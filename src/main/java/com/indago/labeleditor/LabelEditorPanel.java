@@ -1,98 +1,73 @@
 package com.indago.labeleditor;
 
-import java.awt.AWTEvent;
-import java.awt.BorderLayout;
-import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-
-import net.imagej.axis.Axes;
-import org.scijava.ui.behaviour.ClickBehaviour;
-import org.scijava.ui.behaviour.io.InputTriggerConfig;
-import org.scijava.ui.behaviour.util.Behaviours;
-
-import com.indago.data.segmentation.LabelData;
-import com.indago.data.segmentation.LabelingSegment;
-import com.indago.fg.Assignment;
-import com.indago.io.DataMover;
-import com.indago.pg.IndicatorNode;
-import com.indago.pg.SegmentationProblem;
-import com.indago.pg.segments.SegmentNode;
-import com.indago.ui.bdv.BdvOwner;
-import com.indago.ui.bdv.BdvWithOverlaysOwner;
-import com.indago.util.ImglibUtil;
-
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOverlay;
 import bdv.util.BdvSource;
+import io.scif.img.IO;
 import net.imagej.ImgPlus;
+import net.imagej.axis.Axes;
+import net.imagej.axis.AxisType;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
-import net.imglib2.RealRandomAccess;
 import net.imglib2.converter.Converters;
 import net.imglib2.img.Img;
-import net.imglib2.interpolation.randomaccess.NearestNeighborInterpolatorFactory;
-import net.imglib2.roi.IterableRegion;
-import net.imglib2.roi.Regions;
+import net.imglib2.img.array.ArrayImg;
+import net.imglib2.img.array.ArrayImgs;
+import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.type.BooleanType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.real.DoubleType;
 import net.imglib2.util.ConstantUtils;
+import net.imglib2.util.Intervals;
 import net.imglib2.util.ValuePair;
-import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import net.miginfocom.swing.MigLayout;
+import org.scijava.ui.behaviour.ClickBehaviour;
+import org.scijava.ui.behaviour.io.InputTriggerConfig;
+import org.scijava.ui.behaviour.util.Behaviours;
 
-public class LabelEditorPanel<T extends RealType<T> & NativeType<T>> extends JPanel implements ActionListener, BdvOwner {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-	/**
-	 * 
-	 */
+public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends JPanel implements ActionListener {
+
 	private static final long serialVersionUID = -2148493794258482330L;
-	private final ImgPlus< T > data;
-	private JButton btnForceSelect;
-	private JButton btnForceRemove;
+	private final LabelEditorModel model;
+//	private JButton btnForceSelect;
+//	private JButton btnForceRemove;
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
 	private List< BdvSource > bdvOverlaySources = new ArrayList<>();
 	private List< BdvOverlay > overlays = new ArrayList<>();
 	private MouseMotionListener mml;
-	protected ImgLabeling< LabelData, IntType > labelingFrames;
-//	protected ImgLabeling< ?, ? > labelingFrames;
 	protected RealPoint mousePointer;
-	private ArrayList< LabelingSegment > segmentsUnderMouse;
+	private ArrayList< U > segmentsUnderMouse;
 	private int selectedIndex;
-	private ValuePair< LabelingSegment, Integer > highlightedSegment;
+	private ValuePair< U, Integer > highlightedSegment;
 	private final RandomAccessible< IntType > highlightedSegmentRai =
 			ConstantUtils.constantRandomAccessible( new IntType(), 2 ); //TODO Change 2 to match 2D/3D image
-	private List< ImgLabeling< LabelData, IntType > > labels;
-	private List<Assignment< IndicatorNode >> pgSolutions;
-	private List< SegmentationProblem > problems;
 
-	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< LabelData, IntType > > labels, InputTriggerConfig config, List<Assignment< IndicatorNode >> pgSolutions, List<SegmentationProblem> problems) {
+	public LabelEditorPanel(LabelEditorModel model) {
+		this.model = model;
+	}
+
+	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels, InputTriggerConfig config) {
 		setLayout( new BorderLayout() );
-		this.data = data;
-		this.labels = labels;
-		this.pgSolutions = pgSolutions;
-		this.problems = problems;
+		model = new DefaultLabelEditorModel<>(data, labels);
 		buildGui(config);
 		populateBdv();
 		this.mml = new MouseMotionListener() {
@@ -108,13 +83,11 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>> extends JPa
 				final int y = ( int ) mousePointer.getFloatPosition( 1 );
 				final int z = ( int ) mousePointer.getFloatPosition( 2 );
 				int time = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
-				// Perhaps this need to be more generic, ie is it always IntType?
-				labelingFrames = (ImgLabeling<LabelData, IntType>) labels.get( time );
 				findSegments( x, y, z, time );
 				if ( !( segmentsUnderMouse.isEmpty() ) ) {
-					highlightedSegment = new ValuePair< LabelingSegment, Integer >( segmentsUnderMouse.get( 0 ), time );
+					highlightedSegment = new ValuePair< U, Integer >( segmentsUnderMouse.get( 0 ), time );
 					JComponent component = ( JComponent ) e.getSource();
-					LabelingSegment ls = highlightedSegment.getA();
+					U ls = highlightedSegment.getA();
 					// Too specific... need to figure something else out....like the labels should be "rich" ie have additional info 
 					// that if there can also be rendered, probably not in a tool tip. 
 					// instead, we should have options to turn this extra info on and off, in case the view gets too crowded.
@@ -149,11 +122,11 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>> extends JPa
 				int idx = getSelectedIndex();
 				if ( idx == segmentsUnderMouse.size() - 1 ) {
 					setSelectedIndex( 0 );
-					highlightedSegment = new ValuePair< LabelingSegment, Integer >( segmentsUnderMouse.get( selectedIndex ), time );
+					highlightedSegment = new ValuePair<>(segmentsUnderMouse.get(selectedIndex), time);
 					showHighlightedSegment();
 				} else {
 					setSelectedIndex( idx + 1 );
-					highlightedSegment = new ValuePair< LabelingSegment, Integer >( segmentsUnderMouse.get( selectedIndex ), time );
+					highlightedSegment = new ValuePair<>(segmentsUnderMouse.get(selectedIndex), time);
 					showHighlightedSegment();
 				}
 			}
@@ -170,29 +143,31 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>> extends JPa
 	}
 
 	protected void showHighlightedSegment() {
-		RandomAccessibleInterval< ? extends BooleanType< ? > > region = highlightedSegment.getA().getRegion();
-		RandomAccessibleInterval< IntType > ret = Converters.convert( region, ( in, out ) -> out.set( in.get() ? 1 : 0 ), new IntType() );
-		( ( AWTEvent ) highlightedSegmentRai ).setSource( ret );
-		bdvHandlePanel.getViewerPanel().setTimepoint( highlightedSegment.getB() );
-		bdvHandlePanel.getViewerPanel().requestRepaint();
+		//FIXME
+//		RandomAccessibleInterval< ? extends BooleanType< ? > > region = highlightedSegment.getA().getRegion();
+//		RandomAccessibleInterval< IntType > ret = Converters.convert( region, ( in, out ) -> out.set( in.get() ? 1 : 0 ), new IntType() );
+//		( ( AWTEvent ) highlightedSegmentRai ).setSource( ret );
+//		bdvHandlePanel.getViewerPanel().setTimepoint( highlightedSegment.getB() );
+//		bdvHandlePanel.getViewerPanel().requestRepaint();
 	}
 
-	protected ArrayList< LabelingSegment > findSegments( final int x, final int y, int z, int time ) {
+	protected ArrayList< U > findSegments( final int x, final int y, int z, int time ) {
 		segmentsUnderMouse = new ArrayList<>();
-		final RealRandomAccess< LabelingType< LabelData > > a = Views.interpolate(
-				Views.extendValue( labelingFrames, labelingFrames.firstElement().createVariable() ),
-				new NearestNeighborInterpolatorFactory<>() ).realRandomAccess();
-
-		a.setPosition( new int[] { x, y } );
-		for ( LabelData labelData : a.get() ) {
-			segmentsUnderMouse.add( labelData.getSegment() );
-		}
+		//FIXME
+		//		final RealRandomAccess< LabelingType< U > > a = Views.interpolate(
+//				Views.extendValue( model.getLabels( time ), model.getLabels( time ).firstElement().createVariable() ),
+//				new NearestNeighborInterpolatorFactory<>() ).realRandomAccess();
+//
+//		a.setPosition( new int[] { x, y } );
+//		for ( LabelingSegment labelData : a.get() ) {
+//			segmentsUnderMouse.add( labelData );
+//		}
 		return segmentsUnderMouse;
 
 	}
 
 	private void buildGui(InputTriggerConfig config) {
-		final JPanel viewer = new JPanel( new BorderLayout() );
+		final JPanel viewer = new JPanel( new MigLayout("fill, w 500, h 500") );
 
 		// TODO... How do you find out what kind of data it is? A utility perhaps or is it good enough to check that config is not null? Can it be null in a generic case?
 		if ( /*data.is2D()*/ config != null ) {
@@ -201,130 +176,136 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>> extends JPa
 			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
 		}
 		//This gives 2D/3D bdv panel for leveraged editing
-		bdvAdd( (RandomAccessibleInterval< T >)data, "RAW" );
-		viewer.add( bdvHandlePanel.getViewerPanel(), BorderLayout.CENTER );
+		BdvFunctions.show( model.getData(), "RAW", Bdv.options().addTo( bdvGetHandlePanel() ) );
+		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
 
-		final MigLayout layout = new MigLayout( "", "[][grow]", "" );
-		final JPanel controls = new JPanel( layout );
-
-		final JPanel panelEdit = new JPanel( new MigLayout() );
-		panelEdit.setBorder( BorderFactory.createTitledBorder( "leveraged editing" ) );
-
-		btnForceSelect = new JButton( "force select" );
-		btnForceSelect.addActionListener( this );
-		btnForceRemove = new JButton( "force remove" );
-		btnForceRemove.addActionListener( this );
-		panelEdit.add( btnForceSelect, "growx, wrap" );
-		panelEdit.add( btnForceRemove, "growx, wrap" );
-
-		controls.add( panelEdit, "growx, wrap" );
-
-		final JSplitPane splitPane = new JSplitPane( JSplitPane.HORIZONTAL_SPLIT, controls, viewer );
-		splitPane.setResizeWeight( 0.1 ); // 1.0 == extra space given to left component alone!
-		this.add( splitPane, BorderLayout.CENTER );
+		this.add( viewer );
 
 	}
 
 	@Override
 	public void actionPerformed( ActionEvent e ) {
-		if ( e.getSource().equals( btnForceSelect ) ) {} else if ( e.getSource().equals( btnForceRemove ) ) {}
+//		if ( e.getSource().equals( btnForceSelect ) ) {} else if ( e.getSource().equals( btnForceRemove ) ) {}
 	}
 
 	public void populateBdv() {
 		bdvRemoveAll();
-		bdvAdd( ( RandomAccessibleInterval< T > ) data, "RAW" );
+		BdvFunctions.show( model.getData(), "RAW", Bdv.options().addTo( bdvGetHandlePanel() ) );
 		final int bdvTime = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
-		RandomAccessibleInterval< IntType > imgSolution = drawSolutionSegmentImages();
-		bdvAdd( imgSolution, "solution", 0, 2, new ARGBType( 0x00FF00 ), true );
-		bdvAdd(
-				Views.interval( Views.addDimension( highlightedSegmentRai ), data ),
-				"lev. edit",
-				0,
-				2,
-				new ARGBType( 0x00BFFF ),
-				true );
+		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
+		RandomAccessibleInterval converted = Converters.convert( (RandomAccessibleInterval<LabelingType< U >>) img, (i, o) -> {
+			o.set( i.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
+		}, new ARGBType() );
+
+		final BdvSource source = BdvFunctions.show(
+				converted,
+				"solution",
+				Bdv.options().addTo( bdvGetHandlePanel() ) );
+		source.setActive(true);
+//		bdvAdd(
+//				Views.interval( Views.addDimension( highlightedSegmentRai ), model.getData() ),
+//				"lev. edit",
+//				0,
+//				2,
+//				new ARGBType( 0x00BFFF ),
+//				true );
 	}
 
-	@Override
+	private void bdvRemoveAll() {
+		for ( final BdvSource source : bdvGetSources()) {
+			source.removeFromBdv();
+		}
+		bdvGetSources().clear();
+	}
+
 	public BdvHandlePanel bdvGetHandlePanel() {
 		return bdvHandlePanel;
 	}
 
-	@Override
-	public void bdvSetHandlePanel( final BdvHandlePanel bdvHandlePanel ) {
-		this.bdvHandlePanel = bdvHandlePanel;
-	}
-
-	@Override
 	public List< BdvSource > bdvGetSources() {
 		return this.bdvSources;
 	}
 
-	@Override
-	public < T extends RealType< T > & NativeType< T > > BdvSource bdvGetSourceFor( RandomAccessibleInterval< T > img ) {
-		return null;
-	}
+//	private RandomAccessibleInterval< IntType > drawSolutionSegmentImages( ) {
+//
+//		LabelEditorTag approved = new LabelEditorTag("approved");
+//
+//		final RandomAccessibleInterval< IntType > ret =
+//				DataMover.createEmptyArrayImgLike( model.getData(), new IntType() );
+//
+//		// TODO: must check data type, how? Methods left in place to convey logic, need to update to real objects
+//		int timeDim = model.getData().dimensionIndex(Axes.TIME);
+//		if ( timeDim < 0 ) {
+//			for ( int t = 0; t < model.getData().dimension(timeDim); t++ ) {
+//				final Assignment< IndicatorNode > solution = pgSolutions.get( t );
+//				if ( solution != null ) {
+//					final IntervalView< IntType > retSlice = Views.hyperSlice( ret, timeDim, t );
+//
+//					final int curColorId = 1;
+//					for ( final SegmentNode segVar : problems.get( t ).getSegments() ) {
+//						if ( solution.getAssignment( segVar ) == 1 ) {
+//							model.setTag(segVar.getSegment(), approved);
+////							drawSegmentWithId( retSlice, solution, segVar, curColorId );
+//						}
+//					}
+//				}
+//			}
+//		} else {
+//			final Assignment< IndicatorNode > solution = pgSolutions.get( 0 );
+//			if ( solution != null ) {
+//				final int curColorId = 1;
+//				for ( final SegmentNode segVar : problems.get( 0 ).getSegments() ) {
+//					if ( solution.getAssignment( segVar ) == 1 ) {
+//						model.setTag(segVar.getSegment(), approved);
+////						drawSegmentWithId( ret, solution, segVar, curColorId );
+//					}
+//				}
+//			}
+//		}
+//		return ret;
+//	}
 
-	public List< BdvSource > bdvGetOverlaySources() {
-		return this.bdvOverlaySources;
-	}
+//	private static void drawSegmentWithId(
+//			final RandomAccessibleInterval< IntType > imgSolution,
+//			final Assignment< IndicatorNode > solution,
+//			final SegmentNode segVar,
+//			final int curColorId ) {
+//
+//		if ( solution.getAssignment( segVar ) == 1 ) {
+//			final int color = curColorId;
+//
+//			final IterableRegion< ? > region = segVar.getSegment().getRegion();
+//			final int c = color;
+//			try {
+//				Regions.sample( region, imgSolution ).forEach( t -> t.set( c ) );
+//			} catch ( final ArrayIndexOutOfBoundsException aiaob ) {
+//				//TODO: log.error( aiaob );
+//			}
+//		}
+//	}
 
-	public List< BdvOverlay > bdvGetOverlays() {
-		return this.overlays;
-	}
+	public static <T extends RealType<T> & NativeType<T>> void main(String... args) throws IOException {
+		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
+		ImgPlus<T> data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
 
-	private RandomAccessibleInterval< IntType > drawSolutionSegmentImages( ) {
+		ArrayImg< IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
+		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
+		String LABEL1 = "label1";
+		String LABEL2 = "label2";
 
-		final RandomAccessibleInterval< IntType > ret =
-				DataMover.createEmptyArrayImgLike( data, new IntType() );
+		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
+		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
 
-		// TODO: must check data type, how? Methods left in place to convey logic, need to update to real objects
-		int timeDim = data.dimensionIndex(Axes.TIME);
-		if ( timeDim < 0 ) {
-			for ( int t = 0; t < data.dimension(timeDim); t++ ) {
-				final Assignment< IndicatorNode > solution = pgSolutions.get( t );
-				if ( solution != null ) {
-					final IntervalView< IntType > retSlice = Views.hyperSlice( ret, timeDim, t );
-
-					final int curColorId = 1;
-					for ( final SegmentNode segVar : problems.get( t ).getSegments() ) {
-						if ( solution.getAssignment( segVar ) == 1 ) {
-							drawSegmentWithId( retSlice, solution, segVar, curColorId );
-						}
-					}
-				}
-			}
-		} else {
-			final Assignment< IndicatorNode > solution = pgSolutions.get( 0 );
-			if ( solution != null ) {
-				final int curColorId = 1;
-				for ( final SegmentNode segVar : problems.get( 0 ).getSegments() ) {
-					if ( solution.getAssignment( segVar ) == 1 ) {
-						drawSegmentWithId( ret, solution, segVar, curColorId );
-					}
-				}
-			}
-		}
-		return ret;
-	}
-
-	private static void drawSegmentWithId(
-			final RandomAccessibleInterval< IntType > imgSolution,
-			final Assignment< IndicatorNode > solution,
-			final SegmentNode segVar,
-			final int curColorId ) {
-
-		if ( solution.getAssignment( segVar ) == 1 ) {
-			final int color = curColorId;
-
-			final IterableRegion< ? > region = segVar.getSegment().getRegion();
-			final int c = color;
-			try {
-				Regions.sample( region, imgSolution ).forEach( t -> t.set( c ) );
-			} catch ( final ArrayIndexOutOfBoundsException aiaob ) {
-				//TODO: log.error( aiaob );
-			}
-		}
+		JFrame frame = new JFrame("Label editor");
+		JPanel parent = new JPanel();
+		frame.setContentPane(parent);
+		frame.setMinimumSize(new Dimension(500,500));
+		InputTriggerConfig config = new InputTriggerConfig2D().load(parent);
+		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel(data, Collections.singletonList(labels), config);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		parent.add(labelEditorPanel);
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 }
