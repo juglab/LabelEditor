@@ -5,6 +5,7 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOverlay;
 import bdv.util.BdvSource;
+import com.indago.labeleditor.model.VisibleTag;
 import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -13,12 +14,15 @@ import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
+import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelRegion;
+import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.ARGBType;
@@ -44,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends JPanel implements ActionListener {
 
@@ -195,9 +201,23 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		bdvAdd( model.getData(), "RAW" );
 		final int bdvTime = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
 		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
-		RandomAccessibleInterval converted = Converters.convert( (RandomAccessibleInterval<LabelingType< U >>) img, (i, o) -> {
-			o.set( i.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
-		}, new ARGBType() );
+		Map<U, Set<LabelEditorTag>> tags = model.getTags(bdvTime);
+		Converter<LabelingType< U >, ARGBType> converter;
+		VisibleTag visibleTag = new VisibleTag();
+		if(tags == null) {
+			// no tags
+			converter = (i, o) -> o.set( i.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
+		} else {
+			// tags exist
+			converter = (i, o) -> {
+				// only paint if visible tag is set
+				if(labelHasTag(tags, i, visibleTag)) {
+					o.set( i.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
+				}
+			};
+		}
+
+		RandomAccessibleInterval converted = Converters.convert( (RandomAccessibleInterval<LabelingType< U >>) img, converter, new ARGBType() );
 
 		final BdvSource source = BdvFunctions.show(
 				converted,
@@ -211,6 +231,11 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 //				2,
 //				new ARGBType( 0x00BFFF ),
 //				true );
+	}
+
+	private boolean labelHasTag(Map<U, Set<LabelEditorTag>> tags, LabelingType<U> labels, VisibleTag tag) {
+		if(labels == null) return false;
+		return labels.stream().anyMatch(label -> tags.get(label).contains(tag));
 	}
 
 	private < T extends RealType< T > & NativeType< T > > void bdvAdd(
@@ -341,6 +366,9 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+
+//		LabelRegions<String> regions = new LabelRegions<>(labels);
+//		regions.getLabelRegion(LABEL1);
 
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();

@@ -2,12 +2,16 @@ package com.indago.labeleditor;
 
 import net.imagej.ImgPlus;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.integer.IntType;
 
-public interface LabelEditorModel <T>  {
-	ImgLabeling<T, IntType> getLabels(int time);
+import java.util.Map;
+import java.util.Set;
 
+public interface LabelEditorModel <T>  {
 	ImgPlus getData();
 
-	void setTag(T label, LabelEditorTag tag);
+	ImgLabeling<T, IntType> getLabels(int time);
+
+	Map< T, Set < LabelEditorTag > > getTags(int time);
 }
