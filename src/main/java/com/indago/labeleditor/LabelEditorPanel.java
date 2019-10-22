@@ -16,6 +16,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import net.imagej.axis.Axes;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
@@ -60,13 +61,13 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import net.miginfocom.swing.MigLayout;
 
-public class LabelEditorPanel extends JPanel implements ActionListener, BdvOwner {
+public class LabelEditorPanel<T extends RealType<T> & NativeType<T>> extends JPanel implements ActionListener, BdvOwner {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2148493794258482330L;
-	private final ImgPlus< ? > data;
+	private final ImgPlus< T > data;
 	private JButton btnForceSelect;
 	private JButton btnForceRemove;
 	private BdvHandlePanel bdvHandlePanel;
@@ -74,19 +75,19 @@ public class LabelEditorPanel extends JPanel implements ActionListener, BdvOwner
 	private List< BdvSource > bdvOverlaySources = new ArrayList<>();
 	private List< BdvOverlay > overlays = new ArrayList<>();
 	private MouseMotionListener mml;
-	//protected ImgLabeling< LabelData, IntType > labelingFrames;
-	protected ImgLabeling< ?, ? > labelingFrames;
+	protected ImgLabeling< LabelData, IntType > labelingFrames;
+//	protected ImgLabeling< ?, ? > labelingFrames;
 	protected RealPoint mousePointer;
 	private ArrayList< LabelingSegment > segmentsUnderMouse;
 	private int selectedIndex;
 	private ValuePair< LabelingSegment, Integer > highlightedSegment;
 	private final RandomAccessible< IntType > highlightedSegmentRai =
 			ConstantUtils.constantRandomAccessible( new IntType(), 2 ); //TODO Change 2 to match 2D/3D image
-	private List< ImgLabeling< ?, ? > > labels;
+	private List< ImgLabeling< LabelData, IntType > > labels;
 	private List<Assignment< IndicatorNode >> pgSolutions;
 	private List< SegmentationProblem > problems;
 
-	public LabelEditorPanel( ImgPlus< ? > data, List< ImgLabeling< ?, ? > > labels, InputTriggerConfig config, List<Assignment< IndicatorNode >> pgSolutions, List<SegmentationProblem> problems) {
+	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< LabelData, IntType > > labels, InputTriggerConfig config, List<Assignment< IndicatorNode >> pgSolutions, List<SegmentationProblem> problems) {
 		setLayout( new BorderLayout() );
 		this.data = data;
 		this.labels = labels;
@@ -108,7 +109,7 @@ public class LabelEditorPanel extends JPanel implements ActionListener, BdvOwner
 				final int z = ( int ) mousePointer.getFloatPosition( 2 );
 				int time = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
 				// Perhaps this need to be more generic, ie is it always IntType?
-				labelingFrames = ( ImgLabeling< ?, ? > ) labels.get( time );
+				labelingFrames = (ImgLabeling<LabelData, IntType>) labels.get( time );
 				findSegments( x, y, z, time );
 				if ( !( segmentsUnderMouse.isEmpty() ) ) {
 					highlightedSegment = new ValuePair< LabelingSegment, Integer >( segmentsUnderMouse.get( 0 ), time );
@@ -200,7 +201,7 @@ public class LabelEditorPanel extends JPanel implements ActionListener, BdvOwner
 			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
 		}
 		//This gives 2D/3D bdv panel for leveraged editing
-		bdvAdd( (RandomAccessibleInterval< ? >)data, "RAW" );
+		bdvAdd( (RandomAccessibleInterval< T >)data, "RAW" );
 		viewer.add( bdvHandlePanel.getViewerPanel(), BorderLayout.CENTER );
 
 		final MigLayout layout = new MigLayout( "", "[][grow]", "" );
@@ -231,7 +232,7 @@ public class LabelEditorPanel extends JPanel implements ActionListener, BdvOwner
 
 	public void populateBdv() {
 		bdvRemoveAll();
-		bdvAdd( ( RandomAccessibleInterval< ? > ) data, "RAW" );
+		bdvAdd( ( RandomAccessibleInterval< T > ) data, "RAW" );
 		final int bdvTime = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
 		RandomAccessibleInterval< IntType > imgSolution = drawSolutionSegmentImages();
 		bdvAdd( imgSolution, "solution", 0, 2, new ARGBType( 0x00FF00 ), true );
@@ -278,11 +279,12 @@ public class LabelEditorPanel extends JPanel implements ActionListener, BdvOwner
 				DataMover.createEmptyArrayImgLike( data, new IntType() );
 
 		// TODO: must check data type, how? Methods left in place to convey logic, need to update to real objects
-		if ( data.hasFrames() ) {
-			for ( int t = 0; t < data.getNumberOfFrames(); t++ ) {
+		int timeDim = data.dimensionIndex(Axes.TIME);
+		if ( timeDim < 0 ) {
+			for ( int t = 0; t < data.dimension(timeDim); t++ ) {
 				final Assignment< IndicatorNode > solution = pgSolutions.get( t );
 				if ( solution != null ) {
-					final IntervalView< IntType > retSlice = Views.hyperSlice( ret, data.getTimeDimensionIndex(), t );
+					final IntervalView< IntType > retSlice = Views.hyperSlice( ret, timeDim, t );
 
 					final int curColorId = 1;
 					for ( final SegmentNode segVar : problems.get( t ).getSegments() ) {
@@ -324,16 +326,5 @@ public class LabelEditorPanel extends JPanel implements ActionListener, BdvOwner
 			}
 		}
 	}
-	
-	private RandomAccessibleInterval< DoubleType > getFrame( final long t ) {
-		final int timeIdx = ImglibUtil.getTimeDimensionIndex( data);
-		if ( timeIdx == -1 ) {
-			return data;
-		} else {
-			return Views.hyperSlice( data, timeIdx, data.min( timeIdx ) + t );
-		}
-
-	}
-
 
 }
