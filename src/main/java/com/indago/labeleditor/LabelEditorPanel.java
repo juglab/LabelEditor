@@ -9,6 +9,7 @@ import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
+import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
@@ -41,6 +42,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends JPanel implements ActionListener {
@@ -176,7 +178,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
 		}
 		//This gives 2D/3D bdv panel for leveraged editing
-		BdvFunctions.show( model.getData(), "RAW", Bdv.options().addTo( bdvGetHandlePanel() ) );
+		bdvAdd( model.getData(), "RAW" );
 		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
 
 		this.add( viewer );
@@ -190,7 +192,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 	public void populateBdv() {
 		bdvRemoveAll();
-		BdvFunctions.show( model.getData(), "RAW", Bdv.options().addTo( bdvGetHandlePanel() ) );
+		bdvAdd( model.getData(), "RAW" );
 		final int bdvTime = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
 		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
 		RandomAccessibleInterval converted = Converters.convert( (RandomAccessibleInterval<LabelingType< U >>) img, (i, o) -> {
@@ -209,6 +211,50 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 //				2,
 //				new ARGBType( 0x00BFFF ),
 //				true );
+	}
+
+	private < T extends RealType< T > & NativeType< T > > void bdvAdd(
+			final RandomAccessibleInterval< T > img,
+			final String title ) {
+		final BdvSource source = BdvFunctions.show(
+				img,
+				title,
+				Bdv.options().addTo( bdvGetHandlePanel() ) );
+		bdvGetSources().add( source );
+
+		final T min = img.randomAccess().get().copy();
+		final T max = min.copy();
+
+		computeMinMax( Views.iterable( img ), min, max );
+		source.setDisplayRangeBounds( Math.min( min.getRealDouble(), 0 ), max.getRealDouble() );
+		source.setDisplayRange( min.getRealDouble(), max.getRealDouble() );
+		source.setActive( true );
+	}
+
+	public static < T extends RealType< T > & NativeType< T > > void computeMinMax(
+			final IterableInterval< T > iterableInterval,
+			final T min,
+			final T max ) {
+		if ( iterableInterval == null ) { return; }
+
+		// create a cursor for the image (the order does not matter)
+		final Iterator< T > iterator = iterableInterval.iterator();
+
+		// initialize min and max with the first image value
+		T type = iterator.next();
+
+		min.set( type );
+		max.set( type );
+
+		// loop over the rest of the data and determine min and max value
+		while ( iterator.hasNext() ) {
+			// we need this type more than once
+			type = iterator.next();
+
+			if ( type.compareTo( min ) < 0 ) min.set( type );
+
+			if ( type.compareTo( max ) > 0 ) max.set( type );
+		}
 	}
 
 	private void bdvRemoveAll() {
