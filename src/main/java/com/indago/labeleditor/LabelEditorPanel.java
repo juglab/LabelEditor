@@ -72,12 +72,12 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 	public LabelEditorPanel(LabelEditorModel model) {
 		this.model = model;
-	}
-
-	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels, InputTriggerConfig config) {
 		setLayout( new BorderLayout() );
-		model = new DefaultLabelEditorModel<>(data, labels);
+
+		//this limits the BDV navigation to 2D
+		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
 		buildGui(config);
+
 		populateBdv();
 		this.mml = new MouseMotionListener() {
 
@@ -97,8 +97,8 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 					highlightedSegment = new ValuePair< U, Integer >( segmentsUnderMouse.get( 0 ), time );
 					JComponent component = ( JComponent ) e.getSource();
 					U ls = highlightedSegment.getA();
-					// Too specific... need to figure something else out....like the labels should be "rich" ie have additional info 
-					// that if there can also be rendered, probably not in a tool tip. 
+					// Too specific... need to figure something else out....like the labels should be "rich" ie have additional info
+					// that if there can also be rendered, probably not in a tool tip.
 					// instead, we should have options to turn this extra info on and off, in case the view gets too crowded.
 					// component.setToolTipText( "Cost of segment: " + data.getdata().getCostTrainerdata().getCost( ls ) );
 					showHighlightedSegment();
@@ -113,16 +113,13 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), new String[] { "metaseg" } );
 		behaviours.install( bdvHandlePanel.getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
 		behaviours.behaviour(
-				new ClickBehaviour() {
-
-					@Override
-					public void click( int x, int y ) {
-						browseSegments( x, y, bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint() );
-
-					}
-				},
+				(ClickBehaviour) (x, y) -> browseSegments( x, y, bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint() ),
 				"browse segments",
 				"P" );
+	}
+
+	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
+		this(new DefaultLabelEditorModel<>(data, labels));
 	}
 
 	protected void browseSegments( int x, int y, int time ) {
@@ -375,8 +372,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		InputTriggerConfig config = new InputTriggerConfig2D().load(parent);
-		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel(data, Collections.singletonList(labels), config);
+		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel(data, Collections.singletonList(labels));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
