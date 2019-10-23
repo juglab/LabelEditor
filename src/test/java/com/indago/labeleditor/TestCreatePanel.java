@@ -18,9 +18,6 @@ import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 import org.junit.Test;
 
-import javax.swing.*;
-import java.awt.*;
-
 public class TestCreatePanel {
 
 	@Test

@@ -70,6 +70,8 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 	private final RandomAccessible< IntType > highlightedSegmentRai =
 			ConstantUtils.constantRandomAccessible( new IntType(), 2 ); //TODO Change 2 to match 2D/3D image
 
+	private final static LabelEditorTag visibleTag = new VisibleTag();
+
 	public LabelEditorPanel(LabelEditorModel model) {
 		this.model = model;
 		setLayout( new BorderLayout() );
@@ -94,16 +96,16 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 				int time = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
 				findSegments( x, y, z, time );
 				if ( !( segmentsUnderMouse.isEmpty() ) ) {
-					highlightedSegment = new ValuePair< U, Integer >( segmentsUnderMouse.get( 0 ), time );
+					highlightedSegment = new ValuePair< >( segmentsUnderMouse.get( 0 ), time );
 					JComponent component = ( JComponent ) e.getSource();
 					U ls = highlightedSegment.getA();
 					// Too specific... need to figure something else out....like the labels should be "rich" ie have additional info
 					// that if there can also be rendered, probably not in a tool tip.
 					// instead, we should have options to turn this extra info on and off, in case the view gets too crowded.
 					// component.setToolTipText( "Cost of segment: " + data.getdata().getCostTrainerdata().getCost( ls ) );
-					showHighlightedSegment();
-					setSelectedIndex( 0 );
-
+//					showHighlightedSegment();
+//					setSelectedIndex( 0 );
+					model.addTag(time, ls, visibleTag);
 				}
 
 			}
@@ -205,19 +207,14 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
 		Map<U, Set<LabelEditorTag>> tags = model.getTags(bdvTime);
 		Converter<LabelingType< U >, ARGBType> converter;
-		VisibleTag visibleTag = new VisibleTag();
-		if(tags == null) {
-			// no tags
-			converter = (i, o) -> o.set( i.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
-		} else {
-			// tags exist
-			converter = (input, output) -> {
-				// only paint if visible tag is set
-				if(labelHasTag(tags, input, visibleTag)) {
-					output.set( input.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
-				}
-			};
-		}
+		converter = (input, output) -> {
+			// only paint if visible tag is set
+			if(labelHasTag(tags, input, visibleTag)) {
+				output.set( input.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
+			} else {
+				output.set(ARGBType.rgba(0,0,0,0));
+			}
+		};
 
 		RandomAccessibleInterval converted = Converters.convert( (RandomAccessibleInterval<LabelingType< U >>) img, converter, new ARGBType() );
 
@@ -235,7 +232,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 //				true );
 	}
 
-	private boolean labelHasTag(Map<U, Set<LabelEditorTag>> tags, LabelingType<U> labels, VisibleTag tag) {
+	private boolean labelHasTag(Map<U, Set<LabelEditorTag>> tags, LabelingType<U> labels, LabelEditorTag tag) {
 		if(labels == null) return false;
 		return labels.stream().anyMatch(label -> tags.get(label).contains(tag));
 	}
@@ -365,14 +362,13 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
-		VisibleTag visibleTag = new VisibleTag();
 
 		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
 
 		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
 
-		model.getTags(0).get(LABEL1).add(visibleTag);
+		model.addTag(0, LABEL1, visibleTag);
 
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
