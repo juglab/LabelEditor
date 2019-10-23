@@ -23,7 +23,6 @@ import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
@@ -50,6 +49,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends JPanel implements ActionListener {
 
@@ -68,6 +68,11 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 	private ValuePair< U, Integer > highlightedSegment;
 	private final RandomAccessible< IntType > highlightedSegmentRai =
 			ConstantUtils.constantRandomAccessible( new IntType(), 2 ); //TODO Change 2 to match 2D/3D image
+
+	private int colorBG = ARGBType.rgba(0,0,255,255);
+	private int colorLabeled = ARGBType.rgba(255,0,0,255);
+	private int colorSelected = ARGBType.rgba(0,255,0,255);
+	private int[] lut;
 
 	public LabelEditorPanel(LabelEditorModel model) {
 		this.model = model;
@@ -202,45 +207,50 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		bdvAdd( model.getData(), "RAW" );
 		final int bdvTime = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
 		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
-		Map<U, Set<LabelEditorTag>> tags = model.getTags(bdvTime);
-		Converter<LabelingType< U >, ARGBType> converter;
-		int green = ARGBType.rgba(0, 255, 0, 255);
-		int red = ARGBType.rgba(255, 0, 0, 255);
-		int blue = ARGBType.rgba(0, 0, 255, 255);
-		converter = (input, output) -> {
-			// only paint if visible tag is set
-			if(labelHasTag(tags, input, LabelEditorTag.VISIBLE)) {
-//			if(input.size() > 0) {
-				output.set( green );
-			} else {
-				output.set(red);
-			}
-		};
+		buildLUT(bdvTime);
+		Converter<IntType, ARGBType> converter = (i, o) -> o.set(lut[i.get()]);
 
-		RandomAccessibleInterval converted = Converters.convert( (RandomAccessibleInterval<LabelingType< U >>) img, converter, new ARGBType() );
+		RandomAccessibleInterval converted = Converters.convert(img.getIndexImg(), converter, new ARGBType() );
 
 		final BdvSource source = BdvFunctions.show(
 				converted,
 				"solution",
 				Bdv.options().addTo( bdvGetHandlePanel() ) );
 		source.setActive(true);
-//		bdvAdd(
-//				Views.interval( Views.addDimension( highlightedSegmentRai ), model.getData() ),
-//				"lev. edit",
-//				0,
-//				2,
-//				new ARGBType( 0x00BFFF ),
-//				true );
 	}
 
-	private boolean labelHasTag(Map<U, Set<LabelEditorTag>> tags, LabelingType<U> labels, LabelEditorTag tag) {
-		if(labels == null) return false;
-		for (U label : labels) {
-			if (tags.get(label).contains(tag)) {
-				return true;
+	private void buildLUT(int time) {
+		// the labeling at this specific timepoint
+		ImgLabeling<U, IntType> img = model.getLabels(time);
+
+		// the tags present at this timepoint
+		Map<U, Set<LabelEditorTag>> tags = model.getTags(time);
+
+		// our LUT has one entry per index in the index img of our labeling
+		lut = new int[img.getMapping().numSets()];
+
+		for (int i = 0; i < lut.length; i++) {
+			// get all labels of this index
+			Set<U> labels = img.getMapping().labelsAtIndex(i);
+
+			// distinguish between background index and labeled indices
+			lut[i] = labels.size() > 0 ? colorLabeled : colorBG;
+
+			// if there are no labels, we don't need to check for tags and can continue
+			if(labels.size() == 0) continue;
+
+			// get all tags associated with the labels of this index
+			Set<LabelEditorTag> mytags = filterTagsByLabels(tags, labels);
+
+			// set the color depending on the existence of specific tags
+			if(mytags.contains(LabelEditorTag.SELECTED)) {
+				lut[i] = colorSelected;
 			}
 		}
-		return false;
+	}
+
+	private Set<LabelEditorTag> filterTagsByLabels(Map<U, Set<LabelEditorTag>> tags, Set<U> labels) {
+		return tags.entrySet().stream().filter(entry -> labels.contains(entry.getKey())).map(Map.Entry::getValue).flatMap(Set::stream).collect(Collectors.toSet());
 	}
 
 	private < T extends RealType< T > & NativeType< T > > void bdvAdd(
@@ -374,7 +384,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
 
-		model.addTag(0, LABEL1, LabelEditorTag.VISIBLE);
+		model.addTag(0, LABEL1, LabelEditorTag.SELECTED);
 
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
