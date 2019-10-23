@@ -7,20 +7,30 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class DefaultLabelEditorModel<V extends RealType<V> & NativeType<V>, T> implements LabelEditorModel<T> {
 
-	private final ImgPlus<V> data;
-	private final List< ImgLabeling<T, IntType > > labels;
-	private final List <Map<T, Set<LabelEditorTag>>> tags;
+	final ImgPlus<V> data;
+	final List< ImgLabeling<T, IntType > > labels;
+	final List <Map<T, Set<LabelEditorTag>>> tags;
+
+	public DefaultLabelEditorModel(ImgPlus<V> data, ImgLabeling<T, IntType> labels) {
+		this(data, Collections.singletonList(labels));
+	}
 
 	public DefaultLabelEditorModel(ImgPlus<V> data, List<ImgLabeling<T, IntType>> labels) {
 		this.data = data;
 		this.labels = labels;
-		tags = new ArrayList<>();
+		tags = new ArrayList<>(labels.size());
+		for (int i = 0; i < labels.size(); i++) {
+			tags.add(new HashMap<>());
+		}
 	}
 
 	@Override
@@ -32,6 +42,23 @@ public class DefaultLabelEditorModel<V extends RealType<V> & NativeType<V>, T> i
 	public Map<T, Set<LabelEditorTag>> getTags(int time) {
 		if(tags.size() <= time) return null;
 		return tags.get(time);
+	}
+
+	@Override
+	public void addTag(int time, T label, LabelEditorTag tag) {
+		Set<LabelEditorTag> set = tags.get(time).computeIfAbsent(label, k -> new HashSet<>());
+		set.add(tag);
+	}
+
+	@Override
+	public void removeTag(int time, T label, LabelEditorTag tag) {
+		Set<LabelEditorTag> set = tags.get(time).computeIfAbsent(label, k -> new HashSet<>());
+		set.remove(tag);
+	}
+
+	@Override
+	public Set<LabelEditorTag> getTags(int time, T label) {
+		return tags.get(time).computeIfAbsent(label, k -> new HashSet<>());
 	}
 
 	@Override

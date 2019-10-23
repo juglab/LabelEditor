@@ -51,13 +51,18 @@
 			<artifactId>miglayout</artifactId>
 			<classifier>swing</classifier>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<developers>
 		<developer>
 			<id>frauzufall</id>
 			<name>Deborah Schmidt</name>
-			<email>frauzufall@gmail.com</email>
+			<email>frauzufall@mpi-cbg.de</email>
 			<url>http://juglab.mpi-cbg.de</url>
 			<organization>CSBD</organization>
 			<organizationUrl>http://www.mpi-cbg.de/jug</organizationUrl>

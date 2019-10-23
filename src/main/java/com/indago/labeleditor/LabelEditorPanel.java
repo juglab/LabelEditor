@@ -110,12 +110,16 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 		};
 		bdvHandlePanel.getBdvHandle().getViewerPanel().getDisplay().addMouseMotionListener( this.mml );
-		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), new String[] { "metaseg" } );
+		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
 		behaviours.install( bdvHandlePanel.getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
 		behaviours.behaviour(
 				(ClickBehaviour) (x, y) -> browseSegments( x, y, bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint() ),
 				"browse segments",
 				"P" );
+	}
+
+	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling< U, IntType > labels) {
+		this(data, Collections.singletonList(labels));
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
@@ -207,10 +211,10 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 			converter = (i, o) -> o.set( i.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
 		} else {
 			// tags exist
-			converter = (i, o) -> {
+			converter = (input, output) -> {
 				// only paint if visible tag is set
-				if(labelHasTag(tags, i, visibleTag)) {
-					o.set( i.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
+				if(labelHasTag(tags, input, visibleTag)) {
+					output.set( input.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
 				}
 			};
 		}
@@ -361,18 +365,20 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
+		VisibleTag visibleTag = new VisibleTag();
 
 		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
 
-//		LabelRegions<String> regions = new LabelRegions<>(labels);
-//		regions.getLabelRegion(LABEL1);
+		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
+
+		model.getTags(0).get(LABEL1).add(visibleTag);
 
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel(data, Collections.singletonList(labels));
+		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel<>(model);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
