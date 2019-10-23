@@ -1,7 +1,7 @@
 package com.indago.labeleditor;
 
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.model.VisibleTag;
+import com.indago.labeleditor.model.LabelEditorTag;
 import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -29,14 +29,13 @@ public class TestCreatePanel {
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
-		VisibleTag visibleTag = new VisibleTag();
 
 		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
 		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
 
 		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
 
-		model.addTag(0, LABEL1, visibleTag);
+		model.addTag(0, LABEL1, LabelEditorTag.VISIBLE);
 
 		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel<>(model);
 	}

@@ -8,7 +8,6 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
-import com.indago.labeleditor.model.VisibleTag;
 import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -70,8 +69,6 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 	private final RandomAccessible< IntType > highlightedSegmentRai =
 			ConstantUtils.constantRandomAccessible( new IntType(), 2 ); //TODO Change 2 to match 2D/3D image
 
-	private final static LabelEditorTag visibleTag = new VisibleTag();
-
 	public LabelEditorPanel(LabelEditorModel model) {
 		this.model = model;
 		setLayout( new BorderLayout() );
@@ -105,7 +102,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 					// component.setToolTipText( "Cost of segment: " + data.getdata().getCostTrainerdata().getCost( ls ) );
 //					showHighlightedSegment();
 //					setSelectedIndex( 0 );
-					model.addTag(time, ls, visibleTag);
+					model.addTag(time, ls, LabelEditorTag.VISIBLE);
 				}
 
 			}
@@ -207,12 +204,16 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
 		Map<U, Set<LabelEditorTag>> tags = model.getTags(bdvTime);
 		Converter<LabelingType< U >, ARGBType> converter;
+		int green = ARGBType.rgba(0, 255, 0, 255);
+		int red = ARGBType.rgba(255, 0, 0, 255);
+		int blue = ARGBType.rgba(0, 0, 255, 255);
 		converter = (input, output) -> {
 			// only paint if visible tag is set
-			if(labelHasTag(tags, input, visibleTag)) {
-				output.set( input.size() > 0 ? ARGBType.rgba(0,255,0,255) : ARGBType.rgba(255,0,0,255) );
+			if(labelHasTag(tags, input, LabelEditorTag.VISIBLE)) {
+//			if(input.size() > 0) {
+				output.set( green );
 			} else {
-				output.set(ARGBType.rgba(0,0,0,0));
+				output.set(red);
 			}
 		};
 
@@ -234,7 +235,12 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 	private boolean labelHasTag(Map<U, Set<LabelEditorTag>> tags, LabelingType<U> labels, LabelEditorTag tag) {
 		if(labels == null) return false;
-		return labels.stream().anyMatch(label -> tags.get(label).contains(tag));
+		for (U label : labels) {
+			if (tags.get(label).contains(tag)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private < T extends RealType< T > & NativeType< T > > void bdvAdd(
@@ -368,7 +374,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
 
-		model.addTag(0, LABEL1, visibleTag);
+		model.addTag(0, LABEL1, LabelEditorTag.VISIBLE);
 
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();

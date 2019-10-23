@@ -22,7 +22,6 @@ public class TestDefaultLabelEditorModel {
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
-		VisibleTag visibleTag = new VisibleTag();
 
 		DefaultLabelEditorModel<IntType, String> model = new DefaultLabelEditorModel<>(imgPlus, labels);
 
@@ -31,12 +30,10 @@ public class TestDefaultLabelEditorModel {
 		assertNotNull(model.getTags(0));
 		assertEquals(0, model.getTags(0, LABEL1).size());
 
-		model.addTag(0, LABEL1, visibleTag);
+		model.addTag(0, LABEL1, LabelEditorTag.VISIBLE);
 		assertEquals(1, model.getTags(0, LABEL1).size());
 
-		//FIXME does not work:
-//		model.removeTag(0, LABEL1, new VisibleTag());
-		model.removeTag(0, LABEL1, visibleTag);
+		model.removeTag(0, LABEL1, LabelEditorTag.VISIBLE);
 		assertEquals(0, model.getTags(0, LABEL1).size());
 
 	}

@@ -1,18 +1,5 @@
 package com.indago.labeleditor.model;
 
-public class LabelEditorTag {
-	private String name;
-
-	public LabelEditorTag(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		return name.equals(((LabelEditorTag)o).name);
-	}
+public enum LabelEditorTag {
+	VISIBLE, SELECTED, LEAD_SELECTED
 }
