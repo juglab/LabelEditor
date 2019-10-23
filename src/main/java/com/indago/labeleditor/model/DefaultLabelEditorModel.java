@@ -1,4 +1,4 @@
-package com.indago.labeleditor;
+package com.indago.labeleditor.model;
 
 import net.imagej.ImgPlus;
 import net.imglib2.roi.labeling.ImgLabeling;

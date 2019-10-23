@@ -1,4 +1,4 @@
-package com.indago.labeleditor;
+package com.indago.labeleditor.model;
 
 public class LabelEditorTag {
 	private String name;
