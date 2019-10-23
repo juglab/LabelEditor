@@ -21,7 +21,7 @@
 	<artifactId>labeleditor</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 
-	<name>metaseg</name>
+	<name>Label Editor</name>
 	<description>UI component for image segmentation label comparison and selection</description>
 	<url>https:github.com/juglab/labeleditor</url>
 	<inceptionYear>2019</inceptionYear>
