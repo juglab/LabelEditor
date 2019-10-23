@@ -42,7 +42,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -127,7 +126,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
-		this(new DefaultLabelEditorModel<>(data, labels));
+		this(new DefaultLabelEditorModel<T, U>(data, labels));
 	}
 
 	protected void browseSegments( int x, int y, int time ) {
@@ -253,7 +252,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		return tags.entrySet().stream().filter(entry -> labels.contains(entry.getKey())).map(Map.Entry::getValue).flatMap(Set::stream).collect(Collectors.toSet());
 	}
 
-	private < T extends RealType< T > & NativeType< T > > void bdvAdd(
+	private void bdvAdd(
 			final RandomAccessibleInterval< T > img,
 			final String title ) {
 		final BdvSource source = BdvFunctions.show(
@@ -271,10 +270,10 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 		source.setActive( true );
 	}
 
-	public static < T extends RealType< T > & NativeType< T > > void computeMinMax(
-			final IterableInterval< T > iterableInterval,
+	private void computeMinMax(
+			final IterableInterval<T> iterableInterval,
 			final T min,
-			final T max ) {
+			final T max) {
 		if ( iterableInterval == null ) { return; }
 
 		// create a cursor for the image (the order does not matter)
@@ -370,7 +369,7 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 //		}
 //	}
 
-	public static <T extends RealType<T> & NativeType<T>> void main(String... args) throws IOException {
+	public static <T extends RealType<T> & NativeType<T>> void main(String... args) {
 		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
 		ImgPlus<T> data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
 

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultLabelEditorModel<V extends RealType<V> & NativeType<V>, T> implements LabelEditorModel<T> {
+public class DefaultLabelEditorModel<V, T> implements LabelEditorModel<T> {
 
 	final ImgPlus<V> data;
 	final List< ImgLabeling<T, IntType > > labels;
