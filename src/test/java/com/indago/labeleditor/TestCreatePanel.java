@@ -8,6 +8,7 @@ import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -16,28 +17,32 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import org.junit.Before;
 import org.junit.Test;
 
-public class TestCreatePanel {
+public class TestCreatePanel <T extends RealType<T> & NativeType<T>> {
+
+	private ImgPlus<T> data;
+	private ImgLabeling<String, IntType> labels;
+
+	@Before
+	public void initData() {
+		Img input = new ArrayImgFactory<>(new IntType()).create(10, 10);
+		data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y});
+		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
+		labels = new ImgLabeling<>( backing );
+	}
 
 	@Test
-	public <T extends RealType<T> & NativeType<T>> void run() {
-		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
-		ImgPlus<T> data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
-
-		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
-		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
-		String LABEL1 = "label1";
-		String LABEL2 = "label2";
-
-		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
-		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
-
+	public void run() {
 		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
+		new LabelEditorPanel<>(model);
+	}
 
-		model.addTag(0, LABEL1, LabelEditorTag.VISIBLE);
-
-		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel<>(model);
+	@Test
+	public void useEmptyConstructor() {
+		LabelEditorPanel<T, String> panel = new LabelEditorPanel<>();
+		panel.init(data, labels);
 	}
 
 }

@@ -3,8 +3,9 @@ package com.indago.labeleditor;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
-import bdv.util.BdvOverlay;
 import bdv.util.BdvSource;
+import com.indago.labeleditor.display.DefaultLUTBuilder;
+import com.indago.labeleditor.display.LUTBuilder;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
@@ -13,7 +14,6 @@ import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imglib2.IterableInterval;
-import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
 import net.imglib2.converter.Converter;
@@ -27,7 +27,6 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.util.ConstantUtils;
 import net.imglib2.util.Intervals;
 import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
@@ -46,42 +45,49 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends JPanel implements ActionListener {
+public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -2148493794258482330L;
-	private final LabelEditorModel model;
-//	private JButton btnForceSelect;
-//	private JButton btnForceRemove;
+	private LabelEditorModel model;
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
-	private List< BdvSource > bdvOverlaySources = new ArrayList<>();
-	private List< BdvOverlay > overlays = new ArrayList<>();
 	private MouseMotionListener mml;
 	protected RealPoint mousePointer;
 	private ArrayList< U > segmentsUnderMouse;
 	private int selectedIndex;
 	private ValuePair< U, Integer > highlightedSegment;
-	private final RandomAccessible< IntType > highlightedSegmentRai =
-			ConstantUtils.constantRandomAccessible( new IntType(), 2 ); //TODO Change 2 to match 2D/3D image
 
-	private int colorBG = ARGBType.rgba(0,0,255,255);
-	private int colorLabeled = ARGBType.rgba(255,0,0,255);
-	private int colorSelected = ARGBType.rgba(0,255,0,255);
-	private int[] lut;
+	protected LUTBuilder<U> lutBuilder;
+	int[] lut;
+
+	public LabelEditorPanel() {
+	}
+
+	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling< U, IntType > labels) {
+		this(data, Collections.singletonList(labels));
+	}
+
+	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
+		this(new DefaultLabelEditorModel<>(data, labels));
+	}
 
 	public LabelEditorPanel(LabelEditorModel model) {
-		this.model = model;
+		init(model);
+	}
+
+	public void init(ImgPlus<T> data, ImgLabeling<U, IntType> labels) {
+		init(new DefaultLabelEditorModel<>(data, labels));
+	}
+
+	public void init(LabelEditorModel model) {
+
 		setLayout( new BorderLayout() );
 
-		//this limits the BDV navigation to 2D
-		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
-		buildGui(config);
+		lutBuilder = initLUTBuilder();
 
-		populateBdv();
+		if(model != null) buildPanelFromModel(model);
+
 		this.mml = new MouseMotionListener() {
 
 			@Override
@@ -112,6 +118,14 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 			}
 
 		};
+	}
+
+	private void buildPanelFromModel(LabelEditorModel model) {
+		this.model = model;
+		//this limits the BDV navigation to 2D
+		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
+		buildGui(config);
+		populateBdv();
 		bdvHandlePanel.getBdvHandle().getViewerPanel().getDisplay().addMouseMotionListener( this.mml );
 		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
 		behaviours.install( bdvHandlePanel.getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
@@ -121,12 +135,8 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 				"P" );
 	}
 
-	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling< U, IntType > labels) {
-		this(data, Collections.singletonList(labels));
-	}
-
-	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
-		this(new DefaultLabelEditorModel<T, U>(data, labels));
+	protected LUTBuilder<U> initLUTBuilder() {
+		return new DefaultLUTBuilder<>();
 	}
 
 	protected void browseSegments( int x, int y, int time ) {
@@ -202,11 +212,12 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 	}
 
 	public void populateBdv() {
+		if(model == null) return;
 		bdvRemoveAll();
 		bdvAdd( model.getData(), "RAW" );
 		final int bdvTime = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
 		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
-		buildLUT(bdvTime);
+		lut = lutBuilder.build(img, model.getTags(bdvTime));
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(lut[i.get()]);
 
 		RandomAccessibleInterval converted = Converters.convert(img.getIndexImg(), converter, new ARGBType() );
@@ -216,40 +227,6 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 				"solution",
 				Bdv.options().addTo( bdvGetHandlePanel() ) );
 		source.setActive(true);
-	}
-
-	private void buildLUT(int time) {
-		// the labeling at this specific timepoint
-		ImgLabeling<U, IntType> img = model.getLabels(time);
-
-		// the tags present at this timepoint
-		Map<U, Set<LabelEditorTag>> tags = model.getTags(time);
-
-		// our LUT has one entry per index in the index img of our labeling
-		lut = new int[img.getMapping().numSets()];
-
-		for (int i = 0; i < lut.length; i++) {
-			// get all labels of this index
-			Set<U> labels = img.getMapping().labelsAtIndex(i);
-
-			// distinguish between background index and labeled indices
-			lut[i] = labels.size() > 0 ? colorLabeled : colorBG;
-
-			// if there are no labels, we don't need to check for tags and can continue
-			if(labels.size() == 0) continue;
-
-			// get all tags associated with the labels of this index
-			Set<LabelEditorTag> mytags = filterTagsByLabels(tags, labels);
-
-			// set the color depending on the existence of specific tags
-			if(mytags.contains(LabelEditorTag.SELECTED)) {
-				lut[i] = colorSelected;
-			}
-		}
-	}
-
-	private Set<LabelEditorTag> filterTagsByLabels(Map<U, Set<LabelEditorTag>> tags, Set<U> labels) {
-		return tags.entrySet().stream().filter(entry -> labels.contains(entry.getKey())).map(Map.Entry::getValue).flatMap(Set::stream).collect(Collectors.toSet());
 	}
 
 	private void bdvAdd(
@@ -263,10 +240,11 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 
 		final T min = img.randomAccess().get().copy();
 		final T max = min.copy();
-
 		computeMinMax( Views.iterable( img ), min, max );
-		source.setDisplayRangeBounds( Math.min( min.getRealDouble(), 0 ), max.getRealDouble() );
-		source.setDisplayRange( min.getRealDouble(), max.getRealDouble() );
+		if(!min.equals(max)) {
+			source.setDisplayRangeBounds( Math.min( min.getRealDouble(), 0 ), max.getRealDouble() );
+			source.setDisplayRange( min.getRealDouble(), max.getRealDouble() );
+		}
 		source.setActive( true );
 	}
 
@@ -310,7 +288,6 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 	public List< BdvSource > bdvGetSources() {
 		return this.bdvSources;
 	}
-
 //	private RandomAccessibleInterval< IntType > drawSolutionSegmentImages( ) {
 //
 //		LabelEditorTag approved = new LabelEditorTag("approved");
@@ -348,8 +325,8 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 //			}
 //		}
 //		return ret;
-//	}
 
+//	}
 //	private static void drawSegmentWithId(
 //			final RandomAccessibleInterval< IntType > imgSolution,
 //			final Assignment< IndicatorNode > solution,
@@ -367,33 +344,41 @@ public class LabelEditorPanel<T extends RealType<T> & NativeType<T>, U> extends 
 //				//TODO: log.error( aiaob );
 //			}
 //		}
+
 //	}
 
-	public static <T extends RealType<T> & NativeType<T>> void main(String... args) {
-		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
-		ImgPlus<T> data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
+	public LUTBuilder<U> getLUTBuilder() {
+		return lutBuilder;
+	}
 
-		ArrayImg< IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
-		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
-		String LABEL1 = "label1";
-		String LABEL2 = "label2";
-
-		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
-		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
-
-		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
-
-		model.addTag(0, LABEL1, LabelEditorTag.SELECTED);
-
+	public static void main(String... args) {
+		DefaultLabelEditorModel model = buildModel();
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		LabelEditorPanel<T, String> labelEditorPanel = new LabelEditorPanel<>(model);
+		LabelEditorPanel labelEditorPanel = new LabelEditorPanel<>(model);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
 		frame.setVisible(true);
 	}
 
+	private static <T extends RealType<T> & NativeType<T>> DefaultLabelEditorModel<T, String> buildModel() {
+		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
+		ImgPlus<T> data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
+
+		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
+		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
+		String LABEL1 = "label1";
+		String LABEL2 = "label2";
+
+		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
+		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+
+		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
+
+		model.addTag(0, LABEL1, LabelEditorTag.SELECTED);
+		return model;
+	}
 }

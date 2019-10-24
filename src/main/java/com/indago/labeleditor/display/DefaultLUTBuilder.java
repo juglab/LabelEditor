@@ -1,6 +1,5 @@
 package com.indago.labeleditor.display;
 
-import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
@@ -10,21 +9,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class LabelEditorLUT<U> {
+public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 
 	private static int colorBG = ARGBType.rgba(0,0,255,255);
 	private static int colorLabeled = ARGBType.rgba(255,0,0,255);
 	private static int colorSelected = ARGBType.rgba(0,255,0,255);
 
-	public int[] build(int time, LabelEditorModel model) {
+	public int[] build(ImgLabeling<U, IntType> img, Map<U, Set<LabelEditorTag>> tags) {
 
 		int[] lut;
-
-		// the labeling at this specific timepoint
-		ImgLabeling<U, IntType> img = model.getLabels(time);
-
-		// the tags present at this timepoint
-		Map<U, Set<LabelEditorTag>> tags = model.getTags(time);
 
 		// our LUT has one entry per index in the index img of our labeling
 		lut = new int[img.getMapping().numSets()];
