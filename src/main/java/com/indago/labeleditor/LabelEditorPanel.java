@@ -23,7 +23,6 @@ import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
@@ -130,7 +129,7 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 					// component.setToolTipText( "Cost of segment: " + data.getdata().getCostTrainerdata().getCost( ls ) );
 //					showHighlightedSegment();
 //					setSelectedIndex( 0 );
-					model.addTag(time, ls, LabelEditorTag.VISIBLE);
+					model.addTag(ls, LabelEditorTag.VISIBLE);
 				}
 
 			}
@@ -220,8 +219,8 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 		bdvRemoveAll();
 		bdvAdd( model.getData(), "RAW" );
 		final int bdvTime = bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint();
-		ImgLabeling<U, IntType> img = model.getLabels(bdvTime);
-		lut = lutBuilder.build(img, model.getTags(bdvTime));
+		ImgLabeling<U, IntType> img = model.getLabels();
+		lut = lutBuilder.build(img, model.getTags());
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(lut[i.get()]);
 
 		RandomAccessibleInterval converted = Converters.convert(img.getIndexImg(), converter, new ARGBType() );
@@ -375,25 +374,16 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
 
-		List<ImgLabeling<String, IntType>> labelings = new ArrayList<>();
-		for (int i = 0; i < 2; i++) {
-			ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
-			ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
-			if(i == 0) {
-				Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
-				Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
-			} else {
-				Views.interval( labels, Intervals.createMinSize( 120, 120, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
-				Views.interval( labels, Intervals.createMinSize( 180, 180, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
-			}
-			labelings.add(labels);
-		}
+		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1), data.dimension(2) );
+		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
+		Views.interval( labels, Intervals.createMinSize( 20, 20, 0, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
+		Views.interval( labels, Intervals.createMinSize( 80, 80, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+		Views.interval( labels, Intervals.createMinSize( 120, 120, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
+		Views.interval( labels, Intervals.createMinSize( 180, 180, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
-		RandomAccessibleInterval<LabelingType<String>> labelingStack = Views.stack(labelings);
+		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
 
-		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labelings);
-
-		model.addTag(0, LABEL1, LabelEditorTag.SELECTED);
+		model.addTag(LABEL1, LabelEditorTag.SELECTED);
 		return model;
 	}
 }

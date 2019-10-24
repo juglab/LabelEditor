@@ -10,13 +10,13 @@ import java.util.Set;
 public interface LabelEditorModel <T>  {
 	ImgPlus getData();
 
-	ImgLabeling<T, IntType> getLabels(int time);
+	ImgLabeling<T, IntType> getLabels();
 
-	Map< T, Set <Object> > getTags(int time);
+	Map< T, Set <Object> > getTags();
 
-	void addTag(int time, T label, Object tag);
+	void addTag(T label, Object tag);
 
-	void removeTag(int time, T label, Object tag);
+	void removeTag(T label, Object tag);
 
-	Set<Object> getTags(int time, T label);
+	Set<Object> getTags(T label);
 }

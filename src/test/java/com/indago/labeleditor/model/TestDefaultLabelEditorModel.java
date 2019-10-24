@@ -25,16 +25,14 @@ public class TestDefaultLabelEditorModel {
 
 		DefaultLabelEditorModel<IntType, String> model = new DefaultLabelEditorModel<>(imgPlus, labels);
 
-		assertNotNull(model.tags);
-		assertEquals(1, model.tags.size());
-		assertNotNull(model.getTags(0));
-		assertEquals(0, model.getTags(0, LABEL1).size());
+		assertNotNull(model.getTags());
+		assertEquals(0, model.getTags(LABEL1).size());
 
-		model.addTag(0, LABEL1, LabelEditorTag.VISIBLE);
-		assertEquals(1, model.getTags(0, LABEL1).size());
+		model.addTag(LABEL1, LabelEditorTag.VISIBLE);
+		assertEquals(1, model.getTags(LABEL1).size());
 
-		model.removeTag(0, LABEL1, LabelEditorTag.VISIBLE);
-		assertEquals(0, model.getTags(0, LABEL1).size());
+		model.removeTag(LABEL1, LabelEditorTag.VISIBLE);
+		assertEquals(0, model.getTags(LABEL1).size());
 
 	}
 }
