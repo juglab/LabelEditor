@@ -1,14 +1,34 @@
 package com.indago.labeleditor;
 
-import bdv.util.Bdv;
-import bdv.util.BdvFunctions;
-import bdv.util.BdvHandlePanel;
-import bdv.util.BdvSource;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import org.scijava.ui.behaviour.ClickBehaviour;
+import org.scijava.ui.behaviour.io.InputTriggerConfig;
+import org.scijava.ui.behaviour.util.Behaviours;
+
 import com.indago.labeleditor.display.DefaultLUTBuilder;
 import com.indago.labeleditor.display.LUTBuilder;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
+
+import bdv.util.Bdv;
+import bdv.util.BdvFunctions;
+import bdv.util.BdvHandlePanel;
+import bdv.util.BdvSource;
 import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -31,20 +51,6 @@ import net.imglib2.util.Intervals;
 import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 import net.miginfocom.swing.MigLayout;
-import org.scijava.ui.behaviour.ClickBehaviour;
-import org.scijava.ui.behaviour.io.InputTriggerConfig;
-import org.scijava.ui.behaviour.util.Behaviours;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implements ActionListener {
 
@@ -65,7 +71,8 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling< U, IntType > labels) {
-		this(data, Collections.singletonList(labels));
+//		this(data, Collections.singletonList(labels));
+		this( new DefaultLabelEditorModel<>( data, labels ) );
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
