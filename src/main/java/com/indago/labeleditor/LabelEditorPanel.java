@@ -23,6 +23,7 @@ import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
@@ -88,6 +89,23 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 
 		if(model != null) buildPanelFromModel(model);
 
+	}
+
+	private void buildPanelFromModel(LabelEditorModel model) {
+		this.model = model;
+		//this limits the BDV navigation to 2D
+		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
+		buildGui(config);
+		populateBdv();
+		bdvHandlePanel.getBdvHandle().getViewerPanel().getDisplay().addMouseMotionListener( this.mml );
+		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
+		behaviours.install( bdvHandlePanel.getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
+		behaviours.behaviour(
+				(ClickBehaviour) (x, y) -> browseSegments( x, y, bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint() ),
+				"browse segments",
+				"P" );
+
+
 		this.mml = new MouseMotionListener() {
 
 			@Override
@@ -118,21 +136,7 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 			}
 
 		};
-	}
 
-	private void buildPanelFromModel(LabelEditorModel model) {
-		this.model = model;
-		//this limits the BDV navigation to 2D
-		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
-		buildGui(config);
-		populateBdv();
-		bdvHandlePanel.getBdvHandle().getViewerPanel().getDisplay().addMouseMotionListener( this.mml );
-		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
-		behaviours.install( bdvHandlePanel.getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
-		behaviours.behaviour(
-				(ClickBehaviour) (x, y) -> browseSegments( x, y, bdvHandlePanel.getViewerPanel().getState().getCurrentTimepoint() ),
-				"browse segments",
-				"P" );
 	}
 
 	protected LUTBuilder<U> initLUTBuilder() {
@@ -368,15 +372,26 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
 		ImgPlus<T> data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
 
-		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
-		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
 
-		Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
-		Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+		List<ImgLabeling<String, IntType>> labelings = new ArrayList<>();
+		for (int i = 0; i < 2; i++) {
+			ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
+			ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
+			if(i == 0) {
+				Views.interval( labels, Intervals.createMinSize( 20, 20, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
+				Views.interval( labels, Intervals.createMinSize( 80, 80, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+			} else {
+				Views.interval( labels, Intervals.createMinSize( 120, 120, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
+				Views.interval( labels, Intervals.createMinSize( 180, 180, 100, 100 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
+			}
+			labelings.add(labels);
+		}
 
-		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labels);
+		RandomAccessibleInterval<LabelingType<String>> labelingStack = Views.stack(labelings);
+
+		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(data, labelings);
 
 		model.addTag(0, LABEL1, LabelEditorTag.SELECTED);
 		return model;

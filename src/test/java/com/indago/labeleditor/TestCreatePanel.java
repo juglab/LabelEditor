@@ -1,8 +1,6 @@
 package com.indago.labeleditor;
 
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorTag;
-import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -15,8 +13,6 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.util.Intervals;
-import net.imglib2.view.Views;
 import org.junit.Before;
 import org.junit.Test;
 
