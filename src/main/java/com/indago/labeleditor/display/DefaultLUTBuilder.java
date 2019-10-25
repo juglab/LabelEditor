@@ -73,6 +73,16 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 		return new ArrayList<>(tagColors.values());
 	}
 
+	@Override
+	public void setColor(LabelEditorTag tag, int color) {
+		tagColors.put(tag, new LUTChannel(color));
+	}
+
+	@Override
+	public void removeColor(LabelEditorTag tag) {
+
+	}
+
 	private Set<LabelEditorTag> filterTagsByLabels(Map<U, Set<LabelEditorTag>> tags, Set<U> labels) {
 		return tags.entrySet().stream().filter(entry -> labels.contains(entry.getKey())).map(Map.Entry::getValue).flatMap(Set::stream).collect(Collectors.toSet());
 	}

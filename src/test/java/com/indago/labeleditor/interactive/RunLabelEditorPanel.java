@@ -22,21 +22,25 @@ import java.awt.*;
 
 public class RunLabelEditorPanel {
 	public static void main(String... args) {
-		DefaultLabelEditorModel model = buildModel();
+		ImgPlus img = buildData();
+		DefaultLabelEditorModel model = buildModel(img);
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		LabelEditorPanel labelEditorPanel = new LabelEditorPanel<>(model);
+		LabelEditorPanel labelEditorPanel = new LabelEditorPanel<>(img, model);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
 		frame.setVisible(true);
 	}
 
-	private static <T extends RealType<T> & NativeType<T>> DefaultLabelEditorModel<T, String> buildModel() {
+	private static <T extends RealType<T> & NativeType<T>> ImgPlus<T> buildData() {
 		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
-		ImgPlus<T> data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
+		return new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
+	}
+
+	private static <T extends RealType<T> & NativeType<T>> DefaultLabelEditorModel<T, String> buildModel(ImgPlus data) {
 
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
@@ -49,6 +53,6 @@ public class RunLabelEditorPanel {
 		Views.interval( labels, Intervals.createMinSize( 120, 120, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 180, 180, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
-		return new DefaultLabelEditorModel<>(data, labels);
+		return new DefaultLabelEditorModel<>(labels);
 	}
 }

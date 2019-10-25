@@ -2,6 +2,7 @@ package com.indago.labeleditor.model;
 
 import net.imagej.ImgPlus;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.Views;
 
@@ -13,16 +14,19 @@ import java.util.Set;
 
 public class DefaultLabelEditorModel<V, T> implements LabelEditorModel<T> {
 
-	final ImgPlus<V> data;
-	final ImgLabeling<T, IntType > labels;
-	final Map<T, Set<Object>> tags;
+	private ImgLabeling<T, IntType > labels;
+	private Map<T, Set<Object>> tags;
 
-	public DefaultLabelEditorModel(ImgPlus<V> data, List<ImgLabeling<T, IntType>> labels) {
-		this(data, (ImgLabeling<T, IntType>) Views.stack(labels));
+	public DefaultLabelEditorModel() {
+		labels = null;
+		tags = new HashMap<>();
 	}
 
-	public DefaultLabelEditorModel(ImgPlus<V> data, ImgLabeling<T, IntType> labels) {
-		this.data = data;
+	public DefaultLabelEditorModel(List<ImgLabeling<T, IntType>> labels) {
+		this((ImgLabeling<T, IntType>) Views.stack(labels));
+	}
+
+	public DefaultLabelEditorModel(ImgLabeling<T, IntType> labels) {
 		this.labels = labels;
 		tags = new HashMap<>();
 	}
@@ -33,36 +37,39 @@ public class DefaultLabelEditorModel<V, T> implements LabelEditorModel<T> {
 	}
 
 	@Override
+	public void setLabels(ImgLabeling<T, IntType> labels) {
+		this.labels = labels;
+	}
+
+	@Override
 	public Map<T, Set<Object>> getTags() {
 		return tags;
 	}
 
 	@Override
 	public void addTag(T label, Object tag) {
+		if(tags == null) return;
 		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
 		set.add(tag);
 	}
 
 	@Override
 	public void removeTag(T label, Object tag) {
+		if(tags == null) return;
 		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
 		set.remove(tag);
 	}
 
 	@Override
 	public Set<Object> getTags(T label) {
+		if(tags == null) return null;
 		return tags.computeIfAbsent(label, k -> new HashSet<>());
 	}
 
 	@Override
 	public void removeTag(Object tag) {
+		if(tags == null) return;
 		tags.forEach( (label, tags) -> tags.remove(tag));
 	}
-
-	@Override
-	public ImgPlus getData() {
-		return data;
-	}
-
 
 }

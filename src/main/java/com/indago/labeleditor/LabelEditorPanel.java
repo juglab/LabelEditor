@@ -43,30 +43,44 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 
 	private static final long serialVersionUID = -2148493794258482330L;
 	private LabelEditorModel model;
+	private ImgPlus<T> data;
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
 	private MouseMotionListener mml;
 
-	protected LUTBuilder<U> lutBuilder;
-	int[] lut;
+	private LUTBuilder<U> lutBuilder;
+	private int[] lut;
 
 	public LabelEditorPanel() {
 	}
 
+	public LabelEditorPanel( ImgPlus<T> data) {
+		this(new DefaultLabelEditorModel<>());
+		this.data = data;
+	}
+
 	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling< U, IntType > labels) {
-		this( new DefaultLabelEditorModel<>( data, labels ) );
+		this( new DefaultLabelEditorModel<>( labels ) );
+		this.data = data;
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
-		this(new DefaultLabelEditorModel<>(data, labels));
+		this(new DefaultLabelEditorModel<>(labels));
+		this.data = data;
 	}
 
 	public LabelEditorPanel(LabelEditorModel model) {
 		init(model);
 	}
 
+	public LabelEditorPanel( ImgPlus<T> data, LabelEditorModel model) {
+		this.data = data;
+		init(model);
+	}
+
 	public void init(ImgPlus<T> data, ImgLabeling<U, IntType> labels) {
-		init(new DefaultLabelEditorModel<>(data, labels));
+		init(new DefaultLabelEditorModel<>(labels));
+		this.data = data;
 	}
 
 	public void init(LabelEditorModel model) {
@@ -164,7 +178,7 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
 		}
 		//This gives 2D/3D bdv panel for leveraged editing
-		bdvAdd( model.getData(), "RAW" );
+		bdvAdd( data, "RAW" );
 		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
 
 		this.add( viewer );
@@ -176,10 +190,10 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 //		if ( e.getSource().equals( btnForceSelect ) ) {} else if ( e.getSource().equals( btnForceRemove ) ) {}
 	}
 
-	public void populateBdv() {
+	private void populateBdv() {
 		if(model == null) return;
 		bdvRemoveAll();
-		bdvAdd( model.getData(), "RAW" );
+		bdvAdd( data, "RAW" );
 		updateLUT();
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
 		RandomAccessibleInterval converted = Converters.convert(model.getLabels().getIndexImg(), converter, new ARGBType() );

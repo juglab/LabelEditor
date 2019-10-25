@@ -8,6 +8,10 @@ import net.imglib2.type.numeric.ARGBType;
 public class LUTChannel implements VirtualChannels.VirtualChannel {
 	private final ARGBType argb;
 
+	public LUTChannel(int argb) {
+		this.argb = new ARGBType(argb);
+	}
+
 	public LUTChannel(ARGBType argb) {
 		this.argb = argb;
 	}
