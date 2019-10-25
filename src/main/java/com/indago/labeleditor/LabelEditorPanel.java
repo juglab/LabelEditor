@@ -36,7 +36,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling< U, IntType > labels) {
-		this(data, Collections.singletonList(labels));
+		this( new DefaultLabelEditorModel<>( data, labels ) );
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, List< ImgLabeling< U, IntType > > labels) {
