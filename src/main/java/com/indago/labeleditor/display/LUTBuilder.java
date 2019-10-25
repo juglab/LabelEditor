@@ -2,7 +2,6 @@ package com.indago.labeleditor.display;
 
 import com.indago.labeleditor.LUTChannel;
 import com.indago.labeleditor.model.LabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.type.numeric.ARGBType;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public interface LUTBuilder<U> {
 		return null;
 	}
 
-	void setColor(LabelEditorTag tag, int color);
+	default void setColor(Object tag, int color) {}
 
-	void removeColor(LabelEditorTag tag);
+	default void removeColor(Object tag) {}
 }

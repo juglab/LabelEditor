@@ -6,13 +6,9 @@ import bdv.viewer.ViewerPanel;
 import net.imglib2.type.numeric.ARGBType;
 
 public class LUTChannel implements VirtualChannels.VirtualChannel {
-	private final ARGBType argb;
+	private final int argb;
 
 	public LUTChannel(int argb) {
-		this.argb = new ARGBType(argb);
-	}
-
-	public LUTChannel(ARGBType argb) {
 		this.argb = argb;
 	}
 
@@ -36,7 +32,7 @@ public class LUTChannel implements VirtualChannels.VirtualChannel {
 	public void setViewerPanel(ViewerPanel viewerPanel) {
 	}
 
-	public ARGBType getColor() {
+	public int getColor() {
 		return argb;
 	}
 }

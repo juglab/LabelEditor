@@ -1,5 +1,5 @@
 package com.indago.labeleditor.model;
 
 public enum LabelEditorTag {
-	VISIBLE, SELECTED, LEAD_SELECTED
+	VISIBLE, MOUSE_OVER, SELECTED, LEAD_SELECTED
 }

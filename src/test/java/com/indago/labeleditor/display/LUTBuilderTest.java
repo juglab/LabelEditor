@@ -11,7 +11,7 @@ public class LUTBuilderTest {
 
 	@Test
 	public void overrideLUTBuilder() {
-		LabelEditorPanel panel = new LabelEditorPanel<IntType, String>(null) {
+		LabelEditorPanel panel = new LabelEditorPanel<IntType, String>() {
 			@Override
 			protected LUTBuilder<String> initLUTBuilder() {
 				return (model) -> new int[]{0,1};

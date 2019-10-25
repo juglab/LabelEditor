@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 
 public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 
-	private static ARGBType colorBG = new ARGBType(ARGBType.rgba(0,0,255,255));
-	private static ARGBType colorLabeled = new ARGBType(ARGBType.rgba(255,0,0,255));
-	private static ARGBType colorSelected = new ARGBType(ARGBType.rgba(0,255,0,255));
-	private static ARGBType colorLeadSelected = new ARGBType(ARGBType.rgba(255,255,0,255));
+	private static int colorBG = ARGBType.rgba(0,0,255,150);
+	private static int colorLabeled = ARGBType.rgba(255,0,0,150);
+	private static int colorSelected = ARGBType.rgba(0,255,0,150);
+	private static int colorLeadSelected = ARGBType.rgba(255,255,0,150);
 	private final Map<Object, LUTChannel> tagColors;
 
 	public DefaultLUTBuilder() {
 		tagColors = new HashMap<>();
 		tagColors.put(LabelEditorTag.SELECTED, new LUTChannel(colorSelected));
-		tagColors.put(LabelEditorTag.VISIBLE, new LUTChannel(colorLabeled));
+		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorLabeled));
 		tagColors.put(LabelEditorTag.LEAD_SELECTED, new LUTChannel(colorLeadSelected));
 	}
 
@@ -41,33 +41,38 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 			// get all labels of this index
 			Set<U> labels = model.getLabels().getMapping().labelsAtIndex(i);
 
-			// distinguish between background index and labeled indices
-			lut[i] = labels.size() > 0 ? colorLabeled.get() : colorBG.get();
-
 			// if there are no labels, we don't need to check for tags and can continue
 			if(labels.size() == 0) continue;
 
 			// get all tags associated with the labels of this index
 			Set<LabelEditorTag> mytags = filterTagsByLabels(model.getTags(), labels);
 
-			int red = 0;
-			int green = 0;
-			int blue = 0;
-			int alpha = 0;
-			boolean first = true;
-			for (LabelEditorTag tag : mytags) {
-				if (first && tagColors.get(tag) != null) {
-					ARGBType color = tagColors.get(tag).getColor();
-					first = false;
-				}
-			}
-			// set the color depending on the existence of specific tags
-			if(mytags.contains(LabelEditorTag.SELECTED)) {
-				lut[i] = colorSelected.get();
-			}
+			lut[i] = mixColors(mytags);
+
 		}
 
 		return lut;
+	}
+
+	private int mixColors(Set<LabelEditorTag> mytags) {
+		float red = 0;
+		float green = 0;
+		float blue = 0;
+		float alpha = 0;
+		for (LabelEditorTag tag : mytags) {
+			LUTChannel lutChannel = tagColors.get(tag);
+			if(lutChannel == null) continue;
+			int color = lutChannel.getColor();
+			float newred = ARGBType.red(color);
+			float newgreen = ARGBType.blue(color);
+			float newblue = ARGBType.green(color);
+			float newalpha = ((float)ARGBType.alpha(color))/255.f;
+			red = (red*alpha+newred*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
+			green = (green*alpha+newgreen*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
+			blue = (blue*alpha+newblue*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
+			alpha = alpha + newalpha*(1-alpha);
+		}
+		return ARGBType.rgba(red, green, blue, alpha);
 	}
 
 	@Override
@@ -76,13 +81,13 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 	}
 
 	@Override
-	public void setColor(LabelEditorTag tag, int color) {
+	public void setColor(Object tag, int color) {
 		tagColors.put(tag, new LUTChannel(color));
 	}
 
 	@Override
-	public void removeColor(LabelEditorTag tag) {
-
+	public void removeColor(Object tag) {
+		tagColors.remove(tag);
 	}
 
 	private Set<LabelEditorTag> filterTagsByLabels(Map<U, Set<LabelEditorTag>> tags, Set<U> labels) {

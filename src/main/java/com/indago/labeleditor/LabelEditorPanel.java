@@ -288,4 +288,12 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 		return lutBuilder;
 	}
 
+	public void setTagColor(Object tag, int color){
+		lutBuilder.setColor(tag, color);
+	}
+
+	public void removeTagColor(Object tag){
+		lutBuilder.removeColor(tag);
+	}
+
 }

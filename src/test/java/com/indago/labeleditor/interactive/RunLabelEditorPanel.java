@@ -12,6 +12,7 @@ import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
@@ -21,14 +22,21 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RunLabelEditorPanel {
+
+	private static String LABEL1 = "label1";
+	private static String LABEL2 = "label2";
+
 	public static void main(String... args) {
 		ImgPlus img = buildData();
 		DefaultLabelEditorModel model = buildModel(img);
+
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
 		LabelEditorPanel labelEditorPanel = new LabelEditorPanel<>(img, model);
+		labelEditorPanel.setTagColor(LABEL1, ARGBType.rgba(255,255,0,100));
+		labelEditorPanel.setTagColor(LABEL2, ARGBType.rgba(0,255,255,100));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
@@ -41,9 +49,6 @@ public class RunLabelEditorPanel {
 	}
 
 	private static <T extends RealType<T> & NativeType<T>> DefaultLabelEditorModel<T, String> buildModel(ImgPlus data) {
-
-		String LABEL1 = "label1";
-		String LABEL2 = "label2";
 
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1), data.dimension(2) );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
