@@ -19,4 +19,6 @@ public interface LabelEditorModel <T>  {
 	void removeTag(T label, Object tag);
 
 	Set<Object> getTags(T label);
+
+	void removeTag(Object tag);
 }

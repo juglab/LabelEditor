@@ -55,6 +55,11 @@ public class DefaultLabelEditorModel<V, T> implements LabelEditorModel<T> {
 	}
 
 	@Override
+	public void removeTag(Object tag) {
+		tags.forEach( (label, tags) -> tags.remove(tag));
+	}
+
+	@Override
 	public ImgPlus getData() {
 		return data;
 	}

@@ -1,18 +1,19 @@
 package com.indago.labeleditor.display;
 
-import com.indago.labeleditor.model.LabelEditorTag;
-import net.imglib2.roi.labeling.ImgLabeling;
+import com.indago.labeleditor.LUTChannel;
+import com.indago.labeleditor.model.LabelEditorModel;
 import net.imglib2.type.numeric.ARGBType;
-import net.imglib2.type.numeric.integer.IntType;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 public interface LUTBuilder<U> {
 	/**
-	 * @param img the labeling do display
-	 * @param tags the tags corresponding to the labels in {@param img}
-	 * @return a lookup table matching the indices of {@param img} to a specific {@link ARGBType} color
+	 * @param model the model to display
+	 * @return a lookup table containing {@link ARGBType} colors for displaying the model
 	 */
-	int[] build(ImgLabeling<U, IntType> img, Map<U, Set<LabelEditorTag>> tags);
+	int[] build(LabelEditorModel model);
+
+	default List<LUTChannel> getVirtualChannels() {
+		return null;
+	}
 }
