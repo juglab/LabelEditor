@@ -1,4 +1,4 @@
-package com.indago.labeleditor;
+package com.indago.labeleditor.action;
 
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.io.yaml.YamlConfigIO;
@@ -19,7 +19,8 @@ public class InputTriggerConfig2D {
 	public InputTriggerConfig load(JPanel parent) {
 		try {
 
-			System.out.println( "Try to fetch yaml from " + ClassLoader.getSystemResource( "metaseg.yaml" ) );
+			//FIXME figure out how to modularize the configs / which ones to load
+
 			URL yamlURL = ClassLoader.getSystemResource( "metaseg.yaml" );
 			if ( yamlURL == null ) {
 				System.out.println( "Try to fetch yaml from " + getClass().getClassLoader().getResource( "metaseg.yaml" ) );
@@ -28,22 +29,9 @@ public class InputTriggerConfig2D {
 			if ( yamlURL != null ) {
 				final BufferedReader in = new BufferedReader( new InputStreamReader( yamlURL.openStream() ) );
 				final InputTriggerConfig conf = new InputTriggerConfig( YamlConfigIO.read( in ) );
-
 				final InputActionBindings bindings = new InputActionBindings();
 				SwingUtilities.replaceUIActionMap( parent, bindings.getConcatenatedActionMap() );
 				SwingUtilities.replaceUIInputMap( parent, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, bindings.getConcatenatedInputMap() );
-
-//				final AbstractActions a = new AbstractActions( bindings, "tabs", conf, new String[] { "tr2d" } );
-//
-//				a.runnableAction(
-//						() -> tabs.setSelectedIndex( Math.min( tabs.getSelectedIndex() + 1, tabs.getTabCount() - 1 ) ),
-//						"next tab",
-//						"COLON" );
-//				a.runnableAction(
-//						() -> tabs.setSelectedIndex( Math.max( tabs.getSelectedIndex() - 1, 0 ) ),
-//						"previous tab",
-//						"COMMA" );
-
 				return conf;
 			} else {
 				System.out.println( "Falling back to default BDV action settings." );

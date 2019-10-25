@@ -26,6 +26,9 @@ public class RunLabelEditorPanel {
 	private static String LABEL1 = "label1";
 	private static String LABEL2 = "label2";
 
+	private static String TAG1 = "tag1";
+	private static String TAG2 = "tag2";
+
 	public static void main(String... args) {
 		ImgPlus img = buildData();
 		DefaultLabelEditorModel model = buildModel(img);
@@ -35,8 +38,8 @@ public class RunLabelEditorPanel {
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
 		LabelEditorPanel labelEditorPanel = new LabelEditorPanel<>(img, model);
-		labelEditorPanel.setTagColor(LABEL1, ARGBType.rgba(255,255,0,100));
-		labelEditorPanel.setTagColor(LABEL2, ARGBType.rgba(0,255,255,100));
+		labelEditorPanel.setTagColor(TAG1, ARGBType.rgba(255,255,0,50));
+		labelEditorPanel.setTagColor(TAG2, ARGBType.rgba(0,255,255,50));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
@@ -52,12 +55,15 @@ public class RunLabelEditorPanel {
 
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1), data.dimension(2) );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
-		Views.interval( labels, Intervals.createMinSize( 20, 20, 0, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
-		Views.interval( labels, Intervals.createMinSize( 80, 80, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+		Views.interval( labels, Intervals.createMinSize( 220, 220, 0, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
+		Views.interval( labels, Intervals.createMinSize( 280, 280, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
 
-		Views.interval( labels, Intervals.createMinSize( 120, 120, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
-		Views.interval( labels, Intervals.createMinSize( 180, 180, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
+		Views.interval( labels, Intervals.createMinSize( 320, 320, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
+		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
-		return new DefaultLabelEditorModel<>(labels);
+		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(labels);
+		model.addTag(LABEL1, TAG1);
+		model.addTag(LABEL2, TAG2);
+		return model;
 	}
 }

@@ -1,6 +1,5 @@
 package com.indago.labeleditor.display;
 
-import com.indago.labeleditor.LUTChannel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.type.numeric.ARGBType;
@@ -14,21 +13,18 @@ import java.util.stream.Collectors;
 
 public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 
-	private static int colorBG = ARGBType.rgba(0,0,255,150);
-	private static int colorLabeled = ARGBType.rgba(255,0,0,150);
-	private static int colorSelected = ARGBType.rgba(0,255,0,150);
-	private static int colorLeadSelected = ARGBType.rgba(255,255,0,150);
+	private static int colorMouseOver = ARGBType.rgba(50,50,50,100);
+	private static int colorSelected = ARGBType.rgba(255,50,50,100);
 	private final Map<Object, LUTChannel> tagColors;
 
 	public DefaultLUTBuilder() {
 		tagColors = new HashMap<>();
 		tagColors.put(LabelEditorTag.SELECTED, new LUTChannel(colorSelected));
-		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorLabeled));
-		tagColors.put(LabelEditorTag.LEAD_SELECTED, new LUTChannel(colorLeadSelected));
+		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorMouseOver));
 	}
 
 	@Override
-	public int[] build(LabelEditorModel model) {
+	public int[] build(LabelEditorModel<U> model) {
 
 		if(model.getLabels() == null) return new int[0];
 
@@ -56,7 +52,7 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 
 	//https://en.wikipedia.org/wiki/Alpha_compositing
 	//https://wikimedia.org/api/rest_v1/media/math/render/svg/12ea004023a1756851fc7caa0351416d2ba03bae
-	private static int mixColors(Set<Object> mytags, Map<Object, LUTChannel> tagColors) {
+	static int mixColors(Set<Object> mytags, Map<Object, LUTChannel> tagColors) {
 		float red = 0;
 		float green = 0;
 		float blue = 0;
@@ -74,7 +70,7 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 			blue = (blue*alpha+newblue*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
 			alpha = alpha + newalpha*(1-alpha);
 		}
-		return ARGBType.rgba(red, green, blue, alpha);
+		return ARGBType.rgba((int)red, (int)green, (int)blue, (int)(alpha*255));
 	}
 
 	@Override

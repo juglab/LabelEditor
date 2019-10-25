@@ -11,10 +11,15 @@ import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.NativeType;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -52,8 +57,25 @@ public class LUTBuilderTest <T extends RealType<T> & NativeType<T>> {
 
 	@Test
 	public void testMixColors() {
-		LUTBuilder lutBuilder = new DefaultLUTBuilder<>();
-//		lutBuilder.setC
+		Map<Object, LUTChannel> tagColors = new HashMap<>();
+		String tag1 = "tag1";
+		String tag2 = "tag2";
+		tagColors.put(tag1, new LUTChannel(ARGBType.rgba(255, 0, 0, 100)));
+		tagColors.put(tag2, new LUTChannel(ARGBType.rgba(0, 255, 0, 100)));
+		HashSet<Object> noSet = new HashSet<>();
+		int colorNoTag = DefaultLUTBuilder.mixColors(noSet, tagColors);
+		assertEquals(0, ARGBType.red(colorNoTag));
+		assertEquals(0, ARGBType.green(colorNoTag));
+		assertEquals(0, ARGBType.blue(colorNoTag));
+		assertEquals(0, ARGBType.alpha(colorNoTag));
+		HashSet<Object> tag1Set = new HashSet<>();
+		tag1Set.add(tag1);
+		int colorTag1 = DefaultLUTBuilder.mixColors(tag1Set, tagColors);
+		assertEquals(255, ARGBType.red(colorTag1));
+		assertEquals(0, ARGBType.green(colorTag1));
+		assertEquals(0, ARGBType.blue(colorTag1));
+		assertEquals(100, ARGBType.alpha(colorTag1));
+		//TODO test second color and mixed color
 	}
 
 }

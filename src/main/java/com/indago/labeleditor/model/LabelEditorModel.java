@@ -1,6 +1,7 @@
 package com.indago.labeleditor.model;
 
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.Map;
@@ -21,4 +22,6 @@ public interface LabelEditorModel <T>  {
 	Set<Object> getTags(T label);
 
 	void removeTag(Object tag);
+
+	int compare(T label1, T label2);
 }

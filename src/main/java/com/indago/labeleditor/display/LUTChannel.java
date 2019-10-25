@@ -1,9 +1,6 @@
-package com.indago.labeleditor;
+package com.indago.labeleditor.display;
 
-import bdv.util.PlaceHolderOverlayInfo;
 import bdv.util.VirtualChannels;
-import bdv.viewer.ViewerPanel;
-import net.imglib2.type.numeric.ARGBType;
 
 public class LUTChannel implements VirtualChannels.VirtualChannel {
 	private final int argb;
@@ -24,12 +21,6 @@ public class LUTChannel implements VirtualChannels.VirtualChannel {
 
 	private void update() {
 
-	}
-
-	public void setPlaceHolderOverlayInfo(PlaceHolderOverlayInfo placeHolderOverlayInfo) {
-	}
-
-	public void setViewerPanel(ViewerPanel viewerPanel) {
 	}
 
 	public int getColor() {
