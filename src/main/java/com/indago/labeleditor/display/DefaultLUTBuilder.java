@@ -45,7 +45,7 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 			if(labels.size() == 0) continue;
 
 			// get all tags associated with the labels of this index
-			Set<LabelEditorTag> mytags = filterTagsByLabels(model.getTags(), labels);
+			Set<Object> mytags = filterTagsByLabels(model.getTags(), labels);
 
 			lut[i] = mixColors(mytags);
 
@@ -54,12 +54,12 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 		return lut;
 	}
 
-	private int mixColors(Set<LabelEditorTag> mytags) {
+	private int mixColors(Set<Object> mytags) {
 		float red = 0;
 		float green = 0;
 		float blue = 0;
 		float alpha = 0;
-		for (LabelEditorTag tag : mytags) {
+		for (Object tag : mytags) {
 			LUTChannel lutChannel = tagColors.get(tag);
 			if(lutChannel == null) continue;
 			int color = lutChannel.getColor();
@@ -90,7 +90,7 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 		tagColors.remove(tag);
 	}
 
-	private Set<LabelEditorTag> filterTagsByLabels(Map<U, Set<LabelEditorTag>> tags, Set<U> labels) {
+	private Set<Object> filterTagsByLabels(Map<U, Set<Object>> tags, Set<U> labels) {
 		return tags.entrySet().stream().filter(entry -> labels.contains(entry.getKey())).map(Map.Entry::getValue).flatMap(Set::stream).collect(Collectors.toSet());
 	}
 
