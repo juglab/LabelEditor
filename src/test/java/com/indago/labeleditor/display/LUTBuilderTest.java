@@ -50,4 +50,10 @@ public class LUTBuilderTest <T extends RealType<T> & NativeType<T>> {
 		assertEquals(1, lut[1]);
 	}
 
+	@Test
+	public void testMixColors() {
+		LUTBuilder lutBuilder = new DefaultLUTBuilder<>();
+//		lutBuilder.setC
+	}
+
 }

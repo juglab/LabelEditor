@@ -47,14 +47,16 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 			// get all tags associated with the labels of this index
 			Set<Object> mytags = filterTagsByLabels(model.getTags(), labels);
 
-			lut[i] = mixColors(mytags);
+			lut[i] = mixColors(mytags, tagColors);
 
 		}
 
 		return lut;
 	}
 
-	private int mixColors(Set<Object> mytags) {
+	//https://en.wikipedia.org/wiki/Alpha_compositing
+	//https://wikimedia.org/api/rest_v1/media/math/render/svg/12ea004023a1756851fc7caa0351416d2ba03bae
+	private static int mixColors(Set<Object> mytags, Map<Object, LUTChannel> tagColors) {
 		float red = 0;
 		float green = 0;
 		float blue = 0;
