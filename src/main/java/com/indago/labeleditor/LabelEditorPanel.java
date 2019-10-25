@@ -177,10 +177,7 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 		} else {
 			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
 		}
-		//This gives 2D/3D bdv panel for leveraged editing
-		bdvAdd( data, "RAW" );
 		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
-
 		this.add( viewer );
 
 	}
@@ -193,7 +190,11 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 	private void populateBdv() {
 		if(model == null) return;
 		bdvRemoveAll();
-		bdvAdd( data, "RAW" );
+		if(data != null) {
+			bdvAdd( data, "RAW" );
+		}
+		if(model.getLabels() == null) return;
+
 		updateLUT();
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
 		RandomAccessibleInterval converted = Converters.convert(model.getLabels().getIndexImg(), converter, new ARGBType() );

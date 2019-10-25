@@ -30,6 +30,8 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 	@Override
 	public int[] build(LabelEditorModel model) {
 
+		if(model.getLabels() == null) return new int[0];
+
 		int[] lut;
 
 		// our LUT has one entry per index in the index img of our labeling
