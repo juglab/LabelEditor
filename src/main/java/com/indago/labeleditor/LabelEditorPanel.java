@@ -52,6 +52,7 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel implement
 	private int[] lut;
 
 	public LabelEditorPanel() {
+		lutBuilder = initLUTBuilder();
 	}
 
 	public LabelEditorPanel( ImgPlus<T> data) {
