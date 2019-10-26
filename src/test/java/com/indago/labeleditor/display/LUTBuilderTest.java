@@ -1,8 +1,5 @@
 package com.indago.labeleditor.display;
 
-import com.indago.labeleditor.DefaultLabelEditorRenderer;
-import com.indago.labeleditor.LabelEditorPanel;
-import com.indago.labeleditor.LabelEditorRenderer;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -42,7 +39,7 @@ public class LUTBuilderTest <T extends RealType<T> & NativeType<T>> {
 
 	@Test
 	public void overrideLUTBuilder() {
-		LabelEditorRenderer renderer = new DefaultLabelEditorRenderer<String>(null) {
+		LabelEditorRenderer renderer = new DefaultLabelEditorRenderer<String>((ImgLabeling)null) {
 			@Override
 			public void update() {
 				lut = new int[]{0,1};

@@ -1,20 +1,21 @@
-package com.indago.labeleditor;
+package com.indago.labeleditor.display;
 
-import com.indago.labeleditor.display.LUTChannel;
+import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
+import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
@@ -25,6 +26,10 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	private static int colorSelected = ARGBType.rgba(255,50,50,100);
 	private final Map<Object, LUTChannel> tagColors;
 
+	public DefaultLabelEditorRenderer(ImgLabeling<L, IntType> labeling) {
+		this(new DefaultLabelEditorModel<>(labeling));
+	}
+
 	public DefaultLabelEditorRenderer(LabelEditorModel<L> model) {
 		this.model = model;
 		tagColors = new HashMap<>();
@@ -33,7 +38,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	}
 
 	@Override
-	public void update() {
+	public synchronized void update() {
 
 		if(model.getLabels() == null) return;
 
@@ -114,8 +119,14 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 		//TODO propagateEvent...
 	}
 
-	private Set<Object> filterTagsByLabels(Map<L, Set<Object>> tags, Set<L> labels) {
-		return tags.entrySet().stream().filter(entry -> labels.contains(entry.getKey())).map(Map.Entry::getValue).flatMap(Set::stream).collect(Collectors.toSet());
+	private synchronized Set<Object> filterTagsByLabels(Map<L, Set<Object>> tags, Set<L> labels) {
+		Set<Object> set = new HashSet<>();
+		for (Map.Entry<L, Set<Object>> entry : tags.entrySet()) {
+			if (labels.contains(entry.getKey())) {
+				set.addAll(entry.getValue());
+			}
+		}
+		return set;
 	}
 
 }

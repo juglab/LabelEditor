@@ -7,6 +7,8 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.DefaultActionHandler;
 import com.indago.labeleditor.action.InputTriggerConfig2D;
+import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
+import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.util.ImgLib2Util;
@@ -26,22 +28,28 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LabelEditorPanel<T extends RealType<T>, L> extends JPanel {
+public class LabelEditorPanel<L, T extends RealType<T>> extends JPanel {
 
 	private ImgPlus<T> data;
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
 
-	private ActionHandler actionHandler;
+	private LabelEditorModel<L> model;
 	private LabelEditorRenderer<L> renderer;
+	private ActionHandler<L> actionHandler;
+
+	boolean panelBuilt = false;
 
 	public LabelEditorPanel() {
-		buildPanel();
 	}
 
 	public LabelEditorPanel( ImgPlus<T> data) {
 		setData(data);
 		buildPanel();
+	}
+
+	public LabelEditorPanel( ImgLabeling<L, IntType > labels) {
+		init(labels);
 	}
 
 	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling<L, IntType > labels) {
@@ -68,6 +76,7 @@ public class LabelEditorPanel<T extends RealType<T>, L> extends JPanel {
 
 	public void init(LabelEditorModel<L> model) {
 		if(model != null) {
+			this.model = model;
 			actionHandler = initActionHandler(model);
 			renderer = initRenderer(model);
 		}
@@ -79,22 +88,10 @@ public class LabelEditorPanel<T extends RealType<T>, L> extends JPanel {
 	}
 
 	private void buildPanel() {
+		if(panelBuilt) return;
+		panelBuilt = true;
 		//this limits the BDV navigation to 2D
 		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
-		buildGui(config);
-		populateBdv();
-		if(actionHandler != null) actionHandler.init();
-	}
-
-	protected ActionHandler initActionHandler(LabelEditorModel<L> model) {
-		return new DefaultActionHandler<L>(this, model);
-	}
-
-	protected LabelEditorRenderer<L> initRenderer(LabelEditorModel<L> model) {
-		return new DefaultLabelEditorRenderer<L>(model);
-	}
-
-	private void buildGui(InputTriggerConfig config) {
 		setLayout( new BorderLayout() );
 		final JPanel viewer = new JPanel( new MigLayout("fill, w 500, h 500") );
 
@@ -106,7 +103,16 @@ public class LabelEditorPanel<T extends RealType<T>, L> extends JPanel {
 		}
 		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
 		this.add( viewer );
+		populateBdv();
+		if(actionHandler != null) actionHandler.init();
+	}
 
+	protected ActionHandler initActionHandler(LabelEditorModel<L> model) {
+		return new DefaultActionHandler<L>(this, model);
+	}
+
+	protected LabelEditorRenderer<L> initRenderer(LabelEditorModel<L> model) {
+		return new DefaultLabelEditorRenderer<L>(model);
 	}
 
 	private void populateBdv() {
@@ -166,15 +172,23 @@ public class LabelEditorPanel<T extends RealType<T>, L> extends JPanel {
 	}
 
 	public List< BdvSource > bdvGetSources() {
-		return this.bdvSources;
+		return bdvSources;
 	}
 
-	public void updateLabelRendering() {
+	public synchronized void updateLabelRendering() {
 		renderer.update();
 		bdvHandlePanel.getViewerPanel().requestRepaint();
 	}
 
 	public LabelEditorRenderer<L> getRenderer() {
 		return renderer;
+	}
+
+	public LabelEditorModel<L> getModel() {
+		return model;
+	}
+
+	public ActionHandler<L> getActionHandler() {
+		return actionHandler;
 	}
 }

@@ -20,14 +20,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultActionHandler <L> implements ActionHandler {
+public class DefaultActionHandler <L> implements ActionHandler<L> {
 
-	private final LabelEditorPanel<?, L> panel;
+	private final LabelEditorPanel<L, ?> panel;
 	private final LabelEditorModel<L> model;
 	private LabelingType<L> currentLabels;
 	private int currentSegment;
 
-	public DefaultActionHandler(LabelEditorPanel<?, L> panel, LabelEditorModel<L> model) {
+	public DefaultActionHandler(LabelEditorPanel<L, ?> panel, LabelEditorModel<L> model) {
 		this.panel = panel;
 		this.model = model;
 	}
@@ -104,7 +104,8 @@ public class DefaultActionHandler <L> implements ActionHandler {
 				selectPrevious(currentLabels);
 	}
 
-	private LabelingType<L> getLabelsAtMousePosition() {
+	@Override
+	public LabelingType<L> getLabelsAtMousePosition() {
 		Point pos = getMousePositionInBDV();
 		return getLabelsAtPosition(pos);
 	}

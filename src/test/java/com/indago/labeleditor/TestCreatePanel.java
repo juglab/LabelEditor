@@ -37,7 +37,7 @@ public class TestCreatePanel <T extends RealType<T> & NativeType<T>> {
 
 	@Test
 	public void useEmptyConstructor() {
-		LabelEditorPanel<T, String> panel = new LabelEditorPanel<>();
+		LabelEditorPanel<String, T> panel = new LabelEditorPanel<>();
 		panel.init(data, labels);
 	}
 

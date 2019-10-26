@@ -1,6 +1,7 @@
-package com.indago.labeleditor;
+package com.indago.labeleditor.display;
 
 import com.indago.labeleditor.display.LUTChannel;
+import com.indago.labeleditor.model.LabelEditorModel;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.ARGBType;
 
@@ -15,4 +16,5 @@ public interface LabelEditorRenderer<L> {
 	default void setTagColor(Object tag, int color) {}
 	default void removeTagColor(Object tag) {}
 	int[] getLUT();
+	LabelEditorModel<L> getModel();
 }

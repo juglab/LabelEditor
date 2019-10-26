@@ -35,8 +35,10 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	@Override
 	public void setLabels(ImgLabeling<L, IntType> labeling) {
-		this.labels = labeling;
-		createOrderedLabels(labeling);
+		if(labeling != null) {
+			this.labels = labeling;
+			createOrderedLabels(labeling);
+		}
 	}
 
 	private void createOrderedLabels(ImgLabeling<L, IntType> labeling) {
