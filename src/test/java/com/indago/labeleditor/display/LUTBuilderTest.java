@@ -1,6 +1,8 @@
 package com.indago.labeleditor.display;
 
+import com.indago.labeleditor.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.LabelEditorPanel;
+import com.indago.labeleditor.LabelEditorRenderer;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -40,15 +42,14 @@ public class LUTBuilderTest <T extends RealType<T> & NativeType<T>> {
 
 	@Test
 	public void overrideLUTBuilder() {
-		LabelEditorPanel panel = new LabelEditorPanel<T, String>(data, labels) {
+		LabelEditorRenderer renderer = new DefaultLabelEditorRenderer<String>(null) {
 			@Override
-			protected LUTBuilder<String> initLUTBuilder() {
-				return (model) -> new int[]{0,1};
+			public void update() {
+				lut = new int[]{0,1};
 			}
 		};
-		LUTBuilder builder = panel.getLUTBuilder();
-		assertNotNull(builder);
-		int[] lut = builder.build(null);
+		renderer.update();
+		int[] lut = renderer.getLUT();
 		assertNotNull(lut);
 		assertEquals(2, lut.length);
 		assertEquals(0, lut[0]);
@@ -63,14 +64,14 @@ public class LUTBuilderTest <T extends RealType<T> & NativeType<T>> {
 		tagColors.put(tag1, new LUTChannel(ARGBType.rgba(255, 0, 0, 100)));
 		tagColors.put(tag2, new LUTChannel(ARGBType.rgba(0, 255, 0, 100)));
 		HashSet<Object> noSet = new HashSet<>();
-		int colorNoTag = DefaultLUTBuilder.mixColors(noSet, tagColors);
+		int colorNoTag = DefaultLabelEditorRenderer.mixColors(noSet, tagColors);
 		assertEquals(0, ARGBType.red(colorNoTag));
 		assertEquals(0, ARGBType.green(colorNoTag));
 		assertEquals(0, ARGBType.blue(colorNoTag));
 		assertEquals(0, ARGBType.alpha(colorNoTag));
 		HashSet<Object> tag1Set = new HashSet<>();
 		tag1Set.add(tag1);
-		int colorTag1 = DefaultLUTBuilder.mixColors(tag1Set, tagColors);
+		int colorTag1 = DefaultLabelEditorRenderer.mixColors(tag1Set, tagColors);
 		assertEquals(255, ARGBType.red(colorTag1));
 		assertEquals(0, ARGBType.green(colorTag1));
 		assertEquals(0, ARGBType.blue(colorTag1));

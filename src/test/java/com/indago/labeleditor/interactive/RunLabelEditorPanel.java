@@ -38,8 +38,8 @@ public class RunLabelEditorPanel {
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
 		LabelEditorPanel labelEditorPanel = new LabelEditorPanel<>(img, model);
-		labelEditorPanel.setTagColor(TAG1, ARGBType.rgba(255,255,0,50));
-		labelEditorPanel.setTagColor(TAG2, ARGBType.rgba(0,255,255,50));
+		labelEditorPanel.getRenderer().setTagColor(TAG1, ARGBType.rgba(255,255,0,50));
+		labelEditorPanel.getRenderer().setTagColor(TAG2, ARGBType.rgba(0,255,255,50));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
@@ -51,7 +51,7 @@ public class RunLabelEditorPanel {
 		return new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
 	}
 
-	private static <T extends RealType<T> & NativeType<T>> DefaultLabelEditorModel<T, String> buildModel(ImgPlus data) {
+	private static <T extends RealType<T> & NativeType<T>> DefaultLabelEditorModel<String> buildModel(ImgPlus data) {
 
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1), data.dimension(2) );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
@@ -61,7 +61,7 @@ public class RunLabelEditorPanel {
 		Views.interval( labels, Intervals.createMinSize( 320, 320, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
-		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(labels);
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.addTag(LABEL1, TAG1);
 		model.addTag(LABEL2, TAG2);
 		return model;

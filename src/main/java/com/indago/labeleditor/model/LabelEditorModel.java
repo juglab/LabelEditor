@@ -1,27 +1,30 @@
 package com.indago.labeleditor.model;
 
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.type.numeric.integer.IntType;
 
+import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.Set;
 
-public interface LabelEditorModel <T>  {
+public interface LabelEditorModel <L>  {
 
-	ImgLabeling<T, IntType> getLabels();
+	ImgLabeling<L, IntType> getLabels();
 
-	void setLabels(ImgLabeling<T, IntType> labels);
+	void setLabels(ImgLabeling<L, IntType> labels);
 
-	Map< T, Set <Object> > getTags();
+	Map<L, Set <Object> > getTags();
 
-	void addTag(T label, Object tag);
+	void addTag(Object tag, L label);
 
-	void removeTag(T label, Object tag);
+	void removeTag(Object tag, L label);
 
-	Set<Object> getTags(T label);
+	Set<Object> getTags(L label);
 
 	void removeTag(Object tag);
 
-	int compare(T label1, T label2);
+	int compare(L label1, L label2);
+
+	void addListener(TagChangeListener listener);
+
 }

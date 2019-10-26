@@ -1,6 +1,7 @@
 package com.indago.labeleditor.action;
 
 import com.indago.labeleditor.LabelEditorPanel;
+import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
@@ -19,14 +20,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultActionHandler <U> implements ActionHandler {
+public class DefaultActionHandler <L> implements ActionHandler {
 
-	private final LabelEditorPanel<?, U> panel;
-	private LabelingType<U> currentLabels;
-	int currentSegment;
+	private final LabelEditorPanel<?, L> panel;
+	private final LabelEditorModel<L> model;
+	private LabelingType<L> currentLabels;
+	private int currentSegment;
 
-	public DefaultActionHandler(LabelEditorPanel<?,U> panel) {
+	public DefaultActionHandler(LabelEditorPanel<?, L> panel, LabelEditorModel<L> model) {
 		this.panel = panel;
+		this.model = model;
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class DefaultActionHandler <U> implements ActionHandler {
 	}
 
 	private void handleMouseMove() {
-		LabelingType<U> labels = getLabelsAtMousePosition();
+		LabelingType<L> labels = getLabelsAtMousePosition();
 		int intIndex;
 		try {
 			intIndex = labels.getIndex().getInteger();
@@ -73,7 +76,7 @@ public class DefaultActionHandler <U> implements ActionHandler {
 			defocusAll();
 			currentLabels = labels;
 			labels.forEach(this::focus);
-			panel.updateLUT();
+			panel.updateLabelRendering();
 		}).start();
 	}
 
@@ -83,7 +86,7 @@ public class DefaultActionHandler <U> implements ActionHandler {
 		} else {
 			selectFirst(currentLabels);
 		}
-		panel.updateLUT();
+		panel.updateLabelRendering();
 	}
 
 	private boolean noLabelsAtMousePosition() {
@@ -101,7 +104,7 @@ public class DefaultActionHandler <U> implements ActionHandler {
 				selectPrevious(currentLabels);
 	}
 
-	private LabelingType<U> getLabelsAtMousePosition() {
+	private LabelingType<L> getLabelsAtMousePosition() {
 		Point pos = getMousePositionInBDV();
 		return getLabelsAtPosition(pos);
 	}
@@ -115,42 +118,42 @@ public class DefaultActionHandler <U> implements ActionHandler {
 		return new Point(x, y, time);
 	}
 
-	protected LabelingType<U> getLabelsAtPosition(Localizable pos) {
-		RandomAccess<LabelingType<U>> ra = panel.getModel().getLabels().randomAccess();
+	private LabelingType<L> getLabelsAtPosition(Localizable pos) {
+		RandomAccess<LabelingType<L>> ra = model.getLabels().randomAccess();
 		ra.setPosition(pos);
 		return ra.get();
 	}
 
-	private void selectFirst(LabelingType<U> currentLabels) {
-		List<U> orderedLabels = new ArrayList<>(currentLabels);
-		orderedLabels.sort(panel.getModel()::compare);
+	private void selectFirst(LabelingType<L> currentLabels) {
+		List<L> orderedLabels = new ArrayList<>(currentLabels);
+		orderedLabels.sort(model::compare);
 		deselectAll();
 		select(orderedLabels.get(0));
 	}
 
-	private boolean isSelected(U label) {
-		return panel.getModel().getTags(label).contains(LabelEditorTag.SELECTED);
+	private boolean isSelected(L label) {
+		return model.getTags(label).contains(LabelEditorTag.SELECTED);
 	}
 
-	private boolean anySelected(LabelingType<U> labels) {
-		return labels.stream().anyMatch(label -> panel.getModel().getTags(label).contains(LabelEditorTag.SELECTED));
+	private boolean anySelected(LabelingType<L> labels) {
+		return labels.stream().anyMatch(label -> model.getTags(label).contains(LabelEditorTag.SELECTED));
 	}
 
-	private void select(U label) {
-		panel.getModel().addTag(label, LabelEditorTag.SELECTED);
+	private void select(L label) {
+		model.addTag(LabelEditorTag.SELECTED, label);
 	}
 
-	private void selectPrevious(LabelingType<U> labels) {
+	private void selectPrevious(LabelingType<L> labels) {
 		System.out.println("select previous");
-		List<U> reverseLabels = new ArrayList<>(labels);
+		List<L> reverseLabels = new ArrayList<>(labels);
 		Collections.reverse(reverseLabels);
 		selectNext(reverseLabels);
 	}
 
-	private void selectNext(Collection<U> labels) {
+	private void selectNext(Collection<L> labels) {
 		System.out.println("select previous");
 		boolean foundSelected = false;
-		for (U label : labels) {
+		for (L label : labels) {
 			if(isSelected(label)) {
 				foundSelected = true;
 				deselect(label);
@@ -163,19 +166,19 @@ public class DefaultActionHandler <U> implements ActionHandler {
 		}
 	}
 
-	private void deselect(U label) {
-		panel.getModel().removeTag(label, LabelEditorTag.SELECTED);
+	private void deselect(L label) {
+		model.removeTag(LabelEditorTag.SELECTED, label);
 	}
 
 	private void deselectAll() {
-		panel.getModel().removeTag(LabelEditorTag.SELECTED);
+		model.removeTag(LabelEditorTag.SELECTED);
 	}
 
 	private void defocusAll() {
-		panel.getModel().removeTag(LabelEditorTag.MOUSE_OVER);
+		model.removeTag(LabelEditorTag.MOUSE_OVER);
 	}
 
-	private void focus(U label) {
-		panel.getModel().addTag(label, LabelEditorTag.MOUSE_OVER);
+	private void focus(L label) {
+		model.addTag(LabelEditorTag.MOUSE_OVER, label);
 	}
 }

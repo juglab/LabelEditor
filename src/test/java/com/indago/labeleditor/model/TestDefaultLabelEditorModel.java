@@ -18,15 +18,15 @@ public class TestDefaultLabelEditorModel {
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 
-		DefaultLabelEditorModel<IntType, String> model = new DefaultLabelEditorModel<>(labels);
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
 		assertNotNull(model.getTags());
 		assertEquals(0, model.getTags(LABEL1).size());
 
-		model.addTag(LABEL1, LabelEditorTag.SELECTED);
+		model.addTag(LabelEditorTag.SELECTED, LABEL1);
 		assertEquals(1, model.getTags(LABEL1).size());
 
-		model.removeTag(LABEL1, LabelEditorTag.SELECTED);
+		model.removeTag(LabelEditorTag.SELECTED, LABEL1);
 		assertEquals(0, model.getTags(LABEL1).size());
 
 	}

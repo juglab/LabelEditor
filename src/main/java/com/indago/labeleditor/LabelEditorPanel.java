@@ -7,15 +7,11 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.DefaultActionHandler;
 import com.indago.labeleditor.action.InputTriggerConfig2D;
-import com.indago.labeleditor.display.DefaultLUTBuilder;
-import com.indago.labeleditor.display.LUTBuilder;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.util.ImgLib2Util;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.converter.Converter;
-import net.imglib2.converter.Converters;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
@@ -27,84 +23,79 @@ import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel {
+public class LabelEditorPanel<T extends RealType<T>, L> extends JPanel {
 
-	private LabelEditorModel<U> model;
 	private ImgPlus<T> data;
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
-	private MouseMotionListener mml;
 
-	private LUTBuilder<U> lutBuilder;
 	private ActionHandler actionHandler;
-	private int[] lut;
+	private LabelEditorRenderer<L> renderer;
 
 	public LabelEditorPanel() {
-		init(null);
+		buildPanel();
 	}
 
 	public LabelEditorPanel( ImgPlus<T> data) {
-		this(new DefaultLabelEditorModel<>());
-		this.data = data;
+		setData(data);
+		buildPanel();
 	}
 
-	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling< U, IntType > labels) {
-		this( new DefaultLabelEditorModel<>( labels ) );
-		this.data = data;
+	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling<L, IntType > labels) {
+		init(data, labels);
 	}
 
-	public LabelEditorPanel(LabelEditorModel<U> model) {
+	public LabelEditorPanel(LabelEditorModel<L> model) {
 		init(model);
 	}
 
-	public LabelEditorPanel( ImgPlus<T> data, LabelEditorModel model) {
-		this.data = data;
+	public LabelEditorPanel( ImgPlus<T> data, LabelEditorModel<L> model) {
+		setData(data);
 		init(model);
 	}
 
-	public void init(ImgPlus<T> data, ImgLabeling<U, IntType> labels) {
+	public void init(ImgPlus<T> data, ImgLabeling<L, IntType> labels) {
+		setData(data);
+		init(labels);
+	}
+
+	public void init(ImgLabeling<L, IntType> labels) {
 		init(new DefaultLabelEditorModel<>(labels));
+	}
+
+	public void init(LabelEditorModel<L> model) {
+		if(model != null) {
+			actionHandler = initActionHandler(model);
+			renderer = initRenderer(model);
+		}
+		buildPanel();
+	}
+
+	private void setData(ImgPlus<T> data) {
 		this.data = data;
 	}
 
-	public void init(LabelEditorModel<U> model) {
-
-		setLayout( new BorderLayout() );
-
-		lutBuilder = initLUTBuilder();
-		actionHandler = initActionHandler();
-
-		if(model != null) buildPanelFromModel(model);
-
-	}
-
-	private void buildPanelFromModel(LabelEditorModel<U> model) {
-		this.model = model;
+	private void buildPanel() {
 		//this limits the BDV navigation to 2D
 		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
 		buildGui(config);
 		populateBdv();
-		actionHandler.init();
+		if(actionHandler != null) actionHandler.init();
 	}
 
-	public void updateLUT() {
-		lut = lutBuilder.build(model);
-		bdvHandlePanel.getViewerPanel().requestRepaint();
+	protected ActionHandler initActionHandler(LabelEditorModel<L> model) {
+		return new DefaultActionHandler<L>(this, model);
 	}
 
-	protected LUTBuilder<U> initLUTBuilder() {
-		return new DefaultLUTBuilder<>();
-	}
-
-	private ActionHandler initActionHandler() {
-		return new DefaultActionHandler<U>(this);
+	protected LabelEditorRenderer<L> initRenderer(LabelEditorModel<L> model) {
+		return new DefaultLabelEditorRenderer<L>(model);
 	}
 
 	private void buildGui(InputTriggerConfig config) {
+		setLayout( new BorderLayout() );
 		final JPanel viewer = new JPanel( new MigLayout("fill, w 500, h 500") );
 
 		// TODO... How do you find out what kind of data it is? A utility perhaps or is it good enough to check that config is not null? Can it be null in a generic case?
@@ -119,22 +110,18 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel {
 	}
 
 	private void populateBdv() {
-		if(model == null) return;
 		bdvRemoveAll();
 		if(data != null) {
-			bdvAdd( data, "RAW" );
+			displayInBdv( data, "RAW" );
 		}
-		if(model.getLabels() == null) return;
-
-		updateLUT();
-		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
-		RandomAccessibleInterval converted = Converters.convert(model.getLabels().getIndexImg(), converter, new ARGBType() );
+		if(renderer == null) return;
+		RandomAccessibleInterval<ARGBType> labelColorImg = renderer.getRenderedLabels();
 
 		//TODO make virtual channels work
-//		List<LUTChannel> virtualChannels = lutBuilder.getVirtualChannels();
+//		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
 //		if(virtualChannels != null) {
 //			List<BdvVirtualChannelSource> sources = BdvFunctions.show(
-//					converted,
+//					labelColorImg,
 //					virtualChannels,
 //					"solution",
 //					Bdv.options().addTo(bdvGetHandlePanel()));
@@ -145,18 +132,13 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel {
 //			}
 //		} else {
 			BdvFunctions.show(
-					converted,
+					labelColorImg,
 					"solution",
 					Bdv.options().addTo(bdvGetHandlePanel()));
 //		}
 	}
 
-	private int[] getLUT() {
-		return lut;
-	}
-
-	private void bdvAdd(
-			final RandomAccessibleInterval< T > img,
+	private void displayInBdv( final RandomAccessibleInterval< T > img,
 			final String title ) {
 		final BdvSource source = BdvFunctions.show(
 				img,
@@ -187,21 +169,12 @@ public class LabelEditorPanel<T extends RealType<T>, U> extends JPanel {
 		return this.bdvSources;
 	}
 
-	public LUTBuilder<U> getLUTBuilder() {
-		return lutBuilder;
+	public void updateLabelRendering() {
+		renderer.update();
+		bdvHandlePanel.getViewerPanel().requestRepaint();
 	}
 
-	public void setTagColor(Object tag, int color){
-		lutBuilder.setColor(tag, color);
-		updateLUT();
-	}
-
-	public void removeTagColor(Object tag){
-		lutBuilder.removeColor(tag);
-		updateLUT();
-	}
-
-	public LabelEditorModel<U> getModel() {
-		return model;
+	public LabelEditorRenderer<L> getRenderer() {
+		return renderer;
 	}
 }

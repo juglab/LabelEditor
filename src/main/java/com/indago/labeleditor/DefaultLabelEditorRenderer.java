@@ -1,8 +1,13 @@
-package com.indago.labeleditor.display;
+package com.indago.labeleditor;
 
+import com.indago.labeleditor.display.LUTChannel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.converter.Converter;
+import net.imglib2.converter.Converters;
 import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,22 +16,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
+public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
+
+	private final LabelEditorModel<L> model;
+	protected int[] lut;
 
 	private static int colorMouseOver = ARGBType.rgba(50,50,50,100);
 	private static int colorSelected = ARGBType.rgba(255,50,50,100);
 	private final Map<Object, LUTChannel> tagColors;
 
-	public DefaultLUTBuilder() {
+	public DefaultLabelEditorRenderer(LabelEditorModel<L> model) {
+		this.model = model;
 		tagColors = new HashMap<>();
 		tagColors.put(LabelEditorTag.SELECTED, new LUTChannel(colorSelected));
 		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorMouseOver));
 	}
 
 	@Override
-	public int[] build(LabelEditorModel<U> model) {
+	public void update() {
 
-		if(model.getLabels() == null) return new int[0];
+		if(model.getLabels() == null) return;
 
 		int[] lut;
 
@@ -35,7 +44,7 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 
 		for (int i = 0; i < lut.length; i++) {
 			// get all labels of this index
-			Set<U> labels = model.getLabels().getMapping().labelsAtIndex(i);
+			Set<L> labels = model.getLabels().getMapping().labelsAtIndex(i);
 
 			// if there are no labels, we don't need to check for tags and can continue
 			if(labels.size() == 0) continue;
@@ -47,12 +56,27 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 
 		}
 
+		this.lut = lut;
+	}
+
+	@Override
+	public RandomAccessibleInterval<ARGBType> getRenderedLabels() {
+		update();
+		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
+		return Converters.convert(model.getLabels().getIndexImg(), converter, new ARGBType() );
+	}
+
+	public int[] getLUT() {
 		return lut;
+	}
+
+	public LabelEditorModel<L> getModel() {
+		return model;
 	}
 
 	//https://en.wikipedia.org/wiki/Alpha_compositing
 	//https://wikimedia.org/api/rest_v1/media/math/render/svg/12ea004023a1756851fc7caa0351416d2ba03bae
-	static int mixColors(Set<Object> mytags, Map<Object, LUTChannel> tagColors) {
+	public static int mixColors(Set<Object> mytags, Map<Object, LUTChannel> tagColors) {
 		float red = 0;
 		float green = 0;
 		float blue = 0;
@@ -79,16 +103,18 @@ public class DefaultLUTBuilder<U> implements LUTBuilder<U> {
 	}
 
 	@Override
-	public void setColor(Object tag, int color) {
+	public void setTagColor(Object tag, int color) {
 		tagColors.put(tag, new LUTChannel(color));
+		//TODO propagateEvent...
 	}
 
 	@Override
-	public void removeColor(Object tag) {
+	public void removeTagColor(Object tag) {
 		tagColors.remove(tag);
+		//TODO propagateEvent...
 	}
 
-	private Set<Object> filterTagsByLabels(Map<U, Set<Object>> tags, Set<U> labels) {
+	private Set<Object> filterTagsByLabels(Map<L, Set<Object>> tags, Set<L> labels) {
 		return tags.entrySet().stream().filter(entry -> labels.contains(entry.getKey())).map(Map.Entry::getValue).flatMap(Set::stream).collect(Collectors.toSet());
 	}
 

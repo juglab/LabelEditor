@@ -31,7 +31,7 @@ public class TestCreatePanel <T extends RealType<T> & NativeType<T>> {
 
 	@Test
 	public void run() {
-		DefaultLabelEditorModel<T, String> model = new DefaultLabelEditorModel<>(labels);
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		new LabelEditorPanel<>(data, model);
 	}
 
