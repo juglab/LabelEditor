@@ -1,6 +1,6 @@
 package com.indago.labeleditor.interactive;
 
-import com.indago.labeleditor.LabelEditorPanel;
+import com.indago.labeleditor.LabelEditorBdvPanel;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import io.scif.img.IO;
 import net.imagej.ImgPlus;
@@ -37,7 +37,7 @@ public class RunLabelEditorPanel {
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		LabelEditorPanel labelEditorPanel = new LabelEditorPanel<>(img, model);
+		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel<>(img, model);
 		labelEditorPanel.getRenderer().setTagColor(TAG1, ARGBType.rgba(255,255,0,50));
 		labelEditorPanel.getRenderer().setTagColor(TAG2, ARGBType.rgba(0,255,255,50));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,7 +47,7 @@ public class RunLabelEditorPanel {
 	}
 
 	private static <T extends RealType<T> & NativeType<T>> ImgPlus<T> buildData() {
-		Img input = IO.openImgs(LabelEditorPanel.class.getResource("/raw.tif").getPath()).get(0);
+		Img input = IO.openImgs(LabelEditorBdvPanel.class.getResource("/raw.tif").getPath()).get(0);
 		return new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
 	}
 

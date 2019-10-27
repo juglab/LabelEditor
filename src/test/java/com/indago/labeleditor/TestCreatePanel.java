@@ -32,18 +32,18 @@ public class TestCreatePanel <T extends RealType<T> & NativeType<T>> {
 	@Test
 	public void run() {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
-		new LabelEditorPanel<>(data, model);
+		new LabelEditorBdvPanel<>(data, model);
 	}
 
 	@Test
 	public void useEmptyConstructor() {
-		LabelEditorPanel<String, T> panel = new LabelEditorPanel<>();
+		LabelEditorBdvPanel<String, T> panel = new LabelEditorBdvPanel<>();
 		panel.init(data, labels);
 	}
 
 	@Test
 	public void showOnlyData() {
-		new LabelEditorPanel<>(data);
+		new LabelEditorBdvPanel<>(data);
 	}
 
 }

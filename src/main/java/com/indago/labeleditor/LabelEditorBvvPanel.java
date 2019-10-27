@@ -1,66 +1,65 @@
 package com.indago.labeleditor;
 
-import bdv.util.Bdv;
-import bdv.util.BdvFunctions;
-import bdv.util.BdvHandlePanel;
-import bdv.util.BdvSource;
+import bvv.util.Bvv;
+import bvv.util.BvvFunctions;
+import bvv.util.BvvHandle;
+import bvv.util.BvvSource;
+import bvv.util.BvvStackSource;
 import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.DefaultActionHandler;
-import com.indago.labeleditor.action.InputTriggerConfig2D;
+import com.indago.labeleditor.action.DefaultBvvActionHandler;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
-import com.indago.labeleditor.util.ImgLib2Util;
 import net.imagej.ImgPlus;
+import net.imagej.axis.Axes;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
-import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.util.ValuePair;
-import net.imglib2.view.Views;
 import net.miginfocom.swing.MigLayout;
-import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LabelEditorPanel<L, T extends RealType<T>> extends JPanel {
+public class LabelEditorBvvPanel<L, T extends NumericType<T>> extends JPanel {
 
 	private ImgPlus<T> data;
-	private BdvHandlePanel bdvHandlePanel;
-	private List< BdvSource > bdvSources = new ArrayList<>();
+	private BvvHandle bvvHandle;
+	private List< BvvSource > bdvSources = new ArrayList<>();
 
 	private LabelEditorModel<L> model;
 	private LabelEditorRenderer<L> renderer;
 	private ActionHandler<L> actionHandler;
 
-	boolean panelBuilt = false;
+	private boolean panelBuilt = false;
+	private boolean mode3D = false;
 
-	public LabelEditorPanel() {
+	public LabelEditorBvvPanel() {
 	}
 
-	public LabelEditorPanel( ImgPlus<T> data) {
+	public LabelEditorBvvPanel(ImgPlus<T> data) {
 		setData(data);
 		buildPanel();
 	}
 
-	public LabelEditorPanel( ImgLabeling<L, IntType > labels) {
+	public LabelEditorBvvPanel(ImgLabeling<L, IntType > labels) {
 		init(labels);
 	}
 
-	public LabelEditorPanel( ImgPlus< T > data, ImgLabeling<L, IntType > labels) {
+	public LabelEditorBvvPanel(ImgPlus< T > data, ImgLabeling<L, IntType > labels) {
 		init(data, labels);
 	}
 
-	public LabelEditorPanel(LabelEditorModel<L> model) {
+	public LabelEditorBvvPanel(LabelEditorModel<L> model) {
 		init(model);
 	}
 
-	public LabelEditorPanel( ImgPlus<T> data, LabelEditorModel<L> model) {
+	public LabelEditorBvvPanel(ImgPlus<T> data, LabelEditorModel<L> model) {
 		setData(data);
 		init(model);
 	}
@@ -85,40 +84,42 @@ public class LabelEditorPanel<L, T extends RealType<T>> extends JPanel {
 
 	private void setData(ImgPlus<T> data) {
 		this.data = data;
+		if(data.dimensionIndex(Axes.Z) > 0) {
+			mode3D = true;
+		}
 	}
 
 	private void buildPanel() {
 		if(panelBuilt) return;
 		panelBuilt = true;
 		//this limits the BDV navigation to 2D
-		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
 		setLayout( new BorderLayout() );
 		final JPanel viewer = new JPanel( new MigLayout("fill, w 500, h 500") );
-
-		// TODO... How do you find out what kind of data it is? A utility perhaps or is it good enough to check that config is not null? Can it be null in a generic case?
-		if ( /*data.is2D()*/ config != null ) {
-			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options().is2D().inputTriggerConfig(config));
-		} else {
-			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
-		}
-		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
+		System.out.println("3D mode");
+		BvvStackSource<ARGBType> source1 = BvvFunctions.show(fakeImg(), "", Bvv.options());
+		bvvHandle = source1.getBvvHandle();
+		viewer.add(bvvHandle.getViewerPanel(), "span, grow, push" );
 		this.add( viewer );
-		populateBdv();
+		populateBvv();
 		if(actionHandler != null) actionHandler.init();
 	}
 
-	protected ActionHandler initActionHandler(LabelEditorModel<L> model) {
-		return new DefaultActionHandler<L>(this, model);
+	private ImgPlus<ARGBType> fakeImg() {
+		return new ImgPlus<>(new ArrayImgFactory<>(new ARGBType()).create(data.dimension(0), data.dimension(1)));
+	}
+
+	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model) {
+		return new DefaultBvvActionHandler<L>(this, model);
 	}
 
 	protected LabelEditorRenderer<L> initRenderer(LabelEditorModel<L> model) {
 		return new DefaultLabelEditorRenderer<L>(model);
 	}
 
-	private void populateBdv() {
-		bdvRemoveAll();
+	private void populateBvv() {
+		bvvRemoveAll();
 		if(data != null) {
-			displayInBdv( data, "RAW" );
+//			displayInBdv( data, "RAW" );
 		}
 		if(renderer == null) return;
 		RandomAccessibleInterval<ARGBType> labelColorImg = renderer.getRenderedLabels();
@@ -137,47 +138,41 @@ public class LabelEditorPanel<L, T extends RealType<T>> extends JPanel {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-			BdvFunctions.show(
+			BvvFunctions.show(
 					labelColorImg,
 					"solution",
-					Bdv.options().addTo(bdvGetHandlePanel()));
+					Bvv.options().addTo(bvvHandle));
 //		}
 	}
 
 	private void displayInBdv( final RandomAccessibleInterval< T > img,
 			final String title ) {
-		final BdvSource source = BdvFunctions.show(
+		final BvvSource source = BvvFunctions.show(
 				img,
 				title,
-				Bdv.options().addTo( bdvGetHandlePanel() ) );
-		bdvGetSources().add( source );
-
-		ValuePair<T, T> minMax = ImgLib2Util.computeMinMax(Views.iterable(img));
-		if(!minMax.getA().equals(minMax.getB())) {
-			source.setDisplayRangeBounds( Math.min( minMax.getA().getRealDouble(), 0 ), minMax.getB().getRealDouble() );
-			source.setDisplayRange( minMax.getA().getRealDouble(), minMax.getB().getRealDouble() );
-		}
+				Bvv.options().addTo(bvvHandle) );
+		bvvGetSources().add( source );
 		source.setActive( true );
 	}
 
-	private void bdvRemoveAll() {
-		for ( final BdvSource source : bdvGetSources()) {
+	private void bvvRemoveAll() {
+		for ( final BvvSource source : bvvGetSources()) {
 			source.removeFromBdv();
 		}
-		bdvGetSources().clear();
+		bvvGetSources().clear();
 	}
 
-	public BdvHandlePanel bdvGetHandlePanel() {
-		return bdvHandlePanel;
+	public BvvHandle getBvvHandle() {
+		return bvvHandle;
 	}
 
-	public List< BdvSource > bdvGetSources() {
+	public List< BvvSource > bvvGetSources() {
 		return bdvSources;
 	}
 
 	public synchronized void updateLabelRendering() {
 		renderer.update();
-		bdvHandlePanel.getViewerPanel().requestRepaint();
+		bvvHandle.getViewerPanel().requestRepaint();
 	}
 
 	public LabelEditorRenderer<L> getRenderer() {

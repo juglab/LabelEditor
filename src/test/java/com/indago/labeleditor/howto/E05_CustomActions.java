@@ -1,6 +1,6 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.LabelEditorPanel;
+import com.indago.labeleditor.LabelEditorBdvPanel;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
@@ -20,9 +20,20 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 /**
- * How to add custom actions to set or remove tags to {@link com.indago.labeleditor.LabelEditorPanel}
+ * How to add custom actions to set or remove tags to {@link LabelEditorBdvPanel}
  */
-public class E04_CustomActions {
+public class E05_CustomActions {
+
+	class PopUpDemo extends JPopupMenu {
+		JMenuItem anItem;
+		public PopUpDemo() {
+			anItem = new JMenuItem("Click Me!");
+			anItem.addActionListener(actionEvent -> {
+				System.out.println("Event!");
+			});
+			add(anItem);
+		}
+	}
 
 	/**
 	 * Demonstrates how to register a mouse action.
@@ -42,34 +53,44 @@ public class E04_CustomActions {
 
 		// build LabelEditorPanel
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-		LabelEditorPanel<Integer, IntType> panel = new LabelEditorPanel<>(new ImgPlus<>(input), model);
+		LabelEditorBdvPanel<Integer, IntType> panel = new LabelEditorBdvPanel<>(new ImgPlus<>(input), model);
 
 		//set custom colors for tags set in the MouseAdapter
-		panel.getRenderer().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,0,0,0));
-		panel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(0,0,0,0));
+		panel.getRenderer().removeTagColor(LabelEditorTag.SELECTED);
+		panel.getRenderer().removeTagColor(LabelEditorTag.MOUSE_OVER);
 		panel.getRenderer().setTagColor("yes", ARGBType.rgba(155, 155, 0, 255));
 		panel.getRenderer().setTagColor("no", ARGBType.rgba(0, 155, 255, 255));
+		panel.updateLabelRendering();
 
 		//register custom actions
 		panel.bdvGetHandlePanel().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
-			public void mousePressed(MouseEvent mouseEvent) {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger())
+					doPop(e);
 				model.removeTag("no");
-				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition()) {
+				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition(e)) {
 					model.addTag("yes", label);
 				}
 				panel.updateLabelRendering();
-				super.mousePressed(mouseEvent);
+				super.mousePressed(e);
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent mouseEvent) {
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger())
+					doPop(e);
 				model.removeTag("yes");
-				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition()) {
+				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition(e)) {
 					model.addTag("no", label);
 				}
 				panel.updateLabelRendering();
-				super.mouseReleased(mouseEvent);
+				super.mouseReleased(e);
+			}
+
+			private void doPop(MouseEvent e) {
+				PopUpDemo menu = new PopUpDemo();
+				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
 
@@ -82,7 +103,7 @@ public class E04_CustomActions {
 	}
 
 	public static void main(String...args) throws IOException {
-		new E04_CustomActions().mouseAction();
+		new E05_CustomActions().mouseAction();
 	}
 
 }
