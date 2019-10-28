@@ -3,6 +3,8 @@ package com.indago.labeleditor.howto;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
+import com.indago.labeleditor.action.ActionHandler;
+import com.indago.labeleditor.action.DefaultActionHandler;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
@@ -38,6 +40,8 @@ public class E03_AddToExistingBDV {
 			model.addTag("displayed", label);
 		});
 		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,155));
+
+
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));
 		JPanel viewer = new JPanel(new MigLayout());
@@ -46,6 +50,7 @@ public class E03_AddToExistingBDV {
 		BdvFunctions.show(renderer.getRenderedLabels(), "labels", Bdv.options().addTo(bdvHandlePanel));
 
 		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
+		ActionHandler actionHandler = new DefaultActionHandler(bdvHandlePanel, model, renderer);
 
 		frame.setContentPane(viewer);
 		frame.pack();

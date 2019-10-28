@@ -1,5 +1,6 @@
 package com.indago.labeleditor.action;
 
+import bdv.util.BdvHandlePanel;
 import net.imglib2.roi.labeling.LabelingType;
 
 import java.awt.event.MouseEvent;

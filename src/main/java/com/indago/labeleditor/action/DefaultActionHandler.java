@@ -1,6 +1,7 @@
 package com.indago.labeleditor.action;
 
-import com.indago.labeleditor.LabelEditorBdvPanel;
+import bdv.util.BdvHandlePanel;
+import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.Localizable;
@@ -22,15 +23,17 @@ import java.util.List;
 
 public class DefaultActionHandler <L> implements ActionHandler<L> {
 
-	private final LabelEditorBdvPanel<L, ?> panel;
+	private final BdvHandlePanel panel;
 	private final LabelEditorModel<L> model;
+	private final LabelEditorRenderer renderer;
 	private LabelingType<L> currentLabels;
 	private int currentSegment;
 	private boolean mode3D;
 
-	public DefaultActionHandler(LabelEditorBdvPanel<L, ?> panel, LabelEditorModel<L> model) {
-		this.panel = panel;
+	public DefaultActionHandler(BdvHandlePanel bdvHandlePanel, LabelEditorModel<L> model, LabelEditorRenderer renderer) {
 		this.model = model;
+		this.renderer = renderer;
+		this.panel = bdvHandlePanel;
 	}
 
 	@Override
@@ -49,12 +52,12 @@ public class DefaultActionHandler <L> implements ActionHandler<L> {
 			}
 		};
 
-		panel.bdvGetHandlePanel().getBdvHandle().getViewerPanel().getDisplay().addMouseMotionListener( mml );
+		panel.getBdvHandle().getViewerPanel().getDisplay().addMouseMotionListener( mml );
 	}
 
 	private void installBdvBehaviours() {
 		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
-		behaviours.install( panel.bdvGetHandlePanel().getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
+		behaviours.install( panel.getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
 		behaviours.behaviour(
 				(ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> handleWheelRotation(wheelRotation, isHorizontal),
 				"browse segments",
@@ -77,7 +80,7 @@ public class DefaultActionHandler <L> implements ActionHandler<L> {
 			defocusAll();
 			currentLabels = labels;
 			labels.forEach(this::focus);
-			panel.updateLabelRendering();
+			updateLabelRendering();
 		}).start();
 	}
 
@@ -87,7 +90,12 @@ public class DefaultActionHandler <L> implements ActionHandler<L> {
 		} else {
 			selectFirst(currentLabels);
 		}
-		panel.updateLabelRendering();
+		updateLabelRendering();
+	}
+
+	private void updateLabelRendering() {
+		renderer.update();
+		panel.getViewerPanel().requestRepaint();
 	}
 
 	private boolean noLabelsAtMousePosition() {
@@ -118,10 +126,10 @@ public class DefaultActionHandler <L> implements ActionHandler<L> {
 
 	private Point getMousePositionInBDV() {
 		RealPoint mousePointer = new RealPoint(3);
-		panel.bdvGetHandlePanel().getViewerPanel().getGlobalMouseCoordinates( mousePointer );
+		panel.getViewerPanel().getGlobalMouseCoordinates( mousePointer );
 		final int x = ( int ) mousePointer.getFloatPosition( 0 );
 		final int y = ( int ) mousePointer.getFloatPosition( 1 );
-		int time = panel.bdvGetHandlePanel().getViewerPanel().getState().getCurrentTimepoint();
+		int time = panel.getViewerPanel().getState().getCurrentTimepoint();
 		if(mode3D) {
 			final int z = ( int ) mousePointer.getFloatPosition( 2 );
 			return new Point(x, y, z, time);

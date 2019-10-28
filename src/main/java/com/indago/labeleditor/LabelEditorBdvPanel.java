@@ -79,10 +79,14 @@ public class LabelEditorBdvPanel<L, T extends RealType<T>> extends JPanel {
 	public void init(LabelEditorModel<L> model) {
 		if(model != null) {
 			this.model = model;
-			actionHandler = initActionHandler(model);
 			renderer = initRenderer(model);
 		}
 		buildPanel();
+		if(model != null) {
+			actionHandler = initActionHandler(model, renderer);
+			actionHandler.set3DViewMode(false);
+			actionHandler.init();
+		}
 	}
 
 	private void setData(ImgPlus<T> data) {
@@ -101,11 +105,9 @@ public class LabelEditorBdvPanel<L, T extends RealType<T>> extends JPanel {
 		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
 		if(!mode3D && config != null ) {
 			System.out.println("2D mode");
-			actionHandler.set3DViewMode(false);
 			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options().is2D().inputTriggerConfig(config));
 		} else {
 			System.out.println("3D mode");
-			actionHandler.set3DViewMode(true);
 			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
 		}
 
@@ -113,11 +115,10 @@ public class LabelEditorBdvPanel<L, T extends RealType<T>> extends JPanel {
 		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
 		this.add( viewer );
 		populateBdv();
-		if(actionHandler != null) actionHandler.init();
 	}
 
-	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model) {
-		return new DefaultActionHandler<L>(this, model);
+	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model, LabelEditorRenderer<L> renderer) {
+		return new DefaultActionHandler<L>(bdvHandlePanel, model, renderer);
 	}
 
 	protected LabelEditorRenderer<L> initRenderer(LabelEditorModel<L> model) {
