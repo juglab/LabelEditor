@@ -62,6 +62,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	@Override
 	public void addTag(Object tag, L label) {
 		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
+		if(set.contains(tag)) return;
 		set.add(tag);
 		notifyListeners(tag, label, TagChangedEvent.Action.ADDED);
 	}
@@ -69,6 +70,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	@Override
 	public void removeTag(Object tag, L label) {
 		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
+		if(!set.contains(tag)) return;
 		set.remove(tag);
 		notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);
 	}
@@ -81,6 +83,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	@Override
 	public void removeTag(Object tag) {
 		tags.forEach( (label, tags) -> {
+			if(!tags.contains(tag)) return;
 			tags.remove(tag);
 			notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);
 		});
@@ -91,6 +94,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		e.action = action;
 		e.tag = tag;
 		e.label = label;
+		System.out.println("[INFO] " + e.toString());
 		listeners.forEach(listener -> listener.tagChanged(e));
 	}
 

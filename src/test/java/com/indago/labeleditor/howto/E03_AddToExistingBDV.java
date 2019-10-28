@@ -30,7 +30,9 @@ public class E03_AddToExistingBDV {
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
+
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+
 		LabelEditorRenderer<Integer> renderer = new DefaultLabelEditorRenderer<>(model);
 		model.getOrderedLabelRegions().forEach((label, regions) -> {
 			model.addTag("displayed", label);

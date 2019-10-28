@@ -17,9 +17,12 @@ import org.scijava.ui.behaviour.util.Behaviours;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 
@@ -67,19 +70,26 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 	}
 
 	private void handleMouseMove(MouseEvent e) {
-		LabelingType<L> labels = getLabelsAtMousePosition(e);
-		int intIndex;
-		try {
-			intIndex = labels.getIndex().getInteger();
-		} catch(ArrayIndexOutOfBoundsException exc) {return;}
-		if(intIndex == currentSegment) return;
-		currentSegment = intIndex;
-		new Thread(() -> {
+		List<LabelingType<L>> allSets = getAllLabelsAtMousePosition(e);
+		if(allSets == null || allSets.size() == 0) {
 			defocusAll();
-			currentLabels = labels;
-			labels.forEach(this::focus);
-			panel.updateLabelRendering();
-		}).start();
+			return;
+		}
+		LabelingType<L> labelset = allSets.get(0);
+//		for (LabelingType<L> labelset : labels) {
+			int intIndex;
+			try {
+				intIndex = labelset.getIndex().getInteger();
+			} catch(ArrayIndexOutOfBoundsException exc) {return;}
+			if(intIndex == currentSegment) return;
+			currentSegment = intIndex;
+			new Thread(() -> {
+				defocusAll();
+				currentLabels = labelset;
+				labelset.forEach(this::focus);
+				panel.updateLabelRendering();
+			}).start();
+//		}
 	}
 
 	private void handleClick() {
@@ -105,12 +115,23 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 			else
 				selectPrevious(currentLabels);
 	}
-
+	
+	public List<LabelingType<L>> getAllLabelsAtMousePosition(MouseEvent e) {
+//		Point pos = getMousePositionInBDV(e);
+//		FIXME find all labels at this position but in all depths (depending on viewport)
+//		return getLabelsAtPosition(pos);
+		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(e);
+		if(labelsAtMousePositionInBVV.size() == 0) return null;
+		return new ArrayList<>(labelsAtMousePositionInBVV);
+	}
+	
 	@Override
 	public LabelingType<L> getLabelsAtMousePosition(MouseEvent e) {
-		Point pos = getMousePositionInBDV(e);
-		//FIXME find all labels at this position but in all depths (depending on viewport)
-		return getLabelsAtPosition(pos);
+//		Point pos = getMousePositionInBDV(e);
+//		return getLabelsAtPosition(pos);
+		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(e);
+		if(labelsAtMousePositionInBVV.size() == 0) return null;
+		return new ArrayList<>(labelsAtMousePositionInBVV).get(0);
 	}
 
 	@Override
@@ -132,6 +153,32 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 		final int z = ( int ) gPos.getFloatPosition( 2 );
 		int time = panel.getBvvHandle().getViewerPanel().getState().getCurrentTimepoint();
 		return new Point(x, y, z, time);
+	}
+
+	private Set<LabelingType<L>> getLabelsAtMousePositionInBVV(MouseEvent e) {
+		RealPoint gPos = new RealPoint(3);
+		assert gPos.numDimensions() == 3;
+		final RealPoint lPos = new RealPoint( 3 );
+		lPos.setPosition(e.getX(), 0);
+		lPos.setPosition(e.getY(), 1);
+		AffineTransform3D transform = new AffineTransform3D();
+
+		int time = panel.getBvvHandle().getViewerPanel().getState().getCurrentTimepoint();
+		Set<LabelingType<L>> labels = new HashSet<>();
+		for (int i = 0; i < 500; i++) {
+			lPos.setPosition(i, 2);
+			panel.getBvvHandle().getViewerPanel().getState().getViewerTransform(transform);
+			transform.applyInverse( gPos, lPos );
+			final int x = ( int ) gPos.getFloatPosition( 0 );
+			final int y = ( int ) gPos.getFloatPosition( 1 );
+			final int z = ( int ) gPos.getFloatPosition( 2 );
+			Point pos = new Point(x, y, z, time);
+			LabelingType<L> labelsAtPosition = getLabelsAtPosition(pos);
+			if(labelsAtPosition != null && labelsAtPosition.size() > 0) {
+				labels.add(labelsAtPosition);
+			}
+		}
+		return labels;
 	}
 
 	private LabelingType<L> getLabelsAtPosition(Localizable pos) {
