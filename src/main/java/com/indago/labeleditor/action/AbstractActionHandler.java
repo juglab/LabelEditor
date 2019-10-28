@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
@@ -62,13 +63,17 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 
 	protected void handleWheelRotation(double direction, boolean isHorizontal) {
 		if(noLabelsAtMousePosition()) return;
-		if(!anySelected(currentLabels))
+		if(!anySelected(currentLabels)) {
 			selectFirst(currentLabels);
-		if ( !isHorizontal )
-			if(direction > 0)
+			updateLabelRendering();
+		}
+		if ( !isHorizontal ) {
+			if (direction > 0)
 				selectNext(currentLabels);
 			else
 				selectPrevious(currentLabels);
+			updateLabelRendering();
+		}
 	}
 
 	@Override
@@ -99,21 +104,22 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 	}
 
 	protected void selectPrevious(LabelingType<L> labels) {
-		System.out.println("select previous");
 		List<L> reverseLabels = new ArrayList<>(labels);
 		Collections.reverse(reverseLabels);
 		selectNext(reverseLabels);
 	}
 
 	protected void selectNext(Collection<L> labels) {
-		System.out.println("select next");
 		boolean foundSelected = false;
-		for (L label : labels) {
-			if(isSelected(label)) {
+		for (Iterator<L> iterator = labels.iterator(); iterator.hasNext(); ) {
+			L label = iterator.next();
+			if (isSelected(label)) {
 				foundSelected = true;
-				deselect(label);
+				if(iterator.hasNext()) {
+					deselect(label);
+				}
 			} else {
-				if(foundSelected) {
+				if (foundSelected) {
 					select(label);
 					return;
 				}
