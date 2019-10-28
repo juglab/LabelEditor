@@ -1,6 +1,7 @@
 package com.indago.labeleditor.action;
 
-import com.indago.labeleditor.LabelEditorBvvPanel;
+import bvv.util.BvvHandle;
+import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.Localizable;
@@ -23,23 +24,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
+public class BvvActionHandler<L> extends AbstractActionHandler<L> {
 
-	private final LabelEditorBvvPanel<L, ?> panel;
-	private final LabelEditorModel<L> model;
-	private LabelingType<L> currentLabels;
-	private int currentSegment;
-	private boolean mode3D;
+	private final BvvHandle panel;
 
-	public DefaultBvvActionHandler(LabelEditorBvvPanel<L, ?> panel, LabelEditorModel<L> model) {
+	public BvvActionHandler(BvvHandle panel, LabelEditorModel<L> model, LabelEditorRenderer renderer) {
+		super(model, renderer);
 		this.panel = panel;
-		this.model = model;
 	}
 
 	@Override
 	public void init() {
 		initMouseMotionListener();
-		installBdvBehaviours();
+		installBvvBehaviours();
 	}
 
 	private void initMouseMotionListener() {
@@ -52,12 +49,12 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 			}
 		};
 
-		panel.getBvvHandle().getViewerPanel().getDisplay().addMouseMotionListener( mml );
+		panel.getViewerPanel().getDisplay().addMouseMotionListener( mml );
 	}
 
-	private void installBdvBehaviours() {
+	private void installBvvBehaviours() {
 		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
-		behaviours.install( panel.getBvvHandle().getTriggerbindings(), "my-new-behaviours" );
+		behaviours.install( panel.getTriggerbindings(), "my-new-behaviours" );
 		behaviours.behaviour(
 				(ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> handleWheelRotation(wheelRotation, isHorizontal),
 				"browse segments",
@@ -68,7 +65,8 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 				"button1" );
 	}
 
-	private void handleMouseMove(MouseEvent e) {
+	@Override
+	protected void handleMouseMove(MouseEvent e) {
 		List<LabelingType<L>> allSets = getAllLabelsAtMousePosition(e);
 		if(allSets == null || allSets.size() == 0) {
 			defocusAll();
@@ -86,39 +84,19 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 				defocusAll();
 				currentLabels = labelset;
 				labelset.forEach(this::focus);
-				panel.updateLabelRendering();
+				updateLabelRendering();
 			}).start();
 //		}
 	}
 
-	private void handleClick() {
-		if (noLabelsAtMousePosition()) {
-			deselectAll();
-		} else {
-			selectFirst(currentLabels);
-		}
-		panel.updateLabelRendering();
+	@Override
+	protected void updateLabelRendering() {
+		System.out.println("update");
+		renderer.update();
+		panel.getViewerPanel().requestRepaint();
 	}
 
-	private boolean noLabelsAtMousePosition() {
-		return currentLabels == null || currentLabels.size() == 0;
-	}
-
-	private void handleWheelRotation(double direction, boolean isHorizontal) {
-		if(noLabelsAtMousePosition()) return;
-		if(!anySelected(currentLabels))
-			selectFirst(currentLabels);
-		if ( !isHorizontal )
-			if(direction > 0)
-				selectNext(currentLabels);
-			else
-				selectPrevious(currentLabels);
-	}
-	
-	public List<LabelingType<L>> getAllLabelsAtMousePosition(MouseEvent e) {
-//		Point pos = getMousePositionInBDV(e);
-//		FIXME find all labels at this position but in all depths (depending on viewport)
-//		return getLabelsAtPosition(pos);
+	private List<LabelingType<L>> getAllLabelsAtMousePosition(MouseEvent e) {
 		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(e);
 		if(labelsAtMousePositionInBVV.size() == 0) return null;
 		return new ArrayList<>(labelsAtMousePositionInBVV);
@@ -126,16 +104,9 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 	
 	@Override
 	public LabelingType<L> getLabelsAtMousePosition(MouseEvent e) {
-//		Point pos = getMousePositionInBDV(e);
-//		return getLabelsAtPosition(pos);
 		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(e);
 		if(labelsAtMousePositionInBVV.size() == 0) return null;
 		return new ArrayList<>(labelsAtMousePositionInBVV).get(0);
-	}
-
-	@Override
-	public void set3DViewMode(boolean mode3D) {
-		this.mode3D = mode3D;
 	}
 
 	private Point getMousePositionInBDV(MouseEvent e) {
@@ -172,10 +143,12 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 			final int y = ( int ) gPos.getFloatPosition( 1 );
 			final int z = ( int ) gPos.getFloatPosition( 2 );
 			Point pos = new Point(x, y, z, time);
-			LabelingType<L> labelsAtPosition = getLabelsAtPosition(pos);
-			if(labelsAtPosition != null && labelsAtPosition.size() > 0) {
-				labels.add(labelsAtPosition);
-			}
+				try {
+					LabelingType<L> labelsAtPosition = getLabelsAtPosition(pos);
+					if(labelsAtPosition != null && labelsAtPosition.size() > 0) {
+						labels.add(labelsAtPosition);
+					}
+				} catch(ArrayIndexOutOfBoundsException ignored) {}
 		}
 		return labels;
 	}
@@ -186,61 +159,4 @@ public class DefaultBvvActionHandler<L> implements ActionHandler<L> {
 		return ra.get();
 	}
 
-	private void selectFirst(LabelingType<L> currentLabels) {
-		List<L> orderedLabels = new ArrayList<>(currentLabels);
-		orderedLabels.sort(model::compare);
-		deselectAll();
-		select(orderedLabels.get(0));
-	}
-
-	private boolean isSelected(L label) {
-		return model.getTags(label).contains(LabelEditorTag.SELECTED);
-	}
-
-	private boolean anySelected(LabelingType<L> labels) {
-		return labels.stream().anyMatch(label -> model.getTags(label).contains(LabelEditorTag.SELECTED));
-	}
-
-	private void select(L label) {
-		model.addTag(LabelEditorTag.SELECTED, label);
-	}
-
-	private void selectPrevious(LabelingType<L> labels) {
-		System.out.println("select previous");
-		List<L> reverseLabels = new ArrayList<>(labels);
-		Collections.reverse(reverseLabels);
-		selectNext(reverseLabels);
-	}
-
-	private void selectNext(Collection<L> labels) {
-		System.out.println("select next");
-		boolean foundSelected = false;
-		for (L label : labels) {
-			if(isSelected(label)) {
-				foundSelected = true;
-				deselect(label);
-			} else {
-				if(foundSelected) {
-					select(label);
-					return;
-				}
-			}
-		}
-	}
-
-	private void deselect(L label) {
-		model.removeTag(LabelEditorTag.SELECTED, label);
-	}
-
-	private void deselectAll() {
-		model.removeTag(LabelEditorTag.SELECTED);
-	}
-
-	private void defocusAll() {
-		model.removeTag(LabelEditorTag.MOUSE_OVER);
-	}
-
-	private void focus(L label) {
-		model.addTag(LabelEditorTag.MOUSE_OVER, label);
-	}
 }

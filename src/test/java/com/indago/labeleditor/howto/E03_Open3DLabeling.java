@@ -19,7 +19,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
-public class E02_Open3DLabeling {
+public class E03_Open3DLabeling {
 
 	@Test
 	public void run() {
@@ -35,7 +35,7 @@ public class E02_Open3DLabeling {
 		ImageJ ij = new ImageJ();
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 		ImgPlus<IntType> imgPlus = new ImgPlus<>(img, "", new AxisType[]{Axes.X, Axes.Y, Axes.Z});
-		LabelEditorBdvPanel<IntType, IntType> labelEditorPanel = new LabelEditorBdvPanel<>(imgPlus, labeling);
+		LabelEditorBdvPanel<IntType> labelEditorPanel = new LabelEditorBdvPanel<>(imgPlus, labeling);
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(labelEditorPanel);
 		frame.setMinimumSize(new Dimension(500,500));
@@ -44,7 +44,7 @@ public class E02_Open3DLabeling {
 	}
 
 	public static void main(String... args) throws IOException {
-		new E02_Open3DLabeling().run();
+		new E03_Open3DLabeling().run();
 	}
 
 

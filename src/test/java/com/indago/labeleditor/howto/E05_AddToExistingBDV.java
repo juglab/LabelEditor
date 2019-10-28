@@ -4,7 +4,8 @@ import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.DefaultActionHandler;
+import com.indago.labeleditor.action.AbstractActionHandler;
+import com.indago.labeleditor.action.BdvActionHandler;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
@@ -24,7 +25,7 @@ import java.io.IOException;
 /**
  * How to display a labeling in an existing BDV instance
  */
-public class E03_AddToExistingBDV {
+public class E05_AddToExistingBDV {
 
 	@Test
 	public void run() throws IOException {
@@ -39,18 +40,19 @@ public class E03_AddToExistingBDV {
 		model.getOrderedLabelRegions().forEach((label, regions) -> {
 			model.addTag("displayed", label);
 		});
-		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,155));
+		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
 
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));
 		JPanel viewer = new JPanel(new MigLayout());
 		BdvHandlePanel bdvHandlePanel = new BdvHandlePanel(frame, Bdv.options().is2D());
-		BdvFunctions.show(input, "RAW", Bdv.options().addTo(bdvHandlePanel));
+//		BdvFunctions.show(input, "RAW", Bdv.options().addTo(bdvHandlePanel));
 		BdvFunctions.show(renderer.getRenderedLabels(), "labels", Bdv.options().addTo(bdvHandlePanel));
 
 		viewer.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
-		ActionHandler actionHandler = new DefaultActionHandler(bdvHandlePanel, model, renderer);
+		ActionHandler actionHandler = new BdvActionHandler<>(bdvHandlePanel, model, renderer);
+		actionHandler.init();
 
 		frame.setContentPane(viewer);
 		frame.pack();
@@ -58,7 +60,7 @@ public class E03_AddToExistingBDV {
 	}
 
 	public static void main(String...args) throws IOException {
-		new E03_AddToExistingBDV().run();
+		new E05_AddToExistingBDV().run();
 	}
 
 }

@@ -22,7 +22,7 @@ import java.io.IOException;
 /**
  * How to add custom actions to set or remove tags to {@link LabelEditorBdvPanel}
  */
-public class E05_CustomActions {
+public class E08_CustomActions {
 
 	class PopUpDemo extends JPopupMenu {
 		JMenuItem anItem;
@@ -53,7 +53,7 @@ public class E05_CustomActions {
 
 		// build LabelEditorPanel
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-		LabelEditorBdvPanel<Integer, IntType> panel = new LabelEditorBdvPanel<>(new ImgPlus<>(input), model);
+		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>(new ImgPlus<>(input), model);
 
 		//set custom colors for tags set in the MouseAdapter
 		panel.getRenderer().removeTagColor(LabelEditorTag.SELECTED);
@@ -103,7 +103,7 @@ public class E05_CustomActions {
 	}
 
 	public static void main(String...args) throws IOException {
-		new E05_CustomActions().mouseAction();
+		new E08_CustomActions().mouseAction();
 	}
 
 }

@@ -16,15 +16,15 @@ import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestCreatePanel <T extends RealType<T> & NativeType<T>> {
+public class TestCreatePanel {
 
-	private ImgPlus<T> data;
+	private ImgPlus data;
 	private ImgLabeling<String, IntType> labels;
 
 	@Before
 	public void initData() {
 		Img input = new ArrayImgFactory<>(new IntType()).create(10, 10);
-		data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y});
+		data = new ImgPlus<>(input, "input", new AxisType[]{Axes.X, Axes.Y});
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
 		labels = new ImgLabeling<>( backing );
 	}
@@ -37,7 +37,7 @@ public class TestCreatePanel <T extends RealType<T> & NativeType<T>> {
 
 	@Test
 	public void useEmptyConstructor() {
-		LabelEditorBdvPanel<String, T> panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
 		panel.init(data, labels);
 	}
 

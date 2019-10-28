@@ -1,8 +1,8 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.LabelEditorBdvPanel;
+import com.indago.labeleditor.model.LabelEditorTag;
 import net.imagej.ImageJ;
-import net.imagej.ImgPlus;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
@@ -18,23 +18,27 @@ import java.util.Random;
 /**
  * How to mark specific labels with your own tabs in the {@link LabelEditorBdvPanel}.
  */
-public class E06_CustomTags {
+public class E07_CustomTags {
 
 	@Test
 	public void run() throws IOException {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
-		LabelEditorBdvPanel<Integer, IntType> labelEditorPanel = new LabelEditorBdvPanel<>(new ImgPlus<>(input), labeling);
+		LabelEditorBdvPanel<Integer> labelEditorPanel = new LabelEditorBdvPanel<>(labeling);
 
 		Random random = new Random();
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
 				labelEditorPanel.getModel().addTag(label, label);
-				labelEditorPanel.getRenderer().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
+				int brightness = random.nextInt(155);
+				labelEditorPanel.getRenderer().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
 
 			}
 		}
+		labelEditorPanel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
+		labelEditorPanel.getRenderer().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
+		labelEditorPanel.updateLabelRendering();
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(labelEditorPanel);
@@ -44,7 +48,7 @@ public class E06_CustomTags {
 	}
 
 	public static void main(String...args) throws IOException {
-		new E06_CustomTags().run();
+		new E07_CustomTags().run();
 	}
 
 }

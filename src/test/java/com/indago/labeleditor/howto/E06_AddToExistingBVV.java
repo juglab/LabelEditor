@@ -1,14 +1,14 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.LabelEditorBdvPanel;
-import com.indago.labeleditor.LabelEditorBvvPanel;
+import bvv.util.Bvv;
+import bvv.util.BvvFunctions;
+import bvv.util.BvvStackSource;
+import com.indago.labeleditor.action.ActionHandler;
+import com.indago.labeleditor.action.BvvActionHandler;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import net.imagej.ImageJ;
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
-import net.imagej.axis.AxisType;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -21,18 +21,16 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.view.Views;
 import org.junit.Test;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
-public class E02_Open3DLabelingInBVV {
+public class E06_AddToExistingBVV {
 
 	@Test
 	public void run() {
+
 		//create img with spheres at random places
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);
 		RandomAccess<IntType> ra = img.randomAccess();
@@ -52,26 +50,26 @@ public class E02_Open3DLabelingInBVV {
 		ImageJ ij = new ImageJ();
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		//add to BVV
-		ImgPlus imgPlus = ij.op().create().imgPlus(ij.op().create().img(imgArgb));
-		LabelEditorBvvPanel<Integer, ARGBType> panel = new LabelEditorBvvPanel<>(imgPlus, labeling);
+		//create model and renderer
+		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		LabelEditorRenderer<Integer> renderer = new DefaultLabelEditorRenderer<>(model);
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
-				panel.getModel().addTag(label, label);
-				panel.getRenderer().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
+				model.addTag(label, label);
+				renderer.setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
 
 			}
 		}
-		panel.updateLabelRendering();
-		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(panel);
-		frame.setMinimumSize(new Dimension(500,500));
-		frame.pack();
-		frame.setVisible(true);
+		//add to BVV
+		BvvStackSource<ARGBType> source1 = BvvFunctions.show(imgArgb, "RAW", Bvv.options());
+		BvvFunctions.show(renderer.getRenderedLabels(), "labels", Bvv.options().addTo(source1));
+
+		ActionHandler<Integer> actionHandler = new BvvActionHandler<>(source1.getBvvHandle(), model, renderer);
+		actionHandler.init();
 	}
 
 	public static void main(String... args) throws IOException {
-		new E02_Open3DLabelingInBVV().run();
+		new E06_AddToExistingBVV().run();
 	}
 
 
