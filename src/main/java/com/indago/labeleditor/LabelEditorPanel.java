@@ -26,4 +26,6 @@ public interface LabelEditorPanel<L> {
 	ActionHandler<L> getActionHandler();
 
 	Container get();
+
+//	setConfig(.yaml)
 }

@@ -31,7 +31,7 @@ import java.io.IOException;
  */
 public class E02_Open2DLabelingConflicts {
 
-	@Test
+//	@Test
 	public void run() {
 
 		String LABEL1 = "label1";
@@ -45,6 +45,8 @@ public class E02_Open2DLabelingConflicts {
 
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1), data.dimension(2) );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
+
+
 		Views.interval( labels, Intervals.createMinSize( 220, 220, 0, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
 		Views.interval( labels, Intervals.createMinSize( 280, 280, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
 

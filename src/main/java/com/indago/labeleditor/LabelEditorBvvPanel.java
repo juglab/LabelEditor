@@ -24,7 +24,7 @@ import java.util.List;
 public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private BvvHandle bvvHandle;
-	private List< BvvSource > bdvSources;
+	private List< BvvStackSource > bvvSources;
 
 	public LabelEditorBvvPanel() {
 		super();
@@ -57,9 +57,9 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	protected Component buildViewer() {
-		bdvSources = new ArrayList<>();
+		bvvSources = new ArrayList<>();
 		BvvStackSource<ARGBType> source1 = BvvFunctions.show(fakeImg(), "", Bvv.options());
-		bdvSources.add(source1);
+		bvvSources.add(source1);
 		bvvHandle = source1.getBvvHandle();
 		return bvvHandle.getViewerPanel();
 	}
@@ -81,7 +81,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	private void populateBvv() {
 		bvvRemoveAll();
 		if(data != null) {
-			displayInBdv( data, "RAW" );
+			displayInBvv( data, "RAW" );
 		}
 		if(renderer == null) return;
 		RandomAccessibleInterval<ARGBType> labelColorImg = renderer.getRenderedLabels();
@@ -100,13 +100,13 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-		displayInBdv(labelColorImg, "solution");
+		displayInBvv(labelColorImg, "solution");
 //		}
 	}
 
-	private void displayInBdv( final RandomAccessibleInterval img,
-			final String title ) {
-		final BvvSource source = BvvFunctions.show(
+	private void displayInBvv(final RandomAccessibleInterval img,
+	                          final String title ) {
+		final BvvStackSource source = BvvFunctions.show(
 				img,
 				title,
 				Bvv.options().addTo(bvvHandle) );
@@ -125,14 +125,15 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return bvvHandle;
 	}
 
-	public List< BvvSource > bvvGetSources() {
-		return bdvSources;
+	public List< BvvStackSource > bvvGetSources() {
+		return bvvSources;
 	}
 
 	@Override
 	public synchronized void updateLabelRendering() {
 		renderer.update();
 		bvvHandle.getViewerPanel().requestRepaint();
+		bvvSources.forEach(source -> source.invalidate());
 	}
 
 }

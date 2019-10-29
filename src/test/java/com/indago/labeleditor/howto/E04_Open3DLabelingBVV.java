@@ -26,7 +26,7 @@ import java.util.Random;
 
 public class E04_Open3DLabelingBVV {
 
-	@Test
+//	@Test
 	public void run() {
 		//create img with spheres at random places
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);

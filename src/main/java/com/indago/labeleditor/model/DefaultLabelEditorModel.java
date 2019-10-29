@@ -3,7 +3,6 @@ package com.indago.labeleditor.model;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.roi.labeling.LabelRegions;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
@@ -110,6 +109,15 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	@Override
 	public void addListener(TagChangeListener listener) {
 		listeners.add(listener);
+	}
+
+	@Override
+	public List<L> getLabels(LabelEditorTag tag) {
+		List<L> labels = new ArrayList<>();
+		tags.forEach((l, tags) -> {
+			if(tags.contains(tag)) labels.add(l);
+		});
+		return labels;
 	}
 
 	public Map<L, LabelRegion <L> > getOrderedLabelRegions() {

@@ -22,7 +22,7 @@ import java.util.Random;
 
 public class E03_Open3DLabeling {
 
-	@Test
+//	@Test
 	public void run() {
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);
 		RandomAccess<IntType> ra = img.randomAccess();
@@ -36,6 +36,7 @@ public class E03_Open3DLabeling {
 		ImageJ ij = new ImageJ();
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 		ImgPlus<IntType> imgPlus = new ImgPlus<>(img, "", new AxisType[]{Axes.X, Axes.Y, Axes.Z});
+		//FIXME why is selection not working
 		LabelEditorPanel<IntType> labelEditorPanel = new LabelEditorBdvPanel<>(imgPlus, labeling);
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(labelEditorPanel.get());

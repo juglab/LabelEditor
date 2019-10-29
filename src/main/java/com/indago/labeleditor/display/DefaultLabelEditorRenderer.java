@@ -62,8 +62,6 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 		}
 
-		System.out.println(Arrays.toString(lut));
-
 		this.lut = lut;
 	}
 

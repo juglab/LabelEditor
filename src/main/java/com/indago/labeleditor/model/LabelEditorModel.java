@@ -4,6 +4,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,4 +28,5 @@ public interface LabelEditorModel <L>  {
 
 	void addListener(TagChangeListener listener);
 
+	List<L> getLabels(LabelEditorTag tag);
 }

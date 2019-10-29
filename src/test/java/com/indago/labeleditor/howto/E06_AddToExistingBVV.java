@@ -28,7 +28,7 @@ import java.util.Random;
 
 public class E06_AddToExistingBVV {
 
-	@Test
+//	@Test
 	public void run() {
 
 		//create img with spheres at random places

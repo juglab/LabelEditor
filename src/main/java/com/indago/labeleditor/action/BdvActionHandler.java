@@ -3,6 +3,7 @@ package com.indago.labeleditor.action;
 import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.LabelEditorModel;
+import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
 import net.imglib2.RealPoint;
@@ -64,11 +65,12 @@ public class BdvActionHandler<L> extends AbstractActionHandler<L> {
 	@Override
 	public LabelingType<L> getLabelsAtMousePosition(MouseEvent e) {
 		RandomAccess<LabelingType<L>> ra = model.getLabels().randomAccess();
-		ra.setPosition(getMousePosition());
+		ra.setPosition(getDataPositionAtMouse());
 		return ra.get();
 	}
 
-	private Point getMousePosition() {
+	@Override
+	public Localizable getDataPositionAtMouse() {
 		RealPoint mousePointer = new RealPoint(3);
 		panel.getViewerPanel().getGlobalMouseCoordinates( mousePointer );
 		final int x = ( int ) mousePointer.getFloatPosition( 0 );

@@ -21,7 +21,7 @@ import java.util.Random;
  */
 public class E07_CustomTags {
 
-	@Test
+//	@Test
 	public void run() throws IOException {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");

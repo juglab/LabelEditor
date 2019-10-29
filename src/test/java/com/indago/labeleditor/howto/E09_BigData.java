@@ -32,7 +32,7 @@ import java.util.Random;
 
 public class E09_BigData {
 
-	@Test
+//	@Test
 	public void run() {
 
 		DiskCachedCellImg<IntType, ?> backing = new DiskCachedCellImgFactory<>(new IntType()).create( 500, 500, 500 );

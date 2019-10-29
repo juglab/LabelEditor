@@ -10,6 +10,7 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RealPoint;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.roi.labeling.LabelingType;
+import org.apache.commons.lang.NotImplementedException;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.ScrollBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -107,6 +108,11 @@ public class BvvActionHandler<L> extends AbstractActionHandler<L> {
 		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(e);
 		if(labelsAtMousePositionInBVV.size() == 0) return null;
 		return new ArrayList<>(labelsAtMousePositionInBVV).get(0);
+	}
+
+	@Override
+	public Localizable getDataPositionAtMouse() {
+		throw new NotImplementedException();
 	}
 
 	private Point getMousePositionInBDV(MouseEvent e) {
