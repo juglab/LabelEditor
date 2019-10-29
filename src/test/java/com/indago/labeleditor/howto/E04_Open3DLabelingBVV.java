@@ -1,6 +1,7 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.LabelEditorBvvPanel;
+import com.indago.labeleditor.LabelEditorPanel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
@@ -48,7 +49,7 @@ public class E04_Open3DLabelingBVV {
 
 		//add to BVV
 		ImgPlus imgPlus = ij.op().create().imgPlus(ij.op().create().img(imgArgb));
-		LabelEditorBvvPanel<Integer> panel = new LabelEditorBvvPanel<>(imgPlus, labeling);
+		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>(imgPlus, labeling);
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
 				panel.getModel().addTag(label, label);
@@ -59,7 +60,7 @@ public class E04_Open3DLabelingBVV {
 		panel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,255,255));
 		panel.updateLabelRendering();
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(panel);
+		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);

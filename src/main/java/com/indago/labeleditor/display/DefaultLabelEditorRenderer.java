@@ -11,6 +11,7 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +61,8 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 			lut[i] = mixColors(mytags, tagColors);
 
 		}
+
+		System.out.println(Arrays.toString(lut));
 
 		this.lut = lut;
 	}

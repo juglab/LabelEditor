@@ -2,6 +2,7 @@ package com.indago.labeleditor.howto;
 
 
 import com.indago.labeleditor.LabelEditorBdvPanel;
+import com.indago.labeleditor.LabelEditorPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -25,9 +26,9 @@ public class E01_Open2DLabeling {
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
 		Img<IntType> thresholded = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
-		LabelEditorBdvPanel<Integer> labelEditorPanel = new LabelEditorBdvPanel<>(new ImgPlus<IntType>(input), labeling);
+		LabelEditorPanel labelEditorPanel = new LabelEditorBdvPanel<>(new ImgPlus<IntType>(input), labeling);
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel);
+		frame.setContentPane(labelEditorPanel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);

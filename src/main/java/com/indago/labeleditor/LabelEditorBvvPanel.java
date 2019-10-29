@@ -12,7 +12,7 @@ import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -65,7 +65,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private ImgPlus<ARGBType> fakeImg() {
-		return new ImgPlus<>(new ArrayImgFactory<>(new ARGBType()).create(data.dimension(0), data.dimension(1)));
+		return new ImgPlus<>(new DiskCachedCellImgFactory<>(new ARGBType()).create(model.getLabels()));
 	}
 
 	@Override
@@ -134,4 +134,5 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		renderer.update();
 		bvvHandle.getViewerPanel().requestRepaint();
 	}
+
 }

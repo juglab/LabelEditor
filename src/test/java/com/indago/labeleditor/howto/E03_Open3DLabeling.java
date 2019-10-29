@@ -1,6 +1,7 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.LabelEditorBdvPanel;
+import com.indago.labeleditor.LabelEditorPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -35,9 +36,9 @@ public class E03_Open3DLabeling {
 		ImageJ ij = new ImageJ();
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 		ImgPlus<IntType> imgPlus = new ImgPlus<>(img, "", new AxisType[]{Axes.X, Axes.Y, Axes.Z});
-		LabelEditorBdvPanel<IntType> labelEditorPanel = new LabelEditorBdvPanel<>(imgPlus, labeling);
+		LabelEditorPanel<IntType> labelEditorPanel = new LabelEditorBdvPanel<>(imgPlus, labeling);
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel);
+		frame.setContentPane(labelEditorPanel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);

@@ -2,6 +2,7 @@ package com.indago.labeleditor.howto;
 
 
 import com.indago.labeleditor.LabelEditorBdvPanel;
+import com.indago.labeleditor.LabelEditorPanel;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import io.scif.img.IO;
 import net.imagej.ImageJ;
@@ -50,13 +51,9 @@ public class E02_Open2DLabelingConflicts {
 		Views.interval( labels, Intervals.createMinSize( 320, 320, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
-		model.addTag(LABEL1, TAG1);
-		model.addTag(LABEL2, TAG2);
-
-		LabelEditorBdvPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>(new ImgPlus<IntType>(input), labels);
+		LabelEditorPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>(labels);
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel);
+		frame.setContentPane(labelEditorPanel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);

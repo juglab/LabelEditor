@@ -1,6 +1,7 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.LabelEditorBdvPanel;
+import com.indago.labeleditor.LabelEditorPanel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imglib2.img.Img;
@@ -25,7 +26,7 @@ public class E07_CustomTags {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
-		LabelEditorBdvPanel<Integer> labelEditorPanel = new LabelEditorBdvPanel<>(labeling);
+		LabelEditorPanel<Integer> labelEditorPanel = new LabelEditorBdvPanel<>(labeling);
 
 		Random random = new Random();
 		for (LabelingType<Integer> labels : labeling) {
@@ -41,7 +42,7 @@ public class E07_CustomTags {
 		labelEditorPanel.updateLabelRendering();
 
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel);
+		frame.setContentPane(labelEditorPanel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);

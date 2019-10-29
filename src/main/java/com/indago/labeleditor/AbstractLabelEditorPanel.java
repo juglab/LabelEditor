@@ -14,7 +14,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class AbstractLabelEditorPanel<L> extends JPanel {
+public abstract class AbstractLabelEditorPanel<L> extends JPanel implements LabelEditorPanel<L> {
 
 	protected ImgPlus data;
 
@@ -50,15 +50,18 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel {
 		init(model);
 	}
 
+	@Override
 	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
 		setData(data);
 		init(labels);
 	}
 
+	@Override
 	public void init(ImgLabeling<L, IntType> labels) {
 		init(new DefaultLabelEditorModel<>(labels));
 	}
 
+	@Override
 	public void init(LabelEditorModel<L> model) {
 		if(model != null) {
 			this.model = model;
@@ -97,17 +100,26 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel {
 		return new DefaultLabelEditorRenderer<L>(model);
 	}
 
+	@Override
 	public abstract void updateLabelRendering();
 
+	@Override
 	public LabelEditorRenderer<L> getRenderer() {
 		return renderer;
 	}
 
+	@Override
 	public LabelEditorModel<L> getModel() {
 		return model;
 	}
 
+	@Override
 	public ActionHandler<L> getActionHandler() {
 		return actionHandler;
+	}
+
+	@Override
+	public Container get() {
+		return this;
 	}
 }
