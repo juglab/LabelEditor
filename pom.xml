@@ -14,7 +14,8 @@
 		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
 
 		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
-		<releaseProfiles>deploy-to-imagej</releaseProfiles>
+		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+
 	</properties>
 
 	<groupId>com.indago</groupId>
@@ -26,8 +27,8 @@
 	<url>https:github.com/juglab/labeleditor</url>
 	<inceptionYear>2019</inceptionYear>
 	<organization>
-		<name>TrNdy</name>
-		<url>https://github.com/TrNdy</url>
+		<name>CSBD</name>
+		<url>https://csbdresden.de</url>
 	</organization>
 	<licenses>
 		<license>
@@ -80,7 +81,7 @@
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bigvolumeviewer</artifactId>
-			<version>0.1.7-SNAPSHOT</version>
+			<version>0.1.6</version>
 <!--			<scope>test</scope>-->
 		</dependency>
 	</dependencies>
@@ -164,8 +165,8 @@
 
 	<repositories>
 		<repository>
-			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
 		</repository>
 	</repositories>
 
