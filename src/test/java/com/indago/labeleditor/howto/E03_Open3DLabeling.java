@@ -39,7 +39,8 @@ public class E03_Open3DLabeling {
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 		ImgPlus<IntType> imgPlus = new ImgPlus<>(img, "", new AxisType[]{Axes.X, Axes.Y, Axes.Z});
 		//FIXME why is selection not working
-		LabelEditorPanel<IntType> labelEditorPanel = new LabelEditorBdvPanel<>(imgPlus, labeling);
+		LabelEditorPanel<IntType> labelEditorPanel = new LabelEditorBdvPanel<>();
+		labelEditorPanel.init(imgPlus, labeling);
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(labelEditorPanel.get());
 		frame.setMinimumSize(new Dimension(500,500));

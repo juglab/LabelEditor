@@ -29,7 +29,8 @@ public class E01_Open2DLabeling {
 		Img<IntType> thresholded = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorPanel labelEditorPanel = new LabelEditorBdvPanel<>(new ImgPlus<IntType>(input), labeling);
+		LabelEditorPanel labelEditorPanel = new LabelEditorBdvPanel<>();
+		labelEditorPanel.init(new ImgPlus<IntType>(input), labeling);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(labelEditorPanel.get());

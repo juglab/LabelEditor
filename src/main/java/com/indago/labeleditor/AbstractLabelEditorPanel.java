@@ -28,32 +28,22 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	public AbstractLabelEditorPanel() {
 	}
 
-	public AbstractLabelEditorPanel(ImgPlus data) {
+	@Override
+	public void init(ImgPlus data) {
 		setData(data);
 		buildPanel();
-	}
-
-	public AbstractLabelEditorPanel(ImgLabeling<L, IntType> labels) {
-		init(labels);
-	}
-
-	public AbstractLabelEditorPanel(ImgPlus data, ImgLabeling<L, IntType > labels) {
-		init(data, labels);
-	}
-
-	public AbstractLabelEditorPanel(LabelEditorModel<L> model) {
-		init(model);
-	}
-
-	public AbstractLabelEditorPanel(ImgPlus data, LabelEditorModel<L> model) {
-		setData(data);
-		init(model);
 	}
 
 	@Override
 	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
 		setData(data);
 		init(labels);
+	}
+
+	@Override
+	public void init(ImgPlus data, LabelEditorModel<L> model) {
+		setData(data);
+		init(model);
 	}
 
 	@Override
@@ -66,16 +56,14 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		if(model != null) {
 			this.model = model;
 			renderer = initRenderer(model);
-		}
-		buildPanel();
-		if(model != null) {
+			buildPanel();
 			actionHandler = initActionHandler(model, renderer);
 			actionHandler.set3DViewMode(false);
 			actionHandler.init();
 		}
 	}
 
-	private void setData(ImgPlus data) {
+	protected void setData(ImgPlus data) {
 		this.data = data;
 		if(data.dimensionIndex(Axes.Z) > 0) {
 			mode3D = true;
@@ -122,4 +110,5 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	public Container get() {
 		return this;
 	}
+
 }

@@ -26,35 +26,6 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	private BvvHandle bvvHandle;
 	private List< BvvStackSource > bvvSources;
 
-	public LabelEditorBvvPanel() {
-		super();
-	}
-
-	public LabelEditorBvvPanel(ImgPlus data) {
-		super(data);
-		populateBvv();
-	}
-
-	public LabelEditorBvvPanel(ImgLabeling<L, IntType> labels) {
-		super(labels);
-		populateBvv();
-	}
-
-	public LabelEditorBvvPanel(ImgPlus data, ImgLabeling<L, IntType> labels) {
-		super(data, labels);
-		populateBvv();
-	}
-
-	public LabelEditorBvvPanel(LabelEditorModel<L> model) {
-		super(model);
-		populateBvv();
-	}
-
-	public LabelEditorBvvPanel(ImgPlus data, LabelEditorModel<L> model) {
-		super(data, model);
-		populateBvv();
-	}
-
 	@Override
 	protected Component buildViewer() {
 		bvvSources = new ArrayList<>();
@@ -134,6 +105,11 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		renderer.update();
 		bvvHandle.getViewerPanel().requestRepaint();
 		bvvSources.forEach(source -> source.invalidate());
+	}
+
+	@Override
+	public void updateData(ImgPlus<L> imgPlus) {
+		super.setData(imgPlus);
 	}
 
 }

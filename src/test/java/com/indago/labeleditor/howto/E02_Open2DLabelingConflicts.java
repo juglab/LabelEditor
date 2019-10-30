@@ -62,7 +62,8 @@ public class E02_Open2DLabelingConflicts {
 		model.addTag(TAG1, LABEL1);
 		model.addTag(TAG2, LABEL2);
 
-		LabelEditorPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>(model);
+		LabelEditorPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>();
+		labelEditorPanel.init(model);
 		labelEditorPanel.getRenderer().setTagColor(TAG1, ARGBType.rgba(255,255,0,100));
 		labelEditorPanel.getRenderer().setTagColor(TAG2, ARGBType.rgba(255,0,255,100));
 		labelEditorPanel.updateLabelRendering();

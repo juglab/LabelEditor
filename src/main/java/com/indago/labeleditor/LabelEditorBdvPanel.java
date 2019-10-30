@@ -5,7 +5,6 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
 import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.AbstractActionHandler;
 import com.indago.labeleditor.action.BdvActionHandler;
 import com.indago.labeleditor.action.InputTriggerConfig2D;
 import com.indago.labeleditor.display.LabelEditorRenderer;
@@ -13,7 +12,6 @@ import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
@@ -26,33 +24,41 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
 
-	public LabelEditorBdvPanel() {
-		super();
+	@Override
+	public void init(ImgPlus data) {
+		super.init(data);
+		bdvRemoveAll();
+		addDataToBDV();
 	}
 
-	public LabelEditorBdvPanel(ImgPlus data) {
-		super(data);
-		populateBdv();
+	@Override
+	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
+		super.init(data, labels);
+		bdvRemoveAll();
+		addDataToBDV();
+		addLabelsToBDV();
 	}
 
-	public LabelEditorBdvPanel(ImgLabeling<L, IntType> labels) {
-		super(labels);
-		populateBdv();
+	@Override
+	public void init(ImgPlus data, LabelEditorModel<L> model) {
+		super.init(data, model);
+		bdvRemoveAll();
+		addDataToBDV();
+		addLabelsToBDV();
 	}
 
-	public LabelEditorBdvPanel(ImgPlus data, ImgLabeling<L, IntType> labels) {
-		super(data, labels);
-		populateBdv();
+	@Override
+	public void init(ImgLabeling<L, IntType> labels) {
+		super.init(labels);
+		bdvRemoveAll();
+		addLabelsToBDV();
 	}
 
-	public LabelEditorBdvPanel(LabelEditorModel<L> model) {
-		super(model);
-		populateBdv();
-	}
-
-	public LabelEditorBdvPanel(ImgPlus data, LabelEditorModel<L> model) {
-		super(data, model);
-		populateBdv();
+	@Override
+	public void init(LabelEditorModel<L> model) {
+		super.init(model);
+		bdvRemoveAll();
+		addLabelsToBDV();
 	}
 
 	@Override
@@ -74,14 +80,16 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 
+
+
 	private void populateBdv() {
 		bdvRemoveAll();
-		if(data != null) {
-			displayInBdv( data, "RAW" );
-		}
-		if(renderer == null) return;
-		RandomAccessibleInterval<ARGBType> labelColorImg = renderer.getRenderedLabels();
+		addDataToBDV();
+		addLabelsToBDV();
+	}
 
+	private void addLabelsToBDV() {
+		if(renderer == null) return;
 		//TODO make virtual channels work
 //		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
 //		if(virtualChannels != null) {
@@ -96,11 +104,14 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-		BdvFunctions.show(
-				labelColorImg,
-				"solution",
-				Bdv.options().addTo(bdvGetHandlePanel()));
+		displayInBdv(renderer.getRenderedLabels(),"solution");
 //		}
+	}
+
+	private void addDataToBDV() {
+		if(data != null) {
+			displayInBdv( data, "RAW" );
+		}
 	}
 
 	private void displayInBdv( final RandomAccessibleInterval img,
@@ -130,8 +141,14 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	public synchronized void updateLabelRendering() {
-		renderer.update();
+		if(renderer != null) renderer.update();
 		bdvHandlePanel.getViewerPanel().requestRepaint();
 	}
 
+	@Override
+	public void updateData(ImgPlus<L> data) {
+		super.setData(data);
+		displayInBdv(data, "RAW");
+		updateLabelRendering();
+	}
 }

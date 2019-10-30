@@ -32,7 +32,8 @@ public class TestCreatePanel {
 	@Ignore
 	public void run() {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
-		new LabelEditorBdvPanel<>(data, model);
+		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
+		panel.init(data, model);
 	}
 
 	@Test
@@ -45,7 +46,8 @@ public class TestCreatePanel {
 	@Test
 	@Ignore
 	public void showOnlyData() {
-		new LabelEditorBdvPanel<>(data);
+		LabelEditorBdvPanel<Object> panel = new LabelEditorBdvPanel<>();
+		panel.init(data);
 	}
 
 }

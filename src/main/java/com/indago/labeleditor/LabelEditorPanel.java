@@ -11,7 +11,11 @@ import java.awt.*;
 
 public interface LabelEditorPanel<L> {
 
+	void init(ImgPlus data);
+
 	void init(ImgPlus data, ImgLabeling<L, IntType> labels);
+
+	void init(ImgPlus data, LabelEditorModel<L> model);
 
 	void init(ImgLabeling<L, IntType> labels);
 
@@ -26,6 +30,8 @@ public interface LabelEditorPanel<L> {
 	ActionHandler<L> getActionHandler();
 
 	Container get();
+
+	void updateData(ImgPlus<L> imgPlus);
 
 //	setConfig(.yaml)
 }

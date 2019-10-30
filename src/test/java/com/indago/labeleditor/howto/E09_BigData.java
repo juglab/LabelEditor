@@ -1,24 +1,10 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.AbstractLabelEditorPanel;
 import com.indago.labeleditor.LabelEditorBdvPanel;
-import com.indago.labeleditor.LabelEditorBvvPanel;
 import com.indago.labeleditor.LabelEditorPanel;
-import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import net.imagej.ImageJ;
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
-import net.imagej.axis.AxisType;
-import net.imglib2.RandomAccess;
-import net.imglib2.algorithm.labeling.ConnectedComponents;
-import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
-import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImg;
-import net.imglib2.img.array.ArrayImgs;
-import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -73,7 +59,8 @@ public class E09_BigData {
 		model.addTag(LABEL1, TAG1);
 		model.addTag(LABEL2, TAG2);
 
-		LabelEditorPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>(model);
+		LabelEditorPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>();
+		labelEditorPanel.init(model);
 		labelEditorPanel.getRenderer().setTagColor(TAG1, ARGBType.rgba(0, 255, 255, 255));
 		labelEditorPanel.getRenderer().setTagColor(TAG2, ARGBType.rgba(255, 0, 255, 255));
 		labelEditorPanel.updateLabelRendering();

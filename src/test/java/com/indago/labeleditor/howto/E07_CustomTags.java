@@ -28,7 +28,8 @@ public class E07_CustomTags {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
-		LabelEditorPanel<Integer> labelEditorPanel = new LabelEditorBdvPanel<>(labeling);
+		LabelEditorPanel<Integer> labelEditorPanel = new LabelEditorBdvPanel<>();
+		labelEditorPanel.init(labeling);
 
 		Random random = new Random();
 		for (LabelingType<Integer> labels : labeling) {

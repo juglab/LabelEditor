@@ -36,7 +36,8 @@ public class RunLabelEditorPanel {
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel<>(img, model);
+		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel<>();
+		labelEditorPanel.init(img, model);
 		labelEditorPanel.getRenderer().setTagColor(TAG1, ARGBType.rgba(255,255,0,50));
 		labelEditorPanel.getRenderer().setTagColor(TAG2, ARGBType.rgba(0,255,255,50));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

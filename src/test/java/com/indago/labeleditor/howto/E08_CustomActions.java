@@ -67,7 +67,8 @@ public class E08_CustomActions {
 
 		// build LabelEditorPanel
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>(new ImgPlus<>(input), model);
+		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		panel.init(new ImgPlus<>(input), model);
 
 		//set custom colors for tags set in the MouseAdapter
 		panel.getRenderer().removeTagColor(LabelEditorTag.SELECTED);

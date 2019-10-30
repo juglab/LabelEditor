@@ -51,7 +51,8 @@ public class E04_Open3DLabelingBVV {
 
 		//add to BVV
 		ImgPlus imgPlus = ij.op().create().imgPlus(ij.op().create().img(imgArgb));
-		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>(imgPlus, labeling);
+		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>();
+		panel.init(imgPlus, labeling);
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
 				panel.getModel().addTag(label, label);
