@@ -21,6 +21,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,7 +29,8 @@ import java.util.Random;
 
 public class E06_AddToExistingBVV {
 
-//	@Test
+	@Test
+	@Ignore
 	public void run() {
 
 		//create img with spheres at random places

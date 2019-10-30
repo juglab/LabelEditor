@@ -9,6 +9,7 @@ import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -20,7 +21,8 @@ import java.io.IOException;
  */
 public class E01_Open2DLabeling {
 
-//	@Test
+	@Test
+	@Ignore
 	public void run() throws IOException {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");

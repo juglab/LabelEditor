@@ -24,6 +24,7 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -32,7 +33,8 @@ import java.util.Random;
 
 public class E09_BigData {
 
-//	@Test
+	@Test
+	@Ignore
 	public void run() {
 
 		DiskCachedCellImg<IntType, ?> backing = new DiskCachedCellImgFactory<>(new IntType()).create( 500, 500, 500 );

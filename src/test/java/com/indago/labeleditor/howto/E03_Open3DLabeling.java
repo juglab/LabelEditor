@@ -13,6 +13,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -22,7 +23,8 @@ import java.util.Random;
 
 public class E03_Open3DLabeling {
 
-//	@Test
+	@Test
+	@Ignore
 	public void run() {
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);
 		RandomAccess<IntType> ra = img.randomAccess();

@@ -16,6 +16,7 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -49,7 +50,8 @@ public class E08_CustomActions {
 	/**
 	 * Demonstrates how to register a mouse action.
 	 */
-//	@Test
+	@Test
+	@Ignore
 	public void mouseAction() throws IOException {
 
 		//initialize ImageJ

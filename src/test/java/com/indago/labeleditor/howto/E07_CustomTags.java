@@ -9,6 +9,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -21,7 +22,8 @@ import java.util.Random;
  */
 public class E07_CustomTags {
 
-//	@Test
+	@Test
+	@Ignore
 	public void run() throws IOException {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
