@@ -57,12 +57,12 @@ public class E04_Open3DLabelingBVV {
 		panel.init(imgPlus, labeling);
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
-				panel.getModel().tagging().addTag(label, label);
-				panel.getRenderer().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
+				panel.model().tagging().addTag(label, label);
+				panel.renderer().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
 
 			}
 		}
-		panel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,255,255));
+		panel.renderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,255,255));
 		panel.updateLabelRendering();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

@@ -58,7 +58,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 			renderer = initRenderer(model);
 			buildPanel();
 			actionHandler = initActionHandler(model, renderer);
-			actionHandler.set3DViewMode(false);
+			actionHandler.set3DViewMode(mode3D);
 			actionHandler.init();
 		}
 	}
@@ -93,17 +93,17 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	public abstract void updateLabelRendering();
 
 	@Override
-	public LabelEditorRenderer<L> getRenderer() {
+	public LabelEditorRenderer<L> renderer() {
 		return renderer;
 	}
 
 	@Override
-	public LabelEditorModel<L> getModel() {
+	public LabelEditorModel<L> model() {
 		return model;
 	}
 
 	@Override
-	public ActionHandler<L> getActionHandler() {
+	public ActionHandler<L> action() {
 		return actionHandler;
 	}
 

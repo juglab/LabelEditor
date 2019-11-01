@@ -22,15 +22,15 @@ public interface LabelEditorPanel<L> extends Disposable {
 
 	void init(LabelEditorModel<L> model);
 
-	void updateLabelRendering();
+	LabelEditorRenderer<L> renderer();
 
-	LabelEditorRenderer<L> getRenderer();
+	LabelEditorModel<L> model();
 
-	LabelEditorModel<L> getModel();
-
-	ActionHandler<L> getActionHandler();
+	ActionHandler<L> action();
 
 	Container get();
+
+	void updateLabelRendering();
 
 	void updateData(ImgPlus<L> imgPlus);
 

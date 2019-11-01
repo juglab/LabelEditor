@@ -25,7 +25,7 @@ public class E03_Open3DLabeling {
 
 	static ImageJ ij = new ImageJ();
 	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel panel;
+	static LabelEditorBdvPanel<IntType> panel;
 
 	@Test
 	public void run() {
@@ -43,6 +43,7 @@ public class E03_Open3DLabeling {
 		//FIXME why is selection not working
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(imgPlus, labeling);
+		panel.bdvGetSources().forEach(source -> source.setDisplayRange(0, 100));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

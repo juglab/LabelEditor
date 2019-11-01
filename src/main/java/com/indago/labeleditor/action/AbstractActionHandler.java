@@ -87,6 +87,7 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 	protected void selectFirst(LabelingType<L> currentLabels) {
 		List<L> orderedLabels = new ArrayList<>(currentLabels);
 		orderedLabels.sort(model.getLabelComparator()::compare);
+		if(model.tagging().getTags(orderedLabels.get(0)).contains(LabelEditorTag.SELECTED)) return;
 		deselectAll();
 		select(orderedLabels.get(0));
 	}

@@ -38,8 +38,8 @@ public class E08_CustomActions {
 			anItem = new JMenuItem("Click Me!");
 			anItem.addActionListener(actionEvent -> {
 				System.out.println("Event!");
-				List<Integer> labels = panel.getModel().tagging().getLabels(LabelEditorTag.SELECTED);
-				labels.forEach(label -> panel.getModel().tagging().addTag("special", label));
+				List<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.SELECTED);
+				labels.forEach(label -> panel.model().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );
 				panel.updateLabelRendering();
 
@@ -55,7 +55,7 @@ public class E08_CustomActions {
 	public void mouseAction() throws IOException {
 
 		//open blobs
-		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
+		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 
 		//do connected component analysis
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
@@ -67,11 +67,11 @@ public class E08_CustomActions {
 		panel.init(new ImgPlus<>(input), model);
 
 		//set custom colors for tags set in the MouseAdapter
-		panel.getRenderer().removeTagColor(LabelEditorTag.SELECTED);
-		panel.getRenderer().removeTagColor(LabelEditorTag.MOUSE_OVER);
-		panel.getRenderer().setTagColor("yes", ARGBType.rgba(155, 155, 0, 255));
-		panel.getRenderer().setTagColor("no", ARGBType.rgba(0, 155, 255, 255));
-		panel.getRenderer().setTagColor("special", ARGBType.rgba(255, 0, 0, 255));
+		panel.renderer().removeTagColor(LabelEditorTag.SELECTED);
+		panel.renderer().removeTagColor(LabelEditorTag.MOUSE_OVER);
+		panel.renderer().setTagColor("yes", ARGBType.rgba(155, 155, 0, 255));
+		panel.renderer().setTagColor("no", ARGBType.rgba(0, 155, 255, 255));
+		panel.renderer().setTagColor("special", ARGBType.rgba(255, 0, 0, 255));
 		panel.updateLabelRendering();
 
 		//register custom actions
@@ -79,9 +79,9 @@ public class E08_CustomActions {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger())
-					doPop(e, panel.getActionHandler().getDataPositionAtMouse());
+					doPop(e, panel.action().getDataPositionAtMouse());
 				model.tagging().removeTag("no");
-				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition(e)) {
+				for (Integer label : panel.action().getLabelsAtMousePosition(e)) {
 					model.tagging().addTag("yes", label);
 				}
 				panel.updateLabelRendering();
@@ -91,9 +91,9 @@ public class E08_CustomActions {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.isPopupTrigger())
-					doPop(e, panel.getActionHandler().getDataPositionAtMouse());
+					doPop(e, panel.action().getDataPositionAtMouse());
 				model.tagging().removeTag("yes");
-				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition(e)) {
+				for (Integer label : panel.action().getLabelsAtMousePosition(e)) {
 					model.tagging().addTag("no", label);
 				}
 				panel.updateLabelRendering();

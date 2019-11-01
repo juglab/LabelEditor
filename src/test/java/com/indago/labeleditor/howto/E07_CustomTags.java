@@ -28,7 +28,7 @@ public class E07_CustomTags {
 
 	@Test
 	public void run() throws IOException {
-		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
+		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(labeling);
@@ -36,14 +36,14 @@ public class E07_CustomTags {
 		Random random = new Random();
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
-				panel.getModel().tagging().addTag(label, label);
+				panel.model().tagging().addTag(label, label);
 				int brightness = random.nextInt(155);
-				panel.getRenderer().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
+				panel.renderer().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
 
 			}
 		}
-		panel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
-		panel.getRenderer().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
+		panel.renderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
+		panel.renderer().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
 		panel.updateLabelRendering();
 
 		frame.setContentPane(panel.get());

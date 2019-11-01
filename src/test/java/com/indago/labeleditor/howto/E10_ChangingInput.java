@@ -1,7 +1,6 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.LabelEditorBdvPanel;
-import com.indago.labeleditor.LabelEditorPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccess;

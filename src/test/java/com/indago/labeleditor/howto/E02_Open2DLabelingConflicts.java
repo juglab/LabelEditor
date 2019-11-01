@@ -41,10 +41,7 @@ public class E02_Open2DLabelingConflicts {
 		String TAG1 = "tag1";
 		String TAG2 = "tag2";
 
-		Img input = IO.openImgs(LabelEditorBdvPanel.class.getResource("/raw.tif").getPath()).get(0);
-		ImgPlus data = new ImgPlus(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
-
-		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1), data.dimension(2) );
+		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( 500, 500 );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 
 
@@ -61,8 +58,8 @@ public class E02_Open2DLabelingConflicts {
 
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
-		panel.getRenderer().setTagColor(TAG1, ARGBType.rgba(100,100,90,100));
-		panel.getRenderer().setTagColor(TAG2, ARGBType.rgba(120,90,120,100));
+		panel.renderer().setTagColor(TAG1, ARGBType.rgba(100,100,90,100));
+		panel.renderer().setTagColor(TAG2, ARGBType.rgba(120,90,120,100));
 		panel.updateLabelRendering();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
