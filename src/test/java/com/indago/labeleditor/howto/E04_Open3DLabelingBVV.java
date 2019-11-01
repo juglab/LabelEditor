@@ -17,7 +17,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.Ignore;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -27,8 +27,11 @@ import java.util.Random;
 
 public class E04_Open3DLabelingBVV {
 
+	static ImageJ ij = new ImageJ();
+	static JFrame frame = new JFrame("Label editor");
+	static LabelEditorPanel panel;
+
 	@Test
-	@Ignore
 	public void run() {
 		//create img with spheres at random places
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);
@@ -46,28 +49,34 @@ public class E04_Open3DLabelingBVV {
 		RandomAccessibleInterval<ARGBType> imgArgb = Converters.convert((RandomAccessibleInterval<IntType>) img, converter, new ARGBType());
 
 		//compute cca
-		ImageJ ij = new ImageJ();
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		//add to BVV
 		ImgPlus imgPlus = ij.op().create().imgPlus(ij.op().create().img(imgArgb));
-		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>();
+		panel = new LabelEditorBvvPanel<>();
 		panel.init(imgPlus, labeling);
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
-				panel.getModel().addTag(label, label);
+				panel.getModel().tagging().addTag(label, label);
 				panel.getRenderer().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
 
 			}
 		}
 		panel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,255,255));
 		panel.updateLabelRendering();
-		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
 	}
+
+	@AfterClass
+	public static void dispose() {
+		ij.context().dispose();
+		frame.dispose();
+		panel.dispose();
+	}
+
 
 	public static void main(String... args) throws IOException {
 		new E04_Open3DLabelingBVV().run();

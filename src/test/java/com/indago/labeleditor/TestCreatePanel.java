@@ -1,5 +1,7 @@
 package com.indago.labeleditor;
 
+import bdv.util.Bdv;
+import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -12,8 +14,9 @@ import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import java.awt.*;
 
 public class TestCreatePanel {
 
@@ -29,7 +32,6 @@ public class TestCreatePanel {
 	}
 
 	@Test
-	@Ignore
 	public void run() {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
@@ -37,17 +39,17 @@ public class TestCreatePanel {
 	}
 
 	@Test
-	@Ignore
 	public void useEmptyConstructor() {
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
 		panel.init(data, labels);
+		panel.dispose();
 	}
 
 	@Test
-	@Ignore
 	public void showOnlyData() {
 		LabelEditorBdvPanel<Object> panel = new LabelEditorBdvPanel<>();
 		panel.init(data);
+		panel.dispose();
 	}
 
 }

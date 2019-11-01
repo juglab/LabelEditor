@@ -20,14 +20,14 @@ public class TestDefaultLabelEditorModel {
 
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
-		assertNotNull(model.getTags());
-		assertEquals(0, model.getTags(LABEL1).size());
+		assertNotNull(model.tagging());
+		assertEquals(0, model.tagging().getTags(LABEL1).size());
 
-		model.addTag(LabelEditorTag.SELECTED, LABEL1);
-		assertEquals(1, model.getTags(LABEL1).size());
+		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL1);
+		assertEquals(1, model.tagging().getTags(LABEL1).size());
 
-		model.removeTag(LabelEditorTag.SELECTED, LABEL1);
-		assertEquals(0, model.getTags(LABEL1).size());
+		model.tagging().removeTag(LabelEditorTag.SELECTED, LABEL1);
+		assertEquals(0, model.tagging().getTags(LABEL1).size());
 
 	}
 }

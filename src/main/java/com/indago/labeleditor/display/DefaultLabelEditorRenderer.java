@@ -11,7 +11,6 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,22 +40,22 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	@Override
 	public synchronized void update() {
 
-		if(model.getLabels() == null) return;
+		if(model.labels() == null) return;
 
 		int[] lut;
 
 		// our LUT has one entry per index in the index img of our labeling
-		lut = new int[model.getLabels().getMapping().numSets()];
+		lut = new int[model.labels().getMapping().numSets()];
 
 		for (int i = 0; i < lut.length; i++) {
 			// get all labels of this index
-			Set<L> labels = model.getLabels().getMapping().labelsAtIndex(i);
+			Set<L> labels = model.labels().getMapping().labelsAtIndex(i);
 
 			// if there are no labels, we don't need to check for tags and can continue
 			if(labels.size() == 0) continue;
 
 			// get all tags associated with the labels of this index
-			Set<Object> mytags = filterTagsByLabels(model.getTags(), labels);
+			Set<Object> mytags = filterTagsByLabels(model.tagging().get(), labels);
 
 			lut[i] = mixColors(mytags, tagColors);
 
@@ -69,7 +68,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	public RandomAccessibleInterval<ARGBType> getRenderedLabels() {
 		update();
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
-		return Converters.convert(model.getLabels().getIndexImg(), converter, new ARGBType() );
+		return Converters.convert(model.labels().getIndexImg(), converter, new ARGBType() );
 	}
 
 	public int[] getLUT() {

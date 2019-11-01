@@ -10,6 +10,7 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -18,6 +19,9 @@ import java.awt.*;
 import java.util.Random;
 
 public class E09_BigData {
+
+	static JFrame frame = new JFrame("Label editor");
+	static LabelEditorPanel panel;
 
 	@Test
 	@Ignore
@@ -56,20 +60,25 @@ public class E09_BigData {
 		System.out.println("Done creating labeling");
 
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
-		model.addTag(LABEL1, TAG1);
-		model.addTag(LABEL2, TAG2);
+		model.tagging().addTag(LABEL1, TAG1);
+		model.tagging().addTag(LABEL2, TAG2);
 
-		LabelEditorPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>();
-		labelEditorPanel.init(model);
-		labelEditorPanel.getRenderer().setTagColor(TAG1, ARGBType.rgba(0, 255, 255, 255));
-		labelEditorPanel.getRenderer().setTagColor(TAG2, ARGBType.rgba(255, 0, 255, 255));
-		labelEditorPanel.updateLabelRendering();
+		panel = new LabelEditorBdvPanel<>();
+		panel.init(model);
+		panel.getRenderer().setTagColor(TAG1, ARGBType.rgba(0, 255, 255, 255));
+		panel.getRenderer().setTagColor(TAG2, ARGBType.rgba(255, 0, 255, 255));
+		panel.updateLabelRendering();
 
-		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel.get());
+		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	@AfterClass
+	public static void dispose() {
+		frame.dispose();
+		panel.dispose();
 	}
 
 	public static void main(String...args) {

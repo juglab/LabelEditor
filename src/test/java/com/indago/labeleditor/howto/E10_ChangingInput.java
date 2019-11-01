@@ -1,6 +1,7 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.LabelEditorBdvPanel;
+import com.indago.labeleditor.LabelEditorPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccess;
@@ -10,7 +11,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.Ignore;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -18,6 +19,10 @@ import java.awt.*;
 import java.util.Random;
 
 public class E10_ChangingInput {
+
+	static ImageJ ij = new ImageJ();
+	static JFrame frame = new JFrame("Label editor");
+	static LabelEditorBdvPanel<IntType> panel;
 
 	@Test
 	@Ignore
@@ -29,19 +34,19 @@ public class E10_ChangingInput {
 		for (int i = 0; i < 13; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 		}
-		LabelEditorBdvPanel<IntType> labelEditorPanel = new LabelEditorBdvPanel<>();
-		labelEditorPanel.init(imgPlus);
+		panel = new LabelEditorBdvPanel<>();
+		panel.init(imgPlus);
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel.get());
+		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-		while(true) {
+		for (int i = 0; i < 3; i++) {
 			drawRandomSphere(imgPlus, ra, random);
-			ImgLabeling<IntType, IntType> labeling = new ImageJ().op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
-			labelEditorPanel.init(imgPlus, labeling);
-			labelEditorPanel.bdvGetSources().forEach(source -> source.setDisplayRange(0, 100));
-			Thread.sleep(5000);
+			ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
+			panel.init(imgPlus, labeling);
+			panel.bdvGetSources().forEach(source -> source.setDisplayRange(0, 100));
+			Thread.sleep(500);
 		}
 	}
 
@@ -50,6 +55,13 @@ public class E10_ChangingInput {
 		HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 5);
 		for (IntType value : hyperSphere)
 			try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
+	}
+
+	@AfterClass
+	public static void dispose() {
+		frame.dispose();
+		panel.dispose();
+		ij.context().dispose();
 	}
 
 	public static void main(String... args) throws InterruptedException {

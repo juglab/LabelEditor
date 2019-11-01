@@ -62,8 +62,8 @@ public class RunLabelEditorPanel {
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
-		model.addTag(LABEL1, TAG1);
-		model.addTag(LABEL2, TAG2);
+		model.tagging().addTag(LABEL1, TAG1);
+		model.tagging().addTag(LABEL2, TAG2);
 		return model;
 	}
 }

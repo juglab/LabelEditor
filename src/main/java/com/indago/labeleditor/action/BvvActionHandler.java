@@ -3,7 +3,6 @@ package com.indago.labeleditor.action;
 import bvv.util.BvvHandle;
 import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.model.LabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
@@ -19,8 +18,6 @@ import org.scijava.ui.behaviour.util.Behaviours;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -160,7 +157,7 @@ public class BvvActionHandler<L> extends AbstractActionHandler<L> {
 	}
 
 	private LabelingType<L> getLabelsAtPosition(Localizable pos) {
-		RandomAccess<LabelingType<L>> ra = model.getLabels().randomAccess();
+		RandomAccess<LabelingType<L>> ra = model.labels().randomAccess();
 		ra.setPosition(pos);
 		return ra.get();
 	}

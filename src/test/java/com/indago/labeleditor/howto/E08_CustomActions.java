@@ -7,16 +7,13 @@ import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
-import net.imglib2.FinalInterval;
 import net.imglib2.Localizable;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.util.Intervals;
-import net.imglib2.view.Views;
-import org.junit.Ignore;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -31,14 +28,18 @@ import java.util.List;
  */
 public class E08_CustomActions {
 
+	static ImageJ ij = new ImageJ();
+	static JFrame frame = new JFrame("Label editor");
+	static LabelEditorBdvPanel<Integer> panel;
+
 	class PopUpDemo extends JPopupMenu {
 		JMenuItem anItem;
 		public PopUpDemo(LabelEditorPanel<Integer> panel, Localizable mouse) {
 			anItem = new JMenuItem("Click Me!");
 			anItem.addActionListener(actionEvent -> {
 				System.out.println("Event!");
-				List<Integer> labels = panel.getModel().getLabels(LabelEditorTag.SELECTED);
-				labels.forEach(label -> panel.getModel().addTag("special", label));
+				List<Integer> labels = panel.getModel().tagging().getLabels(LabelEditorTag.SELECTED);
+				labels.forEach(label -> panel.getModel().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );
 				panel.updateLabelRendering();
 
@@ -51,12 +52,7 @@ public class E08_CustomActions {
 	 * Demonstrates how to register a mouse action.
 	 */
 	@Test
-	@Ignore
 	public void mouseAction() throws IOException {
-
-		//initialize ImageJ
-		ImageJ ij = new ImageJ();
-		ij.launch();
 
 		//open blobs
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
@@ -67,7 +63,7 @@ public class E08_CustomActions {
 
 		// build LabelEditorPanel
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		panel = new LabelEditorBdvPanel<>();
 		panel.init(new ImgPlus<>(input), model);
 
 		//set custom colors for tags set in the MouseAdapter
@@ -84,9 +80,9 @@ public class E08_CustomActions {
 			public void mousePressed(MouseEvent e) {
 				if (e.isPopupTrigger())
 					doPop(e, panel.getActionHandler().getDataPositionAtMouse());
-				model.removeTag("no");
+				model.tagging().removeTag("no");
 				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition(e)) {
-					model.addTag("yes", label);
+					model.tagging().addTag("yes", label);
 				}
 				panel.updateLabelRendering();
 				super.mousePressed(e);
@@ -96,9 +92,9 @@ public class E08_CustomActions {
 			public void mouseReleased(MouseEvent e) {
 				if (e.isPopupTrigger())
 					doPop(e, panel.getActionHandler().getDataPositionAtMouse());
-				model.removeTag("yes");
+				model.tagging().removeTag("yes");
 				for (Integer label : panel.getActionHandler().getLabelsAtMousePosition(e)) {
-					model.addTag("no", label);
+					model.tagging().addTag("no", label);
 				}
 				panel.updateLabelRendering();
 				super.mouseReleased(e);
@@ -111,11 +107,17 @@ public class E08_CustomActions {
 		});
 
 		//build frame
-		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel);
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	@AfterClass
+	public static void dispose() {
+		ij.context().dispose();
+		frame.dispose();
+		panel.dispose();
 	}
 
 	public static void main(String...args) throws IOException {

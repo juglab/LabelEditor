@@ -86,21 +86,21 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 
 	protected void selectFirst(LabelingType<L> currentLabels) {
 		List<L> orderedLabels = new ArrayList<>(currentLabels);
-		orderedLabels.sort(model::compare);
+		orderedLabels.sort(model.getLabelComparator()::compare);
 		deselectAll();
 		select(orderedLabels.get(0));
 	}
 
 	protected boolean isSelected(L label) {
-		return model.getTags(label).contains(LabelEditorTag.SELECTED);
+		return model.tagging().getTags(label).contains(LabelEditorTag.SELECTED);
 	}
 
 	protected boolean anySelected(LabelingType<L> labels) {
-		return labels.stream().anyMatch(label -> model.getTags(label).contains(LabelEditorTag.SELECTED));
+		return labels.stream().anyMatch(label -> model.tagging().getTags(label).contains(LabelEditorTag.SELECTED));
 	}
 
 	protected void select(L label) {
-		model.addTag(LabelEditorTag.SELECTED, label);
+		model.tagging().addTag(LabelEditorTag.SELECTED, label);
 	}
 
 	protected void selectPrevious(LabelingType<L> labels) {
@@ -128,19 +128,19 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 	}
 
 	protected void deselect(L label) {
-		model.removeTag(LabelEditorTag.SELECTED, label);
+		model.tagging().removeTag(LabelEditorTag.SELECTED, label);
 	}
 
 	protected void deselectAll() {
-		model.removeTag(LabelEditorTag.SELECTED);
+		model.tagging().removeTag(LabelEditorTag.SELECTED);
 	}
 
 	protected void defocusAll() {
-		model.removeTag(LabelEditorTag.MOUSE_OVER);
+		model.tagging().removeTag(LabelEditorTag.MOUSE_OVER);
 		currentLabels = null;
 	}
 
 	protected void focus(L label) {
-		model.addTag(LabelEditorTag.MOUSE_OVER, label);
+		model.tagging().addTag(LabelEditorTag.MOUSE_OVER, label);
 	}
 }

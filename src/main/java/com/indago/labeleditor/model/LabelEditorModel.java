@@ -3,30 +3,22 @@ package com.indago.labeleditor.model;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Comparator;
 
-public interface LabelEditorModel <L>  {
+public interface LabelEditorModel <L> {
 
-	ImgLabeling<L, IntType> getLabels();
+	void init(ImgLabeling<L, IntType> labels);
 
-	void setLabels(ImgLabeling<L, IntType> labels);
+	ImgLabeling<L, IntType> labels();
 
-	Map<L, Set <Object> > getTags();
+	TagLabelRelation<L> tagging();
 
-	void addTag(Object tag, L label);
+	TagChangeListenerManager listener();
 
-	void removeTag(Object tag, L label);
+	void setTagComparator(Comparator<Object> comparator);
 
-	Set<Object> getTags(L label);
+	void setLabelComparator(Comparator<L> comparator);
 
-	void removeTag(Object tag);
-
-	int compare(L label1, L label2);
-
-	void addListener(TagChangeListener listener);
-
-	List<L> getLabels(LabelEditorTag tag);
+	Comparator<Object> getTagComparator();
+	Comparator<L> getLabelComparator();
 }

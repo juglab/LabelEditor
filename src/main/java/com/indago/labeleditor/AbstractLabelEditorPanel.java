@@ -64,6 +64,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	}
 
 	protected void setData(ImgPlus data) {
+		if(data == null) return;
 		this.data = data;
 		if(data.dimensionIndex(Axes.Z) > 0) {
 			mode3D = true;

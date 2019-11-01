@@ -79,15 +79,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return new BdvActionHandler<>(bdvHandlePanel, model, renderer);
 	}
 
-
-
-
-	private void populateBdv() {
-		bdvRemoveAll();
-		addDataToBDV();
-		addLabelsToBDV();
-	}
-
 	private void addLabelsToBDV() {
 		if(renderer == null) return;
 		//TODO make virtual channels work
@@ -150,5 +141,10 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		super.setData(data);
 		displayInBdv(data, "RAW");
 		updateLabelRendering();
+	}
+
+	@Override
+	public void dispose() {
+		if(bdvGetHandlePanel() != null) bdvGetHandlePanel().close();
 	}
 }

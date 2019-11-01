@@ -6,8 +6,8 @@ import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,27 +18,37 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private ImgLabeling<L, IntType > labels;
 	private final Map<L, Set<Object>> tags = new HashMap<>();
 	private Map<L, LabelRegion<L>> orderedLabels;
-	private final List<TagChangeListener> listeners = new ArrayList<>();
+	private TagLabelRelation<L> tagLabelRelation;
+	private Comparator<L> labelComparator;
+	private Comparator<Object> tagComparator;
+
+	List<Object> orderedTags = new ArrayList();
 
 	public DefaultLabelEditorModel() {
-		labels = null;
+		init(null);
 	}
 
 	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labels) {
-		setLabels(labels);
+		init(labels);
 	}
 
 	@Override
-	public ImgLabeling<L, IntType> getLabels() {
+	public ImgLabeling<L, IntType> labels() {
 		return labels;
 	}
 
 	@Override
-	public void setLabels(ImgLabeling<L, IntType> labeling) {
+	public void init(ImgLabeling<L, IntType> labeling) {
 		if(labeling != null) {
 			this.labels = labeling;
 			createOrderedLabels(labeling);
+			tagLabelRelation = new DefaultTagLabelRelation(new TagChangeListenerManager());
+			labelComparator = this::compareLabels;
+			tagComparator = this::compareTags;
+			orderedTags.add(LabelEditorTag.MOUSE_OVER);
+			orderedTags.add(LabelEditorTag.SELECTED);
 		}
+
 	}
 
 	private void createOrderedLabels(ImgLabeling<L, IntType> labeling) {
@@ -53,52 +63,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		regionSet.forEach(region -> orderedLabels.put(region.getLabel(), region));
 	}
 
-	@Override
-	public Map<L, Set<Object>> getTags() {
-		return tags;
-	}
-
-	@Override
-	public void addTag(Object tag, L label) {
-		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
-		if(set.contains(tag)) return;
-		set.add(tag);
-		notifyListeners(tag, label, TagChangedEvent.Action.ADDED);
-	}
-
-	@Override
-	public void removeTag(Object tag, L label) {
-		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
-		if(!set.contains(tag)) return;
-		set.remove(tag);
-		notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);
-	}
-
-	@Override
-	public Set<Object> getTags(L label) {
-		return tags.computeIfAbsent(label, k -> new HashSet<>());
-	}
-
-	@Override
-	public void removeTag(Object tag) {
-		tags.forEach( (label, tags) -> {
-			if(!tags.contains(tag)) return;
-			tags.remove(tag);
-			notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);
-		});
-	}
-
-	private void notifyListeners(Object tag, L label, TagChangedEvent.Action action) {
-		TagChangedEvent e = new TagChangedEvent();
-		e.action = action;
-		e.tag = tag;
-		e.label = label;
-		System.out.println("[INFO] " + e.toString());
-		listeners.forEach(listener -> listener.tagChanged(e));
-	}
-
-	@Override
-	public int compare(L label1, L label2) {
+	private int compareLabels(L label1, L label2) {
 		for (Map.Entry<L, LabelRegion<L>> entry : orderedLabels.entrySet()) {
 			if(entry.getKey().equals(label1)) return 1;
 			if(entry.getKey().equals(label2)) return -1;
@@ -106,21 +71,46 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		return 0;
 	}
 
-	@Override
-	public void addListener(TagChangeListener listener) {
-		listeners.add(listener);
+	private int compareTags(Object tag1, Object tag2) {
+		int tag1Index = orderedTags.indexOf(tag1);
+		int tag2Index = orderedTags.indexOf(tag2);
+		if(tag1Index < 0 && tag2Index < 0) {
+			return tag1.toString().compareTo(tag2.toString());
+		}
+		return tag1Index - tag2Index;
 	}
 
 	@Override
-	public List<L> getLabels(LabelEditorTag tag) {
-		List<L> labels = new ArrayList<>();
-		tags.forEach((l, tags) -> {
-			if(tags.contains(tag)) labels.add(l);
-		});
-		return labels;
+	public TagLabelRelation<L> tagging() {
+		return tagLabelRelation;
 	}
 
-	public Map<L, LabelRegion <L> > getOrderedLabelRegions() {
+	@Override
+	public TagChangeListenerManager listener() {
+		return null;
+	}
+
+	@Override
+	public void setTagComparator(Comparator<Object> comparator) {
+		this.tagComparator = comparator;
+	}
+
+	@Override
+	public void setLabelComparator(Comparator<L> comparator) {
+		this.labelComparator = comparator;
+	}
+
+	@Override
+	public Comparator<Object> getTagComparator() {
+		return tagComparator;
+	}
+
+	@Override
+	public Comparator<L> getLabelComparator() {
+		return labelComparator;
+	}
+
+	public Map<L, LabelRegion <L> > labelRegions() {
 		return orderedLabels;
 	}
 

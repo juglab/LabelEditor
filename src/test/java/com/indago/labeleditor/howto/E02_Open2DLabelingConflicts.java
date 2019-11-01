@@ -6,36 +6,33 @@ import com.indago.labeleditor.LabelEditorPanel;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import io.scif.img.IO;
-import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
-import net.imglib2.IterableInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
-import org.junit.Ignore;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 /**
  * How to open an {@link ImgLabeling} in a {@link LabelEditorBdvPanel}.
  */
 public class E02_Open2DLabelingConflicts {
 
+	static JFrame frame = new JFrame("Label editor");
+	static LabelEditorPanel panel;
+
 	@Test
-	@Ignore
 	public void run() {
 
 		String LABEL1 = "label1";
@@ -59,19 +56,24 @@ public class E02_Open2DLabelingConflicts {
 
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
-		model.addTag(TAG1, LABEL1);
-		model.addTag(TAG2, LABEL2);
+		model.tagging().addTag(TAG1, LABEL1);
+		model.tagging().addTag(TAG2, LABEL2);
 
-		LabelEditorPanel<String> labelEditorPanel = new LabelEditorBdvPanel<>();
-		labelEditorPanel.init(model);
-		labelEditorPanel.getRenderer().setTagColor(TAG1, ARGBType.rgba(255,255,0,100));
-		labelEditorPanel.getRenderer().setTagColor(TAG2, ARGBType.rgba(255,0,255,100));
-		labelEditorPanel.updateLabelRendering();
-		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel.get());
+		panel = new LabelEditorBdvPanel<>();
+		panel.init(model);
+		panel.getRenderer().setTagColor(TAG1, ARGBType.rgba(100,100,90,100));
+		panel.getRenderer().setTagColor(TAG2, ARGBType.rgba(120,90,120,100));
+		panel.updateLabelRendering();
+		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	@AfterClass
+	public static void dispose() {
+		frame.dispose();
+		panel.dispose();
 	}
 
 	public static void main(String... args) {

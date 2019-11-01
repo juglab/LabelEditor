@@ -9,7 +9,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.Ignore;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -22,33 +22,41 @@ import java.util.Random;
  */
 public class E07_CustomTags {
 
+	static ImageJ ij = new ImageJ();
+	static JFrame frame = new JFrame("Label editor");
+	static LabelEditorPanel panel;
+
 	@Test
-	@Ignore
 	public void run() throws IOException {
-		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
-		LabelEditorPanel<Integer> labelEditorPanel = new LabelEditorBdvPanel<>();
-		labelEditorPanel.init(labeling);
+		panel = new LabelEditorBdvPanel<>();
+		panel.init(labeling);
 
 		Random random = new Random();
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
-				labelEditorPanel.getModel().addTag(label, label);
+				panel.getModel().tagging().addTag(label, label);
 				int brightness = random.nextInt(155);
-				labelEditorPanel.getRenderer().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
+				panel.getRenderer().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
 
 			}
 		}
-		labelEditorPanel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
-		labelEditorPanel.getRenderer().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
-		labelEditorPanel.updateLabelRendering();
+		panel.getRenderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
+		panel.getRenderer().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
+		panel.updateLabelRendering();
 
-		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(labelEditorPanel.get());
+		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	@AfterClass
+	public static void dispose() {
+		ij.context().dispose();
+		frame.dispose();
+		panel.dispose();
 	}
 
 	public static void main(String...args) throws IOException {

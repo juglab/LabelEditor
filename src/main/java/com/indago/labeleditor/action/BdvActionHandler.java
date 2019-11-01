@@ -64,7 +64,7 @@ public class BdvActionHandler<L> extends AbstractActionHandler<L> {
 
 	@Override
 	public LabelingType<L> getLabelsAtMousePosition(MouseEvent e) {
-		RandomAccess<LabelingType<L>> ra = model.getLabels().randomAccess();
+		RandomAccess<LabelingType<L>> ra = model.labels().randomAccess();
 		ra.setPosition(getDataPositionAtMouse());
 		return ra.get();
 	}

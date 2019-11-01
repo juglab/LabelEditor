@@ -21,7 +21,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.Ignore;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,8 +29,9 @@ import java.util.Random;
 
 public class E06_AddToExistingBVV {
 
+	static ImageJ ij = new ImageJ();
+
 	@Test
-	@Ignore
 	public void run() {
 
 		//create img with spheres at random places
@@ -49,7 +50,6 @@ public class E06_AddToExistingBVV {
 		RandomAccessibleInterval<ARGBType> imgArgb = Converters.convert((RandomAccessibleInterval<IntType>) img, converter, new ARGBType());
 
 		//compute cca
-		ImageJ ij = new ImageJ();
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		//create model and renderer
@@ -57,7 +57,7 @@ public class E06_AddToExistingBVV {
 		LabelEditorRenderer<Integer> renderer = new DefaultLabelEditorRenderer<>(model);
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
-				model.addTag(label, label);
+				model.tagging().addTag(label, label);
 				renderer.setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
 
 			}
@@ -68,6 +68,12 @@ public class E06_AddToExistingBVV {
 
 		ActionHandler<Integer> actionHandler = new BvvActionHandler<>(source1.getBvvHandle(), model, renderer);
 		actionHandler.init();
+	}
+
+
+	@AfterClass
+	public static void dispose() {
+		ij.context().dispose();
 	}
 
 	public static void main(String... args) throws IOException {
