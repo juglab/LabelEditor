@@ -20,7 +20,7 @@
 
 	<groupId>com.indago</groupId>
 	<artifactId>labeleditor</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.2.0</version>
 
 	<name>Label Editor</name>
 	<description>UI component for image segmentation label comparison and selection</description>
@@ -153,7 +153,7 @@
 		<connection>scm:git:git://github.com/juglab/labeleditor</connection>
 		<developerConnection>scm:git:git@github.com:juglab/labeleditor</developerConnection>
 		<url>https://github.com/juglab/labeleditor</url>
-	  <tag>HEAD</tag>
+	  <tag>labeleditor-0.2.0</tag>
   </scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
