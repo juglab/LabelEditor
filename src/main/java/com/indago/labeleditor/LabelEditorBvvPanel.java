@@ -7,8 +7,7 @@ import bvv.util.BvvSource;
 import bvv.util.BvvStackSource;
 import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.BvvActionHandler;
-import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
-import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
@@ -38,13 +37,8 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model, LabelEditorRenderer<L> renderer) {
+	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer) {
 		return new BvvActionHandler<>(getBvvHandle(), model, renderer);
-	}
-
-	@Override
-	protected LabelEditorRenderer<L> initRenderer(LabelEditorModel<L> model) {
-		return new DefaultLabelEditorRenderer<L>(model);
 	}
 
 	private void populateBvv() {
@@ -52,8 +46,9 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		if(data != null) {
 			displayInBvv( data, "RAW" );
 		}
-		if(renderer == null) return;
-		RandomAccessibleInterval<ARGBType> labelColorImg = renderer.getRenderedLabels();
+		if(rendering().size() == 0) return;
+		//TODO add all renderers
+		RandomAccessibleInterval<ARGBType> labelColorImg = rendering().getRenderings().get(0);
 
 		//TODO make virtual channels work
 //		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
@@ -100,9 +95,9 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	public synchronized void updateLabelRendering() {
-		renderer.update();
+		if(rendering().size() > 0) rendering().update();
 		bvvHandle.getViewerPanel().requestRepaint();
-		bvvSources.forEach(source -> source.invalidate());
+		bvvSources.forEach(BvvStackSource::invalidate);
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package com.indago.labeleditor;
 
 import com.indago.labeleditor.action.ActionHandler;
+import com.indago.labeleditor.action.ActionManager;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
@@ -13,17 +15,19 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractLabelEditorPanel<L> extends JPanel implements LabelEditorPanel<L> {
 
 	protected ImgPlus data;
 
 	protected LabelEditorModel<L> model;
-	protected LabelEditorRenderer<L> renderer;
-	protected ActionHandler<L> actionHandler;
 
 	protected boolean panelBuilt = false;
 	protected boolean mode3D = false;
+	private ActionManager<L> actionManager = new ActionManager<>();
+	private RenderingManager<L> renderingManager = new RenderingManager<>();
 
 	public AbstractLabelEditorPanel() {
 	}
@@ -53,13 +57,16 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	@Override
 	public void init(LabelEditorModel<L> model) {
+		actionManager.clear();
 		if(model != null) {
 			this.model = model;
-			renderer = initRenderer(model);
+			renderingManager.init(model);
+			renderingManager.addAll(initRenderers());
 			buildPanel();
-			actionHandler = initActionHandler(model, renderer);
+			ActionHandler<L> actionHandler = initActionHandler(model, renderingManager);
 			actionHandler.set3DViewMode(mode3D);
 			actionHandler.init();
+			actionManager.add(actionHandler);
 		}
 	}
 
@@ -83,18 +90,20 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected abstract Component buildViewer();
 
-	protected abstract ActionHandler<L> initActionHandler(LabelEditorModel<L> model, LabelEditorRenderer<L> renderer);
+	protected abstract ActionHandler<L> initActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer);
 
-	protected LabelEditorRenderer<L> initRenderer(LabelEditorModel<L> model) {
-		return new DefaultLabelEditorRenderer<L>(model);
+	protected List<LabelEditorRenderer<L>> initRenderers() {
+		List<LabelEditorRenderer<L>> res = new ArrayList<>();
+		res.add(new DefaultLabelEditorRenderer<L>());
+		return res;
 	}
 
 	@Override
 	public abstract void updateLabelRendering();
 
 	@Override
-	public LabelEditorRenderer<L> renderer() {
-		return renderer;
+	public RenderingManager<L> rendering() {
+		return renderingManager;
 	}
 
 	@Override
@@ -103,8 +112,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	}
 
 	@Override
-	public ActionHandler<L> action() {
-		return actionHandler;
+	public ActionManager<L> action() {
+		return actionManager;
 	}
 
 	@Override

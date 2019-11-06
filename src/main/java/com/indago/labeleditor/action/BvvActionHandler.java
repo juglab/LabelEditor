@@ -1,7 +1,7 @@
 package com.indago.labeleditor.action;
 
 import bvv.util.BvvHandle;
-import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
@@ -26,7 +26,7 @@ public class BvvActionHandler<L> extends AbstractActionHandler<L> {
 
 	private final BvvHandle panel;
 
-	public BvvActionHandler(BvvHandle panel, LabelEditorModel<L> model, LabelEditorRenderer renderer) {
+	public BvvActionHandler(BvvHandle panel, LabelEditorModel<L> model, RenderingManager<L> renderer) {
 		super(model, renderer);
 		this.panel = panel;
 	}

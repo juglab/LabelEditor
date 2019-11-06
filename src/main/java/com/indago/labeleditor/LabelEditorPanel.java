@@ -1,7 +1,7 @@
 package com.indago.labeleditor;
 
-import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.action.ActionManager;
+import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -22,11 +22,11 @@ public interface LabelEditorPanel<L> extends Disposable {
 
 	void init(LabelEditorModel<L> model);
 
-	LabelEditorRenderer<L> renderer();
+	RenderingManager<L> rendering();
 
 	LabelEditorModel<L> model();
 
-	ActionHandler<L> action();
+	ActionManager<L> action();
 
 	Container get();
 

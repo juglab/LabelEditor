@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class LUTBuilderTest <T extends RealType<T> & NativeType<T>> {
 
@@ -34,23 +33,6 @@ public class LUTBuilderTest <T extends RealType<T> & NativeType<T>> {
 		data = new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y});
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( data.dimension(0), data.dimension(1) );
 		labels = new ImgLabeling<>( backing );
-	}
-
-
-	@Test
-	public void overrideLUTBuilder() {
-		LabelEditorRenderer renderer = new DefaultLabelEditorRenderer<String>((ImgLabeling)null) {
-			@Override
-			public void update() {
-				lut = new int[]{0,1};
-			}
-		};
-		renderer.update();
-		int[] lut = renderer.getLUT();
-		assertNotNull(lut);
-		assertEquals(2, lut.length);
-		assertEquals(0, lut[0]);
-		assertEquals(1, lut[1]);
 	}
 
 	@Test

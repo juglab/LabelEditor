@@ -67,11 +67,11 @@ public class E08_CustomActions {
 		panel.init(new ImgPlus<>(input), model);
 
 		//set custom colors for tags set in the MouseAdapter
-		panel.renderer().removeTagColor(LabelEditorTag.SELECTED);
-		panel.renderer().removeTagColor(LabelEditorTag.MOUSE_OVER);
-		panel.renderer().setTagColor("yes", ARGBType.rgba(155, 155, 0, 255));
-		panel.renderer().setTagColor("no", ARGBType.rgba(0, 155, 255, 255));
-		panel.renderer().setTagColor("special", ARGBType.rgba(255, 0, 0, 255));
+		panel.rendering().removeTagColor(LabelEditorTag.SELECTED);
+		panel.rendering().removeTagColor(LabelEditorTag.MOUSE_OVER);
+		panel.rendering().setTagColor("yes", ARGBType.rgba(155, 155, 0, 255));
+		panel.rendering().setTagColor("no", ARGBType.rgba(0, 155, 255, 255));
+		panel.rendering().setTagColor("special", ARGBType.rgba(255, 0, 0, 255));
 		panel.updateLabelRendering();
 
 		//register custom actions

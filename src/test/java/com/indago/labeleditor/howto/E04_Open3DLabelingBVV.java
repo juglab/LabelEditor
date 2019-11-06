@@ -29,7 +29,7 @@ public class E04_Open3DLabelingBVV {
 
 	static ImageJ ij = new ImageJ();
 	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel panel;
+	static LabelEditorPanel<Integer> panel;
 
 	@Test
 	public void run() {
@@ -58,11 +58,11 @@ public class E04_Open3DLabelingBVV {
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
 				panel.model().tagging().addTag(label, label);
-				panel.renderer().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
+				panel.rendering().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
 
 			}
 		}
-		panel.renderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,255,255));
+		panel.rendering().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,255,255));
 		panel.updateLabelRendering();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

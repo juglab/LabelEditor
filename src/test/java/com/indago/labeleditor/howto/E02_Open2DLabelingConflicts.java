@@ -5,11 +5,6 @@ import com.indago.labeleditor.LabelEditorBdvPanel;
 import com.indago.labeleditor.LabelEditorPanel;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
-import io.scif.img.IO;
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
-import net.imagej.axis.AxisType;
-import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
@@ -37,17 +32,22 @@ public class E02_Open2DLabelingConflicts {
 
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
+		String LABEL3 = "label3";
+		String LABEL4 = "label4";
 
 		String TAG1 = "tag1";
 		String TAG2 = "tag2";
 
-		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( 500, 500 );
+		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( 500, 500, 2 );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 
-
+		//t1
 		Views.interval( labels, Intervals.createMinSize( 220, 220, 0, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
-		Views.interval( labels, Intervals.createMinSize( 280, 280, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+		Views.interval( labels, Intervals.createMinSize( 220, 280, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
+		Views.interval( labels, Intervals.createMinSize( 280, 280, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL3 ) );
+		Views.interval( labels, Intervals.createMinSize( 280, 220, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL4 ) );
 
+		//t2
 		Views.interval( labels, Intervals.createMinSize( 320, 320, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
@@ -55,11 +55,13 @@ public class E02_Open2DLabelingConflicts {
 
 		model.tagging().addTag(TAG1, LABEL1);
 		model.tagging().addTag(TAG2, LABEL2);
+		model.tagging().addTag(TAG1, LABEL3);
+		model.tagging().addTag(TAG2, LABEL4);
 
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
-		panel.renderer().setTagColor(TAG1, ARGBType.rgba(100,100,90,100));
-		panel.renderer().setTagColor(TAG2, ARGBType.rgba(120,90,120,100));
+		panel.rendering().setTagColor(TAG1, ARGBType.rgba(0,255,255,100));
+		panel.rendering().setTagColor(TAG2, ARGBType.rgba(255,0,255,100));
 		panel.updateLabelRendering();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

@@ -7,7 +7,7 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.BdvActionHandler;
 import com.indago.labeleditor.action.InputTriggerConfig2D;
-import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
@@ -75,12 +75,12 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model, LabelEditorRenderer<L> renderer) {
+	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer) {
 		return new BdvActionHandler<>(bdvHandlePanel, model, renderer);
 	}
 
 	private void addLabelsToBDV() {
-		if(renderer == null) return;
+		if(rendering().size() == 0) return;
 		//TODO make virtual channels work
 //		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
 //		if(virtualChannels != null) {
@@ -95,7 +95,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-		displayInBdv(renderer.getRenderedLabels(),"solution");
+		//TODO display all renderings
+		displayInBdv(rendering().getRenderings().get(0),"solution");
 //		}
 	}
 
@@ -132,7 +133,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	public synchronized void updateLabelRendering() {
-		if(renderer != null) renderer.update();
+		rendering().update();
 		bdvHandlePanel.getViewerPanel().requestRepaint();
 	}
 

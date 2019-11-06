@@ -38,12 +38,12 @@ public class E07_CustomTags {
 			for (Integer label : labels) {
 				panel.model().tagging().addTag(label, label);
 				int brightness = random.nextInt(155);
-				panel.renderer().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
+				panel.rendering().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
 
 			}
 		}
-		panel.renderer().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
-		panel.renderer().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
+		panel.rendering().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
+		panel.rendering().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
 		panel.updateLabelRendering();
 
 		frame.setContentPane(panel.get());

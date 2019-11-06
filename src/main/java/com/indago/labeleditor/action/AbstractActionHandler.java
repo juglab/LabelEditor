@@ -1,6 +1,6 @@
 package com.indago.labeleditor.action;
 
-import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imglib2.roi.labeling.LabelingType;
@@ -15,12 +15,12 @@ import java.util.List;
 public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 
 	protected final LabelEditorModel<L> model;
-	protected final LabelEditorRenderer renderer;
+	protected final RenderingManager<L> renderer;
 	protected LabelingType<L> currentLabels;
 	protected int currentSegment = -1;
 	protected boolean mode3D;
 
-	public AbstractActionHandler(LabelEditorModel<L> model, LabelEditorRenderer renderer) {
+	public AbstractActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer) {
 		this.model = model;
 		this.renderer = renderer;
 	}

@@ -7,6 +7,7 @@ import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.BdvActionHandler;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -39,7 +40,7 @@ public class E05_AddToExistingBDV {
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
-		LabelEditorRenderer<Integer> renderer = new DefaultLabelEditorRenderer<>(model);
+		RenderingManager<Integer> renderer = new RenderingManager<>(model);
 		model.labelRegions().forEach((label, regions) -> {
 			model.tagging().addTag("displayed", label);
 		});
@@ -48,7 +49,7 @@ public class E05_AddToExistingBDV {
 		JPanel viewer = new JPanel(new MigLayout());
 		panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 //		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
-		BdvFunctions.show(renderer.getRenderedLabels(), "labels", Bdv.options().addTo(panel));
+		BdvFunctions.show(renderer.getRenderings().get(0), "labels", Bdv.options().addTo(panel));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );
 		ActionHandler actionHandler = new BdvActionHandler<>(panel, model, renderer);

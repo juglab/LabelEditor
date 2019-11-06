@@ -10,7 +10,6 @@ import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -30,6 +29,7 @@ public class E01_Open2DLabeling {
 	public void run() throws IOException {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		Img<IntType> thresholded = (Img) ij.op().threshold().otsu(input);
+
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		panel = new LabelEditorBdvPanel<>();
