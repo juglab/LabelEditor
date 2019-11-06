@@ -69,6 +69,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 			float newgreen = ARGBType.blue(color);
 			float newblue = ARGBType.green(color);
 			float newalpha = ((float)ARGBType.alpha(color))/255.f;
+			if(alpha < 0.0001 && newalpha < 0.0001) continue;
 			red = (red*alpha+newred*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
 			green = (green*alpha+newgreen*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
 			blue = (blue*alpha+newblue*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));

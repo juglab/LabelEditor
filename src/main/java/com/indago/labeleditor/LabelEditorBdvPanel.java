@@ -3,10 +3,12 @@ package com.indago.labeleditor;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
+import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.BdvActionHandler;
 import com.indago.labeleditor.action.InputTriggerConfig2D;
+import com.indago.labeleditor.display.LabelEditorAccumulateProjector;
 import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
@@ -64,12 +66,13 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected Component buildViewer() {
 		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
+		BdvOptions options = Bdv.options().accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
 		if(!mode3D && config != null ) {
 			System.out.println("2D mode");
-			bdvHandlePanel = new BdvHandlePanel( (Frame) this.getTopLevelAncestor(), Bdv.options().is2D().inputTriggerConfig(config));
+			bdvHandlePanel = new BdvHandlePanel( (Frame) this.getTopLevelAncestor(), options.is2D().inputTriggerConfig(config));
 		} else {
 			System.out.println("3D mode");
-			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), Bdv.options() );
+			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), options);
 		}
 		return bdvHandlePanel.getViewerPanel();
 	}
