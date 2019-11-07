@@ -1,5 +1,6 @@
 package com.indago.labeleditor;
 
+import bdv.util.BdvHandlePanel;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvHandle;
@@ -12,7 +13,10 @@ import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
+import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.integer.IntType;
+import tpietzsch.example2.VolumeViewerPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,6 +26,43 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private BvvHandle bvvHandle;
 	private List< BvvStackSource > bvvSources;
+
+	@Override
+	public void init(ImgPlus data) {
+		super.init(data);
+		bvvRemoveAll();
+		addDataToBvv();
+	}
+
+	@Override
+	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
+		super.init(data, labels);
+		bvvRemoveAll();
+		addDataToBvv();
+		addLabelsToBvv();
+	}
+
+	@Override
+	public void init(ImgPlus data, LabelEditorModel<L> model) {
+		super.init(data, model);
+		bvvRemoveAll();
+		addDataToBvv();
+		addLabelsToBvv();
+	}
+
+	@Override
+	public void init(ImgLabeling<L, IntType> labels) {
+		super.init(labels);
+		bvvRemoveAll();
+		addLabelsToBvv();
+	}
+
+	@Override
+	public void init(LabelEditorModel<L> model) {
+		super.init(model);
+		bvvRemoveAll();
+		addLabelsToBvv();
+	}
 
 	@Override
 	protected Component buildViewer() {
@@ -41,11 +82,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return new BvvActionHandler<>(getBvvHandle(), model, renderer);
 	}
 
-	private void populateBvv() {
-		bvvRemoveAll();
-		if(data != null) {
-			displayInBvv( data, "RAW" );
-		}
+	private void addLabelsToBvv() {
 		if(rendering().size() == 0) return;
 		//TODO add all renderers
 		RandomAccessibleInterval<ARGBType> labelColorImg = rendering().getRenderings().get(0);
@@ -66,6 +103,12 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 //		} else {
 		displayInBvv(labelColorImg, "solution");
 //		}
+	}
+
+	private void addDataToBvv() {
+		if(data != null) {
+			displayInBvv( data, "RAW" );
+		}
 	}
 
 	private void displayInBvv(final RandomAccessibleInterval img,
