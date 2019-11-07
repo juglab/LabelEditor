@@ -12,23 +12,22 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
+public class SelectionActions<L> implements ActionHandler<L> {
 
 	protected final LabelEditorModel<L> model;
 	protected final RenderingManager<L> renderer;
+	private final ActionManager<L> actionManager;
 	protected LabelingType<L> currentLabels;
 	protected int currentSegment = -1;
-	protected boolean mode3D;
 
-	public AbstractActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer) {
+	public SelectionActions(LabelEditorModel<L> model, RenderingManager<L> renderer, ActionManager<L> actionManager) {
 		this.model = model;
 		this.renderer = renderer;
+		this.actionManager = actionManager;
 	}
 
-	public abstract void init();
-
 	protected void handleMouseMove(MouseEvent e) {
-		LabelingType<L> labels = getLabelsAtMousePosition(e);
+		LabelingType<L> labels = actionManager.getBridge().getLabelsAtMousePosition(e, model);
 		int intIndex;
 		try {
 			intIndex = labels.getIndex().getInteger();
@@ -61,7 +60,10 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 		}
 		updateLabelRendering();
 	}
-	protected abstract void updateLabelRendering();
+
+	protected void updateLabelRendering() {
+		actionManager.updateLabelRendering();
+	}
 
 	protected boolean noLabelsAtMousePosition() {
 		return currentLabels == null || currentLabels.size() == 0;
@@ -82,14 +84,6 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 		}
 	}
 
-	@Override
-	public abstract LabelingType<L> getLabelsAtMousePosition(MouseEvent e);
-
-	@Override
-	public void set3DViewMode(boolean mode3D) {
-		this.mode3D = mode3D;
-	}
-
 	protected void selectFirst(LabelingType<L> currentLabels) {
 		L label = getFirst(currentLabels);
 		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) return;
@@ -103,9 +97,9 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 		select(label);
 	}
 
-	private L getFirst(LabelingType<L> currentLabels) {
+	protected L getFirst(LabelingType<L> currentLabels) {
 		List<L> orderedLabels = new ArrayList<>(currentLabels);
-		orderedLabels.sort(model.getLabelComparator()::compare);
+		orderedLabels.sort(model.getLabelComparator());
 		return orderedLabels.get(0);
 	}
 

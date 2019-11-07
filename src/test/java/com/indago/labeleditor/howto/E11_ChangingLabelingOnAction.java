@@ -3,7 +3,6 @@ package com.indago.labeleditor.howto;
 import com.indago.labeleditor.LabelEditorBdvPanel;
 import com.indago.labeleditor.LabelEditorPanel;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
@@ -15,8 +14,6 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.util.Intervals;
-import net.imglib2.view.Views;
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -77,12 +74,12 @@ public class E11_ChangingLabelingOnAction {
 		panel.updateLabelRendering();
 
 		//register custom actions
-		panel.bdvGetHandlePanel().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
+		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.action().getDataPositionAtMouse());
+					doPop(e, panel.action().getBridge().getDataPositionAtMouse());
 				}
 			}
 
@@ -90,7 +87,7 @@ public class E11_ChangingLabelingOnAction {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.action().getDataPositionAtMouse());
+					doPop(e, panel.action().getBridge().getDataPositionAtMouse());
 				}
 			}
 

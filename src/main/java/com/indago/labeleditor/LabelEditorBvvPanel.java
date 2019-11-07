@@ -1,14 +1,10 @@
 package com.indago.labeleditor;
 
-import bdv.util.BdvHandlePanel;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvHandle;
 import bvv.util.BvvSource;
 import bvv.util.BvvStackSource;
-import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.BvvActionHandler;
-import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
@@ -16,7 +12,6 @@ import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import tpietzsch.example2.VolumeViewerPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -77,11 +72,6 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return new ImgPlus<>(new DiskCachedCellImgFactory<>(new ARGBType()).create(model.labels()));
 	}
 
-	@Override
-	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer) {
-		return new BvvActionHandler<>(getBvvHandle(), model, renderer);
-	}
-
 	private void addLabelsToBvv() {
 		if(rendering().size() == 0) return;
 		//TODO add all renderers
@@ -128,7 +118,8 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		bvvGetSources().clear();
 	}
 
-	public BvvHandle getBvvHandle() {
+	@Override
+	public BvvHandle getViewerHandle() {
 		return bvvHandle;
 	}
 
@@ -145,7 +136,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	public void dispose() {
-		if(getBvvHandle() != null) getBvvHandle().close();
+		if(getViewerHandle() != null) getViewerHandle().close();
 	}
 
 	@Override

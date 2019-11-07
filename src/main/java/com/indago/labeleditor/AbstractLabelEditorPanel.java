@@ -1,6 +1,5 @@
 package com.indago.labeleditor;
 
-import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.ActionManager;
 import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
@@ -22,7 +21,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected boolean panelBuilt = false;
 	protected boolean mode3D = false;
-	private ActionManager<L> actionManager = new ActionManager<>();
+	private ActionManager<L> actionManager;
 	private RenderingManager<L> renderingManager = new RenderingManager<>();
 
 	public AbstractLabelEditorPanel() {
@@ -53,16 +52,14 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	@Override
 	public void init(LabelEditorModel<L> model) {
-		actionManager.clear();
 		if(model != null) {
 			this.model = model;
 			renderingManager.init(model);
 			initRenderers(renderingManager);
 			buildPanel();
-			ActionHandler<L> actionHandler = initActionHandler(model, renderingManager);
-			actionHandler.set3DViewMode(mode3D);
-			actionHandler.init();
-			actionManager.add(actionHandler);
+			actionManager = new ActionManager<>(getViewerHandle(), model, renderingManager);
+			initActionHandlers(actionManager);
+			actionManager.set3DViewMode(mode3D);
 		}
 	}
 
@@ -86,11 +83,15 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected abstract Component buildViewer();
 
-	protected abstract ActionHandler<L> initActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer);
-
 	protected void initRenderers(RenderingManager<L> renderingManager) {
-		renderingManager.initDefaultRenderings();
+		renderingManager.addDefaultRenderings();
 	}
+
+	private void initActionHandlers(ActionManager<L> actionManager) {
+		actionManager.addDefaultActionHandlers();
+	}
+
+	public abstract Object getViewerHandle();
 
 	@Override
 	public abstract void updateLabelRendering();

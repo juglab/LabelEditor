@@ -4,7 +4,8 @@ import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.BdvActionHandler;
+import com.indago.labeleditor.action.ActionManager;
+import com.indago.labeleditor.action.bdv.BdvSelectionActions;
 import com.indago.labeleditor.display.BorderLabelEditorRenderer;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
 import com.indago.labeleditor.display.RenderingManager;
@@ -41,7 +42,6 @@ public class E12_ShowBorder {
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		RenderingManager<Integer> renderer = new RenderingManager<>(model);
-		renderer.add(new DefaultLabelEditorRenderer<>());
 		renderer.add(new BorderLabelEditorRenderer<>());
 		model.labelRegions().forEach((label, regions) -> {
 			model.tagging().addTag("displayed", label);
@@ -54,8 +54,9 @@ public class E12_ShowBorder {
 		renderer.getRenderings().forEach(rendering -> BdvFunctions.show(rendering, "", Bdv.options().addTo(panel)));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );
-		ActionHandler actionHandler = new BdvActionHandler<>(panel, model, renderer);
-		actionHandler.init();
+		ActionManager actionManager = new ActionManager<>(panel, model, renderer);
+		actionManager.addDefaultActionHandlers();
+		actionManager.set3DViewMode(false);
 
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.setContentPane(viewer);

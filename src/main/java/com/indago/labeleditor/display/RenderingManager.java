@@ -68,7 +68,7 @@ public class RenderingManager<L> extends ArrayList<LabelEditorRenderer<L>> {
 		return res;
 	}
 
-	public void initDefaultRenderings() {
+	public void addDefaultRenderings() {
 		add(new DefaultLabelEditorRenderer<>());
 		add(new BorderLabelEditorRenderer<>());
 	}

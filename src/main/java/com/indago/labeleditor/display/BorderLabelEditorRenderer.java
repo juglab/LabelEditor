@@ -3,6 +3,7 @@ package com.indago.labeleditor.display;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.convolution.kernel.Kernel1D;
 import net.imglib2.algorithm.convolution.kernel.SeparableKernelConvolution;
@@ -19,6 +20,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.scijava.plugin.Parameter;
 
@@ -57,23 +59,15 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 			// if there are no labels, we don't need to check for tags and can continue
 			if(labels.size() == 0) continue;
 
-			// get all tags associated with the labels of this index
-			Set<Object> mytags = filterTagsByLabels( tags, labels);
-
-			lut[i] = mixColors(mytags, tagColors);
+			lut[i] = ARGBType.rgba(255,255,255,Math.min(labels.size()*50, 255));
 
 		}
 
 		this.lut = lut;
 	}
 
-	private int getBlack(Set<Object> mytags, Map<Object, LUTChannel> tagColors) {
-		return ARGBType.rgba(255,255,255,Math.min(mytags.size()*50, 255));
-	}
-
 	@Override
 	public RandomAccessibleInterval<ARGBType> getRenderedLabels(ImgLabeling<L, IntType> labels) {
-
 
 		RandomAccessibleInterval<IntType> output = new ArrayImgFactory<>(new IntType()).create(labels);
 		this.labels = labels;
@@ -89,7 +83,10 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 		RandomAccess<IntType> randomAccess = labels.getIndexImg().randomAccess();
 		int nothing = ARGBType.rgba(0, 0, 0, 0);
 		DiamondShape shape = new DiamondShape(1);
-		IterableInterval<Neighborhood<IntType>> neighborhoods = shape.neighborhoods(labels.getIndexImg());
+
+		RandomAccessible< Neighborhood<IntType>> neighborhoodsAccessible = shape.neighborhoodsRandomAccessible(Views.extendMirrorSingle(labels.getIndexImg()));
+
+		IntervalView<Neighborhood<IntType>> neighborhoods = Views.interval(neighborhoodsAccessible, labels);
 
 		Cursor<Neighborhood<IntType>> neighborhoodCursor = neighborhoods.localizingCursor();
 		RandomAccess<IntType> outputRa = output.randomAccess();
@@ -113,13 +110,11 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 //			}
 			boolean found = false;
 			for (IntType neighbor : neighborhood) {
-				try {
-					if (!neighbor.equals(centerPixel)) {
-						o.set(centerPixel);
-						found = true;
-						break;
-					}
-				} catch(ArrayIndexOutOfBoundsException ignored) {o.set(nothing);}
+				if (!neighbor.equals(centerPixel)) {
+					o.set(centerPixel);
+					found = true;
+					break;
+				}
 			}
 			if(!found) o.set(nothing);
 		}

@@ -6,7 +6,7 @@ import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.BdvActionHandler;
+import com.indago.labeleditor.action.bdv.BdvSelectionActions;
 import com.indago.labeleditor.action.InputTriggerConfig2D;
 import com.indago.labeleditor.display.LabelEditorAccumulateProjector;
 import com.indago.labeleditor.display.RenderingManager;
@@ -77,11 +77,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return bdvHandlePanel.getViewerPanel();
 	}
 
-	@Override
-	protected ActionHandler<L> initActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer) {
-		return new BdvActionHandler<>(bdvHandlePanel, model, renderer);
-	}
-
 	private void addLabelsToBDV() {
 		if(rendering().size() == 0) return;
 		//TODO make virtual channels work
@@ -113,7 +108,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		final BdvSource source = BdvFunctions.show(
 				img,
 				title,
-				Bdv.options().addTo( bdvGetHandlePanel() ) );
+				Bdv.options().addTo( getViewerHandle() ) );
 		bdvGetSources().add( source );
 		source.setActive( true );
 	}
@@ -125,7 +120,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		bdvGetSources().clear();
 	}
 
-	public BdvHandlePanel bdvGetHandlePanel() {
+	@Override
+	public BdvHandlePanel getViewerHandle() {
 		return bdvHandlePanel;
 	}
 
@@ -148,6 +144,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	public void dispose() {
-		if(bdvGetHandlePanel() != null) bdvGetHandlePanel().close();
+		if(getViewerHandle() != null) getViewerHandle().close();
 	}
 }

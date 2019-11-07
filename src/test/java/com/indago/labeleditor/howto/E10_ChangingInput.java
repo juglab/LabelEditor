@@ -41,12 +41,12 @@ public class E10_ChangingInput {
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 13; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 			ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
 			panel.init(imgPlus, labeling);
 			panel.bdvGetSources().forEach(source -> source.setDisplayRange(0, 100));
-			Thread.sleep(500);
+			Thread.sleep(3000);
 		}
 	}
 

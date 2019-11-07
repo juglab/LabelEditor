@@ -4,6 +4,7 @@ import com.indago.labeleditor.LabelEditorBdvPanel;
 import com.indago.labeleditor.LabelEditorPanel;
 import com.indago.labeleditor.model.LabelEditorTag;
 import net.imagej.ImageJ;
+import net.imagej.ImgPlus;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
@@ -31,14 +32,14 @@ public class E07_CustomTags {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
 		panel = new LabelEditorBdvPanel<>();
-		panel.init(labeling);
+		panel.init(new ImgPlus(input), labeling);
 
 		Random random = new Random();
 		for (LabelingType<Integer> labels : labeling) {
 			for (Integer label : labels) {
 				panel.model().tagging().addTag(label, label);
 				int brightness = random.nextInt(155);
-				panel.rendering().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 150));
+				panel.rendering().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 255));
 
 			}
 		}

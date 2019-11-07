@@ -75,17 +75,17 @@ public class E08_CustomActions {
 		panel.updateLabelRendering();
 
 		//register custom actions
-		panel.bdvGetHandlePanel().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
+		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				model.tagging().removeTag("no");
-				for (Integer label : panel.action().getLabelsAtMousePosition(e)) {
+				for (Integer label : panel.action().getBridge().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("yes", label);
 				}
 				panel.updateLabelRendering();
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.action().getDataPositionAtMouse());
+					doPop(e, panel.action().getBridge().getDataPositionAtMouse());
 				}
 			}
 
@@ -93,10 +93,10 @@ public class E08_CustomActions {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.action().getDataPositionAtMouse());
+					doPop(e, panel.action().getBridge().getDataPositionAtMouse());
 				}
 				model.tagging().removeTag("yes");
-				for (Integer label : panel.action().getLabelsAtMousePosition(e)) {
+				for (Integer label : panel.action().getBridge().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("no", label);
 				}
 				panel.updateLabelRendering();

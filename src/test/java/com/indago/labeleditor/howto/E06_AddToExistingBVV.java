@@ -3,23 +3,14 @@ package com.indago.labeleditor.howto;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
-import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.BvvActionHandler;
-import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
-import com.indago.labeleditor.display.LabelEditorRenderer;
+import com.indago.labeleditor.action.ActionManager;
 import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import net.imagej.ImageJ;
-import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
-import net.imglib2.algorithm.region.hypersphere.HyperSphere;
-import net.imglib2.converter.Converter;
-import net.imglib2.converter.Converters;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -30,7 +21,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class E06_AddToExistingBVV {
 
@@ -52,6 +42,7 @@ public class E06_AddToExistingBVV {
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		RenderingManager<Integer> renderer = new RenderingManager<>(model);
+		renderer.addDefaultRenderings();
 		model.labelRegions().forEach((label, regions) -> {
 			model.tagging().addTag("displayed", label);
 		});
@@ -61,8 +52,8 @@ public class E06_AddToExistingBVV {
 //		BvvStackSource<ARGBType> source1 = BvvFunctions.show(imgArgb, "RAW", Bvv.options());
 		BvvStackSource source = BvvFunctions.show(renderer.getRenderings().get(0), "labels", Bvv.options());
 
-		ActionHandler<Integer> actionHandler = new BvvActionHandler<>(source.getBvvHandle(), model, renderer);
-		actionHandler.init();
+		ActionManager<Integer> actionHandler = new ActionManager<>(source.getBvvHandle(), model, renderer);
+		actionHandler.addDefaultActionHandlers();
 	}
 
 
