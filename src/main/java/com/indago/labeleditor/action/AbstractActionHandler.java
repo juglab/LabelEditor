@@ -55,6 +55,12 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 		updateLabelRendering();
 	}
 
+	protected void handleShiftClick() {
+		if (!noLabelsAtMousePosition()) {
+			addFirstToSelection(currentLabels);
+		}
+		updateLabelRendering();
+	}
 	protected abstract void updateLabelRendering();
 
 	protected boolean noLabelsAtMousePosition() {
@@ -85,11 +91,22 @@ public abstract class AbstractActionHandler<L> implements ActionHandler<L> {
 	}
 
 	protected void selectFirst(LabelingType<L> currentLabels) {
+		L label = getFirst(currentLabels);
+		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) return;
+		deselectAll();
+		select(label);
+	}
+
+	protected void addFirstToSelection(LabelingType<L> currentLabels) {
+		L label = getFirst(currentLabels);
+		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) return;
+		select(label);
+	}
+
+	private L getFirst(LabelingType<L> currentLabels) {
 		List<L> orderedLabels = new ArrayList<>(currentLabels);
 		orderedLabels.sort(model.getLabelComparator()::compare);
-		if(model.tagging().getTags(orderedLabels.get(0)).contains(LabelEditorTag.SELECTED)) return;
-		deselectAll();
-		select(orderedLabels.get(0));
+		return orderedLabels.get(0);
 	}
 
 	protected boolean isSelected(L label) {

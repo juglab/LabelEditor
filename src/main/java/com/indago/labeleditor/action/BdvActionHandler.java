@@ -1,7 +1,6 @@
 package com.indago.labeleditor.action;
 
 import bdv.util.BdvHandlePanel;
-import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.LabelEditorModel;
 import net.imglib2.Localizable;
@@ -45,16 +44,20 @@ public class BdvActionHandler<L> extends AbstractActionHandler<L> {
 	}
 
 	private void installBdvBehaviours() {
-		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
-		behaviours.install( panel.getBdvHandle().getTriggerbindings(), "my-new-behaviours" );
+		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "labeleditor");
+		behaviours.install( panel.getBdvHandle().getTriggerbindings(), "labeleditor-defaults" );
 		behaviours.behaviour(
 				(ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> handleWheelRotation(wheelRotation, isHorizontal),
-				"browse segments",
+				"browse labels",
 				"shift scroll" );
 		behaviours.behaviour(
 				(ClickBehaviour) (arg0, arg1) -> handleClick(),
-				"select current segment",
+				"select current label",
 				"button1" );
+		behaviours.behaviour(
+				(ClickBehaviour) (arg0, arg1) -> handleShiftClick(),
+				"add current label to selection",
+				"shift button1" );
 	}
 
 	@Override
