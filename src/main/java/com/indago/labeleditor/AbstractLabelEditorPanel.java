@@ -2,8 +2,6 @@ package com.indago.labeleditor;
 
 import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.ActionManager;
-import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
-import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.model.LabelEditorModel;
@@ -15,8 +13,6 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractLabelEditorPanel<L> extends JPanel implements LabelEditorPanel<L> {
 
@@ -61,7 +57,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		if(model != null) {
 			this.model = model;
 			renderingManager.init(model);
-			renderingManager.addAll(initRenderers());
+			initRenderers(renderingManager);
 			buildPanel();
 			ActionHandler<L> actionHandler = initActionHandler(model, renderingManager);
 			actionHandler.set3DViewMode(mode3D);
@@ -92,10 +88,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected abstract ActionHandler<L> initActionHandler(LabelEditorModel<L> model, RenderingManager<L> renderer);
 
-	protected List<LabelEditorRenderer<L>> initRenderers() {
-		List<LabelEditorRenderer<L>> res = new ArrayList<>();
-		res.add(new DefaultLabelEditorRenderer<L>());
-		return res;
+	protected void initRenderers(RenderingManager<L> renderingManager) {
+		renderingManager.initDefaultRenderings();
 	}
 
 	@Override

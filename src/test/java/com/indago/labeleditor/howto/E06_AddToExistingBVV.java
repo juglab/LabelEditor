@@ -21,11 +21,15 @@ import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.view.Views;
 import org.junit.AfterClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class E06_AddToExistingBVV {
@@ -33,41 +37,31 @@ public class E06_AddToExistingBVV {
 	static ImageJ ij = new ImageJ();
 
 	@Test
-	public void run() {
+	public <T extends RealType<T>> void run() throws IOException {
 
-		//create img with spheres at random places
-		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);
-		RandomAccess<IntType> ra = img.randomAccess();
-		Random random = new Random();
-		for (int i = 0; i < 13; i++) {
-			ra.setPosition(new int[]{random.nextInt(100), random.nextInt(100), random.nextInt(100)});
-			HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 5);
-			for (IntType value : hyperSphere)
-				try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
+		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
+		RandomAccessibleInterval inputStack = input;
+		List<RandomAccessibleInterval<T>> stack = new ArrayList<>();
+		for (int i = 0; i < 50; i++) {
+			stack.add(inputStack);
 		}
+		inputStack = Views.stack(stack);
+		Img thresholded = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
+		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		//convert img to color
-		Converter<IntType, ARGBType> converter = (i, o) -> o.set(ARGBType.rgba(i.get(), i.get(), i.get(), 155));
-		RandomAccessibleInterval<ARGBType> imgArgb = Converters.convert((RandomAccessibleInterval<IntType>) img, converter, new ARGBType());
-
-		//compute cca
-		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
-
-		//create model and renderer
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+
 		RenderingManager<Integer> renderer = new RenderingManager<>(model);
-		for (LabelingType<Integer> labels : labeling) {
-			for (Integer label : labels) {
-				model.tagging().addTag(label, label);
-				renderer.setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 150));
-
-			}
-		}
+		model.labelRegions().forEach((label, regions) -> {
+			model.tagging().addTag("displayed", label);
+		});
+		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		renderer.update();
 		//add to BVV
-		BvvStackSource<ARGBType> source1 = BvvFunctions.show(imgArgb, "RAW", Bvv.options());
-		BvvFunctions.show(renderer.getRenderings().get(0), "labels", Bvv.options().addTo(source1));
+//		BvvStackSource<ARGBType> source1 = BvvFunctions.show(imgArgb, "RAW", Bvv.options());
+		BvvStackSource source = BvvFunctions.show(renderer.getRenderings().get(0), "labels", Bvv.options());
 
-		ActionHandler<Integer> actionHandler = new BvvActionHandler<>(source1.getBvvHandle(), model, renderer);
+		ActionHandler<Integer> actionHandler = new BvvActionHandler<>(source.getBvvHandle(), model, renderer);
 		actionHandler.init();
 	}
 

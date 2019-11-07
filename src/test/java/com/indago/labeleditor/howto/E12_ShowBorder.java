@@ -5,8 +5,8 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.action.ActionHandler;
 import com.indago.labeleditor.action.BdvActionHandler;
+import com.indago.labeleditor.display.BorderLabelEditorRenderer;
 import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
-import com.indago.labeleditor.display.LabelEditorRenderer;
 import com.indago.labeleditor.display.RenderingManager;
 import com.indago.labeleditor.model.DefaultLabelEditorModel;
 import net.imagej.ImageJ;
@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * How to display a labeling in an existing BDV instance
  */
-public class E05_AddToExistingBDV {
+public class E12_ShowBorder {
 
 	static ImageJ ij = new ImageJ();
 	static JFrame frame = new JFrame("Label editor");
@@ -41,7 +41,8 @@ public class E05_AddToExistingBDV {
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		RenderingManager<Integer> renderer = new RenderingManager<>(model);
-		renderer.initDefaultRenderings();
+		renderer.add(new DefaultLabelEditorRenderer<>());
+		renderer.add(new BorderLabelEditorRenderer<>());
 		model.labelRegions().forEach((label, regions) -> {
 			model.tagging().addTag("displayed", label);
 		});
@@ -50,7 +51,7 @@ public class E05_AddToExistingBDV {
 		JPanel viewer = new JPanel(new MigLayout());
 		panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 //		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
-		renderer.getRenderings().forEach(rendering -> BdvFunctions.show(rendering, "labels", Bdv.options().addTo(panel)));
+		renderer.getRenderings().forEach(rendering -> BdvFunctions.show(rendering, "", Bdv.options().addTo(panel)));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );
 		ActionHandler actionHandler = new BdvActionHandler<>(panel, model, renderer);
@@ -70,7 +71,7 @@ public class E05_AddToExistingBDV {
 	}
 
 	public static void main(String...args) throws IOException {
-		new E05_AddToExistingBDV().run();
+		new E12_ShowBorder().run();
 	}
 
 }

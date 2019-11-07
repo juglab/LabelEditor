@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
-	private int[] lut;
+	protected int[] lut;
 
 	public DefaultLabelEditorRenderer() {}
 
@@ -50,7 +50,12 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 		return Converters.convert(labels.getIndexImg(), converter, new ARGBType() );
 	}
 
-	public int[] getLUT() {
+	@Override
+	public String getName() {
+		return "labels";
+	}
+
+	protected int[] getLUT() {
 		return lut;
 	}
 
@@ -78,7 +83,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 		return ARGBType.rgba((int)red, (int)green, (int)blue, (int)(alpha*255));
 	}
 
-	private synchronized Set<Object> filterTagsByLabels(Map<L, Set<Object>> tags, Set<L> labels) {
+	protected synchronized Set<Object> filterTagsByLabels(Map<L, Set<Object>> tags, Set<L> labels) {
 		Set<Object> set = new HashSet<>();
 		for (Map.Entry<L, Set<Object>> entry : tags.entrySet()) {
 			if (labels.contains(entry.getKey())) {

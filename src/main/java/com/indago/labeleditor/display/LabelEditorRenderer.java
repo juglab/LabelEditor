@@ -11,4 +11,5 @@ import java.util.Set;
 public interface LabelEditorRenderer<L> {
 	void update(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors);
 	RandomAccessibleInterval getRenderedLabels(ImgLabeling<L, IntType> labels);
+	String getName();
 }

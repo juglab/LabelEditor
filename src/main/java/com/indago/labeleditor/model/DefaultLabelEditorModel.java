@@ -16,13 +16,12 @@ import java.util.Set;
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private ImgLabeling<L, IntType > labels;
-	private final Map<L, Set<Object>> tags = new HashMap<>();
 	private Map<L, LabelRegion<L>> orderedLabels;
 	private TagLabelRelation<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
 
-	List<Object> orderedTags = new ArrayList();
+	private List<Object> orderedTags = new ArrayList<>();
 
 	public DefaultLabelEditorModel() {
 		init(null);
@@ -42,7 +41,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		if(labeling != null) {
 			this.labels = labeling;
 			createOrderedLabels(labeling);
-			tagLabelRelation = new DefaultTagLabelRelation(new TagChangeListenerManager());
+			tagLabelRelation = new DefaultTagLabelRelation<L>(new TagChangeListenerManager());
 			labelComparator = this::compareLabels;
 			tagComparator = this::compareTags;
 			orderedTags.add(LabelEditorTag.MOUSE_OVER);

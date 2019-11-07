@@ -78,26 +78,28 @@ public class E08_CustomActions {
 		panel.bdvGetHandlePanel().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger())
-					doPop(e, panel.action().getDataPositionAtMouse());
+				super.mousePressed(e);
 				model.tagging().removeTag("no");
 				for (Integer label : panel.action().getLabelsAtMousePosition(e)) {
 					model.tagging().addTag("yes", label);
 				}
 				panel.updateLabelRendering();
-				super.mousePressed(e);
+				if (e.isPopupTrigger()) {
+					doPop(e, panel.action().getDataPositionAtMouse());
+				}
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger())
+				super.mouseReleased(e);
+				if (e.isPopupTrigger()) {
 					doPop(e, panel.action().getDataPositionAtMouse());
+				}
 				model.tagging().removeTag("yes");
 				for (Integer label : panel.action().getLabelsAtMousePosition(e)) {
 					model.tagging().addTag("no", label);
 				}
 				panel.updateLabelRendering();
-				super.mouseReleased(e);
 			}
 
 			private void doPop(MouseEvent e, Localizable dataPositionAtMouse) {

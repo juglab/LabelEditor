@@ -98,8 +98,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-		//TODO display all renderings
-		displayInBdv(rendering().getRenderings().get(0),"solution");
+		rendering().getRenderings().forEach(rendering -> displayInBdv(rendering, ""));
 //		}
 	}
 

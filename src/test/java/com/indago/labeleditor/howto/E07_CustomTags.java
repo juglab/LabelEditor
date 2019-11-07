@@ -24,7 +24,7 @@ public class E07_CustomTags {
 
 	static ImageJ ij = new ImageJ();
 	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel panel;
+	static LabelEditorPanel<Integer> panel;
 
 	@Test
 	public void run() throws IOException {
