@@ -1,8 +1,8 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.LabelEditorBdvPanel;
-import com.indago.labeleditor.LabelEditorPanel;
-import com.indago.labeleditor.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -67,7 +67,7 @@ public class E09_BigData {
 		panel.init(model);
 		panel.rendering().setTagColor(TAG1, ARGBType.rgba(0, 255, 255, 255));
 		panel.rendering().setTagColor(TAG2, ARGBType.rgba(255, 0, 255, 255));
-		panel.updateLabelRendering();
+		panel.action().triggerChange();
 
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

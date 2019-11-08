@@ -1,13 +1,12 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.LabelEditorBdvPanel;
-import com.indago.labeleditor.LabelEditorPanel;
-import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorTag;
+import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.Cursor;
-import net.imglib2.Localizable;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -35,7 +34,7 @@ public class E11_ChangingLabelingOnAction {
 
 	class PopUpDemo extends JPopupMenu {
 		JMenuItem anItem;
-		public PopUpDemo(LabelEditorPanel<Integer> panel, Localizable mouse) {
+		public PopUpDemo(LabelEditorPanel<Integer> panel, LabelingType<Integer> labelsAtMouse) {
 			anItem = new JMenuItem("Remove");
 			anItem.addActionListener(actionEvent -> {
 				List<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.MOUSE_OVER);
@@ -44,7 +43,7 @@ public class E11_ChangingLabelingOnAction {
 					LabelingType<Integer> val = cursor.next();
 					val.removeAll(labels);
 				}
-				panel.updateLabelRendering();
+				panel.action().triggerChange();
 
 			});
 			add(anItem);
@@ -71,7 +70,7 @@ public class E11_ChangingLabelingOnAction {
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(new ImgPlus<>(input), model);
 		panel.rendering().setTagColor("displayed", ARGBType.rgba(0,255,255,155));
-		panel.updateLabelRendering();
+		panel.action().triggerChange();
 
 		//register custom actions
 		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
@@ -79,7 +78,7 @@ public class E11_ChangingLabelingOnAction {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.action().getBridge().getDataPositionAtMouse());
+					doPop(e, panel.viewer().getLabelsAtMousePosition(e, model));
 				}
 			}
 
@@ -87,12 +86,12 @@ public class E11_ChangingLabelingOnAction {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.action().getBridge().getDataPositionAtMouse());
+					doPop(e, panel.viewer().getLabelsAtMousePosition(e, model));
 				}
 			}
 
-			private void doPop(MouseEvent e, Localizable dataPositionAtMouse) {
-				PopUpDemo menu = new PopUpDemo(panel, dataPositionAtMouse);
+			private void doPop(MouseEvent e, LabelingType<Integer> labelsAtMouse) {
+				PopUpDemo menu = new PopUpDemo(panel, labelsAtMouse);
 				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});

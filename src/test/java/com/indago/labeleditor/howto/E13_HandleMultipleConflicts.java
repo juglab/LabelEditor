@@ -1,11 +1,11 @@
 package com.indago.labeleditor.howto;
 
 
-import com.indago.labeleditor.LabelEditorBdvPanel;
-import com.indago.labeleditor.LabelEditorPanel;
-import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorTag;
+import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.LabelEditorTag;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.img.array.ArrayImg;
@@ -15,9 +15,6 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.type.numeric.real.DoubleType;
-import net.imglib2.util.Intervals;
-import net.imglib2.view.Views;
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -69,7 +66,7 @@ public class E13_HandleMultipleConflicts {
 		panel.init(model);
 		panel.rendering().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,255));
 		panel.rendering().setTagColor(TAG1, ARGBType.rgba(255,255,255,100));
-		panel.updateLabelRendering();
+		panel.action().triggerChange();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

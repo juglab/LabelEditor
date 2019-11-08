@@ -3,9 +3,10 @@ package com.indago.labeleditor.howto;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
-import com.indago.labeleditor.action.ActionManager;
-import com.indago.labeleditor.display.RenderingManager;
-import com.indago.labeleditor.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.action.ActionManager;
+import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.plugin.bvv.BvvViewerInstance;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -50,9 +51,12 @@ public class E06_AddToExistingBVV {
 		renderer.update();
 		//add to BVV
 //		BvvStackSource<ARGBType> source1 = BvvFunctions.show(imgArgb, "RAW", Bvv.options());
+		List<BvvStackSource> sources = new ArrayList<>();
 		BvvStackSource source = BvvFunctions.show(renderer.getRenderings().get(0), "labels", Bvv.options());
+		sources.add(source);
 
-		ActionManager<Integer> actionHandler = new ActionManager<>(source.getBvvHandle(), model, renderer);
+		ActionManager<Integer> actionHandler = new ActionManager<>();
+		actionHandler.init(new BvvViewerInstance(source.getBvvHandle(), sources), model, renderer);
 		actionHandler.addDefaultActionHandlers();
 	}
 

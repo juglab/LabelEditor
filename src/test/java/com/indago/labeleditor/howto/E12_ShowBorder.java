@@ -3,13 +3,11 @@ package com.indago.labeleditor.howto;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
-import com.indago.labeleditor.action.ActionHandler;
-import com.indago.labeleditor.action.ActionManager;
-import com.indago.labeleditor.action.bdv.BdvSelectionActions;
-import com.indago.labeleditor.display.BorderLabelEditorRenderer;
-import com.indago.labeleditor.display.DefaultLabelEditorRenderer;
-import com.indago.labeleditor.display.RenderingManager;
-import com.indago.labeleditor.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.action.ActionManager;
+import com.indago.labeleditor.plugin.bdv.BdvViewerInstance;
+import com.indago.labeleditor.plugin.renderer.BorderLabelEditorRenderer;
+import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
@@ -54,7 +52,8 @@ public class E12_ShowBorder {
 		renderer.getRenderings().forEach(rendering -> BdvFunctions.show(rendering, "", Bdv.options().addTo(panel)));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );
-		ActionManager actionManager = new ActionManager<>(panel, model, renderer);
+		ActionManager<Integer> actionManager = new ActionManager<>();
+		actionManager.init(new BdvViewerInstance(panel, null), model, renderer);
 		actionManager.addDefaultActionHandlers();
 		actionManager.set3DViewMode(false);
 

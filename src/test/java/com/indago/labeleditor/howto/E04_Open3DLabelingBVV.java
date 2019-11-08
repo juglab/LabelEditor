@@ -1,22 +1,13 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.LabelEditorBvvPanel;
-import com.indago.labeleditor.LabelEditorPanel;
-import com.indago.labeleditor.display.RenderingManager;
-import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorTag;
+import com.indago.labeleditor.plugin.bvv.LabelEditorBvvPanel;
+import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import net.imagej.ImageJ;
-import net.imagej.ImgPlus;
-import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
-import net.imglib2.algorithm.region.hypersphere.HyperSphere;
-import net.imglib2.converter.Converter;
-import net.imglib2.converter.Converters;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -29,7 +20,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class E04_Open3DLabelingBVV {
 
@@ -57,8 +47,8 @@ public class E04_Open3DLabelingBVV {
 
 		panel = new LabelEditorBvvPanel<>();
 		panel.init(model);
-		panel.rendering().setTagColor("displayed", ARGBType.rgba(255,255,0,55));
-		panel.updateLabelRendering();
+		panel.rendering().setTagColor("displayed", ARGBType.rgba(255,255,0,155));
+		panel.action().triggerChange();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

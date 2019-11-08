@@ -1,12 +1,10 @@
 package com.indago.labeleditor.howto;
 
 
-import com.indago.labeleditor.LabelEditorBdvPanel;
-import com.indago.labeleditor.LabelEditorPanel;
-import com.indago.labeleditor.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.model.LabelEditorModel;
-import net.imagej.ImgPlus;
-import net.imglib2.img.Img;
+import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
@@ -55,16 +53,16 @@ public class E02_Open2DLabelingConflicts {
 
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
-//		model.tagging().addTag(TAG1, LABEL1);
-//		model.tagging().addTag(TAG2, LABEL2);
-//		model.tagging().addTag(TAG1, LABEL3);
-//		model.tagging().addTag(TAG2, LABEL4);
+		model.tagging().addTag(TAG1, LABEL1);
+		model.tagging().addTag(TAG2, LABEL2);
+		model.tagging().addTag(TAG1, LABEL3);
+		model.tagging().addTag(TAG2, LABEL4);
 
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
-//		panel.rendering().setTagColor(TAG1, ARGBType.rgba(0,255,255,100));
-//		panel.rendering().setTagColor(TAG2, ARGBType.rgba(255,0,255,100));
-//		panel.updateLabelRendering();
+		panel.rendering().setTagColor(TAG1, ARGBType.rgba(0,255,255,100));
+		panel.rendering().setTagColor(TAG2, ARGBType.rgba(255,0,255,100));
+		panel.action().triggerChange();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
