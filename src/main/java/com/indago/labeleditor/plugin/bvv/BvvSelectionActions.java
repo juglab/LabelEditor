@@ -1,9 +1,9 @@
 package com.indago.labeleditor.plugin.bvv;
 
 import bvv.util.BvvHandle;
-import com.indago.labeleditor.core.action.ActionManager;
+import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.plugin.actions.SelectionActions;
-import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.ClickBehaviour;
@@ -18,9 +18,9 @@ import java.util.List;
 public class BvvSelectionActions<L> extends SelectionActions<L> {
 
 	private final BvvHandle panel;
-	private final BvvViewerInstance bridge;
+	private final BvvInterface bridge;
 
-	public BvvSelectionActions(BvvHandle panel, ActionManager<L> actionManager, LabelEditorModel<L> model, RenderingManager<L> renderer, BvvViewerInstance bridge) {
+	public BvvSelectionActions(BvvHandle panel, LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer, BvvInterface bridge) {
 		super(model, renderer, actionManager);
 		this.panel = panel;
 		this.bridge = bridge;
@@ -59,6 +59,7 @@ public class BvvSelectionActions<L> extends SelectionActions<L> {
 		List<LabelingType<L>> allSets = bridge.getAllLabelsAtMousePosition(e, model);
 		if(allSets == null || allSets.size() == 0) {
 			defocusAll();
+			updateLabelRendering();
 			return;
 		}
 		LabelingType<L> labelset = allSets.get(0);

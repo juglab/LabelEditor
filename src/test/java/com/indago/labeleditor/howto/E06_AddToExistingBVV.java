@@ -3,10 +3,9 @@ package com.indago.labeleditor.howto;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
-import com.indago.labeleditor.core.action.ActionManager;
-import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.plugin.bvv.BvvViewerInstance;
+import com.indago.labeleditor.plugin.bvv.BvvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -22,6 +21,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class E06_AddToExistingBVV {
 
@@ -41,23 +41,31 @@ public class E06_AddToExistingBVV {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-
-		RenderingManager<Integer> renderer = new RenderingManager<>(model);
-		renderer.addDefaultRenderings();
 		model.labelRegions().forEach((label, regions) -> {
 			model.tagging().addTag("displayed", label);
 		});
-		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
-		renderer.update();
-		//add to BVV
-//		BvvStackSource<ARGBType> source1 = BvvFunctions.show(imgArgb, "RAW", Bvv.options());
-		List<BvvStackSource> sources = new ArrayList<>();
-		BvvStackSource source = BvvFunctions.show(renderer.getRenderings().get(0), "labels", Bvv.options());
-		sources.add(source);
 
-		ActionManager<Integer> actionHandler = new ActionManager<>();
-		actionHandler.init(new BvvViewerInstance(source.getBvvHandle(), sources), model, renderer);
-		actionHandler.addDefaultActionHandlers();
+		LabelEditorView<Integer> renderer = new LabelEditorView<>(model);
+		renderer.addDefaultRenderings();
+		renderer.initRenderings();
+		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		renderer.updateOnTagChange();
+
+		List<BvvStackSource> sources = new ArrayList<>();
+		BvvStackSource source = null;
+		for (Map.Entry<String, RandomAccessibleInterval> entry : renderer.getNamedRenderings().entrySet()) {
+			String title = entry.getKey();
+			RandomAccessibleInterval img = entry.getValue();
+			if (source == null) {
+				source = BvvFunctions.show(img, title, Bvv.options());
+			} else {
+				source = BvvFunctions.show(img, title, Bvv.options().addTo(source.getBvvHandle()));
+			}
+			sources.add(source);
+		}
+
+		BvvInterface.control(source.getBvvHandle(), sources, model, renderer);
+
 	}
 
 

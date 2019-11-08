@@ -1,9 +1,8 @@
 package com.indago.labeleditor.core;
 
-import com.indago.labeleditor.core.action.ActionManager;
-import com.indago.labeleditor.core.action.ViewerInstance;
+import com.indago.labeleditor.core.controller.LabelEditorController;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.display.RenderingManager;
 import net.imagej.ImgPlus;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
@@ -23,13 +22,11 @@ public interface LabelEditorPanel<L> extends Disposable {
 
 	void init(LabelEditorModel<L> model);
 
-	RenderingManager<L> rendering();
+	LabelEditorView<L> view();
 
 	LabelEditorModel<L> model();
 
-	ActionManager<L> action();
-
-	ViewerInstance<L> viewer();
+	LabelEditorController<L> control();
 
 	Container get();
 

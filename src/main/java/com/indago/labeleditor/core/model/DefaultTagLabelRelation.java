@@ -44,7 +44,7 @@ public class DefaultTagLabelRelation<L> implements TagLabelRelation<L> {
 	}
 
 	@Override
-	public void removeTag(Object tag) {
+	public synchronized void removeTag(Object tag) {
 		tags.forEach( (label, tags) -> {
 			if(!tags.contains(tag)) return;
 			tags.remove(tag);

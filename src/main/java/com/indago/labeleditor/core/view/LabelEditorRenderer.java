@@ -1,4 +1,4 @@
-package com.indago.labeleditor.core.display;
+package com.indago.labeleditor.core.view;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.Set;
 
 public interface LabelEditorRenderer<L> {
-	void update(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors);
-	RandomAccessibleInterval getRenderedLabels(ImgLabeling<L, IntType> labels);
+	void init(ImgLabeling<L, IntType> labels);
+	void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors);
+	void updateOnLabelingChange();
+	RandomAccessibleInterval getOutput();
+
 	String getName();
 }

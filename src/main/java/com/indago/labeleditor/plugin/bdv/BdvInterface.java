@@ -2,10 +2,11 @@ package com.indago.labeleditor.plugin.bdv;
 
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
-import com.indago.labeleditor.core.action.ActionHandler;
-import com.indago.labeleditor.core.action.ActionManager;
-import com.indago.labeleditor.core.action.ViewerInstance;
-import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.controller.LabelEditorActions;
+import com.indago.labeleditor.core.controller.LabelEditorController;
+import com.indago.labeleditor.core.controller.LabelEditorInterface;
+import com.indago.labeleditor.core.view.LabelEditorView;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
@@ -17,18 +18,26 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BdvViewerInstance<L> implements ViewerInstance<L> {
+public class BdvInterface<L> implements LabelEditorInterface<L> {
 	private final BdvHandlePanel panel;
 	private final List<BdvSource> sources;
 	private boolean mode3D;
 
-	public BdvViewerInstance(BdvHandlePanel panel) {
+	public BdvInterface(BdvHandlePanel panel) {
 		this(panel, null);
 	}
 
-	public BdvViewerInstance(BdvHandlePanel panel, List<BdvSource> bdvSources) {
+	public BdvInterface(BdvHandlePanel panel, List<BdvSource> bdvSources) {
 		this.panel = panel;
 		this.sources = bdvSources;
+	}
+
+	public static <L> LabelEditorController control(BdvHandlePanel panel, DefaultLabelEditorModel<L> model, LabelEditorView<L> renderer) {
+		LabelEditorController<L> actionHandler = new LabelEditorController<>();
+		actionHandler.init(new BdvInterface(panel), model, renderer);
+		actionHandler.addDefaultActionHandlers();
+		actionHandler.set3DViewMode(false);
+		return actionHandler;
 	}
 
 	@Override
@@ -62,8 +71,8 @@ public class BdvViewerInstance<L> implements ViewerInstance<L> {
 	}
 
 	@Override
-	public List<ActionHandler<L>> getAvailableActions(ActionManager<L> actionManager, LabelEditorModel<L> model, RenderingManager<L> renderer) {
-		List<ActionHandler<L>> res = new ArrayList<>();
+	public List<LabelEditorActions> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
+		List<LabelEditorActions> res = new ArrayList<>();
 		res.add(new BdvSelectionActions<>(panel, actionManager, model, renderer));
 		return res;
 	}

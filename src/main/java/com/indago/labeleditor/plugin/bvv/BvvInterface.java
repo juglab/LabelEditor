@@ -2,10 +2,11 @@ package com.indago.labeleditor.plugin.bvv;
 
 import bvv.util.BvvHandle;
 import bvv.util.BvvStackSource;
-import com.indago.labeleditor.core.action.ActionHandler;
-import com.indago.labeleditor.core.action.ActionManager;
-import com.indago.labeleditor.core.action.ViewerInstance;
-import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.controller.LabelEditorActions;
+import com.indago.labeleditor.core.controller.LabelEditorController;
+import com.indago.labeleditor.core.controller.LabelEditorInterface;
+import com.indago.labeleditor.core.view.LabelEditorView;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
@@ -20,13 +21,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BvvViewerInstance<L> implements ViewerInstance<L> {
+public class BvvInterface<L> implements LabelEditorInterface<L> {
 	private BvvHandle bvvHandle;
 	private List<BvvStackSource> bvvSources;
 
-	public BvvViewerInstance(BvvHandle handle, List<BvvStackSource> sources) {
+	public BvvInterface(BvvHandle handle, List<BvvStackSource> sources) {
 		this.bvvHandle = handle;
 		this.bvvSources = sources;
+	}
+
+	public static <L> LabelEditorController<L> control(BvvHandle bvvHandle, List<BvvStackSource> sources, DefaultLabelEditorModel<L> model, LabelEditorView<L> renderer) {
+		LabelEditorController<L> actionHandler = new LabelEditorController<>();
+		actionHandler.init(new BvvInterface<L>(bvvHandle, sources), model, renderer);
+		actionHandler.addDefaultActionHandlers();
+		return actionHandler;
 	}
 
 	protected List<LabelingType<L>> getAllLabelsAtMousePosition(MouseEvent e, LabelEditorModel<L> model) {
@@ -88,8 +96,8 @@ public class BvvViewerInstance<L> implements ViewerInstance<L> {
 	}
 
 	@Override
-	public List<ActionHandler<L>> getAvailableActions(ActionManager<L> actionManager, LabelEditorModel<L> model, RenderingManager<L> renderer) {
-		List<ActionHandler<L>> res = new ArrayList<>();
+	public List<LabelEditorActions> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
+		List<LabelEditorActions> res = new ArrayList<>();
 		res.add(new BvvSelectionActions<L>(bvvHandle, actionManager, model, renderer, this));
 		return res;
 	}

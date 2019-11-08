@@ -1,17 +1,13 @@
 package com.indago.labeleditor.plugin.bvv;
 
-import bdv.util.Bdv;
-import bdv.util.BdvOptions;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvHandle;
-import bvv.util.BvvOptions;
 import bvv.util.BvvSource;
 import bvv.util.BvvStackSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
-import com.indago.labeleditor.core.action.ActionManager;
-import com.indago.labeleditor.core.action.ViewerInstance;
-import com.indago.labeleditor.core.display.LabelEditorAccumulateProjector;
+import com.indago.labeleditor.core.controller.LabelEditorController;
+import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
@@ -28,7 +24,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private BvvHandle bvvHandle;
 	private List< BvvStackSource > bvvSources;
-	private ViewerInstance<L> viewerInstance;
+	private LabelEditorInterface<L> viewerInstance;
 
 	@Override
 	public void init(ImgPlus data) {
@@ -73,14 +69,9 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private void initViewer() {
-		viewerInstance = new BvvViewerInstance<>(bvvHandle, bvvSources);
+		viewerInstance = new BvvInterface<>(bvvHandle, bvvSources);
 		initActionManager(actionManager);
 		actionManager.set3DViewMode(mode3D);
-	}
-
-	@Override
-	public ViewerInstance<L> viewer() {
-		return viewerInstance;
 	}
 
 	@Override
@@ -98,9 +89,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private void addLabelsToBvv() {
-		if(rendering().size() == 0) return;
-		//TODO add all renderers
-		RandomAccessibleInterval<ARGBType> labelColorImg = rendering().getRenderings().get(0);
+		if(view().size() == 0) return;
 
 		//TODO make virtual channels work
 //		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
@@ -116,7 +105,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-		displayInBvv(labelColorImg, "solution");
+		view().getNamedRenderings().forEach((title, img) -> displayInBvv(img, title));
 //		}
 	}
 
@@ -153,17 +142,10 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected void initActionManager(ActionManager<L> actionManager) {
-		actionManager.init(viewer(), model(), rendering());
+	protected void initActionManager(LabelEditorController<L> actionManager) {
+		actionManager.init(viewerInstance, model(), view());
 		actionManager.addDefaultActionHandlers();
 	}
-
-//	public synchronized void updateLabelRendering() {
-//		//FIXME figure out how to call this from ActionManager::updateLabelRendering
-//		rendering().update();
-//		bvvHandle.getViewerPanel().requestRepaint();
-//		bvvSources.forEach(BvvStackSource::invalidate);
-//	}
 
 	@Override
 	public void dispose() {

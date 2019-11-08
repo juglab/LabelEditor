@@ -41,7 +41,7 @@ public class E08_CustomActions {
 				List<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.SELECTED);
 				labels.forEach(label -> panel.model().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );
-				panel.action().triggerChange();
+				panel.control().triggerTagChange();
 
 			});
 			add(anItem);
@@ -67,12 +67,12 @@ public class E08_CustomActions {
 		panel.init(new ImgPlus<>(input), model);
 
 		//set custom colors for tags set in the MouseAdapter
-		panel.rendering().removeTagColor(LabelEditorTag.SELECTED);
-		panel.rendering().removeTagColor(LabelEditorTag.MOUSE_OVER);
-		panel.rendering().setTagColor("yes", ARGBType.rgba(155, 155, 0, 255));
-		panel.rendering().setTagColor("no", ARGBType.rgba(0, 155, 255, 255));
-		panel.rendering().setTagColor("special", ARGBType.rgba(255, 0, 0, 255));
-		panel.action().triggerChange();
+		panel.view().removeTagColor(LabelEditorTag.SELECTED);
+		panel.view().removeTagColor(LabelEditorTag.MOUSE_OVER);
+		panel.view().setTagColor("yes", ARGBType.rgba(155, 155, 0, 255));
+		panel.view().setTagColor("no", ARGBType.rgba(0, 155, 255, 255));
+		panel.view().setTagColor("special", ARGBType.rgba(255, 0, 0, 255));
+		panel.control().triggerTagChange();
 
 		//register custom actions
 		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
@@ -80,12 +80,12 @@ public class E08_CustomActions {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				model.tagging().removeTag("no");
-				for (Integer label : panel.action().viewer().getLabelsAtMousePosition(e, model)) {
+				for (Integer label : panel.control().viewer().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("yes", label);
 				}
-				panel.action().triggerChange();
+				panel.control().triggerTagChange();
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.viewer().getLabelsAtMousePosition(e, model));
+					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
 				}
 			}
 
@@ -93,13 +93,13 @@ public class E08_CustomActions {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.viewer().getLabelsAtMousePosition(e, model));
+					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
 				}
 				model.tagging().removeTag("yes");
-				for (Integer label : panel.action().viewer().getLabelsAtMousePosition(e, model)) {
+				for (Integer label : panel.control().viewer().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("no", label);
 				}
-				panel.action().triggerChange();
+				panel.control().triggerTagChange();
 			}
 
 			private void doPop(MouseEvent e, LabelingType<Integer> labelsAtMouse) {

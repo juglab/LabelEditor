@@ -1,4 +1,4 @@
-package com.indago.labeleditor.core.display;
+package com.indago.labeleditor.core.view;
 
 import com.indago.labeleditor.plugin.renderer.DefaultLabelEditorRenderer;
 import net.imagej.ImgPlus;

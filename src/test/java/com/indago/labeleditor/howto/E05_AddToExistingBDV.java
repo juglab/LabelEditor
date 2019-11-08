@@ -3,10 +3,9 @@ package com.indago.labeleditor.howto;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
-import com.indago.labeleditor.core.action.ActionManager;
-import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.plugin.bdv.BdvViewerInstance;
+import com.indago.labeleditor.plugin.bdv.BdvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
@@ -38,8 +37,9 @@ public class E05_AddToExistingBDV {
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
-		RenderingManager<Integer> renderer = new RenderingManager<>(model);
+		LabelEditorView<Integer> renderer = new LabelEditorView<>(model);
 		renderer.addDefaultRenderings();
+		renderer.initRenderings();
 		model.labelRegions().forEach((label, regions) -> {
 			model.tagging().addTag("displayed", label);
 		});
@@ -48,13 +48,10 @@ public class E05_AddToExistingBDV {
 		JPanel viewer = new JPanel(new MigLayout());
 		panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 //		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
-		renderer.getRenderings().forEach(rendering -> BdvFunctions.show(rendering, "labels", Bdv.options().addTo(panel)));
+		renderer.getNamedRenderings().forEach((title, img) -> BdvFunctions.show(img, title, Bdv.options().addTo(panel)));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );
-		ActionManager actionHandler = new ActionManager<>();
-		actionHandler.init(new BdvViewerInstance(panel), model, renderer);
-		actionHandler.addDefaultActionHandlers();
-		actionHandler.set3DViewMode(false);
+		BdvInterface.control(panel, model, renderer);
 
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.setContentPane(viewer);

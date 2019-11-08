@@ -43,7 +43,8 @@ public class E11_ChangingLabelingOnAction {
 					LabelingType<Integer> val = cursor.next();
 					val.removeAll(labels);
 				}
-				panel.action().triggerChange();
+				panel.control().triggerTagChange();
+				panel.control().triggerLabelingChange();
 
 			});
 			add(anItem);
@@ -69,8 +70,8 @@ public class E11_ChangingLabelingOnAction {
 		// build LabelEditorPanel
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(new ImgPlus<>(input), model);
-		panel.rendering().setTagColor("displayed", ARGBType.rgba(0,255,255,155));
-		panel.action().triggerChange();
+		panel.view().setTagColor("displayed", ARGBType.rgba(0,255,255,155));
+		panel.control().triggerTagChange();
 
 		//register custom actions
 		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
@@ -78,7 +79,7 @@ public class E11_ChangingLabelingOnAction {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.viewer().getLabelsAtMousePosition(e, model));
+					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
 				}
 			}
 
@@ -86,7 +87,7 @@ public class E11_ChangingLabelingOnAction {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.viewer().getLabelsAtMousePosition(e, model));
+					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
 				}
 			}
 

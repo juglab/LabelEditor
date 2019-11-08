@@ -1,10 +1,10 @@
 package com.indago.labeleditor.plugin.actions;
 
-import com.indago.labeleditor.core.action.ActionHandler;
-import com.indago.labeleditor.core.action.ActionManager;
+import com.indago.labeleditor.core.controller.LabelEditorActions;
+import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorTag;
-import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
 
 import java.awt.event.MouseEvent;
@@ -14,15 +14,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class SelectionActions<L> implements ActionHandler<L> {
+public class SelectionActions<L> implements LabelEditorActions {
 
 	protected final LabelEditorModel<L> model;
-	protected final RenderingManager<L> renderer;
-	private final ActionManager<L> actionManager;
+	protected final LabelEditorView<L> renderer;
+	private final LabelEditorController<L> actionManager;
 	protected LabelingType<L> currentLabels;
 	protected int currentSegment = -1;
 
-	public SelectionActions(LabelEditorModel<L> model, RenderingManager<L> renderer, ActionManager<L> actionManager) {
+	public SelectionActions(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager) {
 		this.model = model;
 		this.renderer = renderer;
 		this.actionManager = actionManager;
@@ -35,6 +35,7 @@ public class SelectionActions<L> implements ActionHandler<L> {
 			intIndex = labels.getIndex().getInteger();
 		} catch(ArrayIndexOutOfBoundsException exc) {
 			defocusAll();
+			updateLabelRendering();
 			return;
 		}
 		if(intIndex == currentSegment) return;
@@ -64,7 +65,7 @@ public class SelectionActions<L> implements ActionHandler<L> {
 	}
 
 	protected void updateLabelRendering() {
-		actionManager.triggerChange();
+		actionManager.triggerTagChange();
 	}
 
 	protected boolean noLabelsAtMousePosition() {
@@ -152,7 +153,6 @@ public class SelectionActions<L> implements ActionHandler<L> {
 	protected void defocusAll() {
 		model.tagging().removeTag(LabelEditorTag.MOUSE_OVER);
 		currentLabels = null;
-		updateLabelRendering();
 	}
 
 	protected void focus(L label) {

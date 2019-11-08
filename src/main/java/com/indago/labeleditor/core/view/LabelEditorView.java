@@ -1,4 +1,4 @@
-package com.indago.labeleditor.core.display;
+package com.indago.labeleditor.core.view;
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
@@ -6,31 +6,26 @@ import com.indago.labeleditor.core.model.LabelEditorTag;
 import com.indago.labeleditor.plugin.renderer.BorderLabelEditorRenderer;
 import com.indago.labeleditor.plugin.renderer.DefaultLabelEditorRenderer;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
-import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class RenderingManager<L> extends ArrayList<LabelEditorRenderer<L>> {
+public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
 
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
 	private final Map<Object, LUTChannel> tagColors = new HashMap<>();
 	private LabelEditorModel<L> model;
 
-	public RenderingManager(DefaultLabelEditorModel<L> model) {
+	public LabelEditorView() {}
+
+	public LabelEditorView(DefaultLabelEditorModel<L> model) {
 		init(model);
-	}
-
-	public RenderingManager() {}
-
-	public void init(ImgLabeling<L, IntType> labeling) {
-		init(new DefaultLabelEditorModel<>(labeling));
 	}
 
 	public void init(LabelEditorModel<L> model) {
@@ -54,23 +49,31 @@ public class RenderingManager<L> extends ArrayList<LabelEditorRenderer<L>> {
 		tagColors.remove(tag);
 	}
 
-	public void update() {
+	public void updateOnTagChange() {
 		if(model == null || model.labels() == null) return;
-		LabelingMapping<L> mapping = model.labels().getMapping();
-		this.forEach(renderer -> {
-			renderer.update(mapping, model.tagging().get(), tagColors);
-		});
+		final LabelingMapping<L> mapping = model.labels().getMapping();
+		final Map<L, Set<Object>> tags = model.tagging().get();
+		this.forEach(renderer -> renderer.updateOnTagChange(mapping, tags, tagColors));
 	}
 
-	public List<RandomAccessibleInterval> getRenderings() {
-		update();
-		List<RandomAccessibleInterval> res = new ArrayList<>();
-		this.forEach(renderer -> res.add(renderer.getRenderedLabels(model.labels())));
+	public void updateOnLabelingChange() {
+		if(model == null || model.labels() == null) return;
+		this.forEach(LabelEditorRenderer::updateOnLabelingChange);
+	}
+
+	public Map<String, RandomAccessibleInterval> getNamedRenderings() {
+		updateOnTagChange();
+		Map<String, RandomAccessibleInterval> res = new HashMap<>();
+		this.forEach(renderer -> res.put(renderer.getName(), renderer.getOutput()));
 		return res;
 	}
 
 	public void addDefaultRenderings() {
 		add(new DefaultLabelEditorRenderer<>());
 		add(new BorderLabelEditorRenderer<>());
+	}
+
+	public void initRenderings() {
+		forEach(renderer -> renderer.init(model.labels()));
 	}
 }

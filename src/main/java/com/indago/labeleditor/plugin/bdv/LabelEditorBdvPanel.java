@@ -6,9 +6,8 @@ import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
-import com.indago.labeleditor.core.action.ActionManager;
-import com.indago.labeleditor.core.action.ViewerInstance;
-import com.indago.labeleditor.core.display.LabelEditorAccumulateProjector;
+import com.indago.labeleditor.core.controller.LabelEditorController;
+import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
@@ -24,7 +23,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
-	private ViewerInstance<L> viewerInstance;
+	private LabelEditorInterface<L> viewerInstance;
 
 	@Override
 	public void init(ImgPlus data) {
@@ -68,14 +67,9 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private void initActionHandling() {
-		viewerInstance = new BdvViewerInstance<>(bdvHandlePanel, bdvSources);
+		viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
 		initActionManager(actionManager);
 		actionManager.set3DViewMode(mode3D);
-	}
-
-	@Override
-	public ViewerInstance<L> viewer() {
-		return viewerInstance;
 	}
 
 	@Override
@@ -93,13 +87,13 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected void initActionManager(ActionManager<L> actionManager) {
-		actionManager.init(viewer(), model(), rendering());
+	protected void initActionManager(LabelEditorController<L> actionManager) {
+		actionManager.init(viewerInstance, model(), view());
 		actionManager.addDefaultActionHandlers();
 	}
 
 	private void addLabelsToBDV() {
-		if(rendering().size() == 0) return;
+		if(view().size() == 0) return;
 		//TODO make virtual channels work
 //		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
 //		if(virtualChannels != null) {
@@ -114,7 +108,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-		rendering().getRenderings().forEach(rendering -> displayInBdv(rendering, ""));
+		view().getNamedRenderings().forEach((title, img) -> displayInBdv(img, title));
 //		}
 	}
 
@@ -154,7 +148,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	public void updateData(ImgPlus<L> data) {
 		super.setData(data);
 		displayInBdv(data, "RAW");
-		action().triggerChange();
+		control().triggerTagChange();
 	}
 
 	@Override

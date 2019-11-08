@@ -1,7 +1,7 @@
 package com.indago.labeleditor.plugin.renderer;
 
-import com.indago.labeleditor.core.display.LUTChannel;
-import com.indago.labeleditor.core.display.LabelEditorRenderer;
+import com.indago.labeleditor.core.view.LUTChannel;
+import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
@@ -17,11 +17,15 @@ import java.util.Set;
 public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	protected int[] lut;
-
-	public DefaultLabelEditorRenderer() {}
+	protected ImgLabeling<L, IntType> labels;
 
 	@Override
-	public synchronized void update(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors) {
+	public void init(ImgLabeling<L, IntType> labels) {
+		this.labels = labels;
+	}
+
+	@Override
+	public void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors) {
 
 		int[] lut;
 
@@ -46,8 +50,12 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	}
 
 	@Override
-	public RandomAccessibleInterval<ARGBType> getRenderedLabels(ImgLabeling<L, IntType> labels) {
-//		update();
+	public void updateOnLabelingChange() {
+
+	}
+
+	@Override
+	public RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
 		return Converters.convert(labels.getIndexImg(), converter, new ARGBType() );
 	}

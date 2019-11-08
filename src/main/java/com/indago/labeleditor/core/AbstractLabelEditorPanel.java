@@ -1,8 +1,8 @@
 package com.indago.labeleditor.core;
 
-import com.indago.labeleditor.core.action.ActionManager;
+import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.display.RenderingManager;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -21,8 +21,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected boolean panelBuilt = false;
 	protected boolean mode3D = false;
-	protected ActionManager<L> actionManager;
-	private RenderingManager<L> renderingManager = new RenderingManager<>();
+	protected LabelEditorController<L> actionManager;
+	private LabelEditorView<L> renderingManager = new LabelEditorView<>();
 
 	public AbstractLabelEditorPanel() {
 	}
@@ -55,9 +55,10 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		if(model != null) {
 			this.model = model;
 			renderingManager.init(model);
-			initRenderers(renderingManager);
+			addRenderings(renderingManager);
+			renderingManager.initRenderings();
 			buildPanel();
-			actionManager = new ActionManager<>();
+			actionManager = new LabelEditorController<>();
 		}
 	}
 
@@ -81,16 +82,16 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected abstract Component buildViewer();
 
-	protected void initRenderers(RenderingManager<L> renderingManager) {
+	protected void addRenderings(LabelEditorView<L> renderingManager) {
 		renderingManager.addDefaultRenderings();
 	}
 
-	abstract protected void initActionManager(ActionManager<L> actionManager);
+	abstract protected void initActionManager(LabelEditorController<L> actionManager);
 
 	public abstract Object getViewerHandle();
 
 	@Override
-	public RenderingManager<L> rendering() {
+	public LabelEditorView<L> view() {
 		return renderingManager;
 	}
 
@@ -100,7 +101,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	}
 
 	@Override
-	public ActionManager<L> action() {
+	public LabelEditorController<L> control() {
 		return actionManager;
 	}
 

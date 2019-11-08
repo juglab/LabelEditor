@@ -65,9 +65,9 @@ public class E09_BigData {
 
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
-		panel.rendering().setTagColor(TAG1, ARGBType.rgba(0, 255, 255, 255));
-		panel.rendering().setTagColor(TAG2, ARGBType.rgba(255, 0, 255, 255));
-		panel.action().triggerChange();
+		panel.view().setTagColor(TAG1, ARGBType.rgba(0, 255, 255, 255));
+		panel.view().setTagColor(TAG2, ARGBType.rgba(255, 0, 255, 255));
+		panel.control().triggerTagChange();
 
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

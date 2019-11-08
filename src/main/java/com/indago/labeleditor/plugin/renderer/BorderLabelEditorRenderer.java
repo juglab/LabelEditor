@@ -1,15 +1,15 @@
 package com.indago.labeleditor.plugin.renderer;
 
-import com.indago.labeleditor.core.display.LUTChannel;
+import com.indago.labeleditor.core.view.LUTChannel;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.neighborhood.DiamondShape;
 import net.imglib2.algorithm.neighborhood.Neighborhood;
+import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
@@ -22,8 +22,6 @@ import java.util.Set;
 
 public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> {
 
-
-	private ImgLabeling<L, IntType> labels;
 	private RandomAccessibleInterval<IntType> output;
 
 	public BorderLabelEditorRenderer() {}
@@ -33,10 +31,21 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 		return "borders";
 	}
 
-	@Override
-	public synchronized void update(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors) {
 
-		if(labels != null && output != null) updateOutput(labels, output);
+	@Override
+	public void init(ImgLabeling<L, IntType> labels) {
+		super.init(labels);
+		this.output = new DiskCachedCellImgFactory<>(new IntType()).create(labels);
+		updateOutput();
+	}
+
+	@Override
+	public void updateOnLabelingChange() {
+		if(labels != null && output != null) updateOutput();
+	}
+
+	@Override
+	public synchronized void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors) {
 
 		int[] lut;
 
@@ -50,7 +59,11 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 			// if there are no labels, we don't need to check for tags and can continue
 			if(labels.size() == 0) continue;
 
-			lut[i] = ARGBType.rgba(255,255,255,Math.min(labels.size()*50, 255));
+			// get all tags associated with the labels of this index
+			Set<Object> mytags = filterTagsByLabels( tags, labels);
+
+			lut[i] = mixColors(mytags, tagColors);
+//			lut[i] = ARGBType.rgba(255,255,255,Math.min(labels.size()*50, 255));
 
 		}
 
@@ -58,19 +71,13 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	}
 
 	@Override
-	public RandomAccessibleInterval<ARGBType> getRenderedLabels(ImgLabeling<L, IntType> labels) {
-
-		RandomAccessibleInterval<IntType> output = new ArrayImgFactory<>(new IntType()).create(labels);
-		this.labels = labels;
-		this.output = output;
-
-		updateOutput(labels, output);
+	public RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
 //		ImageJFunctions.show(output, "output");
 		return Converters.convert(output, converter, new ARGBType() );
 	}
 
-	private void updateOutput(ImgLabeling<L, IntType> labels, RandomAccessibleInterval<IntType> output) {
+	private void updateOutput() {
 		RandomAccess<IntType> randomAccess = labels.getIndexImg().randomAccess();
 		int nothing = ARGBType.rgba(0, 0, 0, 0);
 		DiamondShape shape = new DiamondShape(1);
