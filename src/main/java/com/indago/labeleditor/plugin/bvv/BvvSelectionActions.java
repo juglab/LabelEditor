@@ -17,13 +17,11 @@ import java.util.List;
 
 public class BvvSelectionActions<L> extends SelectionActions<L> {
 
-	private final BvvHandle panel;
-	private final BvvInterface bridge;
+	private final BvvInterface<L> bvvInterface;
 
-	public BvvSelectionActions(BvvHandle panel, LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer, BvvInterface bridge) {
+	public BvvSelectionActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer, BvvInterface<L> bvvInterface) {
 		super(model, renderer, actionManager);
-		this.panel = panel;
-		this.bridge = bridge;
+		this.bvvInterface = bvvInterface;
 		initMouseMotionListener();
 		installBvvBehaviours();
 	}
@@ -38,12 +36,12 @@ public class BvvSelectionActions<L> extends SelectionActions<L> {
 			}
 		};
 
-		panel.getViewerPanel().getDisplay().addMouseMotionListener( mml );
+		bvvInterface.getBvvHandle().getViewerPanel().getDisplay().addMouseMotionListener( mml );
 	}
 
 	private void installBvvBehaviours() {
 		final Behaviours behaviours = new Behaviours( new InputTriggerConfig(), "metaseg");
-		behaviours.install( panel.getTriggerbindings(), "my-new-behaviours" );
+		behaviours.install( bvvInterface.getBvvHandle().getTriggerbindings(), "my-new-behaviours" );
 		behaviours.behaviour(
 				(ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> handleWheelRotation(wheelRotation, isHorizontal),
 				"browse segments",
@@ -56,7 +54,7 @@ public class BvvSelectionActions<L> extends SelectionActions<L> {
 
 	@Override
 	protected void handleMouseMove(MouseEvent e) {
-		List<LabelingType<L>> allSets = bridge.getAllLabelsAtMousePosition(e, model);
+		List<LabelingType<L>> allSets = bvvInterface.getAllLabelsAtMousePosition(e, model);
 		if(allSets == null || allSets.size() == 0) {
 			defocusAll();
 			updateLabelRendering();
