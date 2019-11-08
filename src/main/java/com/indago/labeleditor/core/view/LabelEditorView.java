@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+//TODO move renderer list into field
+//TODO make coloring smarter, e.g. add border color, somehow extendable
 public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
 
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);

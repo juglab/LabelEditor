@@ -5,6 +5,7 @@ import com.indago.labeleditor.core.model.LabelEditorModel;
 
 import java.util.ArrayList;
 
+//TODO move actions list into field
 public class LabelEditorController<L> extends ArrayList<LabelEditorActions> {
 
 	private LabelEditorInterface<L> interfaceInstance;

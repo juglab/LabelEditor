@@ -73,6 +73,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	@Override
 	public List<LabelEditorActions> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
 		List<LabelEditorActions> res = new ArrayList<>();
+		//TODO find actions by annotation
 		res.add(new BdvSelectionActions<>(panel, actionManager, model, renderer));
 		return res;
 	}
