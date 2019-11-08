@@ -19,6 +19,7 @@ public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
 
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
+	static int colorDefault = ARGBType.rgba(255,255,255,100);
 	private final Map<Object, LUTChannel> tagColors = new HashMap<>();
 	private LabelEditorModel<L> model;
 
@@ -31,6 +32,7 @@ public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
 	public void init(LabelEditorModel<L> model) {
 		this.model = model;
 		tagColors.clear();
+		tagColors.put(LabelEditorTag.NO_TAG, new LUTChannel(colorDefault));
 		tagColors.put(LabelEditorTag.SELECTED, new LUTChannel(colorSelected));
 		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorMouseOver));
 		clear();
@@ -69,6 +71,7 @@ public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
 	}
 
 	public void addDefaultRenderings() {
+		//TODO find available renderers by annotation
 		add(new DefaultLabelEditorRenderer<>());
 		add(new BorderLabelEditorRenderer<>());
 	}

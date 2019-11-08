@@ -49,12 +49,12 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	private void createOrderedLabels(ImgLabeling<L, IntType> labeling) {
+		//TODO calculating the regions should not be done in the core, but in an addon. By default, the sorting does not have to make sense.
 		LabelRegions<L> regions = new LabelRegions<>(labeling);
 		List<LabelRegion<L>> regionSet = new ArrayList<>();
 		labeling.forEach(labels -> labels.stream().map(regions::getLabelRegion).forEach(labelRegion -> {
 			if (!regionSet.contains(labelRegion)) regionSet.add(labelRegion);
 		}));
-		//TODO check if this is correct - sort by region size?! probably does not work this way
 		regionSet.sort((r1, r2) -> (int)(r1.size() - r2.size()));
 		orderedLabels = new LinkedHashMap<>();
 		regionSet.forEach(region -> orderedLabels.put(region.getLabel(), region));

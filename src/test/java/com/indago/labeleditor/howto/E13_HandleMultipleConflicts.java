@@ -1,11 +1,14 @@
 package com.indago.labeleditor.howto;
 
 
+import bdv.util.BdvFunctions;
+import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorTag;
+import com.indago.labeleditor.plugin.renderer.DefaultLabelEditorRenderer;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.img.array.ArrayImg;
@@ -41,8 +44,6 @@ public class E13_HandleMultipleConflicts {
 		String LABEL7 = "label7";
 		String LABEL8 = "label8";
 
-		String TAG1 = "tag1";
-
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( 500, 500 );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 
@@ -62,15 +63,21 @@ public class E13_HandleMultipleConflicts {
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL2);
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL7);
 
-		panel = new LabelEditorBdvPanel<>();
+		panel = new LabelEditorBdvPanel<String>() {
+			@Override
+			protected void addActionHandlers(LabelEditorController<String> actionManager) {
+				//TODO replace with special selection
+				actionManager.addDefaultActionHandlers();
+			}
+		};
 		panel.init(model);
-		panel.view().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,255));
-		panel.view().setTagColor(TAG1, ARGBType.rgba(255,255,255,100));
+		panel.view().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,200));
 		panel.control().triggerTagChange();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
+		BdvFunctions.show(panel.view().getNamedRenderings().get(new DefaultLabelEditorRenderer<>().getName()), "");
 	}
 
 	private void drawSphere(ImgLabeling<String, IntType> img, long[] position, int radius, String label) {

@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class LabelEditorController<L> extends ArrayList<LabelEditorActions> {
 
-	LabelEditorInterface<L> interfaceInstance;
+	private LabelEditorInterface<L> interfaceInstance;
 	private LabelEditorView<L> renderer;
 	private LabelEditorModel<L> model;
 
-	public void init(LabelEditorInterface interfaceInstance, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
+	public void init(LabelEditorInterface<L> interfaceInstance, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
 		this.interfaceInstance = interfaceInstance;
 		this.renderer = renderer;
 		this.model = model;

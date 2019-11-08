@@ -68,7 +68,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private void initActionHandling() {
 		viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
-		initActionManager(actionManager);
+		actionManager.init(viewerInstance, model(), view());
+		addActionHandlers(actionManager);
 		actionManager.set3DViewMode(mode3D);
 	}
 
@@ -87,8 +88,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected void initActionManager(LabelEditorController<L> actionManager) {
-		actionManager.init(viewerInstance, model(), view());
+	protected void addActionHandlers(LabelEditorController<L> actionManager) {
 		actionManager.addDefaultActionHandlers();
 	}
 

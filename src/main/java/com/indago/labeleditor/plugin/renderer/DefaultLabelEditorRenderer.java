@@ -1,5 +1,6 @@
 package com.indago.labeleditor.plugin.renderer;
 
+import com.indago.labeleditor.core.model.LabelEditorTag;
 import com.indago.labeleditor.core.view.LUTChannel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import net.imglib2.RandomAccessibleInterval;
@@ -18,6 +19,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	protected int[] lut;
 	protected ImgLabeling<L, IntType> labels;
+	boolean debug = false;
 
 	@Override
 	public void init(ImgLabeling<L, IntType> labels) {
@@ -32,21 +34,48 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 		// our LUT has one entry per index in the index img of our labeling
 		lut = new int[mapping.numSets()];
 
-		for (int i = 0; i < lut.length; i++) {
-			// get all labels of this index
-			Set<L> labels = mapping.labelsAtIndex(i);
+		if(tagColors != null) {
+			for (int i = 0; i < lut.length; i++) {
+				// get all labels of this index
+				Set<L> labels = mapping.labelsAtIndex(i);
 
-			// if there are no labels, we don't need to check for tags and can continue
-			if(labels.size() == 0) continue;
+				// if there are no labels, we don't need to check for tags and can continue
+				if(labels.size() == 0) continue;
 
-			// get all tags associated with the labels of this index
-			Set<Object> mytags = filterTagsByLabels( tags, labels);
+				// get all tags associated with the labels of this index
+				Set<Object> mytags = filterTagsByLabels( tags, labels);
 
-			lut[i] = mixColors(mytags, tagColors);
+				//add DEFAULT tag if no tag is assigned (making it possible to draw all labels with a default color)
+				if(mytags.size() == 0) mytags.add(LabelEditorTag.NO_TAG);
 
+				lut[i] = mixColors(mytags, tagColors);
+
+			}
 		}
 
 		this.lut = lut;
+
+		if(debug) {
+			printLUT(mapping, lut);
+		}
+	}
+
+	private void printLUT(LabelingMapping<L> mapping, int[] lut) {
+		StringBuilder str = new StringBuilder();
+		for (int i = 0; i < lut.length; i++) {
+			str.append("{");
+			mapping.labelsAtIndex(i).forEach(label -> str.append(label).append(" "));
+			str.append("} : rgba(");
+			str.append(ARGBType.red(lut[i]));
+			str.append(", ");
+			str.append(ARGBType.green(lut[i]));
+			str.append(", ");
+			str.append(ARGBType.blue(lut[i]));
+			str.append(", ");
+			str.append(ARGBType.alpha(lut[i]));
+			str.append(")\n");
+		}
+		System.out.println(str.toString());
 	}
 
 	@Override
@@ -95,6 +124,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	protected synchronized Set<Object> filterTagsByLabels(Map<L, Set<Object>> tags, Set<L> labels) {
 		Set<Object> set = new HashSet<>();
+		if(tags == null) return set;
 		for (Map.Entry<L, Set<Object>> entry : tags.entrySet()) {
 			if (labels.contains(entry.getKey())) {
 				set.addAll(entry.getValue());

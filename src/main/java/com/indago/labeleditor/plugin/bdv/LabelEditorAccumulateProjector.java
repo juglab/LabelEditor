@@ -83,6 +83,6 @@ public class LabelEditorAccumulateProjector extends AccumulateProjector< ARGBTyp
 			blue = (blue * alpha + newblue * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
 			alpha = alpha + newalpha * (1 - alpha);
 		}
-		target.set( ARGBType.rgba( red, green, blue, alpha ) );
+		target.set( ARGBType.rgba( red, green, blue, (int)(alpha*255) ) );
 	}
 }

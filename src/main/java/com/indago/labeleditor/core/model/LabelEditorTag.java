@@ -1,5 +1,5 @@
 package com.indago.labeleditor.core.model;
 
 public enum LabelEditorTag {
-	MOUSE_OVER, SELECTED
+	NO_TAG, MOUSE_OVER, SELECTED
 }

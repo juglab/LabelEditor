@@ -86,7 +86,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		renderingManager.addDefaultRenderings();
 	}
 
-	abstract protected void initActionManager(LabelEditorController<L> actionManager);
+	abstract protected void addActionHandlers(LabelEditorController<L> actionManager);
 
 	public abstract Object getViewerHandle();
 
