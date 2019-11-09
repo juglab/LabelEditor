@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.bvv;
+package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import bvv.util.BvvHandle;
 import bvv.util.BvvStackSource;

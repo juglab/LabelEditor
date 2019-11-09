@@ -4,7 +4,7 @@ import bdv.util.BdvFunctions;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderers;
 import com.indago.labeleditor.core.view.LabelEditorView;
-import com.indago.labeleditor.plugin.renderer.DefaultLabelEditorRenderer;
+import com.indago.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;

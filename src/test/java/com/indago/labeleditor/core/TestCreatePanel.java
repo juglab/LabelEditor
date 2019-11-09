@@ -1,7 +1,7 @@
 package com.indago.labeleditor.core;
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;

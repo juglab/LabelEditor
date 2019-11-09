@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.bdv;
+package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
@@ -101,12 +101,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	public List< BdvSource > getSources() {
 		return bdvSources;
-	}
-
-	@Override
-	public void updateData(ImgPlus<L> data) {
-		super.setData(data);
-		displayInBdv(data, "RAW");
 	}
 
 	@Override

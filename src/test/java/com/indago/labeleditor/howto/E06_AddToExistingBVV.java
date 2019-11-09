@@ -6,7 +6,7 @@ import bvv.util.BvvStackSource;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.plugin.bvv.BvvInterface;
+import com.indago.labeleditor.plugin.interfaces.bvv.BvvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;

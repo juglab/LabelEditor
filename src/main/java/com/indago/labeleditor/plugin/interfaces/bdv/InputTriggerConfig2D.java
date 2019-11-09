@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.bdv;
+package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.io.yaml.YamlConfigIO;

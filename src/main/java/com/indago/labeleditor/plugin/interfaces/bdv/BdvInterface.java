@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.bdv;
+package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;

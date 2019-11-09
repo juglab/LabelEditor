@@ -5,7 +5,7 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.plugin.bdv.BdvInterface;
+import com.indago.labeleditor.plugin.interfaces.bdv.BdvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;

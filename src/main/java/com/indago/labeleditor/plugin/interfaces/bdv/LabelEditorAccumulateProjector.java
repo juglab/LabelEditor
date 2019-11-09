@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.bdv;
+package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import bdv.viewer.render.AccumulateProjector;
 import bdv.viewer.render.AccumulateProjectorFactory;

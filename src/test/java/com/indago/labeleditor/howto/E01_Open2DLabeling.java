@@ -2,7 +2,7 @@ package com.indago.labeleditor.howto;
 
 
 import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.algorithm.labeling.ConnectedComponents;

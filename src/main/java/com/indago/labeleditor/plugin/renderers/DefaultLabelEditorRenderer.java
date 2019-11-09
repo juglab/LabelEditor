@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.renderer;
+package com.indago.labeleditor.plugin.renderers;
 
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LUTChannel;

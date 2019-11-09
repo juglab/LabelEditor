@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.bvv;
+package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
@@ -110,11 +110,6 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	public void dispose() {
 		if(getViewerHandle() != null) getViewerHandle().close();
-	}
-
-	@Override
-	public void updateData(ImgPlus<L> imgPlus) {
-		super.setData(imgPlus);
 	}
 
 }

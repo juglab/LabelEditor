@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.bvv;
+package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
