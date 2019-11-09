@@ -1,10 +1,9 @@
 package com.indago.labeleditor.plugin.bvv;
 
-import bvv.util.BvvHandle;
 import com.indago.labeleditor.core.controller.LabelEditorController;
-import com.indago.labeleditor.plugin.actions.SelectionActions;
-import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorView;
+import com.indago.labeleditor.plugin.actions.SelectionActions;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.ScrollBehaviour;

@@ -70,7 +70,6 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	@Override
 	public RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
-//		ImageJFunctions.show(output, "output");
 		return Converters.convert(output, converter, new ARGBType() );
 	}
 
@@ -94,15 +93,6 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 			IntType centerPixel = randomAccess.get();
 			IntType o = outputRa.get();
 			if(centerPixel.get() == 0) { o.set(nothing); continue;}
-//			if(pos[0] == labels.dimension(0)-1) {
-//				System.out.print("pos: " + Arrays.toString(pos) + " neighborhood: ");
-//				neighborhood.forEach(neighbor -> {
-//					try {
-//						System.out.print(neighbor.get() + " ");
-//					} catch(ArrayIndexOutOfBoundsException ignored) {System.out.print("X ");}
-//				});
-//				System.out.println();
-//			}
 			boolean found = false;
 			for (IntType neighbor : neighborhood) {
 				if (!neighbor.equals(centerPixel)) {

@@ -78,7 +78,6 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected void buildPanel() {
 		if(panelBuilt) return;
 		panelBuilt = true;
-		//this limits the BDV navigation to 2D
 		setLayout( new BorderLayout() );
 		final JPanel interfacePanel = new JPanel( new MigLayout("fill, w 500, h 500") );
 		interfacePanel.add( buildInterface(), "span, grow, push" );

@@ -3,7 +3,6 @@ package com.indago.labeleditor.core.model.tagging;
 import org.scijava.listeners.Listeners;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +27,6 @@ public class DefaultTagLabelRelation<L> implements TagLabelRelation<L> {
 		e.label = label;
 		//TODO use scijava (?) to print in debug mode
 		System.out.println("[INFO] " + e.toString());
-//		System.out.println(Arrays.toString(Thread.currentThread().getStackTrace()));
 		listeners.list.forEach(listener -> listener.tagChanged(e));
 	}
 

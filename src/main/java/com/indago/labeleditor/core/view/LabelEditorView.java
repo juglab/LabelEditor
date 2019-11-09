@@ -49,17 +49,6 @@ public class LabelEditorView<L> {
 		return new ArrayList<>(tagColors.values());
 	}
 
-//	public void update() {
-//		updateOnTagChange();
-//	}
-//
-//	public void updateOnTagChange() {
-//		if(model == null || model.labels() == null) return;
-//		final LabelingMapping<L> mapping = model.labels().getMapping();
-//		final Map<L, Set<Object>> tags = model.tagging().get();
-//		renderers.forEach(renderer -> renderer.updateOnTagChange(mapping, tags, tagColors));
-//	}
-
 	void updateRenderers() {
 		if(model == null || model.labels() == null) return;
 		final LabelingMapping<L> mapping = model.labels().getMapping();

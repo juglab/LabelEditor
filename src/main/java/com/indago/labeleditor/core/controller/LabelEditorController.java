@@ -23,15 +23,9 @@ public class LabelEditorController<L> {
 	public void addDefaultActionHandlers() {
 		actions.addAll(interfaceInstance.getAvailableActions(this, model, renderer));
 	}
-//
-//	public void triggerTagChange() {
-//		renderer.updateOnTagChange();
-//		interfaceInstance.update();
-//	}
 
 	public void triggerLabelingChange() {
 		renderer.updateOnLabelingChange();
-//		interfaceInstance.update();
 	}
 
 	public LabelEditorInterface<L> viewer() {

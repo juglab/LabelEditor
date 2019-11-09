@@ -2,9 +2,9 @@ package com.indago.labeleditor.plugin.bdv;
 
 import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
-import com.indago.labeleditor.plugin.actions.SelectionActions;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
+import com.indago.labeleditor.plugin.actions.SelectionActions;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.ScrollBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -25,7 +25,6 @@ public class BdvSelectionActions<L> extends SelectionActions<L> {
 	}
 
 	private void initMouseMotionListener() {
-		System.out.println("init mouse motion listener");
 		MouseMotionListener mml = new MouseMotionListener() {
 			@Override
 			public void mouseDragged(MouseEvent e) {}

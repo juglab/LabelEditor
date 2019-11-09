@@ -65,11 +65,6 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		}
 		return new Point(x, y, time);
 	}
-//
-//	@Override
-//	public void update() {
-//		panel.getViewerPanel().requestRepaint();
-//	}
 
 	@Override
 	public List<LabelEditorActions> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {

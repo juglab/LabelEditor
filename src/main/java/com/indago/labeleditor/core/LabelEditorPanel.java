@@ -30,7 +30,5 @@ public interface LabelEditorPanel<L> extends Disposable {
 
 	Container get();
 
-	void updateData(ImgPlus<L> imgPlus);
-
 //	setConfig(.yaml)
 }
