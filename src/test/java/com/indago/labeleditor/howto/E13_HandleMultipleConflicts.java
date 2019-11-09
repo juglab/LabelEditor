@@ -3,6 +3,7 @@ package com.indago.labeleditor.howto;
 
 import bdv.util.BdvFunctions;
 import com.indago.labeleditor.core.controller.LabelEditorController;
+import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
@@ -19,10 +20,12 @@ import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
 
 /**
  * How to open an {@link ImgLabeling} in a {@link LabelEditorBdvPanel}.
@@ -33,6 +36,7 @@ public class E13_HandleMultipleConflicts {
 	static LabelEditorPanel<String> panel;
 
 	@Test
+	@Ignore
 	public void run() {
 
 		String LABEL1 = "label1";
@@ -77,7 +81,8 @@ public class E13_HandleMultipleConflicts {
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-		BdvFunctions.show(panel.view().getNamedRenderings().get(new DefaultLabelEditorRenderer<>().getName()), "");
+		Optional<LabelEditorRenderer> defaultRenderer = panel.view().renderers().get(new DefaultLabelEditorRenderer<>().getName());
+		defaultRenderer.ifPresent(renderer -> BdvFunctions.show(renderer.getOutput(), ""));
 	}
 
 	private void drawSphere(ImgLabeling<String, IntType> img, long[] position, int radius, String label) {

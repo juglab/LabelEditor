@@ -14,6 +14,7 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -30,6 +31,7 @@ public class E05_AddToExistingBDV {
 	static BdvHandlePanel panel;
 
 	@Test
+	@Ignore
 	public void run() throws IOException {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
@@ -37,21 +39,19 @@ public class E05_AddToExistingBDV {
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
-		LabelEditorView<Integer> renderer = new LabelEditorView<>(model);
-		renderer.addDefaultRenderings();
-		renderer.initRenderings();
-		model.labelRegions().forEach((label, regions) -> {
-			model.tagging().addTag("displayed", label);
-		});
-		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		LabelEditorView<Integer> view = new LabelEditorView<>(model);
+		view.renderers().addDefaultRenderers();
+		model.labelRegions().forEach((label, regions) -> model.tagging().addTag("displayed", label));
+		view.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		view.updateOnTagChange();
 
 		JPanel viewer = new JPanel(new MigLayout());
 		panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 //		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
-		renderer.getNamedRenderings().forEach((title, img) -> BdvFunctions.show(img, title, Bdv.options().addTo(panel)));
+		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), Bdv.options().addTo(panel)));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );
-		BdvInterface.control(panel, model, renderer);
+		BdvInterface.control(panel, model, view);
 
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.setContentPane(viewer);

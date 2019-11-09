@@ -11,6 +11,7 @@ import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -28,6 +29,7 @@ public class E07_CustomTags {
 	static LabelEditorPanel<Integer> panel;
 
 	@Test
+	@Ignore
 	public void run() throws IOException {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);

@@ -15,15 +15,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//TODO move renderer list into field
 //TODO make coloring smarter, e.g. add border color, somehow extendable
-public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
+public class LabelEditorView<L> {
 
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
 	static int colorDefault = ARGBType.rgba(255,255,255,100);
 	private final Map<Object, LUTChannel> tagColors = new HashMap<>();
 	private LabelEditorModel<L> model;
+
+	private final LabelEditorRenderers renderers = new LabelEditorRenderers();
 
 	public LabelEditorView() {}
 
@@ -37,7 +38,8 @@ public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
 		tagColors.put(LabelEditorTag.NO_TAG, new LUTChannel(colorDefault));
 		tagColors.put(LabelEditorTag.SELECTED, new LUTChannel(colorSelected));
 		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorMouseOver));
-		clear();
+		renderers.clear();
+		renderers.init(this, model);
 	}
 
 
@@ -53,32 +55,27 @@ public class LabelEditorView<L> extends ArrayList<LabelEditorRenderer<L>> {
 		tagColors.remove(tag);
 	}
 
+	public void update() {
+		updateOnTagChange();
+	}
+
 	public void updateOnTagChange() {
 		if(model == null || model.labels() == null) return;
 		final LabelingMapping<L> mapping = model.labels().getMapping();
 		final Map<L, Set<Object>> tags = model.tagging().get();
-		this.forEach(renderer -> renderer.updateOnTagChange(mapping, tags, tagColors));
+		renderers.forEach(renderer -> renderer.updateOnTagChange(mapping, tags, tagColors));
 	}
 
 	public void updateOnLabelingChange() {
 		if(model == null || model.labels() == null) return;
-		this.forEach(LabelEditorRenderer::updateOnLabelingChange);
+		renderers.forEach(LabelEditorRenderer::updateOnLabelingChange);
 	}
 
-	public Map<String, RandomAccessibleInterval> getNamedRenderings() {
-		updateOnTagChange();
-		Map<String, RandomAccessibleInterval> res = new HashMap<>();
-		this.forEach(renderer -> res.put(renderer.getName(), renderer.getOutput()));
-		return res;
+	public LabelEditorRenderers renderers() {
+		return renderers;
 	}
 
-	public void addDefaultRenderings() {
-		//TODO find available renderers by annotation
-		add(new DefaultLabelEditorRenderer<>());
-		add(new BorderLabelEditorRenderer<>());
-	}
-
-	public void initRenderings() {
-		forEach(renderer -> renderer.init(model.labels()));
+	public Map<Object, LUTChannel> colors() {
+		return tagColors;
 	}
 }

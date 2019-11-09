@@ -1,8 +1,8 @@
 package com.indago.labeleditor.core.interactive;
 
 import bdv.util.BdvFunctions;
-import bdv.util.BdvOptions;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorRenderers;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.plugin.renderer.DefaultLabelEditorRenderer;
 import net.imagej.ImgPlus;
@@ -19,8 +19,6 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,12 +44,11 @@ public class RunDefaultRenderer {
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 100);
 		view.setTagColor("b", red);
-		view.add(new DefaultLabelEditorRenderer<>());
-		view.initRenderings();
+		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		view.updateOnTagChange();
-		Map<String, RandomAccessibleInterval> renderings = view.getNamedRenderings();
-		assertEquals(1, renderings.size());
-		RandomAccessibleInterval<ARGBType> rendering = renderings.get(new DefaultLabelEditorRenderer<>().getName());
+		LabelEditorRenderers renderers = view.renderers();
+		assertEquals(1, renderers.size());
+		RandomAccessibleInterval<ARGBType> rendering = renderers.get(0).getOutput();
 
 		BdvFunctions.show(rendering, "");
 	}

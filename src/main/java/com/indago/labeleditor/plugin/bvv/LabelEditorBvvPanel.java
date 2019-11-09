@@ -90,7 +90,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private void addLabelsToBvv() {
-		if(view().size() == 0) return;
+		if(view().renderers().size() == 0) return;
 
 		//TODO make virtual channels work
 //		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
@@ -106,7 +106,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 //				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
 //			}
 //		} else {
-		view().getNamedRenderings().forEach((title, img) -> displayInBvv(img, title));
+		view().renderers().forEach(renderer -> displayInBvv(renderer.getOutput(), renderer.getName()));
 //		}
 	}
 

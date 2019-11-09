@@ -56,7 +56,6 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 			this.model = model;
 			renderingManager.init(model);
 			addRenderings(renderingManager);
-			renderingManager.initRenderings();
 			buildPanel();
 			actionManager = new LabelEditorController<>();
 		}
@@ -83,7 +82,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected abstract Component buildViewer();
 
 	protected void addRenderings(LabelEditorView<L> renderingManager) {
-		renderingManager.addDefaultRenderings();
+		renderingManager.renderers().addDefaultRenderers();
 	}
 
 	abstract protected void addActionHandlers(LabelEditorController<L> actionManager);

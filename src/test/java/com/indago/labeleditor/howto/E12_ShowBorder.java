@@ -12,6 +12,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -28,6 +29,7 @@ public class E12_ShowBorder {
 	static LabelEditorPanel<Integer> panel;
 
 	@Test
+	@Ignore
 	public void run() throws IOException {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
@@ -36,7 +38,7 @@ public class E12_ShowBorder {
 		panel = new LabelEditorBdvPanel<Integer>() {
 			@Override
 			protected void addRenderings(LabelEditorView<Integer> renderingManager) {
-				renderingManager.add(new BorderLabelEditorRenderer<>());
+				renderingManager.renderers().add(new BorderLabelEditorRenderer<>());
 			}
 		};
 		panel.init(new ImgPlus<IntType>(input), labeling);

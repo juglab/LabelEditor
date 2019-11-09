@@ -3,6 +3,7 @@ package com.indago.labeleditor.howto;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
+import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.plugin.bvv.BvvInterface;
@@ -16,18 +17,19 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.Views;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class E06_AddToExistingBVV {
 
 	static ImageJ ij = new ImageJ();
 
 	@Test
+	@Ignore
 	public <T extends RealType<T>> void run() throws IOException {
 
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
@@ -45,26 +47,24 @@ public class E06_AddToExistingBVV {
 			model.tagging().addTag("displayed", label);
 		});
 
-		LabelEditorView<Integer> renderer = new LabelEditorView<>(model);
-		renderer.addDefaultRenderings();
-		renderer.initRenderings();
-		renderer.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
-		renderer.updateOnTagChange();
+		LabelEditorView<Integer> view = new LabelEditorView<>(model);
+		view.renderers().addDefaultRenderers();
+		view.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		view.updateOnTagChange();
 
 		List<BvvStackSource> sources = new ArrayList<>();
 		BvvStackSource source = null;
-		for (Map.Entry<String, RandomAccessibleInterval> entry : renderer.getNamedRenderings().entrySet()) {
-			String title = entry.getKey();
-			RandomAccessibleInterval img = entry.getValue();
+		for (LabelEditorRenderer renderer : view.renderers()) {
+			RandomAccessibleInterval img = renderer.getOutput();
 			if (source == null) {
-				source = BvvFunctions.show(img, title, Bvv.options());
+				source = BvvFunctions.show(img, renderer.getName(), Bvv.options());
 			} else {
-				source = BvvFunctions.show(img, title, Bvv.options().addTo(source.getBvvHandle()));
+				source = BvvFunctions.show(img, renderer.getName(), Bvv.options().addTo(source.getBvvHandle()));
 			}
 			sources.add(source);
 		}
 
-		BvvInterface.control(source.getBvvHandle(), sources, model, renderer);
+		BvvInterface.control(source.getBvvHandle(), sources, model, view);
 
 	}
 

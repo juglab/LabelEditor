@@ -14,6 +14,7 @@ import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -55,6 +56,7 @@ public class E11_ChangingLabelingOnAction {
 	 * Demonstrates how to register a mouse action.
 	 */
 	@Test
+	@Ignore
 	public void mouseAction() throws IOException {
 
 		//open blobs

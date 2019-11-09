@@ -4,13 +4,14 @@ import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
-//TODO move actions list into field
-public class LabelEditorController<L> extends ArrayList<LabelEditorActions> {
+public class LabelEditorController<L> {
 
 	private LabelEditorInterface<L> interfaceInstance;
 	private LabelEditorView<L> renderer;
 	private LabelEditorModel<L> model;
+	private final List<LabelEditorActions> actions = new ArrayList<>();
 
 	public void init(LabelEditorInterface<L> interfaceInstance, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
 		this.interfaceInstance = interfaceInstance;
@@ -19,7 +20,7 @@ public class LabelEditorController<L> extends ArrayList<LabelEditorActions> {
 	}
 
 	public void addDefaultActionHandlers() {
-		addAll(interfaceInstance.getAvailableActions(this, model, renderer));
+		actions.addAll(interfaceInstance.getAvailableActions(this, model, renderer));
 	}
 
 	public void triggerTagChange() {
@@ -38,5 +39,9 @@ public class LabelEditorController<L> extends ArrayList<LabelEditorActions> {
 
 	public void set3DViewMode(boolean mode3D) {
 		interfaceInstance.set3DViewMode(mode3D);
+	}
+
+	public List<LabelEditorActions> actions() {
+		return actions;
 	}
 }

@@ -13,6 +13,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.Views;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -28,6 +29,7 @@ public class E04_Open3DLabelingBVV {
 	static LabelEditorPanel<Integer> panel;
 
 	@Test
+	@Ignore
 	public <T extends RealType<T>> void run() throws IOException {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		RandomAccessibleInterval inputStack = input;

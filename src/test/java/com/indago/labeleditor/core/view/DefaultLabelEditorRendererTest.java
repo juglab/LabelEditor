@@ -56,12 +56,11 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 100);
 		view.setTagColor("b", red);
-		view.add(new DefaultLabelEditorRenderer<>());
-		view.initRenderings();
 		view.updateOnTagChange();
-		Map<String, RandomAccessibleInterval> renderings = view.getNamedRenderings();
+		view.renderers().add(new DefaultLabelEditorRenderer<>());
+		LabelEditorRenderers renderings = view.renderers();
 		assertEquals(1, renderings.size());
-		RandomAccessibleInterval<ARGBType> rendering = renderings.get(new DefaultLabelEditorRenderer<>().getName());
+		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
 		assertNotNull(rendering);
 		assertEquals(data.numDimensions(), rendering.numDimensions());
 		assertEquals(data.dimension(0), rendering.dimension(0));
