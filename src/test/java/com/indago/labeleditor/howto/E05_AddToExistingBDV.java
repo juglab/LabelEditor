@@ -42,7 +42,7 @@ public class E05_AddToExistingBDV {
 		LabelEditorView<Integer> view = new LabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();
 		model.labelRegions().forEach((label, regions) -> model.tagging().addTag("displayed", label));
-		view.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		view.colors().put("displayed", ARGBType.rgba(255,255,0,55));
 		view.updateOnTagChange();
 
 		JPanel viewer = new JPanel(new MigLayout());

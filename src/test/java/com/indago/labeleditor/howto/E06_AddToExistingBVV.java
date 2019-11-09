@@ -49,7 +49,7 @@ public class E06_AddToExistingBVV {
 
 		LabelEditorView<Integer> view = new LabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();
-		view.setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		view.colors().put("displayed", ARGBType.rgba(255,255,0,55));
 		view.updateOnTagChange();
 
 		List<BvvStackSource> sources = new ArrayList<>();

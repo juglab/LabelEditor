@@ -55,7 +55,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.tagging().addTag("b", "b");
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 100);
-		view.setTagColor("b", red);
+		view.colors().put("b", red);
 		view.updateOnTagChange();
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();

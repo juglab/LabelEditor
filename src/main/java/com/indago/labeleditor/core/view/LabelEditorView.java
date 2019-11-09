@@ -3,14 +3,10 @@ package com.indago.labeleditor.core.view;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorTag;
-import com.indago.labeleditor.plugin.renderer.BorderLabelEditorRenderer;
-import com.indago.labeleditor.plugin.renderer.DefaultLabelEditorRenderer;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +17,7 @@ public class LabelEditorView<L> {
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
 	static int colorDefault = ARGBType.rgba(255,255,255,100);
-	private final Map<Object, LUTChannel> tagColors = new HashMap<>();
+	private final LabelEditorColors tagColors = new LabelEditorColors();
 	private LabelEditorModel<L> model;
 
 	private final LabelEditorRenderers renderers = new LabelEditorRenderers();
@@ -47,14 +43,6 @@ public class LabelEditorView<L> {
 		return new ArrayList<>(tagColors.values());
 	}
 
-	public void setTagColor(Object tag, int color) {
-		tagColors.put(tag, new LUTChannel(color));
-	}
-
-	public void removeTagColor(Object tag) {
-		tagColors.remove(tag);
-	}
-
 	public void update() {
 		updateOnTagChange();
 	}
@@ -75,7 +63,7 @@ public class LabelEditorView<L> {
 		return renderers;
 	}
 
-	public Map<Object, LUTChannel> colors() {
+	public LabelEditorColors colors() {
 		return tagColors;
 	}
 }

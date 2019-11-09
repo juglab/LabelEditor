@@ -72,7 +72,7 @@ public class E11_ChangingLabelingOnAction {
 		// build LabelEditorPanel
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(new ImgPlus<>(input), model);
-		panel.view().setTagColor("displayed", ARGBType.rgba(0,255,255,155));
+		panel.view().colors().put("displayed", ARGBType.rgba(0,255,255,155));
 		panel.control().triggerTagChange();
 
 		//register custom actions

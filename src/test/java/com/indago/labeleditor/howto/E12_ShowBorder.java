@@ -46,7 +46,7 @@ public class E12_ShowBorder {
 
 		panel.model().labels().getMapping().getLabels().forEach(label ->
 				panel.model().tagging().addTag("displayed", label));
-		panel.view().setTagColor("displayed", ARGBType.rgba(255,255,0,55));
+		panel.view().colors().put("displayed", ARGBType.rgba(255,255,0,55));
 		panel.control().triggerLabelingChange();
 
 		frame.setMinimumSize(new Dimension(500,500));

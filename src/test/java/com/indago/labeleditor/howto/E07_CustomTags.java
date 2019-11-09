@@ -41,13 +41,13 @@ public class E07_CustomTags {
 			for (Integer label : labels) {
 				panel.model().tagging().addTag(label, label);
 //				int brightness = random.nextInt(155);
-//				panel.rendering().setTagColor(label, ARGBType.rgba(brightness, brightness, brightness, 255));
-				panel.view().setTagColor(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155));
+//				panel.rendering().colors().put(label, ARGBType.rgba(brightness, brightness, brightness, 255));
+				panel.view().colors().put(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155));
 
 			}
 		}
-		panel.view().setTagColor(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
-		panel.view().setTagColor(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
+		panel.view().colors().put(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
+		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
 		panel.control().triggerTagChange();
 
 		frame.setContentPane(panel.get());

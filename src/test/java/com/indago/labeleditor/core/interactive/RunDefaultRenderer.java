@@ -43,7 +43,7 @@ public class RunDefaultRenderer {
 		model.tagging().addTag("b", "b");
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 100);
-		view.setTagColor("b", red);
+		view.colors().put("b", red);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		view.updateOnTagChange();
 		LabelEditorRenderers renderers = view.renderers();
