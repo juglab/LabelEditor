@@ -1,10 +1,12 @@
 package com.indago.labeleditor.core.view;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.plugin.renderer.BorderLabelEditorRenderer;
-import com.indago.labeleditor.plugin.renderer.DefaultLabelEditorRenderer;
+import org.scijava.Context;
+import org.scijava.InstantiableException;
+import org.scijava.plugin.PluginInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
@@ -18,9 +20,15 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	}
 
 	public void addDefaultRenderers() {
-		//TODO find available renderers by annotation
-		add(new DefaultLabelEditorRenderer<>());
-		add(new BorderLabelEditorRenderer<>());
+		//FIXME inject context, not create new one
+		List<PluginInfo<?>> renderers = new Context().getPluginIndex().get(LabelEditorRenderer.class);
+		renderers.forEach(renderer -> {
+			try {
+				add((LabelEditorRenderer) renderer.createInstance());
+			} catch (InstantiableException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	public Optional<LabelEditorRenderer> get(String name) {

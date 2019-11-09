@@ -10,11 +10,13 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
+import org.scijava.plugin.Plugin;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Plugin(type = LabelEditorRenderer.class, name = "labels")
 public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	protected int[] lut;
@@ -87,11 +89,6 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	public RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
 		return Converters.convert(labels.getIndexImg(), converter, new ARGBType() );
-	}
-
-	@Override
-	public String getName() {
-		return "labels";
 	}
 
 	protected int[] getLUT() {

@@ -1,6 +1,7 @@
 package com.indago.labeleditor.plugin.renderer;
 
 import com.indago.labeleditor.core.view.LUTChannel;
+import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
@@ -16,21 +17,17 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
+import org.scijava.plugin.Plugin;
 
 import java.util.Map;
 import java.util.Set;
 
+@Plugin(type = LabelEditorRenderer.class, name = "borders")
 public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> {
 
 	private RandomAccessibleInterval<IntType> output;
 
 	public BorderLabelEditorRenderer() {}
-
-	@Override
-	public String getName() {
-		return "borders";
-	}
-
 
 	@Override
 	public void init(ImgLabeling<L, IntType> labels) {

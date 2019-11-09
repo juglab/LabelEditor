@@ -1,5 +1,7 @@
 package com.indago.labeleditor.core.controller;
 
-public interface LabelEditorActions {
-	//TODO make annotation, maybe behavior
+import org.scijava.plugin.SciJavaPlugin;
+
+//TODO should maybe become behavior
+public interface LabelEditorActions extends SciJavaPlugin {
 }
