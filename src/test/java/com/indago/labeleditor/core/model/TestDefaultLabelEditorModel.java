@@ -1,5 +1,6 @@
 package com.indago.labeleditor.core.model;
 
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;

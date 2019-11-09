@@ -43,7 +43,6 @@ public class E05_AddToExistingBDV {
 		view.renderers().addDefaultRenderers();
 		model.labelRegions().forEach((label, regions) -> model.tagging().addTag("displayed", label));
 		view.colors().put("displayed", ARGBType.rgba(255,255,0,55));
-		view.updateOnTagChange();
 
 		JPanel viewer = new JPanel(new MigLayout());
 		panel = new BdvHandlePanel(frame, Bdv.options().is2D());

@@ -1,5 +1,8 @@
 package com.indago.labeleditor.core.model;
 
+import com.indago.labeleditor.core.model.tagging.DefaultTagLabelRelation;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.core.model.tagging.TagLabelRelation;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.roi.labeling.LabelRegions;
@@ -39,7 +42,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		if(labeling != null) {
 			this.labels = labeling;
 			createOrderedLabels(labeling);
-			tagLabelRelation = new DefaultTagLabelRelation<L>(new TagChangeListenerManager());
+			tagLabelRelation = new DefaultTagLabelRelation<L>();
 			labelComparator = this::compareLabels;
 			tagComparator = this::compareTags;
 			orderedTags.add(LabelEditorTag.MOUSE_OVER);
@@ -49,7 +52,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	private void createOrderedLabels(ImgLabeling<L, IntType> labeling) {
-		//TODO calculating the regions should not be done in the core, but in an addon. By default, the sorting does not have to make sense.
+		//TODO calculating the regions should not be done in the core, but in an addon. By default, the sorting does not need to make sense.
 		LabelRegions<L> regions = new LabelRegions<>(labeling);
 		List<LabelRegion<L>> regionSet = new ArrayList<>();
 		labeling.forEach(labels -> labels.stream().map(regions::getLabelRegion).forEach(labelRegion -> {
@@ -80,11 +83,6 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	@Override
 	public TagLabelRelation<L> tagging() {
 		return tagLabelRelation;
-	}
-
-	@Override
-	public TagChangeListenerManager listener() {
-		return null;
 	}
 
 	@Override

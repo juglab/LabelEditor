@@ -25,6 +25,7 @@ public class BdvSelectionActions<L> extends SelectionActions<L> {
 	}
 
 	private void initMouseMotionListener() {
+		System.out.println("init mouse motion listener");
 		MouseMotionListener mml = new MouseMotionListener() {
 			@Override
 			public void mouseDragged(MouseEvent e) {}

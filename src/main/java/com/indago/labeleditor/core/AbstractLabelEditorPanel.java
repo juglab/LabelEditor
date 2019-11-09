@@ -21,8 +21,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected boolean panelBuilt = false;
 	protected boolean mode3D = false;
-	protected LabelEditorController<L> actionManager;
-	private LabelEditorView<L> renderingManager = new LabelEditorView<>();
+	protected LabelEditorController<L> controller;
+	private LabelEditorView<L> view = new LabelEditorView<>();
 
 	public AbstractLabelEditorPanel() {
 	}
@@ -31,6 +31,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	public void init(ImgPlus data) {
 		setData(data);
 		buildPanel();
+		clearInterface();
+		displayData();
 	}
 
 	@Override
@@ -54,11 +56,15 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	public void init(LabelEditorModel<L> model) {
 		if(model != null) {
 			this.model = model;
-			renderingManager.init(model);
-			addRenderings(renderingManager);
+			view.init(model);
+			addRenderings(view);
 			buildPanel();
-			actionManager = new LabelEditorController<>();
+			controller = new LabelEditorController<>();
 		}
+		clearInterface();
+		displayData();
+		displayLabeling();
+		initController();
 	}
 
 	protected void setData(ImgPlus data) {
@@ -69,17 +75,19 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		}
 	}
 
-	private void buildPanel() {
+	protected void buildPanel() {
 		if(panelBuilt) return;
 		panelBuilt = true;
 		//this limits the BDV navigation to 2D
 		setLayout( new BorderLayout() );
-		final JPanel viewer = new JPanel( new MigLayout("fill, w 500, h 500") );
-		viewer.add( buildViewer(), "span, grow, push" );
-		this.add( viewer );
+		final JPanel interfacePanel = new JPanel( new MigLayout("fill, w 500, h 500") );
+		interfacePanel.add( buildInterface(), "span, grow, push" );
+		this.add( interfacePanel );
 	}
 
-	protected abstract Component buildViewer();
+	protected abstract void initController();
+
+	protected abstract Component buildInterface();
 
 	protected void addRenderings(LabelEditorView<L> renderingManager) {
 		renderingManager.renderers().addDefaultRenderers();
@@ -87,11 +95,17 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	abstract protected void addActionHandlers(LabelEditorController<L> actionManager);
 
+	protected abstract void displayLabeling();
+
+	protected abstract void displayData();
+
+	protected abstract void clearInterface();
+
 	public abstract Object getViewerHandle();
 
 	@Override
 	public LabelEditorView<L> view() {
-		return renderingManager;
+		return view;
 	}
 
 	@Override
@@ -101,7 +115,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	@Override
 	public LabelEditorController<L> control() {
-		return actionManager;
+		return controller;
 	}
 
 	@Override

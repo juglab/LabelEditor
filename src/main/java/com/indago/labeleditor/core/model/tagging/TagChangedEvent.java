@@ -1,4 +1,4 @@
-package com.indago.labeleditor.core.model;
+package com.indago.labeleditor.core.model.tagging;
 
 public class TagChangedEvent<L> {
 	public Object tag;

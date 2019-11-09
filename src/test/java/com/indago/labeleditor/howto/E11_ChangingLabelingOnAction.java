@@ -3,7 +3,7 @@ package com.indago.labeleditor.howto;
 import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.core.model.LabelEditorTag;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.Cursor;
@@ -44,7 +44,6 @@ public class E11_ChangingLabelingOnAction {
 					LabelingType<Integer> val = cursor.next();
 					val.removeAll(labels);
 				}
-				panel.control().triggerTagChange();
 				panel.control().triggerLabelingChange();
 
 			});
@@ -73,7 +72,6 @@ public class E11_ChangingLabelingOnAction {
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(new ImgPlus<>(input), model);
 		panel.view().colors().put("displayed", ARGBType.rgba(0,255,255,155));
-		panel.control().triggerTagChange();
 
 		//register custom actions
 		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {

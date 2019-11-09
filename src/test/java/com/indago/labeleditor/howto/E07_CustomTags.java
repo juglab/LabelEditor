@@ -2,7 +2,7 @@ package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.core.model.LabelEditorTag;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.img.Img;
@@ -48,7 +48,6 @@ public class E07_CustomTags {
 		}
 		panel.view().colors().put(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
 		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
-		panel.control().triggerTagChange();
 
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

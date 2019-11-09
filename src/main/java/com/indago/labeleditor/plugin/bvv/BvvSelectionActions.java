@@ -56,8 +56,9 @@ public class BvvSelectionActions<L> extends SelectionActions<L> {
 	protected void handleMouseMove(MouseEvent e) {
 		List<LabelingType<L>> allSets = bvvInterface.getAllLabelsAtMousePosition(e, model);
 		if(allSets == null || allSets.size() == 0) {
+			//TODO pause model listeners
 			defocusAll();
-			updateLabelRendering();
+			//TODO resume model listeners
 			return;
 		}
 		LabelingType<L> labelset = allSets.get(0);
@@ -69,10 +70,11 @@ public class BvvSelectionActions<L> extends SelectionActions<L> {
 			if(intIndex == currentSegment) return;
 			currentSegment = intIndex;
 			new Thread(() -> {
+				//TODO pause model listeners
 				defocusAll();
 				currentLabels = labelset;
 				labelset.forEach(this::focus);
-				updateLabelRendering();
+				//TODO resume model listeners
 			}).start();
 //		}
 	}

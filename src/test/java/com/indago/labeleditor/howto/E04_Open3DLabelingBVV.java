@@ -50,7 +50,6 @@ public class E04_Open3DLabelingBVV {
 		panel = new LabelEditorBvvPanel<>();
 		panel.init(model);
 		panel.view().colors().put("displayed", ARGBType.rgba(255,255,0,155));
-		panel.control().triggerTagChange();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

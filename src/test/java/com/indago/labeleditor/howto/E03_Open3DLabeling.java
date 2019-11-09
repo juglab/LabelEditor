@@ -43,7 +43,7 @@ public class E03_Open3DLabeling {
 		ImgPlus<IntType> imgPlus = new ImgPlus<>(img, "", new AxisType[]{Axes.X, Axes.Y, Axes.Z});
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(imgPlus, labeling);
-		panel.bdvGetSources().forEach(source -> source.setDisplayRange(0, 100));
+		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

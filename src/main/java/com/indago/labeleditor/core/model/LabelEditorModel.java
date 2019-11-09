@@ -1,5 +1,6 @@
 package com.indago.labeleditor.core.model;
 
+import com.indago.labeleditor.core.model.tagging.TagLabelRelation;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 
@@ -12,8 +13,6 @@ public interface LabelEditorModel <L> {
 	ImgLabeling<L, IntType> labels();
 
 	TagLabelRelation<L> tagging();
-
-	TagChangeListenerManager listener();
 
 	void setTagComparator(Comparator<Object> comparator);
 

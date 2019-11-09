@@ -8,6 +8,7 @@ import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.ViewChangedEvent;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
@@ -64,11 +65,11 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		}
 		return new Point(x, y, time);
 	}
-
-	@Override
-	public void update() {
-		panel.getViewerPanel().requestRepaint();
-	}
+//
+//	@Override
+//	public void update() {
+//		panel.getViewerPanel().requestRepaint();
+//	}
 
 	@Override
 	public List<LabelEditorActions> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
@@ -76,6 +77,11 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		//TODO find actions by annotation
 		res.add(new BdvSelectionActions<>(panel, actionManager, model, renderer));
 		return res;
+	}
+
+	@Override
+	public void onViewChange(ViewChangedEvent viewChangedEvent) {
+		panel.getViewerPanel().requestRepaint();
 	}
 
 }

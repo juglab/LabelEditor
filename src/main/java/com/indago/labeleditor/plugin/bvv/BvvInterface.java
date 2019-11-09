@@ -5,9 +5,10 @@ import bvv.util.BvvStackSource;
 import com.indago.labeleditor.core.controller.LabelEditorActions;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorView;
+import com.indago.labeleditor.core.view.ViewChangedEvent;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
@@ -90,17 +91,17 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void update() {
-		bvvHandle.getViewerPanel().requestRepaint();
-		bvvSources.forEach(BvvStackSource::invalidate);
-	}
-
-	@Override
 	public List<LabelEditorActions> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
 		List<LabelEditorActions> res = new ArrayList<>();
 		//TODO find actions by annotation
 		res.add(new BvvSelectionActions<>(actionManager, model, renderer, this));
 		return res;
+	}
+
+	@Override
+	public void onViewChange(ViewChangedEvent viewChangedEvent) {
+		bvvHandle.getViewerPanel().requestRepaint();
+		bvvSources.forEach(BvvStackSource::invalidate);
 	}
 
 	public BvvHandle getBvvHandle() {

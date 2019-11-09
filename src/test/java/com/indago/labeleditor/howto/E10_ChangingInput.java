@@ -45,7 +45,7 @@ public class E10_ChangingInput {
 			drawRandomSphere(imgPlus, ra, random);
 			ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
 			panel.init(imgPlus, labeling);
-			panel.bdvGetSources().forEach(source -> source.setDisplayRange(0, 100));
+			panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 			Thread.sleep(3000);
 		}
 	}

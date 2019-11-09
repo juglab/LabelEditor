@@ -3,7 +3,7 @@ package com.indago.labeleditor.plugin.actions;
 import com.indago.labeleditor.core.controller.LabelEditorActions;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.model.LabelEditorTag;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
 
@@ -28,44 +28,44 @@ public class SelectionActions<L> implements LabelEditorActions {
 		this.actionManager = actionManager;
 	}
 
-	protected void handleMouseMove(MouseEvent e) {
+	protected synchronized void handleMouseMove(MouseEvent e) {
 		LabelingType<L> labels = actionManager.viewer().getLabelsAtMousePosition(e, model);
 		int intIndex;
 		try {
 			intIndex = labels.getIndex().getInteger();
 		} catch(ArrayIndexOutOfBoundsException exc) {
+			//TODO pause model listeners
 			defocusAll();
-			updateLabelRendering();
+			//TODO resume model listeners
 			return;
 		}
 		if(intIndex == currentSegment) return;
 		currentSegment = intIndex;
-		new Thread(() -> {
+//		new Thread(() -> {
+			//TODO pause model listeners
 			defocusAll();
 			currentLabels = labels;
 			labels.forEach(this::focus);
-			updateLabelRendering();
-		}).start();
+			//TODO resume model listeners
+//		}).start();
 	}
 
 	protected void handleClick() {
+		//TODO pause model listeners
 		if (noLabelsAtMousePosition()) {
 			deselectAll();
 		} else {
 			selectFirst(currentLabels);
 		}
-		updateLabelRendering();
+		//TODO resume model listeners
 	}
 
 	protected void handleShiftClick() {
+		//TODO pause model listeners
 		if (!noLabelsAtMousePosition()) {
 			addFirstToSelection(currentLabels);
 		}
-		updateLabelRendering();
-	}
-
-	protected void updateLabelRendering() {
-		actionManager.triggerTagChange();
+		//TODO resume model listeners
 	}
 
 	protected boolean noLabelsAtMousePosition() {
@@ -75,15 +75,17 @@ public class SelectionActions<L> implements LabelEditorActions {
 	protected void handleWheelRotation(double direction, boolean isHorizontal) {
 		if(noLabelsAtMousePosition()) return;
 		if(!anySelected(currentLabels)) {
+			//TODO pause model listeners
 			selectFirst(currentLabels);
-			updateLabelRendering();
+			//TODO resume model listeners
 		}
 		if ( !isHorizontal ) {
+			//TODO pause model listeners
 			if (direction > 0)
 				selectNext(currentLabels);
 			else
 				selectPrevious(currentLabels);
-			updateLabelRendering();
+			//TODO resume model listeners
 		}
 	}
 

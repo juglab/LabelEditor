@@ -8,13 +8,10 @@ import bvv.util.BvvStackSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.core.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
-import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
-import net.imglib2.type.numeric.integer.IntType;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -27,56 +24,15 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	private LabelEditorInterface<L> viewerInstance;
 
 	@Override
-	public void init(ImgPlus data) {
-		super.init(data);
-		bvvRemoveAll();
-		addDataToBvv();
-		initViewer();
-	}
-
-	@Override
-	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
-		super.init(data, labels);
-		bvvRemoveAll();
-		addDataToBvv();
-		addLabelsToBvv();
-		initViewer();
-	}
-
-	@Override
-	public void init(ImgPlus data, LabelEditorModel<L> model) {
-		super.init(data, model);
-		bvvRemoveAll();
-		addDataToBvv();
-		addLabelsToBvv();
-		initViewer();
-	}
-
-	@Override
-	public void init(ImgLabeling<L, IntType> labels) {
-		super.init(labels);
-		bvvRemoveAll();
-		addLabelsToBvv();
-		initViewer();
-	}
-
-	@Override
-	public void init(LabelEditorModel<L> model) {
-		super.init(model);
-		bvvRemoveAll();
-		addLabelsToBvv();
-		initViewer();
-	}
-
-	private void initViewer() {
+	protected void initController() {
 		viewerInstance = new BvvInterface<>(bvvHandle, bvvSources);
-		actionManager.init(viewerInstance, model(), view());
-		addActionHandlers(actionManager);
-		actionManager.set3DViewMode(mode3D);
+		controller.init(viewerInstance, model(), view());
+		addActionHandlers(controller);
+		controller.set3DViewMode(mode3D);
 	}
 
 	@Override
-	protected Component buildViewer() {
+	protected Component buildInterface() {
 		bvvSources = new ArrayList<>();
 //		BvvOptions options = Bvv.options().accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
 		BvvStackSource<ARGBType> source1 = BvvFunctions.show(fakeImg(), "", Bvv.options());
@@ -89,7 +45,8 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return new ImgPlus<>(new DiskCachedCellImgFactory<>(new ARGBType()).create(model.labels()));
 	}
 
-	private void addLabelsToBvv() {
+	@Override
+	protected void displayLabeling() {
 		if(view().renderers().size() == 0) return;
 
 		//TODO make virtual channels work
@@ -110,7 +67,8 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 //		}
 	}
 
-	private void addDataToBvv() {
+	@Override
+	protected void displayData() {
 		if(data != null) {
 			displayInBvv( data, "RAW" );
 		}
@@ -122,15 +80,16 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 				img,
 				title,
 				Bvv.options().addTo(bvvHandle) );
-		bvvGetSources().add( source );
+		getSources().add( source );
 		source.setActive( true );
 	}
 
-	private void bvvRemoveAll() {
-		for ( final BvvSource source : bvvGetSources()) {
+	@Override
+	protected void clearInterface() {
+		for ( final BvvSource source : getSources()) {
 			source.removeFromBdv();
 		}
-		bvvGetSources().clear();
+		getSources().clear();
 	}
 
 	@Override
@@ -138,7 +97,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return bvvHandle;
 	}
 
-	public List< BvvStackSource > bvvGetSources() {
+	public List< BvvStackSource > getSources() {
 		return bvvSources;
 	}
 

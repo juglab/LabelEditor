@@ -17,20 +17,21 @@ public class LabelEditorController<L> {
 		this.interfaceInstance = interfaceInstance;
 		this.renderer = renderer;
 		this.model = model;
+		renderer.listeners().add(interfaceInstance::onViewChange);
 	}
 
 	public void addDefaultActionHandlers() {
 		actions.addAll(interfaceInstance.getAvailableActions(this, model, renderer));
 	}
-
-	public void triggerTagChange() {
-		renderer.updateOnTagChange();
-		interfaceInstance.update();
-	}
+//
+//	public void triggerTagChange() {
+//		renderer.updateOnTagChange();
+//		interfaceInstance.update();
+//	}
 
 	public void triggerLabelingChange() {
 		renderer.updateOnLabelingChange();
-		interfaceInstance.update();
+//		interfaceInstance.update();
 	}
 
 	public LabelEditorInterface<L> viewer() {

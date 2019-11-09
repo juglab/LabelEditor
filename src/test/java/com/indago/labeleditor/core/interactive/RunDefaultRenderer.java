@@ -45,7 +45,6 @@ public class RunDefaultRenderer {
 		int red = ARGBType.rgba(255, 0, 0, 100);
 		view.colors().put("b", red);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
-		view.updateOnTagChange();
 		LabelEditorRenderers renderers = view.renderers();
 		assertEquals(1, renderers.size());
 		RandomAccessibleInterval<ARGBType> rendering = renderers.get(0).getOutput();

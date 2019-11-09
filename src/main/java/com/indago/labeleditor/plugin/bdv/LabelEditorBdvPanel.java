@@ -8,11 +8,8 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.core.model.LabelEditorModel;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import java.awt.*;
@@ -23,58 +20,17 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
-	private LabelEditorInterface<L> viewerInstance;
 
 	@Override
-	public void init(ImgPlus data) {
-		super.init(data);
-		bdvRemoveAll();
-		addDataToBDV();
+	protected void initController() {
+		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
+		controller.init(viewerInstance, model(), view());
+		addActionHandlers(controller);
+		controller.set3DViewMode(mode3D);
 	}
 
 	@Override
-	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
-		super.init(data, labels);
-		bdvRemoveAll();
-		addDataToBDV();
-		addLabelsToBDV();
-		initActionHandling();
-	}
-
-	@Override
-	public void init(ImgPlus data, LabelEditorModel<L> model) {
-		super.init(data, model);
-		bdvRemoveAll();
-		addDataToBDV();
-		addLabelsToBDV();
-		initActionHandling();
-	}
-
-	@Override
-	public void init(ImgLabeling<L, IntType> labels) {
-		super.init(labels);
-		bdvRemoveAll();
-		addLabelsToBDV();
-		initActionHandling();
-	}
-
-	@Override
-	public void init(LabelEditorModel<L> model) {
-		super.init(model);
-		bdvRemoveAll();
-		addLabelsToBDV();
-		initActionHandling();
-	}
-
-	private void initActionHandling() {
-		viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
-		actionManager.init(viewerInstance, model(), view());
-		addActionHandlers(actionManager);
-		actionManager.set3DViewMode(mode3D);
-	}
-
-	@Override
-	protected Component buildViewer() {
+	protected Component buildInterface() {
 		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
 		BdvOptions options = Bdv.options().accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
 		if(!mode3D && config != null ) {
@@ -92,7 +48,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		actionManager.addDefaultActionHandlers();
 	}
 
-	private void addLabelsToBDV() {
+	@Override
+	protected void displayLabeling() {
 		if(view().renderers().size() == 0) return;
 		//TODO make virtual channels work
 //		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
@@ -112,7 +69,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 //		}
 	}
 
-	private void addDataToBDV() {
+	@Override
+	protected void displayData() {
 		if(data != null) {
 			displayInBdv( data, "RAW" );
 		}
@@ -124,15 +82,16 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 				img,
 				title,
 				Bdv.options().addTo( getViewerHandle() ) );
-		bdvGetSources().add( source );
+		getSources().add( source );
 		source.setActive( true );
 	}
 
-	private void bdvRemoveAll() {
-		for ( final BdvSource source : bdvGetSources()) {
+	@Override
+	protected void clearInterface() {
+		for ( final BdvSource source : getSources()) {
 			source.removeFromBdv();
 		}
-		bdvGetSources().clear();
+		getSources().clear();
 	}
 
 	@Override
@@ -140,7 +99,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		return bdvHandlePanel;
 	}
 
-	public List< BdvSource > bdvGetSources() {
+	public List< BdvSource > getSources() {
 		return bdvSources;
 	}
 
@@ -148,7 +107,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	public void updateData(ImgPlus<L> data) {
 		super.setData(data);
 		displayInBdv(data, "RAW");
-		control().triggerTagChange();
 	}
 
 	@Override

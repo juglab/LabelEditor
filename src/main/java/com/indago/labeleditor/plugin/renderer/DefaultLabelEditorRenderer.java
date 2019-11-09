@@ -1,6 +1,6 @@
 package com.indago.labeleditor.plugin.renderer;
 
-import com.indago.labeleditor.core.model.LabelEditorTag;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LUTChannel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import net.imglib2.RandomAccessibleInterval;

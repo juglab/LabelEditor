@@ -4,7 +4,7 @@ import com.indago.labeleditor.plugin.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.model.LabelEditorTag;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -40,9 +40,10 @@ public class E08_CustomActions {
 			anItem.addActionListener(actionEvent -> {
 				System.out.println("Event!");
 				List<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.SELECTED);
+				//TODO pause model listeners
 				labels.forEach(label -> panel.model().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );
-				panel.control().triggerTagChange();
+				//TODO resume model listeners
 
 			});
 			add(anItem);
@@ -74,7 +75,6 @@ public class E08_CustomActions {
 		panel.view().colors().put("yes", ARGBType.rgba(155, 155, 0, 255));
 		panel.view().colors().put("no", ARGBType.rgba(0, 155, 255, 255));
 		panel.view().colors().put("special", ARGBType.rgba(255, 0, 0, 255));
-		panel.control().triggerTagChange();
 
 		//register custom actions
 		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
@@ -85,7 +85,6 @@ public class E08_CustomActions {
 				for (Integer label : panel.control().viewer().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("yes", label);
 				}
-				panel.control().triggerTagChange();
 				if (e.isPopupTrigger()) {
 					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
 				}
@@ -101,7 +100,6 @@ public class E08_CustomActions {
 				for (Integer label : panel.control().viewer().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("no", label);
 				}
-				panel.control().triggerTagChange();
 			}
 
 			private void doPop(MouseEvent e, LabelingType<Integer> labelsAtMouse) {
