@@ -3,6 +3,7 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
+import com.indago.labeleditor.plugin.actions.ConflictSelectionActions;
 import com.indago.labeleditor.plugin.actions.SelectionActions;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.ClickBehaviour;
@@ -14,11 +15,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
 
-public class BvvSelectionActions<L> extends SelectionActions<L> {
+public class BvvConflictSelectionActions<L> extends ConflictSelectionActions<L> {
 
 	private final BvvInterface<L> bvvInterface;
 
-	public BvvSelectionActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer, BvvInterface<L> bvvInterface) {
+	public BvvConflictSelectionActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer, BvvInterface<L> bvvInterface) {
 		super(model, renderer, actionManager);
 		this.bvvInterface = bvvInterface;
 		initMouseMotionListener();

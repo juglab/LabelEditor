@@ -4,6 +4,8 @@ package com.indago.labeleditor.howto;
 import bdv.util.BdvFunctions;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
+import com.indago.labeleditor.plugin.actions.ConflictSelectionActions;
+import com.indago.labeleditor.plugin.interfaces.bdv.BdvConflictSelectionActions;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
@@ -33,7 +35,7 @@ import java.util.Optional;
 public class E13_HandleMultipleConflicts {
 
 	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel<String> panel;
+	static LabelEditorBdvPanel<String> panel;
 
 	@Test
 	@Ignore
@@ -47,6 +49,7 @@ public class E13_HandleMultipleConflicts {
 		String LABEL6 = "label6";
 		String LABEL7 = "label7";
 		String LABEL8 = "label8";
+		String LABEL9 = "label9";
 
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( 500, 500 );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
@@ -56,6 +59,8 @@ public class E13_HandleMultipleConflicts {
 		drawSphere(labels, new long[]{170, 200}, radius, LABEL2);
 		drawSphere(labels, new long[]{200, 200}, radius, LABEL3);
 		drawSphere(labels, new long[]{200, 170}, radius, LABEL4);
+
+		drawSphere(labels, new long[]{240, 280}, (int) (radius*1.2), LABEL9);
 
 		drawSphere(labels, new long[]{270, 370}, radius, LABEL5);
 		drawSphere(labels, new long[]{270, 400}, radius, LABEL6);
@@ -70,18 +75,15 @@ public class E13_HandleMultipleConflicts {
 		panel = new LabelEditorBdvPanel<String>() {
 			@Override
 			protected void addActionHandlers(LabelEditorController<String> actionManager) {
-				//TODO replace with special selection
-				actionManager.addDefaultActionHandlers();
 			}
 		};
 		panel.init(model);
+		panel.control().actions().add(new BdvConflictSelectionActions<>(panel.getViewerHandle(), panel.control(), model, panel.view()));
 		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,200));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-		Optional<LabelEditorRenderer> defaultRenderer = panel.view().renderers().get(new DefaultLabelEditorRenderer<>().getName());
-		defaultRenderer.ifPresent(renderer -> BdvFunctions.show(renderer.getOutput(), ""));
 	}
 
 	private void drawSphere(ImgLabeling<String, IntType> img, long[] position, int radius, String label) {

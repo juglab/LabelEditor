@@ -18,7 +18,7 @@ public class SelectionActions<L> implements LabelEditorActions {
 
 	protected final LabelEditorModel<L> model;
 	protected final LabelEditorView<L> renderer;
-	private final LabelEditorController<L> actionManager;
+	protected final LabelEditorController<L> actionManager;
 	protected LabelingType<L> currentLabels;
 	protected int currentSegment = -1;
 
@@ -63,7 +63,7 @@ public class SelectionActions<L> implements LabelEditorActions {
 	protected void handleShiftClick() {
 		//TODO pause model listeners
 		if (!noLabelsAtMousePosition()) {
-			addFirstToSelection(currentLabels);
+			toggleSelectionOfFirst(currentLabels);
 		}
 		//TODO resume model listeners
 	}
@@ -72,12 +72,13 @@ public class SelectionActions<L> implements LabelEditorActions {
 		return currentLabels == null || currentLabels.size() == 0;
 	}
 
-	protected void handleWheelRotation(double direction, boolean isHorizontal) {
+	protected void handleShiftWheelRotation(double direction, boolean isHorizontal) {
 		if(noLabelsAtMousePosition()) return;
 		if(!anySelected(currentLabels)) {
 			//TODO pause model listeners
 			selectFirst(currentLabels);
 			//TODO resume model listeners
+			return;
 		}
 		if ( !isHorizontal ) {
 			//TODO pause model listeners
@@ -96,10 +97,13 @@ public class SelectionActions<L> implements LabelEditorActions {
 		select(label);
 	}
 
-	protected void addFirstToSelection(LabelingType<L> currentLabels) {
+	protected void toggleSelectionOfFirst(LabelingType<L> currentLabels) {
 		L label = getFirst(currentLabels);
-		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) return;
-		select(label);
+		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) {
+			deselect(label);
+		} else {
+			select(label);
+		}
 	}
 
 	protected L getFirst(LabelingType<L> currentLabels) {
