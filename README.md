@@ -16,27 +16,27 @@ A color can be assigned to a tag in `ARGBType` representation. The tag `LabelEdi
 Renderers implementing `LabelEditorRenderer` will be discovered via the SciJava Plugin mechanism and translate an `ImgLabeling` into a `RandomAccessibleInterval<ARGBType>` with reference to the assigned tags and tag colors.
 
 #### controller
-A list of actions is bundled as a `LabelEditorActions` class and can be added to a specific `LabelEditorInterface` instance (e.g. BDV or BVV).
+This project uses Scijava `Behaviours` to bundle interaction concepts and connect them to a specific `LabelEditorInterface` instance (e.g. BDV or BVV).
 
 ### plugins
 
 #### interfaces
-- **BigDataViewer**: currently the main target interface
+- **`BigDataViewer`**: currently the main target interface
     - `[TODO]` [bigdataviewer-ui-panel](https://github.com/bigdataviewer/bigdataviewer-ui-panel) is used to provide control over BDV and LabelEditor settings  
-- **BigVolumeViewer**: buggy proof of concept implementation
+- **`BigVolumeViewer`**: buggy proof of concept implementation
 
-#### actions
-- the default selection model works like a standard file selection and uses the tags `LabelEditorTag.MOUSE_OVER` and `LabelEditorTag.SELECTED`
+#### behaviours
+- **`SelectionBehaviours`** work like any default selection model and uses the tags `LabelEditorTag.MOUSE_OVER` and `LabelEditorTag.SELECTED`
+- **`ConflictSelectionBehaviours`** are deselecting conflicting labels on each selection
 - `[TODO]` delete action can delete a label via right click
-- `[TODO]` the conflicting selection model is meant to solve conflicting segmentation labeling results
 - `[TODO]` watershed label division action
 - `[TODO]` grow label merge action
 - `[TODO]` export `ImgLabeling` index image action
 - `[TODO]` export `ImgLabeling` as image with one mask channel per label action 
 
 #### renderer
-- **DefaultLabelEditorRenderer**: paints each pixel of a label with the color of the tag(s)
-- **BorderLabelEditorRenderer**: paints only the outer pixels of a label with the color of the tag(s)
+- **`DefaultLabelEditorRenderer`**: paints each pixel of a label with the color of the tag(s)
+- **`BorderLabelEditorRenderer`**: paints only the outer pixels of a label with the color of the tag(s)
 - `[TODO]` render numbers next to each label section
 - `[TODO]` render bounding box
 
@@ -44,9 +44,9 @@ A list of actions is bundled as a `LabelEditorActions` class and can be added to
 
 The following applications can be tested by installing this update site in Fiji: `[TODO]` 
 
-- **ImgLabelingViewer**: Displays a `ImgLabeling` and an optional `ImgPlus` in the LabelEditor
-- **CCAViewer**: Performs otsu threshold and CCA from imagej-ops on the input image and displays the result in the LabelEditor
-- **WatershedViewer**: Performs watershed from imagej-ops on the input image and displays the result in the LabelEditor
+- **`ImgLabelingViewer`**: Displays a `ImgLabeling` and an optional `ImgPlus` in the LabelEditor
+- **`CCAViewer`**: Performs otsu threshold and CCA from imagej-ops on the input image and displays the result in the LabelEditor
+- **`WatershedViewer*`*: Performs watershed from imagej-ops on the input image and displays the result in the LabelEditor
 - `[TODO]` create `ImgLabeling` from mask channels
 
 ## How to use the API
@@ -63,4 +63,5 @@ There is no real documentation yet, also no JavaDoc. Have a look at `src/test/co
 ## Integration efforts
 - `[ongoing]` [metaseg](https://github.com/juglab/metaseg)
 - `[ongoing]` [MoMA](https://github.com/fjug/MoMA)
+- `[planned]` [Labkit](https://github.com/maarzt/imglib2-labkit)
 - `[planned]` [CLIJ](https://github.com/clij/clij-bdv)
