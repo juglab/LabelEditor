@@ -63,7 +63,7 @@ public class E06_AddToExistingBVV {
 			sources.add(source);
 		}
 
-		BvvInterface.control(source.getBvvHandle(), sources, model, view);
+		BvvInterface.control(model, view, source.getBvvHandle(), sources);
 
 	}
 

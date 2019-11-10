@@ -17,11 +17,11 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected ImgPlus data;
 
-	protected LabelEditorModel<L> model;
-
 	protected boolean panelBuilt = false;
 	protected boolean mode3D = false;
+
 	protected LabelEditorController<L> controller;
+	protected LabelEditorModel<L> model;
 	private LabelEditorView<L> view = new LabelEditorView<>();
 
 	public AbstractLabelEditorPanel() {
@@ -92,7 +92,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		renderingManager.renderers().addDefaultRenderers();
 	}
 
-	abstract protected void addActionHandlers(LabelEditorController<L> actionManager);
+	abstract protected void addBehaviours(LabelEditorController<L> controller);
 
 	protected abstract void displayLabeling();
 
@@ -100,16 +100,16 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected abstract void clearInterface();
 
-	public abstract Object getViewerHandle();
-
-	@Override
-	public LabelEditorView<L> view() {
-		return view;
-	}
+	public abstract Object getInterfaceHandle();
 
 	@Override
 	public LabelEditorModel<L> model() {
 		return model;
+	}
+
+	@Override
+	public LabelEditorView<L> view() {
+		return view;
 	}
 
 	@Override

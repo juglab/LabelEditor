@@ -77,7 +77,7 @@ public class E08_CustomActions {
 		panel.view().colors().put("special", ARGBType.rgba(255, 0, 0, 255));
 
 		//register custom actions
-		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
+		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);

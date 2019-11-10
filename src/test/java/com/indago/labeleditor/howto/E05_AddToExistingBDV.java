@@ -50,7 +50,7 @@ public class E05_AddToExistingBDV {
 		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), Bdv.options().addTo(panel)));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );
-		BdvInterface.control(panel, model, view);
+		BdvInterface.control(model, view, panel);
 
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.setContentPane(viewer);

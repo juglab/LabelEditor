@@ -3,7 +3,6 @@ package com.indago.labeleditor.plugin.behaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
 
 import java.util.Collection;
@@ -13,8 +12,8 @@ import java.util.Set;
 
 public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
-	public ConflictSelectionBehaviours(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager) {
-		super(model, renderer, actionManager);
+	public ConflictSelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
+		super(model, controller);
 	}
 
 	@Override

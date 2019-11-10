@@ -37,7 +37,7 @@ public class LabelEditorView<L> {
 		tagColors.put(LabelEditorTag.SELECTED, new LUTChannel(colorSelected));
 		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorMouseOver));
 		renderers.clear();
-		renderers.init(this, model);
+		renderers.init(model, this);
 		model.tagging().listeners().add(this::onTagChange);
 	}
 

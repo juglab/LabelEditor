@@ -1,31 +1,31 @@
 package com.indago.labeleditor.core.controller;
 
-import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LabelEditorController<L> {
 
-	private LabelEditorInterface<L> interfaceInstance;
-	private LabelEditorView<L> renderer;
 	private LabelEditorModel<L> model;
-	private final List<LabelEditorBehaviours> actions = new ArrayList<>();
+	private LabelEditorView<L> view;
+	private LabelEditorInterface<L> interfaceInstance;
+	private final List<LabelEditorBehaviours> behaviours = new ArrayList<>();
 
-	public void init(LabelEditorInterface<L> interfaceInstance, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
-		this.interfaceInstance = interfaceInstance;
-		this.renderer = renderer;
+	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
 		this.model = model;
-		renderer.listeners().add(interfaceInstance::onViewChange);
+		this.view = view;
+		this.interfaceInstance = interfaceInstance;
+		view.listeners().add(interfaceInstance::onViewChange);
 	}
 
-	public void addDefaultActionHandlers() {
-		actions.addAll(interfaceInstance.getAvailableActions(this, model, renderer));
+	public void addDefaultBehaviours() {
+		behaviours.addAll(interfaceInstance.getAvailableActions(model, this));
 	}
 
 	public void triggerLabelingChange() {
-		renderer.updateOnLabelingChange();
+		view.updateOnLabelingChange();
 	}
 
 	public LabelEditorInterface<L> viewer() {
@@ -36,7 +36,7 @@ public class LabelEditorController<L> {
 		interfaceInstance.set3DViewMode(mode3D);
 	}
 
-	public List<LabelEditorBehaviours> actions() {
-		return actions;
+	public List<LabelEditorBehaviours> behaviours() {
+		return behaviours;
 	}
 }

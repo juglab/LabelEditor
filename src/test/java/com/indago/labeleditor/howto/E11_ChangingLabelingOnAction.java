@@ -74,7 +74,7 @@ public class E11_ChangingLabelingOnAction {
 		panel.view().colors().put("displayed", ARGBType.rgba(0,255,255,155));
 
 		//register custom actions
-		panel.getViewerHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
+		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);

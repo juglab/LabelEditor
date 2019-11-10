@@ -14,9 +14,9 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	private LabelEditorModel model;
 	private LabelEditorView view;
 
-	public void init(LabelEditorView view, LabelEditorModel model) {
-		this.view = view;
+	public void init(LabelEditorModel model, LabelEditorView view) {
 		this.model = model;
+		this.view = view;
 	}
 
 	public void addDefaultRenderers() {

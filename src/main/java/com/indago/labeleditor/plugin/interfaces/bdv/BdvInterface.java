@@ -5,9 +5,9 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
@@ -33,12 +33,12 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		this.sources = bdvSources;
 	}
 
-	public static <L> LabelEditorController control(BdvHandlePanel panel, DefaultLabelEditorModel<L> model, LabelEditorView<L> renderer) {
-		LabelEditorController<L> actionHandler = new LabelEditorController<>();
-		actionHandler.init(new BdvInterface(panel), model, renderer);
-		actionHandler.addDefaultActionHandlers();
-		actionHandler.set3DViewMode(false);
-		return actionHandler;
+	public static <L> LabelEditorController control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BdvHandlePanel panel) {
+		LabelEditorController<L> controller = new LabelEditorController<>();
+		controller.init(model, view, new BdvInterface<>(panel));
+		controller.addDefaultBehaviours();
+		controller.set3DViewMode(false);
+		return controller;
 	}
 
 	@Override
@@ -67,10 +67,10 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public List<LabelEditorBehaviours> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
+	public List<LabelEditorBehaviours> getAvailableActions(LabelEditorModel<L> model, LabelEditorController<L> controller) {
 		List<LabelEditorBehaviours> res = new ArrayList<>();
 		//TODO find actions by annotation
-		res.add(new BdvSelectionBehaviours<>(panel, actionManager, model, renderer));
+		res.add(new BdvSelectionBehaviours<>(model, controller, panel));
 		return res;
 	}
 

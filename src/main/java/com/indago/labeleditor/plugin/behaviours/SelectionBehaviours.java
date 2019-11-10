@@ -4,7 +4,6 @@ import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.Behaviour;
 import org.scijava.ui.behaviour.ClickBehaviour;
@@ -13,7 +12,6 @@ import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,16 +21,14 @@ import java.util.List;
 public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBehaviours {
 
 	protected final LabelEditorModel<L> model;
-	protected final LabelEditorView<L> renderer;
-	protected final LabelEditorController<L> actionManager;
+	protected final LabelEditorController<L> controller;
 	protected LabelingType<L> currentLabels;
 	protected int currentSegment = -1;
 
-	public SelectionBehaviours(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager) {
-		super(new InputTriggerConfig(), "labeleditor-default-selection");
+	public SelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
+		super(new InputTriggerConfig(), "labeleditor-selection");
 		this.model = model;
-		this.renderer = renderer;
-		this.actionManager = actionManager;
+		this.controller = controller;
 		behaviour(getShiftScrollBehaviour(),"browse labels","shift scroll" );
 		behaviour(getClickBehaviour(),"select current label","button1" );
 		behaviour(getShiftClickBehaviour(),"add current label to selection","shift button1" );
@@ -55,7 +51,7 @@ public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBeh
 	}
 
 	protected synchronized void handleMouseMove(MouseEvent e) {
-		LabelingType<L> labels = actionManager.viewer().getLabelsAtMousePosition(e, model);
+		LabelingType<L> labels = controller.viewer().getLabelsAtMousePosition(e, model);
 		int intIndex;
 		try {
 			intIndex = labels.getIndex().getInteger();

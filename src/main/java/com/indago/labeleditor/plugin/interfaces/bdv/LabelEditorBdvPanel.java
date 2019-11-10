@@ -8,7 +8,6 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
@@ -24,8 +23,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void initController() {
 		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
-		controller.init(viewerInstance, model(), view());
-		addActionHandlers(controller);
+		controller.init(model(), view(), viewerInstance);
+		addBehaviours(controller);
 		controller.set3DViewMode(mode3D);
 	}
 
@@ -44,8 +43,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected void addActionHandlers(LabelEditorController<L> actionManager) {
-		actionManager.addDefaultActionHandlers();
+	protected void addBehaviours(LabelEditorController<L> controller) {
+		controller.addDefaultBehaviours();
 	}
 
 	@Override
@@ -81,7 +80,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		final BdvSource source = BdvFunctions.show(
 				img,
 				title,
-				Bdv.options().addTo( getViewerHandle() ) );
+				Bdv.options().addTo( getInterfaceHandle() ) );
 		getSources().add( source );
 		source.setActive( true );
 	}
@@ -95,7 +94,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	public BdvHandlePanel getViewerHandle() {
+	public BdvHandlePanel getInterfaceHandle() {
 		return bdvHandlePanel;
 	}
 
@@ -105,6 +104,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	public void dispose() {
-		if(getViewerHandle() != null) getViewerHandle().close();
+		if(getInterfaceHandle() != null) getInterfaceHandle().close();
 	}
 }

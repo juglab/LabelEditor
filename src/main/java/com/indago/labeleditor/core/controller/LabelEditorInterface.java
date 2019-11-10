@@ -11,6 +11,6 @@ import java.util.Collection;
 public interface LabelEditorInterface<L> {
 	LabelingType<L> getLabelsAtMousePosition(MouseEvent e, LabelEditorModel<L> model);
 	void set3DViewMode(boolean mode3D);
-	Collection<? extends LabelEditorBehaviours> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer);
+	Collection<? extends LabelEditorBehaviours> getAvailableActions(LabelEditorModel<L> model, LabelEditorController<L> controller);
 	void onViewChange(ViewChangedEvent viewChangedEvent);
 }

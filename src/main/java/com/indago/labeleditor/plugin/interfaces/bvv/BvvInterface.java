@@ -31,10 +31,10 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 		this.bvvSources = sources;
 	}
 
-	public static <L> LabelEditorController<L> control(BvvHandle bvvHandle, List<BvvStackSource> sources, DefaultLabelEditorModel<L> model, LabelEditorView<L> renderer) {
+	public static <L> LabelEditorController<L> control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BvvHandle bvvHandle, List<BvvStackSource> sources) {
 		LabelEditorController<L> actionHandler = new LabelEditorController<>();
-		actionHandler.init(new BvvInterface<L>(bvvHandle, sources), model, renderer);
-		actionHandler.addDefaultActionHandlers();
+		actionHandler.init(model, view, new BvvInterface<L>(bvvHandle, sources));
+		actionHandler.addDefaultBehaviours();
 		return actionHandler;
 	}
 
@@ -91,10 +91,10 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public List<LabelEditorBehaviours> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
+	public List<LabelEditorBehaviours> getAvailableActions(LabelEditorModel<L> model, LabelEditorController<L> controller) {
 		List<LabelEditorBehaviours> res = new ArrayList<>();
 		//TODO find actions by annotation
-		res.add(new BvvSelectionBehaviours<>(model, renderer, actionManager, this));
+		res.add(new BvvSelectionBehaviours<>(model, controller, this));
 		return res;
 	}
 

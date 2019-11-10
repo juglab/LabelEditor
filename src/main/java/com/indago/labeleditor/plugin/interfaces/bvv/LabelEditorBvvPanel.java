@@ -26,8 +26,8 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void initController() {
 		viewerInstance = new BvvInterface<>(bvvHandle, bvvSources);
-		controller.init(viewerInstance, model(), view());
-		addActionHandlers(controller);
+		controller.init(model(), view(), viewerInstance);
+		addBehaviours(controller);
 		controller.set3DViewMode(mode3D);
 	}
 
@@ -93,7 +93,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	public BvvHandle getViewerHandle() {
+	public BvvHandle getInterfaceHandle() {
 		return bvvHandle;
 	}
 
@@ -102,14 +102,14 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected void addActionHandlers(LabelEditorController<L> actionManager) {
-		actionManager.init(viewerInstance, model(), view());
-		actionManager.addDefaultActionHandlers();
+	protected void addBehaviours(LabelEditorController<L> controller) {
+		controller.init(model(), view(), viewerInstance);
+		controller.addDefaultBehaviours();
 	}
 
 	@Override
 	public void dispose() {
-		if(getViewerHandle() != null) getViewerHandle().close();
+		if(getInterfaceHandle() != null) getInterfaceHandle().close();
 	}
 
 }

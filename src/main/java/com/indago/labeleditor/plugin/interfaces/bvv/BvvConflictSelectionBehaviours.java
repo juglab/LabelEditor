@@ -2,24 +2,19 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.plugin.behaviours.ConflictSelectionBehaviours;
 import net.imglib2.roi.labeling.LabelingType;
-import org.scijava.ui.behaviour.ClickBehaviour;
-import org.scijava.ui.behaviour.ScrollBehaviour;
-import org.scijava.ui.behaviour.io.InputTriggerConfig;
-import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.List;
 
-public class BvvConflictSelectionActions<L> extends ConflictSelectionBehaviours<L> {
+public class BvvConflictSelectionBehaviours<L> extends ConflictSelectionBehaviours<L> {
 
 	private final BvvInterface<L> bvvInterface;
 
-	public BvvConflictSelectionActions(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager, BvvInterface<L> bvvInterface) {
-		super(model, renderer, actionManager);
+	public BvvConflictSelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, BvvInterface<L> bvvInterface) {
+		super(model, controller);
 		this.bvvInterface = bvvInterface;
 		install( bvvInterface.getBvvHandle().getTriggerbindings(), "labeleditor-bvv" );
 		MouseMotionListener mml = new MouseMotionListener() {

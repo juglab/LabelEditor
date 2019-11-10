@@ -2,7 +2,6 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.plugin.behaviours.SelectionBehaviours;
 import net.imglib2.roi.labeling.LabelingType;
 
@@ -14,8 +13,8 @@ public class BvvSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
 	private final BvvInterface<L> bvvInterface;
 
-	public BvvSelectionBehaviours(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager, BvvInterface<L> bvvInterface) {
-		super(model, renderer, actionManager);
+	public BvvSelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, BvvInterface<L> bvvInterface) {
+		super(model, controller);
 		this.bvvInterface = bvvInterface;
 		install( bvvInterface.getBvvHandle().getTriggerbindings(), "labeleditor-bvv" );
 		MouseMotionListener mml = new MouseMotionListener() {

@@ -2,11 +2,11 @@ package com.indago.labeleditor.howto;
 
 
 import com.indago.labeleditor.core.controller.LabelEditorController;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.plugin.interfaces.bdv.BdvConflictSelectionBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
-import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.img.array.ArrayImg;
@@ -68,11 +68,11 @@ public class E13_HandleMultipleConflicts {
 
 		panel = new LabelEditorBdvPanel<String>() {
 			@Override
-			protected void addActionHandlers(LabelEditorController<String> actionManager) {
+			protected void addBehaviours(LabelEditorController<String> controller) {
+				controller.behaviours().add(new BdvConflictSelectionBehaviours<>(model, panel.control(), panel.getInterfaceHandle()));
 			}
 		};
 		panel.init(model);
-		panel.control().actions().add(new BdvConflictSelectionBehaviours<>(panel.getViewerHandle(), panel.control(), model, panel.view()));
 		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,200));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
