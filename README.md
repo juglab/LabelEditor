@@ -1,3 +1,66 @@
 [![](https://travis-ci.com/juglab/labeleditor.svg?branch=master)](https://travis-ci.com/juglab/labeleditor)
 
 # LabelEditor
+
+The LabelEditor is a JugLab creation aiming to close the gap between segmentation algorithms and user interaction in ImageJ2 / Fiji.
+
+## Implementation
+
+### core
+
+#### model
+The heart of this project is a mechanism to tag any label of an `ImgLabeling` instance with tags. A tag is of type `Object` so it can be anything. 
+
+#### view
+A color can be assigned to a tag in `ARGBType` representation. The tag `LabelEditorTag.NO_TAG` can be used to assign a color to all labels with no associated tag.
+Renderers implementing `LabelEditorRenderer` will be discovered via the SciJava Plugin mechanism and translate an `ImgLabeling` into a `RandomAccessibleInterval<ARGBType>` with reference to the assigned tags and tag colors.
+
+#### controller
+A list of actions is bundled as a `LabelEditorActions` class and can be added to a specific `LabelEditorInterface` instance (e.g. BDV or BVV).
+
+### plugins
+
+#### interfaces
+- **BigDataViewer**: currently the main target interface
+    - `[TODO]` [bigdataviewer-ui-panel](https://github.com/bigdataviewer/bigdataviewer-ui-panel) is used to provide control over BDV and LabelEditor settings  
+- **BigVolumeViewer**: buggy proof of concept implementation
+
+#### actions
+- the default selection model works like a standard file selection and uses the tags `LabelEditorTag.MOUSE_OVER` and `LabelEditorTag.SELECTED`
+- `[TODO]` delete action can delete a label via right click
+- `[TODO]` the conflicting selection model is meant to solve conflicting segmentation labeling results
+- `[TODO]` watershed label division action
+- `[TODO]` grow label merge action
+- `[TODO]` export `ImgLabeling` index image action
+- `[TODO]` export `ImgLabeling` as image with one mask channel per label action 
+
+#### renderer
+- **DefaultLabelEditorRenderer**: paints each pixel of a label with the color of the tag(s)
+- **BorderLabelEditorRenderer**: paints only the outer pixels of a label with the color of the tag(s)
+- `[TODO]` render numbers next to each label section
+- `[TODO]` render bounding box
+
+### applications
+
+The following applications can be tested by installing this update site in Fiji: `[TODO]` 
+
+- **ImgLabelingViewer**: Displays a `ImgLabeling` and an optional `ImgPlus` in the LabelEditor
+- **CCAViewer**: Performs otsu threshold and CCA from imagej-ops on the input image and displays the result in the LabelEditor
+- **WatershedViewer**: Performs watershed from imagej-ops on the input image and displays the result in the LabelEditor
+- `[TODO]` create `ImgLabeling` from mask channels
+
+## How to use the API
+There is no real documentation yet, also no JavaDoc. Have a look at `src/test/com/indago/labeleditor/howto` to see how to integrate this project into your own implementation. 
+
+## Configuration
+- `[TODO]` Make behaviors configurable / come up with config loading / saving 
+
+## Future steps
+- ask for community feedback, maybe move / split up repo into core / plugins / applications
+- join forces with Labkit
+- figure out how to move towards ROI integration
+
+## Integration efforts
+- `[ongoing]` [metaseg](https://github.com/juglab/metaseg)
+- `[ongoing]` [MoMA](https://github.com/fjug/MoMA)
+- `[planned]` [CLIJ](https://github.com/clij/clij-bdv)
