@@ -1,17 +1,12 @@
 package com.indago.labeleditor.howto;
 
 
-import bdv.util.BdvFunctions;
 import com.indago.labeleditor.core.controller.LabelEditorController;
-import com.indago.labeleditor.core.view.LabelEditorRenderer;
-import com.indago.labeleditor.plugin.actions.ConflictSelectionActions;
-import com.indago.labeleditor.plugin.interfaces.bdv.BdvConflictSelectionActions;
+import com.indago.labeleditor.plugin.interfaces.bdv.BdvConflictSelectionBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
-import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.img.array.ArrayImg;
@@ -27,7 +22,6 @@ import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Optional;
 
 /**
  * How to open an {@link ImgLabeling} in a {@link LabelEditorBdvPanel}.
@@ -78,7 +72,7 @@ public class E13_HandleMultipleConflicts {
 			}
 		};
 		panel.init(model);
-		panel.control().actions().add(new BdvConflictSelectionActions<>(panel.getViewerHandle(), panel.control(), model, panel.view()));
+		panel.control().actions().add(new BdvConflictSelectionBehaviours<>(panel.getViewerHandle(), panel.control(), model, panel.view()));
 		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,200));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.actions;
+package com.indago.labeleditor.plugin.behaviours;
 
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
@@ -11,9 +11,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ConflictSelectionActions<L> extends SelectionActions<L> {
+public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
-	public ConflictSelectionActions(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager) {
+	public ConflictSelectionBehaviours(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager) {
 		super(model, renderer, actionManager);
 	}
 

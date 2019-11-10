@@ -1,20 +1,26 @@
-package com.indago.labeleditor.plugin.actions;
+package com.indago.labeleditor.plugin.behaviours;
 
-import com.indago.labeleditor.core.controller.LabelEditorActions;
+import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
+import org.scijava.ui.behaviour.Behaviour;
+import org.scijava.ui.behaviour.ClickBehaviour;
+import org.scijava.ui.behaviour.ScrollBehaviour;
+import org.scijava.ui.behaviour.io.InputTriggerConfig;
+import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class SelectionActions<L> implements LabelEditorActions {
+public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBehaviours {
 
 	protected final LabelEditorModel<L> model;
 	protected final LabelEditorView<L> renderer;
@@ -22,10 +28,30 @@ public class SelectionActions<L> implements LabelEditorActions {
 	protected LabelingType<L> currentLabels;
 	protected int currentSegment = -1;
 
-	public SelectionActions(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager) {
+	public SelectionBehaviours(LabelEditorModel<L> model, LabelEditorView<L> renderer, LabelEditorController<L> actionManager) {
+		super(new InputTriggerConfig(), "labeleditor-default-selection");
 		this.model = model;
 		this.renderer = renderer;
 		this.actionManager = actionManager;
+		behaviour(getShiftScrollBehaviour(),"browse labels","shift scroll" );
+		behaviour(getClickBehaviour(),"select current label","button1" );
+		behaviour(getShiftClickBehaviour(),"add current label to selection","shift button1" );
+	}
+
+	private Behaviour getShiftScrollBehaviour() {
+		return (ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> handleShiftWheelRotation(wheelRotation, isHorizontal);
+	}
+
+	private Behaviour getClickBehaviour() {
+		return (ClickBehaviour) (arg0, arg1) -> handleClick();
+	}
+
+	private Behaviour getShiftClickBehaviour() {
+		return (ClickBehaviour) (arg0, arg1) -> handleShiftClick();
+	}
+
+	public MouseMoveBehaviour getMouseMoveBehaviour() {
+		return new MouseMoveBehaviour();
 	}
 
 	protected synchronized void handleMouseMove(MouseEvent e) {
@@ -163,5 +189,11 @@ public class SelectionActions<L> implements LabelEditorActions {
 
 	protected void focus(L label) {
 		model.tagging().addTag(LabelEditorTag.MOUSE_OVER, label);
+	}
+
+	public class MouseMoveBehaviour implements Behaviour {
+		public void move(MouseEvent e) {
+			handleMouseMove(e);
+		}
 	}
 }

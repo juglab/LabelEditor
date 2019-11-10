@@ -11,7 +11,7 @@ public class LabelEditorController<L> {
 	private LabelEditorInterface<L> interfaceInstance;
 	private LabelEditorView<L> renderer;
 	private LabelEditorModel<L> model;
-	private final List<LabelEditorActions> actions = new ArrayList<>();
+	private final List<LabelEditorBehaviours> actions = new ArrayList<>();
 
 	public void init(LabelEditorInterface<L> interfaceInstance, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
 		this.interfaceInstance = interfaceInstance;
@@ -36,7 +36,7 @@ public class LabelEditorController<L> {
 		interfaceInstance.set3DViewMode(mode3D);
 	}
 
-	public List<LabelEditorActions> actions() {
+	public List<LabelEditorBehaviours> actions() {
 		return actions;
 	}
 }

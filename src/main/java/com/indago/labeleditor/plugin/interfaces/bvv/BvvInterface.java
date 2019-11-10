@@ -2,7 +2,7 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import bvv.util.BvvHandle;
 import bvv.util.BvvStackSource;
-import com.indago.labeleditor.core.controller.LabelEditorActions;
+import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
@@ -91,10 +91,10 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public List<LabelEditorActions> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
-		List<LabelEditorActions> res = new ArrayList<>();
+	public List<LabelEditorBehaviours> getAvailableActions(LabelEditorController<L> actionManager, LabelEditorModel<L> model, LabelEditorView<L> renderer) {
+		List<LabelEditorBehaviours> res = new ArrayList<>();
 		//TODO find actions by annotation
-		res.add(new BvvSelectionActions<>(actionManager, model, renderer, this));
+		res.add(new BvvSelectionBehaviours<>(model, renderer, actionManager, this));
 		return res;
 	}
 
