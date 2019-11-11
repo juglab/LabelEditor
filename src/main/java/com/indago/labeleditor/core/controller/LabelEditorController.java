@@ -32,10 +32,6 @@ public class LabelEditorController<L> {
 		return interfaceInstance;
 	}
 
-	public void set3DViewMode(boolean mode3D) {
-		interfaceInstance.set3DViewMode(mode3D);
-	}
-
 	public List<LabelEditorBehaviours> behaviours() {
 		return behaviours;
 	}

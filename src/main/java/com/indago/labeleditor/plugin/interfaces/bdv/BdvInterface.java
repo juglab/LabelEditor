@@ -37,7 +37,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		LabelEditorController<L> controller = new LabelEditorController<>();
 		controller.init(model, view, new BdvInterface<>(panel));
 		controller.addDefaultBehaviours();
-		controller.set3DViewMode(false);
+		controller.interfaceInstance().set3DViewMode(false);
 		return controller;
 	}
 

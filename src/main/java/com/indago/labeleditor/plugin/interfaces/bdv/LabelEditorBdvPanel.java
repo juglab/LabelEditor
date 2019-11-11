@@ -8,6 +8,7 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
+import net.imagej.axis.Axes;
 import net.imglib2.RandomAccessibleInterval;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
@@ -23,16 +24,20 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void initController() {
 		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
-		controller.init(model(), view(), viewerInstance);
-		addBehaviours(controller);
-		controller.set3DViewMode(mode3D);
+		control().init(model(), view(), viewerInstance);
+		addBehaviours(control());
+		control().interfaceInstance().set3DViewMode(is3DMode());
+	}
+
+	private boolean is3DMode() {
+		return getData().dimensionIndex(Axes.Z) > 0;
 	}
 
 	@Override
 	protected Component buildInterface() {
 		InputTriggerConfig config = new InputTriggerConfig2D().load(this);
 		BdvOptions options = Bdv.options().accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
-		if(!mode3D && config != null ) {
+		if(!is3DMode() && config != null ) {
 			System.out.println("2D mode");
 			bdvHandlePanel = new BdvHandlePanel( (Frame) this.getTopLevelAncestor(), options.is2D().inputTriggerConfig(config));
 		} else {
@@ -70,8 +75,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	protected void displayData() {
-		if(data != null) {
-			displayInBdv( data, "RAW" );
+		if(getData() != null) {
+			displayInBdv( getData(), "RAW" );
 		}
 	}
 

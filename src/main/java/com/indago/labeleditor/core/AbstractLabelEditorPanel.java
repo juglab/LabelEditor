@@ -15,13 +15,12 @@ import java.awt.*;
 
 public abstract class AbstractLabelEditorPanel<L> extends JPanel implements LabelEditorPanel<L> {
 
-	protected ImgPlus data;
+	private ImgPlus data;
 
-	protected boolean panelBuilt = false;
-	protected boolean mode3D = false;
+	private boolean panelBuilt = false;
 
-	protected LabelEditorController<L> controller;
-	protected LabelEditorModel<L> model;
+	private LabelEditorController<L> controller;
+	private LabelEditorModel<L> model;
 	private LabelEditorView<L> view = new LabelEditorView<>();
 
 	public AbstractLabelEditorPanel() {
@@ -70,9 +69,6 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected void setData(ImgPlus data) {
 		if(data == null) return;
 		this.data = data;
-		if(data.dimensionIndex(Axes.Z) > 0) {
-			mode3D = true;
-		}
 	}
 
 	protected void buildPanel() {
@@ -120,6 +116,10 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	@Override
 	public Container get() {
 		return this;
+	}
+
+	public ImgPlus getData() {
+		return data;
 	}
 
 }

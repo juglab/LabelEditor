@@ -87,7 +87,6 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 
 	@Override
 	public void set3DViewMode(boolean mode3D) {
-
 	}
 
 	@Override

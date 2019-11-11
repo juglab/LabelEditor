@@ -26,9 +26,9 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void initController() {
 		viewerInstance = new BvvInterface<>(bvvHandle, bvvSources);
-		controller.init(model(), view(), viewerInstance);
-		addBehaviours(controller);
-		controller.set3DViewMode(mode3D);
+		control().init(model(), view(), viewerInstance);
+		addBehaviours(control());
+		control().interfaceInstance().set3DViewMode(true);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private ImgPlus<ARGBType> fakeImg() {
-		return new ImgPlus<>(new DiskCachedCellImgFactory<>(new ARGBType()).create(model.labels()));
+		return new ImgPlus<>(new DiskCachedCellImgFactory<>(new ARGBType()).create(model().labels()));
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	protected void displayData() {
-		if(data != null) {
-			displayInBvv( data, "RAW" );
+		if(getData() != null) {
+			displayInBvv( getData(), "RAW" );
 		}
 	}
 
