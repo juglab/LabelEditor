@@ -28,7 +28,8 @@ This project uses Scijava `Behaviours` to bundle interaction concepts and connec
 #### behaviours
 - **`SelectionBehaviours`** work like any default selection model and uses the tags `LabelEditorTag.MOUSE_OVER` and `LabelEditorTag.SELECTED`
 - **`ConflictSelectionBehaviours`** are deselecting conflicting labels on each selection
-- `[TODO]` delete action can delete a label via right click
+- **`ModificationBehaviours`**
+    - delete a label (in BDV via right click)
 - `[TODO]` watershed label division action
 - `[TODO]` grow label merge action
 - `[TODO]` export `ImgLabeling` index image action
@@ -46,7 +47,7 @@ The following applications can be tested by installing this update site in Fiji:
 
 - **`ImgLabelingViewer`**: Displays a `ImgLabeling` and an optional `ImgPlus` in the LabelEditor
 - **`CCAViewer`**: Performs otsu threshold and CCA from imagej-ops on the input image and displays the result in the LabelEditor
-- **`WatershedViewer*`*: Performs watershed from imagej-ops on the input image and displays the result in the LabelEditor
+- **`WatershedViewer`**: Performs watershed from imagej-ops on the input image and displays the result in the LabelEditor
 - `[TODO]` create `ImgLabeling` from mask channels
 
 ## How to use the API

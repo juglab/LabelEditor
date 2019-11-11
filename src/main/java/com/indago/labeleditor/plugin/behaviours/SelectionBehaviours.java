@@ -11,14 +11,16 @@ import org.scijava.ui.behaviour.ScrollBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBehaviours {
+public class SelectionBehaviours<L> implements LabelEditorBehaviours {
 
 	protected final LabelEditorModel<L> model;
 	protected final LabelEditorController<L> controller;
@@ -26,12 +28,25 @@ public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBeh
 	protected int currentSegment = -1;
 
 	public SelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		super(new InputTriggerConfig(), "labeleditor-selection");
 		this.model = model;
 		this.controller = controller;
-		behaviour(getShiftScrollBehaviour(),"browse labels","shift scroll" );
-		behaviour(getClickBehaviour(),"select current label","button1" );
-		behaviour(getShiftClickBehaviour(),"add current label to selection","shift button1" );
+
+	}
+
+	public void install(Behaviours behaviours, Component panel) {
+		behaviours.behaviour(getShiftScrollBehaviour(),"browse labels","shift scroll" );
+		behaviours.behaviour(getClickBehaviour(),"select current label","button1" );
+		behaviours.behaviour(getShiftClickBehaviour(),"add current label to selection","shift button1" );
+		MouseMotionListener mml = new MouseMotionListener() {
+			@Override
+			public void mouseDragged(MouseEvent e) {}
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				getMouseMoveBehaviour().move(e);
+			}
+		};
+
+		panel.addMouseMotionListener( mml );
 	}
 
 	private Behaviour getShiftScrollBehaviour() {

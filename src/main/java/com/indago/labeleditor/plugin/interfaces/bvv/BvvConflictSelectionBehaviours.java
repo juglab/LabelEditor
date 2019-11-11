@@ -6,7 +6,6 @@ import com.indago.labeleditor.plugin.behaviours.ConflictSelectionBehaviours;
 import net.imglib2.roi.labeling.LabelingType;
 
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 public class BvvConflictSelectionBehaviours<L> extends ConflictSelectionBehaviours<L> {
@@ -16,16 +15,6 @@ public class BvvConflictSelectionBehaviours<L> extends ConflictSelectionBehaviou
 	public BvvConflictSelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, BvvInterface<L> bvvInterface) {
 		super(model, controller);
 		this.bvvInterface = bvvInterface;
-		install( bvvInterface.getBvvHandle().getTriggerbindings(), "labeleditor-bvv" );
-		MouseMotionListener mml = new MouseMotionListener() {
-			@Override
-			public void mouseDragged(MouseEvent e) {}
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				getMouseMoveBehaviour().move(e);
-			}
-		};
-		bvvInterface.getBvvHandle().getViewerPanel().getDisplay().addMouseMotionListener( mml );
 	}
 
 	@Override

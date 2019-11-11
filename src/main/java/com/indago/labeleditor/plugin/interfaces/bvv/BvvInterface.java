@@ -9,12 +9,15 @@ import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
+import com.indago.labeleditor.plugin.behaviours.SelectionBehaviours;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
 import net.imglib2.RealPoint;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.roi.labeling.LabelingType;
+import org.scijava.ui.behaviour.io.InputTriggerConfig;
+import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -23,12 +26,15 @@ import java.util.List;
 import java.util.Set;
 
 public class BvvInterface<L> implements LabelEditorInterface<L> {
+	private final Behaviours behaviours;
 	private BvvHandle bvvHandle;
 	private List<BvvStackSource> bvvSources;
 
 	public BvvInterface(BvvHandle handle, List<BvvStackSource> sources) {
 		this.bvvHandle = handle;
 		this.bvvSources = sources;
+		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
+		behaviours.install(handle.getTriggerbindings(), "labeleditor");
 	}
 
 	public static <L> LabelEditorController<L> control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BvvHandle bvvHandle, List<BvvStackSource> sources) {
@@ -90,17 +96,19 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public List<LabelEditorBehaviours> getAvailableActions(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		List<LabelEditorBehaviours> res = new ArrayList<>();
-		//TODO find actions by annotation
-		res.add(new BvvSelectionBehaviours<>(model, controller, this));
-		return res;
+	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
+		new BvvSelectionBehaviours<>(model, controller, this).install(behaviours, bvvHandle.getViewerPanel().getDisplay());
 	}
 
 	@Override
 	public void onViewChange(ViewChangedEvent viewChangedEvent) {
 		bvvHandle.getViewerPanel().requestRepaint();
 		bvvSources.forEach(BvvStackSource::invalidate);
+	}
+
+	@Override
+	public Behaviours behaviours() {
+		return behaviours;
 	}
 
 	public BvvHandle getBvvHandle() {

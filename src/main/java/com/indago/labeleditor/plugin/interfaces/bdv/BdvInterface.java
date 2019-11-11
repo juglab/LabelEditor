@@ -2,26 +2,28 @@ package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
-import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
+import com.indago.labeleditor.plugin.behaviours.SelectionBehaviours;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
 import net.imglib2.RealPoint;
 import net.imglib2.roi.labeling.LabelingType;
+import org.scijava.ui.behaviour.io.InputTriggerConfig;
+import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BdvInterface<L> implements LabelEditorInterface<L> {
 	private final BdvHandlePanel panel;
 	private final List<BdvSource> sources;
+	private final Behaviours behaviours;
 	private boolean mode3D;
 
 	public BdvInterface(BdvHandlePanel panel) {
@@ -31,6 +33,8 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	public BdvInterface(BdvHandlePanel panel, List<BdvSource> bdvSources) {
 		this.panel = panel;
 		this.sources = bdvSources;
+		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
+		behaviours.install(panel.getTriggerbindings(), "labeleditor");
 	}
 
 	public static <L> LabelEditorController control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BdvHandlePanel panel) {
@@ -67,16 +71,18 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public List<LabelEditorBehaviours> getAvailableActions(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		List<LabelEditorBehaviours> res = new ArrayList<>();
-		//TODO find actions by annotation
-		res.add(new BdvSelectionBehaviours<>(model, controller, panel));
-		return res;
+	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
+		new SelectionBehaviours<>(model, controller).install(behaviours, panel.getViewerPanel().getDisplay());
 	}
 
 	@Override
 	public void onViewChange(ViewChangedEvent viewChangedEvent) {
 		panel.getViewerPanel().requestRepaint();
+	}
+
+	@Override
+	public Behaviours behaviours() {
+		return behaviours;
 	}
 
 }

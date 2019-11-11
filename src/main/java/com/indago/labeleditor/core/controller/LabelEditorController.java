@@ -11,7 +11,6 @@ public class LabelEditorController<L> {
 	private LabelEditorModel<L> model;
 	private LabelEditorView<L> view;
 	private LabelEditorInterface<L> interfaceInstance;
-	private final List<LabelEditorBehaviours> behaviours = new ArrayList<>();
 
 	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
 		this.model = model;
@@ -21,7 +20,7 @@ public class LabelEditorController<L> {
 	}
 
 	public void addDefaultBehaviours() {
-		behaviours.addAll(interfaceInstance.getAvailableActions(model, this));
+		interfaceInstance.installBehaviours(model, this);
 	}
 
 	public void triggerLabelingChange() {
@@ -32,7 +31,4 @@ public class LabelEditorController<L> {
 		return interfaceInstance;
 	}
 
-	public List<LabelEditorBehaviours> behaviours() {
-		return behaviours;
-	}
 }

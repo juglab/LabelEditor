@@ -6,7 +6,7 @@ import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.interfaces.bdv.BdvConflictSelectionBehaviours;
+import com.indago.labeleditor.plugin.behaviours.ConflictSelectionBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
@@ -70,7 +70,7 @@ public class E13_HandleMultipleConflicts {
 		panel = new LabelEditorBdvPanel<String>() {
 			@Override
 			protected void addBehaviours(LabelEditorController<String> controller) {
-				controller.behaviours().add(new BdvConflictSelectionBehaviours<>(model, panel.control(), panel.getInterfaceHandle()));
+				new ConflictSelectionBehaviours<>(model, panel.control()).install(controller.interfaceInstance().behaviours(), panel);
 			}
 		};
 		panel.init(model);

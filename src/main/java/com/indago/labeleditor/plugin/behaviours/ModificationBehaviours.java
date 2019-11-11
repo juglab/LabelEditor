@@ -35,6 +35,5 @@ public class ModificationBehaviours extends Behaviours implements LabelEditorBeh
 			}
 			controller.triggerLabelingChange();
 		}
-
 	}
 }
