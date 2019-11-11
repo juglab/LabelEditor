@@ -82,11 +82,11 @@ public class E08_CustomActions {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				model.tagging().removeTag("no");
-				for (Integer label : panel.control().viewer().getLabelsAtMousePosition(e, model)) {
+				for (Integer label : panel.control().interfaceInstance().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("yes", label);
 				}
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
+					doPop(e, panel.control().interfaceInstance().getLabelsAtMousePosition(e, model));
 				}
 			}
 
@@ -94,10 +94,10 @@ public class E08_CustomActions {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
+					doPop(e, panel.control().interfaceInstance().getLabelsAtMousePosition(e, model));
 				}
 				model.tagging().removeTag("yes");
-				for (Integer label : panel.control().viewer().getLabelsAtMousePosition(e, model)) {
+				for (Integer label : panel.control().interfaceInstance().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("no", label);
 				}
 			}

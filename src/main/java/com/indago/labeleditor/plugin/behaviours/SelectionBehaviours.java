@@ -51,7 +51,7 @@ public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBeh
 	}
 
 	protected synchronized void handleMouseMove(MouseEvent e) {
-		LabelingType<L> labels = controller.viewer().getLabelsAtMousePosition(e, model);
+		LabelingType<L> labels = controller.interfaceInstance().getLabelsAtMousePosition(e, model);
 		int intIndex;
 		try {
 			intIndex = labels.getIndex().getInteger();

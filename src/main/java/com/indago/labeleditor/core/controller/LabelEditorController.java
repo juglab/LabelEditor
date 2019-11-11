@@ -28,7 +28,7 @@ public class LabelEditorController<L> {
 		view.updateOnLabelingChange();
 	}
 
-	public LabelEditorInterface<L> viewer() {
+	public LabelEditorInterface<L> interfaceInstance() {
 		return interfaceInstance;
 	}
 
