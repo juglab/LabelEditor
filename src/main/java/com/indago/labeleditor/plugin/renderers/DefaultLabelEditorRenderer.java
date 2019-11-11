@@ -1,8 +1,10 @@
 package com.indago.labeleditor.plugin.renderers;
 
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LUTChannel;
+import com.indago.labeleditor.core.view.LabelEditorColorset;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
+import com.indago.labeleditor.core.view.LabelEditorTagColors;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
@@ -29,7 +31,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	}
 
 	@Override
-	public void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors) {
+	public void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors) {
 
 		int[] lut;
 
@@ -50,7 +52,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 				//add DEFAULT tag if no tag is assigned (making it possible to draw all labels with a default color)
 				if(mytags.size() == 0) mytags.add(LabelEditorTag.NO_TAG);
 
-				lut[i] = mixColors(mytags, tagColors);
+				lut[i] = mixColors(mytags, tagColors, LabelEditorTargetComponent.FACE);
 
 			}
 		}
@@ -97,15 +99,15 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	//https://en.wikipedia.org/wiki/Alpha_compositing
 	//https://wikimedia.org/api/rest_v1/media/math/render/svg/12ea004023a1756851fc7caa0351416d2ba03bae
-	public static int mixColors(Set<Object> mytags, Map<Object, LUTChannel> tagColors) {
+	public static int mixColors(Set<Object> mytags, LabelEditorTagColors tagColors, Object targetComponent) {
 		float red = 0;
 		float green = 0;
 		float blue = 0;
 		float alpha = 0;
 		for (Object tag : mytags) {
-			LUTChannel lutChannel = tagColors.get(tag);
-			if(lutChannel == null) continue;
-			int color = lutChannel.getColor();
+			LabelEditorColorset colorset = tagColors.get(tag);
+			if(colorset == null || !colorset.containsKey(targetComponent)) continue;
+			int color = colorset.get(LabelEditorTargetComponent.FACE);
 			float newred = ARGBType.red(color);
 			float newgreen = ARGBType.blue(color);
 			float newblue = ARGBType.green(color);

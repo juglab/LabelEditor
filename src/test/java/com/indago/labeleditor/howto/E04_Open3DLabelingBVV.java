@@ -1,5 +1,6 @@
 package com.indago.labeleditor.howto;
 
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bvv.LabelEditorBvvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
@@ -49,7 +50,7 @@ public class E04_Open3DLabelingBVV {
 
 		panel = new LabelEditorBvvPanel<>();
 		panel.init(model);
-		panel.view().colors().put("displayed", ARGBType.rgba(255,255,0,155));
+		panel.view().colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,155));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

@@ -1,5 +1,6 @@
 package com.indago.labeleditor.howto;
 
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
@@ -74,9 +75,9 @@ public class E08_CustomActions {
 		//set custom colors for tags set in the MouseAdapter
 		panel.view().colors().remove(LabelEditorTag.SELECTED);
 		panel.view().colors().remove(LabelEditorTag.MOUSE_OVER);
-		panel.view().colors().put("yes", ARGBType.rgba(155, 155, 0, 255));
-		panel.view().colors().put("no", ARGBType.rgba(0, 155, 255, 255));
-		panel.view().colors().put("special", ARGBType.rgba(255, 0, 0, 255));
+		panel.view().colors().get("yes").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(155, 155, 0, 255));
+		panel.view().colors().get("no").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 155, 255, 255));
+		panel.view().colors().get("special").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 255));
 
 		//register custom actions
 		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {

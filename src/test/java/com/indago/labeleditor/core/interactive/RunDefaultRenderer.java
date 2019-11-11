@@ -3,6 +3,7 @@ package com.indago.labeleditor.core.interactive;
 import bdv.util.BdvFunctions;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderers;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 import net.imagej.ImgPlus;
@@ -43,7 +44,7 @@ public class RunDefaultRenderer {
 		model.tagging().addTag("b", "b");
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 100);
-		view.colors().put("b", red);
+		view.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderers = view.renderers();
 		assertEquals(1, renderers.size());

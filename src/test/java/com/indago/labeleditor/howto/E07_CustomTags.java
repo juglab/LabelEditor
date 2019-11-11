@@ -1,5 +1,6 @@
 package com.indago.labeleditor.howto;
 
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
@@ -41,13 +42,13 @@ public class E07_CustomTags {
 			for (Integer label : labels) {
 				panel.model().tagging().addTag(label, label);
 //				int brightness = random.nextInt(155);
-//				panel.rendering().colors().put(label, ARGBType.rgba(brightness, brightness, brightness, 255));
-				panel.view().colors().put(label, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155));
+//				panel.view().colors().get(label).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(brightness, brightness, brightness, 255));
+				panel.view().colors().get(label).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155));
 
 			}
 		}
-		panel.view().colors().put(LabelEditorTag.MOUSE_OVER, ARGBType.rgba(255,255,0,255));
-		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(0,255,255,255));
+		panel.view().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,255));
+		panel.view().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,255));
 
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

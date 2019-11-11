@@ -18,7 +18,7 @@ public class LabelEditorView<L> {
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
 	static int colorDefault = ARGBType.rgba(255,255,255,100);
-	private final LabelEditorColors tagColors = new LabelEditorColors(this);
+	private final LabelEditorTagColors tagColors = new LabelEditorTagColors(this);
 	private LabelEditorModel<L> model;
 
 	private final LabelEditorRenderers renderers = new LabelEditorRenderers();
@@ -32,10 +32,9 @@ public class LabelEditorView<L> {
 
 	public void init(LabelEditorModel<L> model) {
 		this.model = model;
-		tagColors.clear();
-		tagColors.put(LabelEditorTag.NO_TAG, new LUTChannel(colorDefault));
-		tagColors.put(LabelEditorTag.SELECTED, new LUTChannel(colorSelected));
-		tagColors.put(LabelEditorTag.MOUSE_OVER, new LUTChannel(colorMouseOver));
+		tagColors.get(LabelEditorTag.NO_TAG).put(LabelEditorTargetComponent.FACE, colorDefault);
+		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, colorSelected);
+		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, colorMouseOver);
 		renderers.clear();
 		renderers.init(model, this);
 		model.tagging().listeners().add(this::onTagChange);
@@ -45,7 +44,7 @@ public class LabelEditorView<L> {
 		updateRenderers();
 	}
 
-	public List<LUTChannel> getVirtualChannels() {
+	public List<LabelEditorColorset> getVirtualChannels() {
 		return new ArrayList<>(tagColors.values());
 	}
 
@@ -67,7 +66,7 @@ public class LabelEditorView<L> {
 		return renderers;
 	}
 
-	public LabelEditorColors colors() {
+	public LabelEditorTagColors colors() {
 		return tagColors;
 	}
 

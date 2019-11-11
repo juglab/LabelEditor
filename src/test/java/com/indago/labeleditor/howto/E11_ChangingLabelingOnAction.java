@@ -3,6 +3,7 @@ package com.indago.labeleditor.howto;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
@@ -64,7 +65,7 @@ public class E11_ChangingLabelingOnAction {
 		// build LabelEditorPanel
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(new ImgPlus<>(input), model);
-		panel.view().colors().put("displayed", ARGBType.rgba(0,255,255,155));
+		panel.view().colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,155));
 
 		//register custom actions
 		ModificationBehaviours modificationBehaviours = new ModificationBehaviours(model, panel.control());

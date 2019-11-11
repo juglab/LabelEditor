@@ -5,6 +5,7 @@ import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.BdvConflictSelectionBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imglib2.RandomAccess;
@@ -73,8 +74,8 @@ public class E13_HandleMultipleConflicts {
 			}
 		};
 		panel.init(model);
-		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,200));
-		panel.view().colors().put(LabelEditorTag.NO_TAG, ARGBType.rgba(255,255,255,50));
+		panel.view().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,0,200));
+		panel.view().colors().get(LabelEditorTag.NO_TAG).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,255,50));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

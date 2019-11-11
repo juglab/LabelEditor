@@ -1,7 +1,8 @@
 package com.indago.labeleditor.plugin.renderers;
 
-import com.indago.labeleditor.core.view.LUTChannel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
+import com.indago.labeleditor.core.view.LabelEditorTagColors;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessible;
@@ -42,7 +43,7 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	}
 
 	@Override
-	public synchronized void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors) {
+	public synchronized void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors) {
 
 		int[] lut;
 
@@ -59,7 +60,7 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 			// get all tags associated with the labels of this index
 			Set<Object> mytags = filterTagsByLabels( tags, labels);
 
-			lut[i] = mixColors(mytags, tagColors);
+			lut[i] = mixColors(mytags, tagColors, LabelEditorTargetComponent.BORDER);
 //			lut[i] = ARGBType.rgba(255,255,255,Math.min(labels.size()*50, 255));
 
 		}

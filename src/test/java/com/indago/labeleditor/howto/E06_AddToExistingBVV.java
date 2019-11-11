@@ -4,6 +4,7 @@ import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.plugin.interfaces.bvv.BvvInterface;
@@ -49,7 +50,7 @@ public class E06_AddToExistingBVV {
 
 		LabelEditorView<Integer> view = new LabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();
-		view.colors().put("displayed", ARGBType.rgba(255,255,0,55));
+		view.colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,55));
 
 		List<BvvStackSource> sources = new ArrayList<>();
 		BvvStackSource source = null;

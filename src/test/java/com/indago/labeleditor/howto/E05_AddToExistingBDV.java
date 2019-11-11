@@ -3,6 +3,7 @@ package com.indago.labeleditor.howto;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.plugin.interfaces.bdv.BdvInterface;
@@ -42,7 +43,7 @@ public class E05_AddToExistingBDV {
 		LabelEditorView<Integer> view = new LabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();
 		model.labelRegions().forEach((label, regions) -> model.tagging().addTag("displayed", label));
-		view.colors().put("displayed", ARGBType.rgba(255,255,0,55));
+		view.colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,55));
 
 		JPanel viewer = new JPanel(new MigLayout());
 		panel = new BdvHandlePanel(frame, Bdv.options().is2D());

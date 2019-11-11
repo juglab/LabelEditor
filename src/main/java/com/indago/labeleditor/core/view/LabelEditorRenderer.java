@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface LabelEditorRenderer<L> extends SciJavaPlugin {
 	void init(ImgLabeling<L, IntType> labels);
-	void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, Map<Object, LUTChannel> tagColors);
+	void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors);
 	void updateOnLabelingChange();
 	RandomAccessibleInterval getOutput();
 

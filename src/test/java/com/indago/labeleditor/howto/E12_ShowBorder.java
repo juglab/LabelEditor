@@ -1,6 +1,7 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.plugin.renderers.BorderLabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorView;
@@ -46,7 +47,7 @@ public class E12_ShowBorder {
 
 		panel.model().labels().getMapping().getLabels().forEach(label ->
 				panel.model().tagging().addTag("displayed", label));
-		panel.view().colors().put("displayed", ARGBType.rgba(255,255,0,55));
+		panel.view().colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,55));
 		panel.control().triggerLabelingChange();
 
 		frame.setMinimumSize(new Dimension(500,500));

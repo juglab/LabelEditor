@@ -21,9 +21,7 @@ import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -55,7 +53,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.tagging().addTag("b", "b");
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 100);
-		view.colors().put("b", red);
+		view.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();
 		assertEquals(1, renderings.size());
@@ -85,20 +83,21 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testMixColors() {
-		Map<Object, LUTChannel> tagColors = new HashMap<>();
+		LabelEditorTagColors tagColors = new LabelEditorTagColors(null);
 		String tag1 = "tag1";
 		String tag2 = "tag2";
-		tagColors.put(tag1, new LUTChannel(ARGBType.rgba(255, 0, 0, 100)));
-		tagColors.put(tag2, new LUTChannel(ARGBType.rgba(0, 255, 0, 100)));
+		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 100));
+		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 100));
+		tagColors.get(tag2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 255, 0, 100));
 		HashSet<Object> noSet = new HashSet<>();
-		int colorNoTag = DefaultLabelEditorRenderer.mixColors(noSet, tagColors);
+		int colorNoTag = DefaultLabelEditorRenderer.mixColors(noSet, tagColors, LabelEditorTargetComponent.FACE);
 		assertEquals(0, ARGBType.red(colorNoTag));
 		assertEquals(0, ARGBType.green(colorNoTag));
 		assertEquals(0, ARGBType.blue(colorNoTag));
 		assertEquals(0, ARGBType.alpha(colorNoTag));
 		HashSet<Object> tag1Set = new HashSet<>();
 		tag1Set.add(tag1);
-		int colorTag1 = DefaultLabelEditorRenderer.mixColors(tag1Set, tagColors);
+		int colorTag1 = DefaultLabelEditorRenderer.mixColors(tag1Set, tagColors, LabelEditorTargetComponent.FACE);
 		assertEquals(255, ARGBType.red(colorTag1));
 		assertEquals(0, ARGBType.green(colorTag1));
 		assertEquals(0, ARGBType.blue(colorTag1));

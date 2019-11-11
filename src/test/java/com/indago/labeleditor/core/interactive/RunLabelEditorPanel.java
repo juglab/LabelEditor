@@ -1,5 +1,6 @@
 package com.indago.labeleditor.core.interactive;
 
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import io.scif.img.IO;
@@ -38,8 +39,8 @@ public class RunLabelEditorPanel {
 		frame.setMinimumSize(new Dimension(500,500));
 		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel<>();
 		labelEditorPanel.init(img, model);
-		labelEditorPanel.view().colors().put(TAG1, ARGBType.rgba(255,255,0,50));
-		labelEditorPanel.view().colors().put(TAG2, ARGBType.rgba(0,255,255,50));
+		labelEditorPanel.view().colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,50));
+		labelEditorPanel.view().colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,50));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();
