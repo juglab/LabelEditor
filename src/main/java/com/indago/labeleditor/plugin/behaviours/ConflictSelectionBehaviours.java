@@ -18,11 +18,11 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
 	@Override
 	protected void handleClick() {
-		//TODO pause model listeners
+		//TODO start collect tagging events, pause listeners
 		if (!noLabelsAtMousePosition()) {
 			selectFirst(currentLabels);
 		}
-		//TODO resume model listeners
+		//TODO resume model listeners and send collected events
 	}
 
 	@Override

@@ -56,38 +56,38 @@ public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBeh
 		try {
 			intIndex = labels.getIndex().getInteger();
 		} catch(ArrayIndexOutOfBoundsException exc) {
-			//TODO pause model listeners
+			//TODO start collect tagging events, pause listeners
 			defocusAll();
-			//TODO resume model listeners
+			//TODO resume model listeners and send collected events
 			return;
 		}
 		if(intIndex == currentSegment) return;
 		currentSegment = intIndex;
 //		new Thread(() -> {
-			//TODO pause model listeners
+			//TODO start collect tagging events, pause listeners
 			defocusAll();
 			currentLabels = labels;
 			labels.forEach(this::focus);
-			//TODO resume model listeners
+			//TODO resume model listeners and send collected events
 //		}).start();
 	}
 
 	protected void handleClick() {
-		//TODO pause model listeners
+		//TODO start collect tagging events, pause listeners
 		if (noLabelsAtMousePosition()) {
 			deselectAll();
 		} else {
 			selectFirst(currentLabels);
 		}
-		//TODO resume model listeners
+		//TODO resume model listeners and send collected events
 	}
 
 	protected void handleShiftClick() {
-		//TODO pause model listeners
+		//TODO start collect tagging events, pause listeners
 		if (!noLabelsAtMousePosition()) {
 			toggleSelectionOfFirst(currentLabels);
 		}
-		//TODO resume model listeners
+		//TODO resume model listeners and send collected events
 	}
 
 	protected boolean noLabelsAtMousePosition() {
@@ -97,18 +97,18 @@ public class SelectionBehaviours<L> extends Behaviours implements LabelEditorBeh
 	protected void handleShiftWheelRotation(double direction, boolean isHorizontal) {
 		if(noLabelsAtMousePosition()) return;
 		if(!anySelected(currentLabels)) {
-			//TODO pause model listeners
+			//TODO start collect tagging events, pause listeners
 			selectFirst(currentLabels);
-			//TODO resume model listeners
+			//TODO resume model listeners and send collected events
 			return;
 		}
 		if ( !isHorizontal ) {
-			//TODO pause model listeners
+			//TODO start collect tagging events, pause listeners
 			if (direction > 0)
 				selectNext(currentLabels);
 			else
 				selectPrevious(currentLabels);
-			//TODO resume model listeners
+			//TODO resume model listeners and send collected events
 		}
 	}
 

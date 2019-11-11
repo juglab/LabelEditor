@@ -42,10 +42,10 @@ public class E08_CustomActions {
 			anItem.addActionListener(actionEvent -> {
 				System.out.println("Event!");
 				Set<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.SELECTED);
-				//TODO pause model listeners
+				//TODO start collect tagging events, pause listeners
 				labels.forEach(label -> panel.model().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );
-				//TODO resume model listeners
+				//TODO resume model listeners and send collected events
 
 			});
 			add(anItem);
