@@ -6,15 +6,22 @@ import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
+import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
 import net.imagej.axis.Axes;
 import net.imglib2.RandomAccessibleInterval;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
@@ -50,6 +57,18 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void addBehaviours(LabelEditorController<L> controller) {
 		controller.addDefaultBehaviours();
+		ModificationBehaviours modificationBehaviours = new ModificationBehaviours(model(), control());
+		getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				super.mousePressed(e);
+				if (e.isPopupTrigger()) {
+					BdvPopupMenu menu = new BdvPopupMenu(LabelEditorBdvPanel.this, modificationBehaviours);
+					menu.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+
+		});
 	}
 
 	@Override
@@ -111,4 +130,18 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	public void dispose() {
 		if(getInterfaceHandle() != null) getInterfaceHandle().close();
 	}
+
+
+	class BdvPopupMenu extends JPopupMenu {
+
+		BdvPopupMenu(LabelEditorPanel<L> panel, ModificationBehaviours modificationBehaviours) {
+			JMenuItem item = new JMenuItem("Remove label");
+			item.addActionListener(actionEvent -> {
+				Set<L> labels = panel.model().tagging().getLabels(LabelEditorTag.MOUSE_OVER);
+				modificationBehaviours.getDeleteBehaviour().delete(labels);
+			});
+			add(item);
+		}
+	}
+
 }
