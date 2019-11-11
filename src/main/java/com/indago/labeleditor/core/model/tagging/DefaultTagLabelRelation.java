@@ -64,8 +64,8 @@ public class DefaultTagLabelRelation<L> implements TagLabelRelation<L> {
 	}
 
 	@Override
-	public List<L> getLabels(LabelEditorTag tag) {
-		List<L> labels = new ArrayList<>();
+	public Set<L> getLabels(LabelEditorTag tag) {
+		Set<L> labels = new HashSet<>();
 		tags.forEach((l, tags) -> {
 			if(tags.contains(tag)) labels.add(l);
 		});

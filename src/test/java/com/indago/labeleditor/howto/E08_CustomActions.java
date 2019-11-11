@@ -23,9 +23,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * How to add custom actions to set or remove tags to {@link LabelEditorBdvPanel}
+ * TODO this example is quite buggy, fix it, make it use behaviours
  */
 public class E08_CustomActions {
 
@@ -35,11 +37,11 @@ public class E08_CustomActions {
 
 	class PopUpDemo extends JPopupMenu {
 		JMenuItem anItem;
-		public PopUpDemo(LabelEditorPanel<Integer> panel, LabelingType<Integer> mouse) {
+		public PopUpDemo(LabelEditorPanel<Integer> panel) {
 			anItem = new JMenuItem("Click Me!");
 			anItem.addActionListener(actionEvent -> {
 				System.out.println("Event!");
-				List<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.SELECTED);
+				Set<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.SELECTED);
 				//TODO pause model listeners
 				labels.forEach(label -> panel.model().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );
@@ -86,25 +88,18 @@ public class E08_CustomActions {
 					model.tagging().addTag("yes", label);
 				}
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.control().interfaceInstance().getLabelsAtMousePosition(e, model));
+					PopUpDemo menu = new PopUpDemo(panel);
+					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
-				if (e.isPopupTrigger()) {
-					doPop(e, panel.control().interfaceInstance().getLabelsAtMousePosition(e, model));
-				}
 				model.tagging().removeTag("yes");
 				for (Integer label : panel.control().interfaceInstance().getLabelsAtMousePosition(e, model)) {
 					model.tagging().addTag("no", label);
 				}
-			}
-
-			private void doPop(MouseEvent e, LabelingType<Integer> labelsAtMouse) {
-				PopUpDemo menu = new PopUpDemo(panel, labelsAtMouse);
-				menu.show(e.getComponent(), e.getX(), e.getY());
 			}
 		});
 

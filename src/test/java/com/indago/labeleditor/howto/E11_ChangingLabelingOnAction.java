@@ -1,16 +1,15 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
+import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
-import net.imglib2.Cursor;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.AfterClass;
@@ -22,7 +21,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * How to add custom actions to set or remove tags to {@link LabelEditorBdvPanel}
@@ -33,21 +32,15 @@ public class E11_ChangingLabelingOnAction {
 	static JFrame frame = new JFrame("Label editor");
 	static LabelEditorBdvPanel<Integer> panel;
 
-	class PopUpDemo extends JPopupMenu {
-		JMenuItem anItem;
-		public PopUpDemo(LabelEditorPanel<Integer> panel, LabelingType<Integer> labelsAtMouse) {
-			anItem = new JMenuItem("Remove");
-			anItem.addActionListener(actionEvent -> {
-				List<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.MOUSE_OVER);
-				Cursor<LabelingType<Integer>> cursor = panel.model().labels().cursor();
-				while(cursor.hasNext()) {
-					LabelingType<Integer> val = cursor.next();
-					val.removeAll(labels);
-				}
-				panel.control().triggerLabelingChange();
+	static class PopUpDemo extends JPopupMenu {
 
+		PopUpDemo(LabelEditorPanel<Integer> panel, ModificationBehaviours modificationBehaviours) {
+			JMenuItem item = new JMenuItem("Remove");
+			item.addActionListener(actionEvent -> {
+				Set<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.MOUSE_OVER);
+				modificationBehaviours.getDeleteBehaviour().delete(labels);
 			});
-			add(anItem);
+			add(item);
 		}
 	}
 
@@ -74,27 +67,17 @@ public class E11_ChangingLabelingOnAction {
 		panel.view().colors().put("displayed", ARGBType.rgba(0,255,255,155));
 
 		//register custom actions
+		ModificationBehaviours modificationBehaviours = new ModificationBehaviours(model, panel.control());
 		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				if (e.isPopupTrigger()) {
-					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
+					PopUpDemo menu = new PopUpDemo(panel, modificationBehaviours);
+					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				super.mouseReleased(e);
-				if (e.isPopupTrigger()) {
-					doPop(e, panel.control().viewer().getLabelsAtMousePosition(e, model));
-				}
-			}
-
-			private void doPop(MouseEvent e, LabelingType<Integer> labelsAtMouse) {
-				PopUpDemo menu = new PopUpDemo(panel, labelsAtMouse);
-				menu.show(e.getComponent(), e.getX(), e.getY());
-			}
 		});
 
 		//build frame

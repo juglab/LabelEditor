@@ -14,7 +14,7 @@ public interface TagLabelRelation<L> {
 	void removeTag(Object tag, L label);
 	Set<Object> getTags(L label);
 	void removeTag(Object tag);
-	List<L> getLabels(LabelEditorTag tag);
+	Set<L> getLabels(LabelEditorTag tag);
 	Listeners< TagChangeListener > listeners();
 
 }

@@ -74,6 +74,7 @@ public class E13_HandleMultipleConflicts {
 		};
 		panel.init(model);
 		panel.view().colors().put(LabelEditorTag.SELECTED, ARGBType.rgba(255,0,0,200));
+		panel.view().colors().put(LabelEditorTag.NO_TAG, ARGBType.rgba(255,255,255,50));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
