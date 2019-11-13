@@ -55,7 +55,7 @@ public class SplitSelectedLabelsTest {
 		Iterator<Integer> iterator = labeling.getMapping().getLabels().iterator();
 		Integer label = iterator.next();
 
-		SplitSelectedLabels.split(label, labeling, data, ij.op());
+		SplitSelectedLabels.split(label, labeling, data, 1, ij.op());
 
 		//TODO why is this not 2?
 		assertEquals(3, labeling.getMapping().getLabels().size());

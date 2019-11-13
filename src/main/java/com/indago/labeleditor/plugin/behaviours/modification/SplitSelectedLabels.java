@@ -48,13 +48,13 @@ public class SplitSelectedLabels<L> implements Behaviour {
 		Set<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
 		selected.forEach(label -> {
 			Set<Object> tags = model.tagging().getTags(label);
-			Set<L> newlabels = split(label, model.labels(), model.getData(), opService);
+			Set<L> newlabels = split(label, model.labels(), model.getData(), 1, opService);
 			newlabels.forEach(newlabel -> tags.forEach(tag -> model.tagging().addTag(tag, newlabel)));
 		});
 		controller.triggerLabelingChange();
 	}
 
-	static <L> Set<L> split(L label, ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data, OpService opService) {
+	public static <L> Set<L> split(L label, ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data, double sigma, OpService opService) {
 		LabelRegions regions = new LabelRegions<>(labeling);
 		LabelRegion<Integer> region = regions.getLabelRegion(label);
 
@@ -66,7 +66,7 @@ public class SplitSelectedLabels<L> implements Behaviour {
 		ImgLabeling< Integer, IntType > watershed = new ImgLabeling<>( backing );
 
 		IntervalView dataCrop = Views.zeroMin(Views.interval(data, region));
-		RandomAccessibleInterval gaussCrop = opService.filter().gauss(dataCrop, 1);
+		RandomAccessibleInterval gaussCrop = opService.filter().gauss(dataCrop, sigma);
 		final ImgLabeling<Integer, IntType> seeds = findAndDisplayLocalMaxima(gaussCrop);
 		Img invertedDataCrop = opService.create().img(Views.iterable(dataCrop));
 		opService.image().invert(invertedDataCrop, Views.iterable(gaussCrop));

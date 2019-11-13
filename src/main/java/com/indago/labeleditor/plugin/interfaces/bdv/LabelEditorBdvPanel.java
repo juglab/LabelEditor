@@ -51,12 +51,21 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		BdvOptions options = Bdv.options().accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
 		if(!is3DMode() && config != null ) {
 			System.out.println("2D mode");
-			bdvHandlePanel = new BdvHandlePanel( (Frame) this.getTopLevelAncestor(), options.is2D().inputTriggerConfig(config));
+			bdvHandlePanel = new BdvHandlePanel(getFrame(), options.is2D().inputTriggerConfig(config));
 		} else {
 			System.out.println("3D mode");
-			bdvHandlePanel = new BdvHandlePanel( ( Frame ) this.getTopLevelAncestor(), options);
+			bdvHandlePanel = new BdvHandlePanel( getFrame(), options);
 		}
 		return bdvHandlePanel.getViewerPanel();
+	}
+
+	private Frame getFrame() {
+		Container topLevelAncestor = SwingUtilities.getWindowAncestor(this);
+		if(topLevelAncestor == null) return null;
+		if(topLevelAncestor.getClass().isAssignableFrom(JDialog.class)) {
+			topLevelAncestor = SwingUtilities.getWindowAncestor(topLevelAncestor);
+		}
+		return (Frame) topLevelAncestor;
 	}
 
 	@Override

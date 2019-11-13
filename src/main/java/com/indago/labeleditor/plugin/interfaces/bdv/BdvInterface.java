@@ -17,7 +17,6 @@ import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class BdvInterface<L> implements LabelEditorInterface<L> {

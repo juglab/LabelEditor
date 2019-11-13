@@ -72,10 +72,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected void buildPanel() {
 		if(panelBuilt) return;
 		panelBuilt = true;
-		setLayout( new BorderLayout() );
-		final JPanel interfacePanel = new JPanel( new MigLayout("fill, w 500, h 500") );
-		interfacePanel.add( buildInterface(), "span, grow, push" );
-		this.add( interfacePanel );
+		setLayout( new MigLayout("fill") );
+		this.add( buildInterface(), "span, grow, push" );
 	}
 
 	protected abstract void initController();
