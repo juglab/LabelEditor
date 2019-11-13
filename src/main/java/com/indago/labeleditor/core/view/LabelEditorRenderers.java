@@ -56,6 +56,6 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 
 	private void prepare(LabelEditorRenderer renderer) {
 		renderer.init(model);
-		renderer.updateOnTagChange(model.labels().getMapping(), model.tagging().get(), view.colors());
+		renderer.updateOnTagChange(model);
 	}
 }

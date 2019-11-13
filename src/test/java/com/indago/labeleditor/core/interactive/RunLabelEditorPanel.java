@@ -32,6 +32,8 @@ public class RunLabelEditorPanel {
 	public static void main(String... args) {
 		ImgPlus img = buildData();
 		DefaultLabelEditorModel model = buildModel(img);
+		model.colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,50));
+		model.colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,50));
 
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
@@ -39,8 +41,6 @@ public class RunLabelEditorPanel {
 		frame.setMinimumSize(new Dimension(500,500));
 		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel<>();
 		labelEditorPanel.init(img, model);
-		labelEditorPanel.view().colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,50));
-		labelEditorPanel.view().colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,50));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();

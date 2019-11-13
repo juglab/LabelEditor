@@ -1,12 +1,11 @@
 package com.indago.labeleditor.plugin.renderers;
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorRenderers;
-import com.indago.labeleditor.core.view.LabelEditorTagColors;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
-import com.indago.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -27,12 +26,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T>> {
 
@@ -59,11 +56,12 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.get().add("b");
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTag("b", "b");
-		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 255);
-		view.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
+		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
 		int green = ARGBType.rgba(0, 255, 0, 255);
-		view.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, green);
+		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, green);
+
+		LabelEditorView<String> view = new LabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();
 		assertEquals(1, renderings.size());
@@ -90,6 +88,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testDefaultRenderingMixColors() {
+		//img
 		RandomAccess<LabelingType<String>> ra = labels.randomAccess();
 		ra.setPosition(new long[]{0,0});
 		ra.get().add("a");
@@ -98,15 +97,19 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.setPosition(new long[]{1,0});
 		ra.get().add("a");
 		ra.get().add("b");
+
+		//model
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTag("b", "b");
 		model.tagging().addTag("a", "a");
-		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int red = ARGBType.rgba(255, 0, 0, 100);
 		int transparent = ARGBType.rgba(0, 0, 0, 0);
-		view.colors().get("a").put(LabelEditorTargetComponent.FACE, transparent);
-		view.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
-		view.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
+		model.colors().get("a").put(LabelEditorTargetComponent.FACE, transparent);
+		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
+		model.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
+
+		//view
+		LabelEditorView<String> view = new LabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();
 		assertEquals(1, renderings.size());
@@ -141,14 +144,16 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.setPosition(new long[]{1,0});
 		ra.get().add("a");
 		ra.get().add("b");
+
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTag("a", "b");
 		model.tagging().addTag("a", "a");
-		LabelEditorView<String> view = new LabelEditorView<>(model);
 		int color = ARGBType.rgba(255, 255, 255, 100);
 		int mixedColor = ARGBType.rgba(255, 255, 255, 160);
-		view.colors().get("a").put(LabelEditorTargetComponent.FACE, color);
-		view.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
+		model.colors().get("a").put(LabelEditorTargetComponent.FACE, color);
+		model.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
+
+		LabelEditorView<String> view = new LabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();
 		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
@@ -170,7 +175,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testMixColors() {
-		LabelEditorTagColors tagColors = new LabelEditorTagColors(null);
+		LabelEditorTagColors tagColors = new LabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
 		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 100));
@@ -193,7 +198,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testMixTransparentColors() {
-		LabelEditorTagColors tagColors = new LabelEditorTagColors(null);
+		LabelEditorTagColors tagColors = new LabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
 		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 0, 0, 0));
@@ -238,7 +243,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testMixSameColors() {
-		LabelEditorTagColors tagColors = new LabelEditorTagColors(null);
+		LabelEditorTagColors tagColors = new LabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
 		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 255, 255, 100));

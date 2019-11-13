@@ -1,5 +1,7 @@
 package com.indago.labeleditor.core.model.tagging;
 
+import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
+import net.imglib2.type.numeric.ARGBType;
 import org.scijava.listeners.Listeners;
 
 import java.util.Collections;
@@ -8,7 +10,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class DefaultTagLabelRelation<L> implements TagLabelRelation<L> {
+public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 
 	private final HashMap<L, Set<Object>> tags = new HashMap<>();
 	private final Listeners.List<TagChangeListener> listeners = new Listeners.SynchronizedList<>();

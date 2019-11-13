@@ -1,9 +1,8 @@
 package com.indago.labeleditor.plugin.renderers;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
-import com.indago.labeleditor.core.view.LabelEditorTagColors;
+import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
@@ -21,7 +20,6 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.scijava.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,8 +43,8 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	}
 
 	@Override
-	public synchronized void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors) {
-		updateLUT(mapping, tagColors, LabelEditorTargetComponent.BORDER);
+	public synchronized void updateOnTagChange(LabelEditorModel model) {
+		updateLUT(model.labels().getMapping(), model.colors(), LabelEditorTargetComponent.BORDER);
 	}
 
 	@Override

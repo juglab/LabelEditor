@@ -72,14 +72,14 @@ public class E13_HandleMultipleConflicts {
 
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL2);
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL7);
+		model.colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
+		model.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
+		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
+//		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(50,50,50,100));
 
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
 		new ConflictSelectionBehaviours<>(model, panel.control()).install(panel.control().interfaceInstance().behaviours(), panel);
-		panel.view().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
-		panel.view().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
-		panel.view().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(50,50,50,100));
-//		panel.view().colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

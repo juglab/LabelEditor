@@ -61,8 +61,8 @@ public class E02_Open2DLabelingConflicts {
 
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
-		panel.view().colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,100));
-		panel.view().colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,255,100));
+		panel.model().colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,100));
+		panel.model().colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,255,100));
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

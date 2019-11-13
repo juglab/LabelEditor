@@ -43,10 +43,12 @@ public class E12_ShowBorder {
 				renderingManager.renderers().add(new BorderLabelEditorRenderer<>());
 			}
 		};
+
+		panel.model().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,0,255,255));
+		panel.model().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,0,255));
+		panel.model().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(255,0,0,255));
+
 		panel.init(new ImgPlus<IntType>(input), labeling);
-		panel.view().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,0,255,255));
-		panel.view().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,0,255));
-		panel.view().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(255,0,0,255));
 
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.setContentPane(panel.get());

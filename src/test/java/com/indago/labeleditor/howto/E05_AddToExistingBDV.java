@@ -39,11 +39,11 @@ public class E05_AddToExistingBDV {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		model.labels().getMapping().getLabels().forEach(label -> model.tagging().addTag("displayed", label));
+		model.colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,55));
 
 		LabelEditorView<Integer> view = new LabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();
-		model.labels().getMapping().getLabels().forEach(label -> model.tagging().addTag("displayed", label));
-		view.colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,55));
 
 		JPanel viewer = new JPanel(new MigLayout());
 		panel = new BdvHandlePanel(frame, Bdv.options().is2D());

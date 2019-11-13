@@ -1,11 +1,15 @@
 package com.indago.labeleditor.core.model;
 
-import com.indago.labeleditor.core.model.tagging.DefaultTagLabelRelation;
+import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
+import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
+import com.indago.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.model.tagging.TagLabelRelation;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imagej.ImgPlus;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
@@ -18,11 +22,16 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private ImgLabeling<L, IntType > labels;
 	private ImgPlus data;
 	private Map<L, LabelRegion<L>> orderedLabels;
-	private TagLabelRelation<L> tagLabelRelation;
+	private LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
 
 	private List<Object> orderedTags = new ArrayList<>();
+
+	private final LabelEditorTagColors tagColors = new LabelEditorTagColors();
+	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
+	private static int colorSelected = ARGBType.rgba(0,100,255,200);
+	private static int colorDefault = ARGBType.rgba(255,255,255,100);
 
 	public DefaultLabelEditorModel() {
 		init(null);
@@ -38,19 +47,26 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
+	public void init(ImgLabeling<L, IntType> labeling, ImgPlus data) {
+		this.data = data;
+		init(labeling);
+	}
+
+	@Override
 	public void init(ImgLabeling<L, IntType> labeling) {
 		if(labeling != null) {
 			this.labels = labeling;
 			initLabelOrdering(labeling);
 			initTagOrdering();
-			tagLabelRelation = new DefaultTagLabelRelation<L>();
+			tagLabelRelation = new DefaultLabelEditorTagging<L>();
+			addDefaultColorsets();
 		}
 	}
 
-	@Override
-	public void init(ImgLabeling<L, IntType> labeling, ImgPlus data) {
-		this.data = data;
-		init(labeling);
+	protected void addDefaultColorsets() {
+		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, colorDefault);
+		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, colorSelected);
+		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, colorMouseOver);
 	}
 
 	private void initLabelOrdering(ImgLabeling<L, IntType> labeling) {
@@ -71,6 +87,11 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		orderedTags.clear();
 		orderedTags.add(LabelEditorTag.MOUSE_OVER);
 		orderedTags.add(LabelEditorTag.SELECTED);
+	}
+
+	@Override
+	public List<LabelEditorColorset> getVirtualChannels() {
+		return new ArrayList<>(tagColors.values());
 	}
 
 	private int compareLabels(L label1, L label2) {
@@ -94,8 +115,12 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public TagLabelRelation<L> tagging() {
+	public LabelEditorTagging<L> tagging() {
 		return tagLabelRelation;
+	}
+
+	public LabelEditorTagColors colors() {
+		return tagColors;
 	}
 
 	@Override

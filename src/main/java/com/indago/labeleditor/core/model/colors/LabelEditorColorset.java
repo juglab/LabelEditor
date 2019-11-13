@@ -1,6 +1,7 @@
-package com.indago.labeleditor.core.view;
+package com.indago.labeleditor.core.model.colors;
 
 import bdv.util.VirtualChannels;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,10 +11,10 @@ import java.util.function.Function;
 
 public class LabelEditorColorset extends HashMap<Object, Integer> implements VirtualChannels.VirtualChannel {
 
-	private final LabelEditorView view;
+	private final LabelEditorTagColors colors;
 
-	public LabelEditorColorset(LabelEditorView view) {
-		this.view = view;
+	public LabelEditorColorset(LabelEditorTagColors colors) {
+		this.colors = colors;
 	}
 
 	@Override
@@ -32,7 +33,8 @@ public class LabelEditorColorset extends HashMap<Object, Integer> implements Vir
 	}
 
 	private void update() {
-		if(view != null) view.updateRenderers();
+		//FIXME
+		if(colors != null) colors.notifyListeners();
 	}
 
 	@Override

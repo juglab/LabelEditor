@@ -1,6 +1,7 @@
 package com.indago.labeleditor.core.view;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingMapping;
 import org.scijava.plugin.Plugin;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 public interface LabelEditorRenderer<L> extends SciJavaPlugin {
 	void init(LabelEditorModel model);
-	void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors);
+	void updateOnTagChange(LabelEditorModel model);
 	void updateOnLabelingChange();
 	RandomAccessibleInterval getOutput();
 

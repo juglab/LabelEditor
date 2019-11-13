@@ -2,9 +2,9 @@ package com.indago.labeleditor.plugin.renderers;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LabelEditorColorset;
+import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
-import com.indago.labeleditor.core.view.LabelEditorTagColors;
+import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
@@ -34,8 +34,8 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	}
 
 	@Override
-	public void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors) {
-		updateLUT(mapping, tagColors, LabelEditorTargetComponent.FACE);
+	public void updateOnTagChange(LabelEditorModel model) {
+		updateLUT(model.labels().getMapping(), model.colors(), LabelEditorTargetComponent.FACE);
 	}
 
 	protected void updateLUT(LabelingMapping<L> mapping, LabelEditorTagColors tagColors, LabelEditorTargetComponent targetComponent) {

@@ -69,15 +69,15 @@ public class E08_CustomActions {
 
 		// build LabelEditorPanel
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		//set custom colors for tags set in the MouseAdapter
+		model.colors().remove(LabelEditorTag.SELECTED);
+		model.colors().remove(LabelEditorTag.MOUSE_OVER);
+		model.colors().get("yes").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(155, 155, 0, 255));
+		model.colors().get("no").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 155, 255, 255));
+		model.colors().get("special").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 255));
+
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(new ImgPlus<>(input), model);
-
-		//set custom colors for tags set in the MouseAdapter
-		panel.view().colors().remove(LabelEditorTag.SELECTED);
-		panel.view().colors().remove(LabelEditorTag.MOUSE_OVER);
-		panel.view().colors().get("yes").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(155, 155, 0, 255));
-		panel.view().colors().get("no").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 155, 255, 255));
-		panel.view().colors().get("special").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 255));
 
 		//register custom actions
 		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {

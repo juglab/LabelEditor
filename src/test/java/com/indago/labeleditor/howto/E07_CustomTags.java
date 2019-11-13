@@ -39,20 +39,20 @@ public class E07_CustomTags {
 
 		Random random = new Random();
 		panel.model().tagging().pauseListeners();
-		panel.view().pauseListeners();
+		panel.model().colors().pauseListeners();
 
 		for (Integer label : labeling.getMapping().getLabels()) {
 			System.out.println(label);
 			panel.model().tagging().addTag(label, label);
 //				int brightness = random.nextInt(155);
 //				panel.view().colors().get(label).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(brightness, brightness, brightness, 255));
-			panel.view().colors().get(label).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155));
+			panel.model().colors().get(label).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155));
 
 		}
 		panel.model().tagging().resumeListeners();
-		panel.view().resumeListeners();
-		panel.view().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,255));
-		panel.view().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,255));
+		panel.model().colors().resumeListeners();
+		panel.model().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,255));
+		panel.model().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,255));
 
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

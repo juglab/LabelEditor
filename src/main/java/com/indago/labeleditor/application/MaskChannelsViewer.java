@@ -86,7 +86,7 @@ public class MaskChannelsViewer implements Command {
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
 		context.inject(panel);
 		panel.init(dataImg, model);
-		colors.forEach((tag, color) -> panel.view().colors().get(tag).put(LabelEditorTargetComponent.FACE, color));
+		colors.forEach((tag, color) -> panel.model().colors().get(tag).put(LabelEditorTargetComponent.FACE, color));
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
