@@ -6,8 +6,12 @@ import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.plugin.behaviours.ConflictSelectionBehaviours;
+import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.plugin.renderers.BorderLabelEditorRenderer;
+import com.indago.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.img.array.ArrayImg;
@@ -23,6 +27,8 @@ import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * How to open an {@link ImgLabeling} in a {@link LabelEditorBdvPanel}.
@@ -67,15 +73,13 @@ public class E13_HandleMultipleConflicts {
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL2);
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL7);
 
-		panel = new LabelEditorBdvPanel<String>() {
-			@Override
-			protected void addBehaviours(LabelEditorController<String> controller) {
-				new ConflictSelectionBehaviours<>(model, panel.control()).install(controller.interfaceInstance().behaviours(), panel);
-			}
-		};
+		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
-		panel.view().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,0,200));
-		panel.view().colors().get(LabelEditorTag.NO_TAG).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,255,50));
+		new ConflictSelectionBehaviours<>(model, panel.control()).install(panel.control().interfaceInstance().behaviours(), panel);
+		panel.view().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
+		panel.view().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
+		panel.view().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(50,50,50,100));
+//		panel.view().colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

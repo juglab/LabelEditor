@@ -17,17 +17,38 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 	}
 
 	@Override
-	protected void handleClick() {
+	protected void handleClick(int arg0, int arg1) {
+		LabelingType<L> labels = controller.interfaceInstance().getLabelsAtMousePosition(arg0, arg1, model);
 		//TODO start collect tagging events, pause listeners
-		if (!noLabelsAtMousePosition()) {
-			selectFirst(currentLabels);
+		if (labels != null) {
+			selectFirst(labels);
 		}
 		//TODO resume model listeners and send collected events
 	}
 
 	@Override
-	protected void handleShiftClick() {
-		handleClick();
+	protected void handleShiftClick(int arg0, int arg1) {
+		handleClick(arg0, arg1);
+	}
+
+	@Override
+	protected void handleShiftWheelRotation(double direction, boolean isHorizontal, int x, int y) {
+		LabelingType<L> labels = controller.interfaceInstance().getLabelsAtMousePosition(x, y, model);
+		if(labels.size() == 0) return;
+		if(!anySelected(labels)) {
+			//TODO start collect tagging events, pause listeners
+			selectFirst(labels);
+			//TODO resume model listeners and send collected events
+			return;
+		}
+		if ( !isHorizontal ) {
+			//TODO start collect tagging events, pause listeners
+			if (direction > 0)
+				selectNext(labels);
+			else
+				selectPrevious(labels);
+			//TODO resume model listeners and send collected events
+		}
 	}
 
 	@Override

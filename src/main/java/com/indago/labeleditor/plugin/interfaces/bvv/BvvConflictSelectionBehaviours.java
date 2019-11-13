@@ -19,7 +19,7 @@ public class BvvConflictSelectionBehaviours<L> extends ConflictSelectionBehaviou
 
 	@Override
 	protected void handleMouseMove(MouseEvent e) {
-		List<LabelingType<L>> allSets = bvvInterface.getAllLabelsAtMousePosition(e, model);
+		List<LabelingType<L>> allSets = bvvInterface.getAllLabelsAtMousePosition(e.getX(), e.getY(), model);
 		if(allSets == null || allSets.size() == 0) {
 			//TODO start collect tagging events, pause listeners
 			defocusAll();

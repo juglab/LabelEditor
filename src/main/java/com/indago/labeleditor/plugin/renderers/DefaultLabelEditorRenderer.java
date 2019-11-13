@@ -1,5 +1,6 @@
 package com.indago.labeleditor.plugin.renderers;
 
+import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorColorset;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
@@ -8,51 +9,64 @@ import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
-import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Plugin(type = LabelEditorRenderer.class, name = "labels")
+@Plugin(type = LabelEditorRenderer.class, name = "labels", priority = 2)
 public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	protected int[] lut;
-	protected ImgLabeling<L, IntType> labels;
 	boolean debug = false;
+	protected LabelEditorModel model;
 
 	@Override
-	public void init(ImgLabeling<L, IntType> labels) {
-		this.labels = labels;
+	public void init(LabelEditorModel model) {
+		this.model = model;
 	}
 
 	@Override
 	public void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors) {
+		updateLUT(mapping, tagColors, LabelEditorTargetComponent.FACE);
+	}
 
+	protected void updateLUT(LabelingMapping<L> mapping, LabelEditorTagColors tagColors, LabelEditorTargetComponent targetComponent) {
 		int[] lut;
 
-		// our LUT has one entry per index in the index img of our labeling
 		lut = new int[mapping.numSets()];
 
 		if(tagColors != null) {
 			for (int i = 0; i < lut.length; i++) {
-				// get all labels of this index
+
 				Set<L> labels = mapping.labelsAtIndex(i);
 
-				// if there are no labels, we don't need to check for tags and can continue
 				if(labels.size() == 0) continue;
 
-				// get all tags associated with the labels of this index
-				Set<Object> mytags = filterTagsByLabels( tags, labels);
 
-				//add DEFAULT tag if no tag is assigned (making it possible to draw all labels with a default color)
-				if(mytags.size() == 0) mytags.add(LabelEditorTag.NO_TAG);
+				List<L> sortedLabels = new ArrayList<>(labels);
+				sortedLabels.sort(model.getLabelComparator());
 
-				lut[i] = mixColors(mytags, tagColors, LabelEditorTargetComponent.FACE);
+				int[] labelColors = new int[sortedLabels.size()];
+				for (int j = 0; j < labelColors.length; j++) {
+
+					Set labelTags = model.tagging().getTags(sortedLabels.get(j));
+					ArrayList<Object> sortedTags = new ArrayList<>(labelTags);
+					sortedTags.sort(model.getTagComparator());
+					sortedTags.add(0, LabelEditorTag.DEFAULT);
+					Collections.reverse(sortedTags);
+
+					labelColors[j] = mixColors(sortedTags, tagColors, targetComponent);
+				}
+
+				lut[i] = mixColors(labelColors);
 
 			}
 		}
@@ -90,7 +104,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	@Override
 	public RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
-		return Converters.convert(labels.getIndexImg(), converter, new ARGBType() );
+		return Converters.convert(model.labels().getIndexImg(), converter, new ARGBType() );
 	}
 
 	protected int[] getLUT() {
@@ -99,18 +113,27 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	//https://en.wikipedia.org/wiki/Alpha_compositing
 	//https://wikimedia.org/api/rest_v1/media/math/render/svg/12ea004023a1756851fc7caa0351416d2ba03bae
-	public static int mixColors(Set<Object> mytags, LabelEditorTagColors tagColors, Object targetComponent) {
+	public static int mixColors(List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent) {
+
+		int[] colors = new int[tags.size()];
+		for (int i = 0; i < colors.length; i++) {
+			LabelEditorColorset colorset = tagColors.get(tags.get(i));
+			if(colorset == null || !colorset.containsKey(targetComponent)) continue;
+			colors[i] = colorset.get(targetComponent);
+		}
+		return mixColors(colors);
+	}
+
+	public static int mixColors(int[] colors) {
 		float red = 0;
 		float green = 0;
 		float blue = 0;
 		float alpha = 0;
-		for (Object tag : mytags) {
-			LabelEditorColorset colorset = tagColors.get(tag);
-			if(colorset == null || !colorset.containsKey(targetComponent)) continue;
-			int color = colorset.get(LabelEditorTargetComponent.FACE);
+		for (int color : colors) {
+			if(color == 0) continue;
 			float newred = ARGBType.red(color);
-			float newgreen = ARGBType.blue(color);
-			float newblue = ARGBType.green(color);
+			float newgreen = ARGBType.green(color);
+			float newblue = ARGBType.blue(color);
 			float newalpha = ((float)ARGBType.alpha(color))/255.f;
 			if(alpha < 0.0001 && newalpha < 0.0001) continue;
 			red = (red*alpha+newred*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
@@ -132,4 +155,7 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 		return set;
 	}
 
+	void printLUT() {
+		printLUT(model.labels().getMapping(), lut);
+	}
 }

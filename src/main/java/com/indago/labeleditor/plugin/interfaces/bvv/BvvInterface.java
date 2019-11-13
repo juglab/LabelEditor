@@ -44,25 +44,25 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 		return actionHandler;
 	}
 
-	protected List<LabelingType<L>> getAllLabelsAtMousePosition(MouseEvent e, LabelEditorModel<L> model) {
-		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(e, model);
+	protected List<LabelingType<L>> getAllLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
+		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(x, y, model);
 		if(labelsAtMousePositionInBVV.size() == 0) return null;
 		return new ArrayList<>(labelsAtMousePositionInBVV);
 	}
 
 	@Override
-	public LabelingType<L> getLabelsAtMousePosition(MouseEvent e, LabelEditorModel<L> model) {
-		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(e, model);
+	public LabelingType<L> getLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
+		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(x, y, model);
 		if(labelsAtMousePositionInBVV.size() == 0) return null;
 		return new ArrayList<>(labelsAtMousePositionInBVV).get(0);
 	}
 
-	private Set<LabelingType<L>> getLabelsAtMousePositionInBVV(MouseEvent e, LabelEditorModel<L> model) {
+	private Set<LabelingType<L>> getLabelsAtMousePositionInBVV(int mx, int my, LabelEditorModel<L> model) {
 		RealPoint gPos = new RealPoint(3);
 		assert gPos.numDimensions() == 3;
 		final RealPoint lPos = new RealPoint( 3 );
-		lPos.setPosition(e.getX(), 0);
-		lPos.setPosition(e.getY(), 1);
+		lPos.setPosition(mx, 0);
+		lPos.setPosition(my, 1);
 		AffineTransform3D transform = new AffineTransform3D();
 
 		int time = bvvHandle.getViewerPanel().getState().getCurrentTimepoint();

@@ -69,8 +69,8 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	protected void displayData() {
-		if(getData() != null) {
-			displayInBvv( getData(), "RAW" );
+		if(model().getData() != null) {
+			displayInBvv( model().getData(), "RAW" );
 		}
 	}
 

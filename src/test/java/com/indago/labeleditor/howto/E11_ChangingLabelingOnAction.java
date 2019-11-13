@@ -38,8 +38,7 @@ public class E11_ChangingLabelingOnAction {
 		PopUpDemo(LabelEditorPanel<Integer> panel, ModificationBehaviours modificationBehaviours) {
 			JMenuItem item = new JMenuItem("Remove");
 			item.addActionListener(actionEvent -> {
-				Set<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.MOUSE_OVER);
-				modificationBehaviours.getDeleteBehaviour().delete(labels);
+				modificationBehaviours.getDeleteBehaviour().deleteSelected();
 			});
 			add(item);
 		}
@@ -60,7 +59,7 @@ public class E11_ChangingLabelingOnAction {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-		model.labelRegions().forEach((label, regions) -> model.tagging().addTag("displayed", label));
+		model.labels().getMapping().getLabels().forEach(label -> model.tagging().addTag("displayed", label));
 
 		// build LabelEditorPanel
 		panel = new LabelEditorBdvPanel<>();

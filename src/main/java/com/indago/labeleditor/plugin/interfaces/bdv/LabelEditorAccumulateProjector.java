@@ -44,7 +44,7 @@ public class LabelEditorAccumulateProjector extends AccumulateProjector< ARGBTyp
 		for (int i = accesses.length-1; i >= 0; i--) {
 			Cursor<? extends ARGBType> access = accesses[i];
 			final int value = access.get().get();
-			final float newalpha = (float) ARGBType.alpha(value) / 255.f;
+			final float newalpha = ((float) ARGBType.alpha(value)) / 255.f;
 			final float newred = ARGBType.red(value);
 			final float newgreen = ARGBType.green(value);
 			final float newblue = ARGBType.blue(value);

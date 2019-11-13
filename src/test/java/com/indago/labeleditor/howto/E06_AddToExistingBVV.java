@@ -44,7 +44,7 @@ public class E06_AddToExistingBVV {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-		model.labelRegions().forEach((label, regions) -> {
+		model.labels().getMapping().getLabels().forEach(label -> {
 			model.tagging().addTag("displayed", label);
 		});
 

@@ -8,7 +8,6 @@ import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.Behaviour;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.ScrollBehaviour;
-import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.*;
@@ -50,15 +49,15 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours {
 	}
 
 	private Behaviour getShiftScrollBehaviour() {
-		return (ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> handleShiftWheelRotation(wheelRotation, isHorizontal);
+		return (ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> handleShiftWheelRotation(wheelRotation, isHorizontal, x, y);
 	}
 
 	private Behaviour getClickBehaviour() {
-		return (ClickBehaviour) (arg0, arg1) -> handleClick();
+		return (ClickBehaviour) (arg0, arg1) -> handleClick(arg0, arg1);
 	}
 
 	private Behaviour getShiftClickBehaviour() {
-		return (ClickBehaviour) (arg0, arg1) -> handleShiftClick();
+		return (ClickBehaviour) (arg0, arg1) -> handleShiftClick(arg0, arg1);
 	}
 
 	public MouseMoveBehaviour getMouseMoveBehaviour() {
@@ -87,7 +86,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours {
 //		}).start();
 	}
 
-	protected void handleClick() {
+	protected void handleClick(int arg0, int arg1) {
 		//TODO start collect tagging events, pause listeners
 		if (noLabelsAtMousePosition()) {
 			deselectAll();
@@ -97,7 +96,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours {
 		//TODO resume model listeners and send collected events
 	}
 
-	protected void handleShiftClick() {
+	protected void handleShiftClick(int arg0, int arg1) {
 		//TODO start collect tagging events, pause listeners
 		if (!noLabelsAtMousePosition()) {
 			toggleSelectionOfFirst(currentLabels);
@@ -109,7 +108,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours {
 		return currentLabels == null || currentLabels.size() == 0;
 	}
 
-	protected void handleShiftWheelRotation(double direction, boolean isHorizontal) {
+	protected void handleShiftWheelRotation(double direction, boolean isHorizontal, int x, int y) {
 		if(noLabelsAtMousePosition()) return;
 		if(!anySelected(currentLabels)) {
 			//TODO start collect tagging events, pause listeners

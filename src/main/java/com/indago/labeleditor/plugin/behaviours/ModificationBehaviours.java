@@ -3,18 +3,20 @@ package com.indago.labeleditor.plugin.behaviours;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import net.imglib2.Cursor;
-import net.imglib2.roi.labeling.LabelingType;
-import org.scijava.ui.behaviour.Behaviour;
+import com.indago.labeleditor.plugin.behaviours.modification.DeleteLabels;
+import com.indago.labeleditor.plugin.behaviours.modification.SplitSelectedLabels;
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
-
-import java.util.Set;
 
 public class ModificationBehaviours extends Behaviours implements LabelEditorBehaviours {
 
 	protected final LabelEditorModel model;
 	protected final LabelEditorController controller;
+
+	@Parameter
+	Context context;
 
 	public ModificationBehaviours(LabelEditorModel model, LabelEditorController controller) {
 		super(new InputTriggerConfig(), "labeleditor-modification");
@@ -22,18 +24,14 @@ public class ModificationBehaviours extends Behaviours implements LabelEditorBeh
 		this.controller = controller;
 	}
 
-	public DeleteLabelsBehaviour getDeleteBehaviour() {
-		return new DeleteLabelsBehaviour();
+	public DeleteLabels getDeleteBehaviour() {
+		return new DeleteLabels(model, controller);
 	}
 
-	public class DeleteLabelsBehaviour implements Behaviour {
-		public void delete(Set labels) {
-			Cursor<LabelingType> cursor = model.labels().cursor();
-			while(cursor.hasNext()) {
-				LabelingType val = cursor.next();
-				val.removeAll(labels);
-			}
-			controller.triggerLabelingChange();
-		}
+	public SplitSelectedLabels getSplitBehaviour() {
+		SplitSelectedLabels behaviour = new SplitSelectedLabels(model, controller);
+		if(context != null) context.inject(behaviour);
+		return behaviour;
 	}
+
 }

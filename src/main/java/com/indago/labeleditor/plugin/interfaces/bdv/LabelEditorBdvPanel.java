@@ -6,27 +6,31 @@ import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
-import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
 import net.imagej.axis.Axes;
 import net.imglib2.RandomAccessibleInterval;
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
+import org.scijava.ui.behaviour.Behaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
+
+	@Parameter
+	Context context;
 
 	@Override
 	protected void initController() {
@@ -37,7 +41,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private boolean is3DMode() {
-		return getData().dimensionIndex(Axes.Z) > 0;
+		if(model().getData() == null) return false;
+		return model().getData().dimensionIndex(Axes.Z) > 0;
 	}
 
 	@Override
@@ -58,12 +63,13 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	protected void addBehaviours(LabelEditorController<L> controller) {
 		controller.addDefaultBehaviours();
 		ModificationBehaviours modificationBehaviours = new ModificationBehaviours(model(), control());
+		if(context != null) context.inject(modificationBehaviours);
 		getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				if (e.isPopupTrigger()) {
-					BdvPopupMenu menu = new BdvPopupMenu(LabelEditorBdvPanel.this, modificationBehaviours);
+					BdvPopupMenu menu = new BdvPopupMenu(modificationBehaviours);
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
@@ -94,8 +100,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	protected void displayData() {
-		if(getData() != null) {
-			displayInBdv( getData(), "RAW" );
+		if(model().getData() != null) {
+			displayInBdv( model().getData(), "RAW" );
 		}
 	}
 
@@ -131,15 +137,16 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		if(getInterfaceHandle() != null) getInterfaceHandle().close();
 	}
 
-
 	class BdvPopupMenu extends JPopupMenu {
 
-		BdvPopupMenu(LabelEditorPanel<L> panel, ModificationBehaviours modificationBehaviours) {
-			JMenuItem item = new JMenuItem("Remove label");
-			item.addActionListener(actionEvent -> {
-				Set<L> labels = panel.model().tagging().getLabels(LabelEditorTag.MOUSE_OVER);
-				modificationBehaviours.getDeleteBehaviour().delete(labels);
-			});
+		BdvPopupMenu(ModificationBehaviours modificationBehaviours) {
+			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getDeleteBehaviour().deleteSelected()).start(), "Delete selected labels");
+			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getSplitBehaviour().splitSelected()).start(), "Split selected labels");
+		}
+
+		private void addMenuItem(ActionListener actionListener, String label) {
+			JMenuItem item = new JMenuItem(label);
+			item.addActionListener(actionListener);
 			add(item);
 		}
 	}

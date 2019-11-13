@@ -1,5 +1,7 @@
 package com.indago.labeleditor.plugin.renderers;
 
+import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorTagColors;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
@@ -12,7 +14,6 @@ import net.imglib2.algorithm.neighborhood.Neighborhood;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
-import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -20,10 +21,11 @@ import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.scijava.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-@Plugin(type = LabelEditorRenderer.class, name = "borders")
+@Plugin(type = LabelEditorRenderer.class, name = "borders", priority = 1)
 public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> {
 
 	private RandomAccessibleInterval<IntType> output;
@@ -31,41 +33,20 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	public BorderLabelEditorRenderer() {}
 
 	@Override
-	public void init(ImgLabeling<L, IntType> labels) {
-		super.init(labels);
-		this.output = new DiskCachedCellImgFactory<>(new IntType()).create(labels);
+	public void init(LabelEditorModel model) {
+		super.init(model);
+		this.output = new DiskCachedCellImgFactory<>(new IntType()).create(model.labels());
 		updateOutput();
 	}
 
 	@Override
 	public void updateOnLabelingChange() {
-		if(labels != null && output != null) updateOutput();
+		if(model.labels() != null && output != null) updateOutput();
 	}
 
 	@Override
 	public synchronized void updateOnTagChange(LabelingMapping<L> mapping, Map<L, Set<Object>> tags, LabelEditorTagColors tagColors) {
-
-		int[] lut;
-
-		// our LUT has one entry per index in the index img of our labeling
-		lut = new int[mapping.numSets()];
-
-		for (int i = 0; i < lut.length; i++) {
-			// get all labels of this index
-			Set<L> labels = mapping.labelsAtIndex(i);
-
-			// if there are no labels, we don't need to check for tags and can continue
-			if(labels.size() == 0) continue;
-
-			// get all tags associated with the labels of this index
-			Set<Object> mytags = filterTagsByLabels( tags, labels);
-
-			lut[i] = mixColors(mytags, tagColors, LabelEditorTargetComponent.BORDER);
-//			lut[i] = ARGBType.rgba(255,255,255,Math.min(labels.size()*50, 255));
-
-		}
-
-		this.lut = lut;
+		updateLUT(mapping, tagColors, LabelEditorTargetComponent.BORDER);
 	}
 
 	@Override
@@ -75,13 +56,13 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	}
 
 	private void updateOutput() {
-		RandomAccess<IntType> randomAccess = labels.getIndexImg().randomAccess();
+		RandomAccess<IntType> randomAccess = model.labels().getIndexImg().randomAccess();
 		int nothing = ARGBType.rgba(0, 0, 0, 0);
 		DiamondShape shape = new DiamondShape(1);
 
-		RandomAccessible< Neighborhood<IntType>> neighborhoodsAccessible = shape.neighborhoodsRandomAccessible(Views.extendMirrorSingle(labels.getIndexImg()));
+		RandomAccessible< Neighborhood<IntType>> neighborhoodsAccessible = shape.neighborhoodsRandomAccessible(Views.extendMirrorSingle(model.labels().getIndexImg()));
 
-		IntervalView<Neighborhood<IntType>> neighborhoods = Views.interval(neighborhoodsAccessible, labels);
+		IntervalView<Neighborhood<IntType>> neighborhoods = Views.interval(neighborhoodsAccessible, model.labels());
 
 		Cursor<Neighborhood<IntType>> neighborhoodCursor = neighborhoods.localizingCursor();
 		RandomAccess<IntType> outputRa = output.randomAccess();

@@ -44,7 +44,7 @@ public class E04_Open3DLabelingBVV {
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
-		model.labelRegions().forEach((label, regions) -> {
+		model.labels().getMapping().getLabels().forEach(label -> {
 			model.tagging().addTag("displayed", label);
 		});
 

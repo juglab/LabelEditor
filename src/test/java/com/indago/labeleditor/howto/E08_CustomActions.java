@@ -42,7 +42,7 @@ public class E08_CustomActions {
 			anItem = new JMenuItem("Click Me!");
 			anItem.addActionListener(actionEvent -> {
 				System.out.println("Event!");
-				Set<Integer> labels = panel.model().tagging().getLabels(LabelEditorTag.SELECTED);
+				Set<Integer> labels = panel.model().tagging().getLabels("no");
 				//TODO start collect tagging events, pause listeners
 				labels.forEach(label -> panel.model().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );

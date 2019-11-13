@@ -15,8 +15,6 @@ import java.awt.*;
 
 public abstract class AbstractLabelEditorPanel<L> extends JPanel implements LabelEditorPanel<L> {
 
-	private ImgPlus data;
-
 	private boolean panelBuilt = false;
 
 	private LabelEditorController<L> controller;
@@ -28,22 +26,12 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	@Override
 	public void init(ImgPlus data) {
-		setData(data);
-		buildPanel();
-		clearInterface();
-		displayData();
+		init(data, new DefaultLabelEditorModel<>());
 	}
 
 	@Override
 	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
-		setData(data);
-		init(labels);
-	}
-
-	@Override
-	public void init(ImgPlus data, LabelEditorModel<L> model) {
-		setData(data);
-		init(model);
+		init(data, new DefaultLabelEditorModel<>(labels));
 	}
 
 	@Override
@@ -53,22 +41,32 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	@Override
 	public void init(LabelEditorModel<L> model) {
-		if(model != null) {
-			this.model = model;
+		init(null, model);
+	}
+
+	@Override
+	public void init(ImgPlus data, LabelEditorModel<L> model) {
+		this.model = model;
+		if(data != null) {
+			setData(data);
+		}
+		if(model.labels() != null) {
 			view.init(model);
 			addRenderings(view);
-			buildPanel();
 			controller = new LabelEditorController<>();
 		}
+		buildPanel();
 		clearInterface();
 		displayData();
-		displayLabeling();
-		initController();
+		if(model.labels() != null) {
+			displayLabeling();
+			initController();
+		}
 	}
 
 	protected void setData(ImgPlus data) {
 		if(data == null) return;
-		this.data = data;
+		model.setData(data);
 	}
 
 	protected void buildPanel() {
@@ -116,10 +114,6 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	@Override
 	public Container get() {
 		return this;
-	}
-
-	public ImgPlus getData() {
-		return data;
 	}
 
 }

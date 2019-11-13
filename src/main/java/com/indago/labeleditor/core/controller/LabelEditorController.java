@@ -15,6 +15,9 @@ public class LabelEditorController<L> {
 	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
 		this.model = model;
 		this.view = view;
+		if(interfaceInstance != null) {
+			view.listeners().remove(interfaceInstance::onViewChange);
+		}
 		this.interfaceInstance = interfaceInstance;
 		view.listeners().add(interfaceInstance::onViewChange);
 	}

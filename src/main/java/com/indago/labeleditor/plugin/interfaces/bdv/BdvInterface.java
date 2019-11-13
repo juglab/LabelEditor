@@ -51,7 +51,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public LabelingType<L> getLabelsAtMousePosition(MouseEvent e, LabelEditorModel<L> model) {
+	public LabelingType<L> getLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
 		RandomAccess<LabelingType<L>> ra = model.labels().randomAccess();
 		ra.setPosition(getDataPositionAtMouse());
 		return ra.get();

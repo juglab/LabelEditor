@@ -2,11 +2,9 @@ package com.indago.labeleditor.core.model.tagging;
 
 import org.scijava.listeners.Listeners;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,13 +12,25 @@ public class DefaultTagLabelRelation<L> implements TagLabelRelation<L> {
 
 	private final HashMap<L, Set<Object>> tags = new HashMap<>();
 	private final Listeners.List<TagChangeListener> listeners = new Listeners.SynchronizedList<>();
+	private boolean listenersPaused = false;
 
 	@Override
 	public Listeners< TagChangeListener > listeners() {
 		return listeners;
 	}
 
+	@Override
+	public void pauseListeners() {
+		listenersPaused = true;
+	}
+
+	@Override
+	public void resumeListeners() {
+		listenersPaused = false;
+	}
+
 	private void notifyListeners(Object tag, L label, TagChangedEvent.Action action) {
+		if(listenersPaused) return;
 		TagChangedEvent e = new TagChangedEvent();
 		e.action = action;
 		e.tag = tag;
@@ -64,7 +74,7 @@ public class DefaultTagLabelRelation<L> implements TagLabelRelation<L> {
 	}
 
 	@Override
-	public Set<L> getLabels(LabelEditorTag tag) {
+	public Set<L> getLabels(Object tag) {
 		Set<L> labels = new HashSet<>();
 		tags.forEach((l, tags) -> {
 			if(tags.contains(tag)) labels.add(l);

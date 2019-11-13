@@ -29,6 +29,7 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 				e.printStackTrace();
 			}
 		});
+		renderers.sort((p1, p2) -> (int) (p1.getAnnotation().priority() - p2.getAnnotation().priority()));
 	}
 
 	public Optional<LabelEditorRenderer> get(String name) {
@@ -54,7 +55,7 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	}
 
 	private void prepare(LabelEditorRenderer renderer) {
-		renderer.init(model.labels());
+		renderer.init(model);
 		renderer.updateOnTagChange(model.labels().getMapping(), model.tagging().get(), view.colors());
 	}
 }

@@ -30,10 +30,12 @@ This project uses Scijava `Behaviours` to bundle interaction concepts and connec
 - **`ConflictSelectionBehaviours`** are deselecting conflicting labels on each selection
 - **`ModificationBehaviours`**
     - delete a label (in BDV via right click)
-- `[TODO]` watershed label division action
-- `[TODO]` grow label merge action
-- `[TODO]` export `ImgLabeling` index image action
-- `[TODO]` export `ImgLabeling` as image with one mask channel per label action 
+    - naive label division (watershed) (`[TODO]` this needs better options / an interface)
+    - `[TODO]` label merge
+    - `[TODO]` fill holes
+- `[TODO]` export `ImgLabeling` index image
+- `[TODO]` export `ImgLabeling` as image with one mask channel per label 
+- `[TODO]` compute label regions, show information in table
 
 #### renderer
 - **`DefaultLabelEditorRenderer`**: paints each pixel of a label with the color of the tag(s)
@@ -48,7 +50,7 @@ The following applications can be tested by installing this update site in Fiji:
 - **`ImgLabelingViewer`**: Displays a `ImgLabeling` and an optional `ImgPlus` in the LabelEditor
 - **`CCAViewer`**: Performs otsu threshold and CCA from imagej-ops on the input image and displays the result in the LabelEditor
 - **`WatershedViewer`**: Performs watershed from imagej-ops on the input image and displays the result in the LabelEditor
-- `[TODO]` create `ImgLabeling` from mask channels
+- **`MaskChannelsViewer`**: Create `ImgLabeling` from mask channels (performing CCA on each channel), user provides channel dimension and channel position of source image
 
 ## How to use the API
 There is no real documentation yet, also no JavaDoc. Have a look at `src/test/com/indago/labeleditor/howto` to see how to integrate this project into your own implementation. 

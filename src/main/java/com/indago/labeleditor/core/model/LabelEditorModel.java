@@ -1,6 +1,8 @@
 package com.indago.labeleditor.core.model;
 
 import com.indago.labeleditor.core.model.tagging.TagLabelRelation;
+import net.imagej.ImgPlus;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 
@@ -12,6 +14,8 @@ public interface LabelEditorModel <L> {
 
 	ImgLabeling<L, IntType> labels();
 
+	void init(ImgLabeling<L, IntType> labeling, ImgPlus data);
+
 	TagLabelRelation<L> tagging();
 
 	void setTagComparator(Comparator<Object> comparator);
@@ -20,4 +24,7 @@ public interface LabelEditorModel <L> {
 
 	Comparator<Object> getTagComparator();
 	Comparator<L> getLabelComparator();
+
+	ImgPlus getData();
+	void setData(ImgPlus data);
 }

@@ -17,12 +17,13 @@ public class LabelEditorView<L> {
 
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
-	static int colorDefault = ARGBType.rgba(255,255,255,100);
+	private static int colorDefault = ARGBType.rgba(255,255,255,100);
 	private final LabelEditorTagColors tagColors = new LabelEditorTagColors(this);
 	private LabelEditorModel<L> model;
 
 	private final LabelEditorRenderers renderers = new LabelEditorRenderers();
 	private final Listeners.List<ViewChangeListener> listeners = new Listeners.SynchronizedList<>();
+	private boolean listenersPaused = false;
 
 	public LabelEditorView() {}
 
@@ -32,7 +33,8 @@ public class LabelEditorView<L> {
 
 	public void init(LabelEditorModel<L> model) {
 		this.model = model;
-		tagColors.get(LabelEditorTag.NO_TAG).put(LabelEditorTargetComponent.FACE, colorDefault);
+		if(model.labels() == null) return;
+		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, colorDefault);
 		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, colorSelected);
 		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, colorMouseOver);
 		renderers.clear();
@@ -74,7 +76,15 @@ public class LabelEditorView<L> {
 		return listeners;
 	}
 
+	public void pauseListeners(){
+		listenersPaused = true;
+	}
+	public void resumeListeners(){
+		listenersPaused = false;
+	}
+
 	private void notifyListeners() {
+		if(listenersPaused) return;
 		listeners.list.forEach(listener -> listener.viewChanged(new ViewChangedEvent()));
 	}
 }
