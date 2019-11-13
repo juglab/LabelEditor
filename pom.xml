@@ -20,7 +20,7 @@
 
 	<groupId>com.indago</groupId>
 	<artifactId>labeleditor</artifactId>
-	<version>0.3.1-SNAPSHOT</version>
+	<version>0.4.1-SNAPSHOT</version>
 
 	<name>Label Editor</name>
 	<description>UI component for image segmentation label comparison and selection</description>
