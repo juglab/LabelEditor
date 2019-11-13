@@ -2,6 +2,7 @@ package com.indago.labeleditor.core.view;
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.colors.ColorChangedEvent;
 import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
 import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
@@ -34,6 +35,11 @@ public class LabelEditorView<L> {
 		renderers.clear();
 		renderers.init(model, this);
 		model.tagging().listeners().add(this::onTagChange);
+		model.colors().listeners().add(this::onColorChange);
+	}
+
+	private void onColorChange(ColorChangedEvent colorChangedEvent) {
+		updateRenderers();
 	}
 
 	private void onTagChange(TagChangedEvent tagChangedEvent) {

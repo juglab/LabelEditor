@@ -1,10 +1,13 @@
 package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Pair;
@@ -29,6 +32,7 @@ public class SwingLabelEditorModelBdvWidget extends SwingInputWidget<LabelEditor
 	protected void doRefresh() {
 		if(model.getValue() == null) return;
 		if(!labelingLoaded) {
+			labelingLoaded = true;
 			LabelEditorModel value = (LabelEditorModel) model.getValue();
 			panel.init(value);
 			ImgPlus data = panel.model().getData();
@@ -36,8 +40,10 @@ public class SwingLabelEditorModelBdvWidget extends SwingInputWidget<LabelEditor
 				Pair minmax = ops.stats().minMax(data);
 				RealType min = (RealType) minmax.getA();
 				RealType max = (RealType) minmax.getB();
-				panel.getSources().forEach(source -> source.setDisplayRange(min.getRealDouble(), max.getRealDouble()));
+				panel.getSources().forEach(source -> source.setDisplayRange(0, 255));
+				panel.getSources().get(0).setDisplayRange(min.getRealDouble(), max.getRealDouble());
 			}
+			panel.model().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,0,255));
 		}
 		else panel.view().updateOnLabelingChange();
 	}

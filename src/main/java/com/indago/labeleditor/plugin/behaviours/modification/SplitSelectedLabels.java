@@ -57,9 +57,6 @@ public class SplitSelectedLabels<L> implements Behaviour {
 	public static <L> Set<L> split(L label, ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data, double sigma, OpService opService) {
 		LabelRegions regions = new LabelRegions<>(labeling);
 		LabelRegion<Integer> region = regions.getLabelRegion(label);
-
-		System.out.println(region.getCenterOfMass());
-
 		IntervalView<BoolType> zeroRegion = Views.zeroMin(region);
 
 		ArrayImg<IntType, IntArray> backing = (ArrayImg<IntType, IntArray>) new ArrayImgFactory<>(new IntType()).create( region );

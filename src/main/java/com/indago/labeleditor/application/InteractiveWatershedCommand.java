@@ -2,6 +2,7 @@ package com.indago.labeleditor.application;
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
 import com.indago.labeleditor.plugin.behaviours.modification.SplitSelectedLabels;
 import net.imagej.ImageJ;
@@ -10,12 +11,14 @@ import net.imagej.ops.OpService;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
+import net.imglib2.display.ScaledARGBConverter;
 import net.imglib2.img.Img;
 import net.imglib2.roi.IterableRegion;
 import net.imglib2.roi.Regions;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.roi.labeling.LabelRegions;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
 import org.scijava.command.InteractiveCommand;
@@ -28,6 +31,7 @@ import org.scijava.widget.NumberWidget;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Plugin(type= InteractiveCommand.class, name="Interactive Watershed Labeling Splitter")
 public class InteractiveWatershedCommand<L> extends InteractiveCommand {
@@ -52,17 +56,26 @@ public class InteractiveWatershedCommand<L> extends InteractiveCommand {
 
 	@Override
 	public void run() {
-		System.out.println("running command");
 		if(displayedModel == null && labeling != null) {
 			DefaultLabelEditorModel<L> model = new DefaultLabelEditorModel<>(ops.copy().imgLabeling(labeling));
 			model.setData(data);
 			setInput("displayedModel", model);
+			displayedModel = model;
 		}
 		else {
 			ops.copy().imgLabeling(displayedModel.labels(), labeling);
 			L onlyLabel = displayedModel.labels().getMapping().getLabels().iterator().next();
 			SplitSelectedLabels.split(onlyLabel, displayedModel.labels(), data, sigma, ops);
+			Random random = new Random();
+			displayedModel.labels().getMapping().getLabels().forEach(label -> {
+				displayedModel.tagging().addTag(label, label);
+				displayedModel.colors().get(label).put(LabelEditorTargetComponent.FACE, randomColor(random));
+			});
 		}
+	}
+
+	private int randomColor(Random random) {
+		return ARGBType.rgba(random.nextInt(155)+100, random.nextInt(155) + 100, random.nextInt(255) + 100, 200);
 	}
 
 	public static void main(String...args) {
