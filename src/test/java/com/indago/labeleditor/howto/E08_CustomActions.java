@@ -1,17 +1,15 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
+import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
-import net.imagej.ImgPlus;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.AfterClass;
@@ -23,7 +21,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -68,7 +65,8 @@ public class E08_CustomActions {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		// build LabelEditorPanel
-		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
+		model.init(labeling);
 		//set custom colors for tags set in the MouseAdapter
 		model.colors().remove(LabelEditorTag.SELECTED);
 		model.colors().remove(LabelEditorTag.MOUSE_OVER);
@@ -76,8 +74,10 @@ public class E08_CustomActions {
 		model.colors().get("no").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 155, 255, 255));
 		model.colors().get("special").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 255));
 
+		model.setData(input);
+
 		panel = new LabelEditorBdvPanel<>();
-		panel.init(new ImgPlus<>(input), model);
+		panel.init(model);
 
 		//register custom actions
 		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {

@@ -35,7 +35,9 @@ public class E01_Open2DLabeling {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		panel = new LabelEditorBdvPanel<>();
-		panel.init(new ImgPlus<IntType>(input), labeling);
+		// The panel needs a context. In case none is provided, it will create one itself.
+//		ij.context().inject(panel);
+		panel.init(labeling, new ImgPlus<IntType>(input));
 
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

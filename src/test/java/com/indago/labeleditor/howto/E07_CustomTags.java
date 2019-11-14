@@ -35,7 +35,7 @@ public class E07_CustomTags {
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
 		panel = new LabelEditorBdvPanel<>();
 		ij.context().inject(panel);
-		panel.init(new ImgPlus(input), labeling);
+		panel.init(labeling, new ImgPlus(input));
 
 		Random random = new Random();
 		panel.model().tagging().pauseListeners();

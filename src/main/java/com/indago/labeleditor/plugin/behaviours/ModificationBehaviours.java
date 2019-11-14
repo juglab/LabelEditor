@@ -4,7 +4,9 @@ import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.plugin.behaviours.modification.DeleteLabels;
-import com.indago.labeleditor.plugin.behaviours.modification.SplitSelectedLabels;
+import com.indago.labeleditor.plugin.behaviours.modification.MergeLabels;
+import com.indago.labeleditor.plugin.behaviours.modification.SplitLabels;
+import com.indago.labeleditor.plugin.behaviours.view.ViewLabels;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -39,10 +41,18 @@ public class ModificationBehaviours extends Behaviours implements LabelEditorBeh
 		return new DeleteLabels(model, controller);
 	}
 
-	public SplitSelectedLabels getSplitBehaviour() {
-		SplitSelectedLabels behaviour = new SplitSelectedLabels(model, controller);
+	public SplitLabels getSplitBehaviour() {
+		SplitLabels behaviour = new SplitLabels(model, controller);
 		if(context != null) context.inject(behaviour);
 		return behaviour;
+	}
+
+	public MergeLabels getMergeBehaviour() {
+		return new MergeLabels(model, controller);
+	}
+
+	public ViewLabels getViewBehaviour() {
+		return new ViewLabels(model, controller);
 	}
 
 }

@@ -6,6 +6,7 @@ import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
+import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
@@ -35,7 +36,7 @@ public class SwingLabelEditorModelBdvWidget extends SwingInputWidget<LabelEditor
 			labelingLoaded = true;
 			LabelEditorModel value = (LabelEditorModel) model.getValue();
 			panel.init(value);
-			ImgPlus data = panel.model().getData();
+			Img data = panel.model().getData();
 			if(data != null) {
 				Pair minmax = ops.stats().minMax(data);
 				RealType min = (RealType) minmax.getA();

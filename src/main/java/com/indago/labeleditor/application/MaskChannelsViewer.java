@@ -59,7 +59,8 @@ public class MaskChannelsViewer implements Command {
 		ArrayImg<IntType, IntArray> backing = (ArrayImg<IntType, IntArray>) new ArrayImgFactory<>(new IntType()).create( Views.hyperSlice(data, channelDim, 0) );
 //		Img<IntType> backing = new DiskCachedCellImgFactory<>(new IntType()).create(Views.hyperSlice(data, channelDim, 0)); // TODO why can I not do this?
 		ImgLabeling< String, IntType > labeling = new ImgLabeling<>( backing );
-		LabelEditorModel<String> model = new DefaultLabelEditorModel(labeling);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel();
+		model.init(labeling);
 		ImgPlus dataImg = null;
 		Map<Object, Integer> colors = new HashMap<>();
 		Random random = new Random();
@@ -85,7 +86,8 @@ public class MaskChannelsViewer implements Command {
 		printDims(labeling);
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
 		context.inject(panel);
-		panel.init(dataImg, model);
+		model.setData(dataImg);
+		panel.init(model);
 		colors.forEach((tag, color) -> panel.model().colors().get(tag).put(LabelEditorTargetComponent.FACE, color));
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
@@ -102,7 +104,8 @@ public class MaskChannelsViewer implements Command {
 
 	public static void main(String... args) throws IOException {
 		ImageJ ij = new ImageJ();
-		Img input = (Img) ij.io().open("/home/random/Development/imagej/project/3DAnalysisFIBSegmentation/High_glucose_Cell_1_complete-crop.tif");
+		ij.launch();
+		Img input = (Img) ij.io().open("/home/random/Development/imagej/project/3DAnalysisFIBSegmentation/High_glucose_Cell_1_complete-crop-2.tif");
 //		Img input = (Img) ij.io().open("/home/random/Development/imagej/project/3DAnalysisFIBSegmentation/owncloud/Segmentation_masks/High_glucose/High_glucose_Cell_3_complete.tif");
 		ij.command().run(MaskChannelsViewer.class, true, "data", input, "channelDim", 2, "channelSource", 2);
 	}

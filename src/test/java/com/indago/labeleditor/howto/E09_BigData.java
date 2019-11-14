@@ -1,9 +1,9 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
+import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -60,7 +60,8 @@ public class E09_BigData {
 
 		System.out.println("Done creating labeling");
 
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
 		model.tagging().addTag(LABEL1, TAG1);
 		model.tagging().addTag(LABEL2, TAG2);
 

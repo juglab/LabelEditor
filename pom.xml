@@ -67,6 +67,10 @@
 			<artifactId>imagej-ui-swing</artifactId>
 		</dependency>
 <!--		<dependency>-->
+<!--			<groupId>net.imagej</groupId>-->
+<!--			<artifactId>imagej-legacy</artifactId>-->
+<!--		</dependency>-->
+<!--		<dependency>-->
 <!--			<groupId>sc.fiji</groupId>-->
 <!--			<artifactId>bigdataviewer-core</artifactId>-->
 <!--			<version>7.0.0</version>-->

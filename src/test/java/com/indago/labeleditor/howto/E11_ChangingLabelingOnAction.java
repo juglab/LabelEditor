@@ -2,6 +2,7 @@ package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
@@ -58,13 +59,14 @@ public class E11_ChangingLabelingOnAction {
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
+		model.init(labeling, input);
 		model.labels().getMapping().getLabels().forEach(label -> model.tagging().addTag("displayed", label));
 		model.colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,155));
 
 		// build LabelEditorPanel
 		panel = new LabelEditorBdvPanel<>();
-		panel.init(new ImgPlus<>(input), model);
+		panel.init(model);
 
 		//register custom actions
 		ModificationBehaviours modificationBehaviours = new ModificationBehaviours();

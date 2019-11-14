@@ -3,6 +3,7 @@ package com.indago.labeleditor.howto;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
+import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
@@ -43,7 +44,8 @@ public class E06_AddToExistingBVV {
 		Img thresholded = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
+		model.init(labeling);
 		model.labels().getMapping().getLabels().forEach(label -> {
 			model.tagging().addTag("displayed", label);
 		});

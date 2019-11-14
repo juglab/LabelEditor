@@ -52,17 +52,20 @@ public class E02_Open2DLabelingConflicts {
 		Views.interval( labels, Intervals.createMinSize( 320, 320, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
 
 		model.tagging().addTag(TAG1, LABEL1);
 		model.tagging().addTag(TAG2, LABEL2);
 		model.tagging().addTag(TAG1, LABEL3);
 		model.tagging().addTag(TAG2, LABEL4);
 
+		model.colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,100));
+		model.colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,255,100));
+
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
-		panel.model().colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,100));
-		panel.model().colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,255,100));
+
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();

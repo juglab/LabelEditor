@@ -33,7 +33,7 @@ public class WatershedViewer<L> implements Command {
 		ImgLabeling<Integer, IntType> labeling = opService.image().watershed(data, eightConnected, false);
 
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
-		panel.init(data, labeling);
+		panel.init(labeling, data);
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

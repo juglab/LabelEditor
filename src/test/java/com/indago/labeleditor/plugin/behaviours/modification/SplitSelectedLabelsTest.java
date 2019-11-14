@@ -1,29 +1,14 @@
 package com.indago.labeleditor.plugin.behaviours.modification;
 
 import net.imagej.ImageJ;
-import net.imglib2.Cursor;
-import net.imglib2.Interval;
 import net.imglib2.Localizable;
 import net.imglib2.RandomAccess;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
-import net.imglib2.algorithm.neighborhood.Neighborhood;
-import net.imglib2.algorithm.neighborhood.RectangleShape;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImg;
-import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelRegion;
-import net.imglib2.roi.labeling.LabelRegions;
-import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.type.logic.BoolType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
-import net.imglib2.util.Intervals;
-import net.imglib2.view.IntervalView;
-import net.imglib2.view.Views;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -55,7 +40,7 @@ public class SplitSelectedLabelsTest {
 		Iterator<Integer> iterator = labeling.getMapping().getLabels().iterator();
 		Integer label = iterator.next();
 
-		SplitSelectedLabels.split(label, labeling, data, 1, ij.op());
+		SplitLabels.split(label, labeling, data, 1, ij.op());
 
 		//TODO why is this not 2?
 		assertEquals(3, labeling.getMapping().getLabels().size());

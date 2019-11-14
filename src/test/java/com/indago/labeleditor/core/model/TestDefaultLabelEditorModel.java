@@ -24,7 +24,8 @@ public class TestDefaultLabelEditorModel {
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
 
 		assertNotNull(model.tagging());
 		assertEquals(0, model.tagging().getTags(LABEL1).size());

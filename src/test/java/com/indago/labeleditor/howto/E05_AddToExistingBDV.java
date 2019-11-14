@@ -38,7 +38,8 @@ public class E05_AddToExistingBDV {
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
+		model.init(labeling);
 		model.labels().getMapping().getLabels().forEach(label -> model.tagging().addTag("displayed", label));
 		model.colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,55));
 

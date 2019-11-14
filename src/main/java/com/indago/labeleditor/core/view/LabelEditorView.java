@@ -1,20 +1,9 @@
 package com.indago.labeleditor.core.view;
 
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.colors.ColorChangedEvent;
-import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
-import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.model.tagging.TagChangedEvent;
-import net.imglib2.roi.labeling.LabelingMapping;
-import net.imglib2.type.numeric.ARGBType;
 import org.scijava.listeners.Listeners;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class LabelEditorView<L> {
 
@@ -25,7 +14,7 @@ public class LabelEditorView<L> {
 
 	public LabelEditorView() {}
 
-	public LabelEditorView(DefaultLabelEditorModel<L> model) {
+	public LabelEditorView(LabelEditorModel<L> model) {
 		init(model);
 	}
 
@@ -36,6 +25,7 @@ public class LabelEditorView<L> {
 		renderers.init(model, this);
 		model.tagging().listeners().add(this::onTagChange);
 		model.colors().listeners().add(this::onColorChange);
+		notifyListeners();
 	}
 
 	private void onColorChange(ColorChangedEvent colorChangedEvent) {
@@ -55,6 +45,7 @@ public class LabelEditorView<L> {
 	public void updateOnLabelingChange() {
 		if(model == null || model.labels() == null) return;
 		renderers.forEach(LabelEditorRenderer::updateOnLabelingChange);
+		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
 		notifyListeners();
 	}
 

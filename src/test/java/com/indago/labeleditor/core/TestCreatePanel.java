@@ -1,6 +1,7 @@
 package com.indago.labeleditor.core;
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -30,15 +31,16 @@ public class TestCreatePanel {
 
 	@Test
 	public void run() {
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels, data);
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
-		panel.init(data, model);
+		panel.init(model);
 	}
 
 	@Test
 	public void useEmptyConstructor() {
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
-		panel.init(data, labels);
+		panel.init(labels, data);
 		panel.dispose();
 	}
 

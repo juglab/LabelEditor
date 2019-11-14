@@ -145,6 +145,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	protected L getFirst(LabelingType<L> currentLabels) {
+		if(currentLabels.size() == 0) return null;
 		List<L> orderedLabels = new ArrayList<>(currentLabels);
 		orderedLabels.sort(model.getLabelComparator());
 		return orderedLabels.get(0);

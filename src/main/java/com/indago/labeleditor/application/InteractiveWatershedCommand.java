@@ -3,38 +3,36 @@ package com.indago.labeleditor.application;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
-import com.indago.labeleditor.plugin.behaviours.modification.SplitSelectedLabels;
+import com.indago.labeleditor.plugin.behaviours.modification.SplitLabels;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
-import net.imglib2.display.ScaledARGBConverter;
 import net.imglib2.img.Img;
-import net.imglib2.roi.IterableRegion;
-import net.imglib2.roi.Regions;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelRegion;
-import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.real.DoubleType;
-import org.scijava.command.InteractiveCommand;
+import org.scijava.Cancelable;
+import org.scijava.ItemIO;
+import org.scijava.command.Command;
+import org.scijava.command.CommandModule;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.PluginInfo;
+import org.scijava.ui.UIService;
 import org.scijava.widget.Button;
 import org.scijava.widget.InputWidget;
 import org.scijava.widget.NumberWidget;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
-@Plugin(type= InteractiveCommand.class, name="Interactive Watershed Labeling Splitter")
-public class InteractiveWatershedCommand<L> extends InteractiveCommand {
+@Plugin(type= Command.class, name="Interactive Watershed Labeling Splitter")
+public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 
 	@Parameter
 	ImgPlus data;
@@ -42,60 +40,94 @@ public class InteractiveWatershedCommand<L> extends InteractiveCommand {
 	@Parameter
 	private ImgLabeling<L, IntType> labeling;
 
-	@Parameter(required = false)
-	private LabelEditorModel<L> displayedModel;
+	@Parameter(required = false, type = ItemIO.BOTH)
+	private LabelEditorModel<L> output;
 
-	@Parameter(style = NumberWidget.SLIDER_STYLE, min = "0", max = "10", stepSize = "1")
+	@Parameter(style = NumberWidget.SLIDER_STYLE, min = "1", max = "10", stepSize = "1", callback = "update")
 	private double sigma = 0;
 
-	@Parameter(description = "Submit")
-	private Button submit;
+	@Parameter(description = "Dark BG?")
+	private boolean backgroundDarker = true;
 
 	@Parameter
 	private OpService ops;
 
-	@Override
-	public void run() {
-		if(displayedModel == null && labeling != null) {
-			DefaultLabelEditorModel<L> model = new DefaultLabelEditorModel<>(ops.copy().imgLabeling(labeling));
-			model.setData(data);
-			setInput("displayedModel", model);
-			displayedModel = model;
+	@Parameter
+	private UIService ui;
+
+	private boolean canceled = false;
+
+	private void update() {
+		if(output == null && labeling != null) {
+			DefaultLabelEditorModel<L> model = new DefaultLabelEditorModel<>();
+			model.init(ops.copy().imgLabeling(labeling));
+			model.setData( new ImgPlus(ops.copy().img(data)));
+//			setInput("displayedModel", model);
+			output = model;
 		}
 		else {
-			ops.copy().imgLabeling(displayedModel.labels(), labeling);
-			L onlyLabel = displayedModel.labels().getMapping().getLabels().iterator().next();
-			SplitSelectedLabels.split(onlyLabel, displayedModel.labels(), data, sigma, ops);
+			ops.copy().imgLabeling(output.labels(), labeling);
+			if(backgroundDarker) {
+				ops.image().invert(output.getData(), data);
+			} else {
+				ops.copy().img(output.getData(), data);
+			}
+			L onlyLabel = output.labels().getMapping().getLabels().iterator().next();
+			SplitLabels.split(onlyLabel, output.labels(), output.getData(), sigma, ops);
 			Random random = new Random();
-			displayedModel.labels().getMapping().getLabels().forEach(label -> {
-				displayedModel.tagging().addTag(label, label);
-				displayedModel.colors().get(label).put(LabelEditorTargetComponent.FACE, randomColor(random));
+			output.labels().getMapping().getLabels().forEach(label -> {
+				output.tagging().addTag(label, label);
+				output.colors().get(label).put(LabelEditorTargetComponent.FACE, randomColor(random));
 			});
 		}
+	}
+
+	@Override
+	public void run() {
+
 	}
 
 	private int randomColor(Random random) {
 		return ARGBType.rgba(random.nextInt(155)+100, random.nextInt(155) + 100, random.nextInt(255) + 100, 200);
 	}
 
-	public static void main(String...args) {
+	@Override
+	public boolean isCanceled() {
+		return canceled;
+	}
+
+	@Override
+	public void cancel(String reason) {
+		output = null;
+	}
+
+	@Override
+	public String getCancelReason() {
+		return null;
+	}
+
+	public static void main(String...args) throws ExecutionException, InterruptedException {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 		List<PluginInfo<InputWidget>> inputWidgets = ij.context().getPluginIndex().getPlugins(InputWidget.class);
 		System.out.println(inputWidgets);
 
-		Img data = ij.op().create().img(new long[]{300, 300});
+		Img<DoubleType> data = ij.op().create().img(new long[]{300, 300});
 
 		drawSphere(data, new long[]{170, 170}, 15);
 		drawSphere(data, new long[]{170, 215}, 15);
 
-		ij.op().filter().gauss(data, data, 10);
+		ij.op().filter().gauss(data, data, 2);
+
+		Img dataInverted = ij.op().create().img(data);
+		ij.op().image().invert(dataInverted, data);
 
 		Img threshold = (Img) ij.op().threshold().otsu(data);
 
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(threshold, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		ij.command().run(InteractiveWatershedCommand.class, true, "labeling", labeling, "data", data);
+		CommandModule res = ij.command().run(InteractiveWatershedCommand.class, true, "labeling", labeling, "data", dataInverted).get();
+		System.out.println(res.getOutput("output"));
 	}
 
 	private static void drawSphere(Img<DoubleType> img, long[] position, int radius) {

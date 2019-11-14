@@ -11,9 +11,7 @@ import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
 import net.imagej.axis.Axes;
 import net.imglib2.RandomAccessibleInterval;
-import org.scijava.Context;
-import org.scijava.plugin.Parameter;
-import org.scijava.ui.behaviour.Behaviour;
+import net.imglib2.img.Img;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import javax.swing.*;
@@ -29,9 +27,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
 
-	@Parameter
-	Context context;
-
 	@Override
 	protected void initController() {
 		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
@@ -42,7 +37,9 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private boolean is3DMode() {
 		if(model().getData() == null) return false;
-		return model().getData().dimensionIndex(Axes.Z) > 0;
+//		return model().getData().dimensionIndex(Axes.Z) > 0;
+		//TODO make options class with 3D option
+		return false;
 	}
 
 	@Override
@@ -73,7 +70,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 		controller.addDefaultBehaviours();
 		ModificationBehaviours modificationBehaviours = new ModificationBehaviours();
 		modificationBehaviours.init(model(), control());
-		if(context != null) context.inject(modificationBehaviours);
+		if(context() != null) context().inject(modificationBehaviours);
 		getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -150,8 +147,10 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	class BdvPopupMenu extends JPopupMenu {
 
 		BdvPopupMenu(ModificationBehaviours modificationBehaviours) {
+			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getViewBehaviour().viewSelected()).start(), "View in new window");
 			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getDeleteBehaviour().deleteSelected()).start(), "Delete selected labels");
 			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getSplitBehaviour().splitSelected()).start(), "Split selected labels");
+			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getMergeBehaviour().assignSelectedToFirst()).start(), "Merge selected labels");
 		}
 
 		private void addMenuItem(ActionListener actionListener, String label) {

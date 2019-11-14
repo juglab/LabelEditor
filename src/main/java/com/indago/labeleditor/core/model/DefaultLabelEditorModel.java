@@ -7,6 +7,8 @@ import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imagej.ImgPlus;
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.type.numeric.ARGBType;
@@ -20,7 +22,7 @@ import java.util.Map;
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private ImgLabeling<L, IntType > labels;
-	private ImgPlus data;
+	private Img data;
 	private Map<L, LabelRegion<L>> orderedLabels;
 	private LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
@@ -33,23 +35,25 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
 	private static int colorDefault = ARGBType.rgba(255,255,255,100);
 
-	public DefaultLabelEditorModel() {
-		init(null);
-	}
-
-	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labels) {
-		init(labels);
-	}
-
 	@Override
 	public ImgLabeling<L, IntType> labels() {
 		return labels;
 	}
 
 	@Override
-	public void init(ImgLabeling<L, IntType> labeling, ImgPlus data) {
+	public void init(ImgLabeling<L, IntType> labeling, Img data) {
 		this.data = data;
 		init(labeling);
+	}
+
+	@Override
+	public void init(Img indexImg) {
+		init(new ImgLabeling((indexImg)));
+	}
+
+	@Override
+	public void init(Img indexImg, Img data) {
+		init(new ImgLabeling(indexImg), data);
 	}
 
 	@Override
@@ -144,12 +148,12 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public ImgPlus getData() {
+	public Img getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(ImgPlus data) {
+	public void setData(Img data) {
 		this.data = data;
 	}
 

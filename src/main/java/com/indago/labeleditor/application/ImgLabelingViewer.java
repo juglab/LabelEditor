@@ -27,7 +27,7 @@ public class ImgLabelingViewer<L> implements Command {
 	@Override
 	public void run() {
 		LabelEditorBdvPanel<L> panel = new LabelEditorBdvPanel<>();
-		panel.init(data, labeling);
+		panel.init(labeling, data);
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

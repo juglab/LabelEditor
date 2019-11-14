@@ -1,8 +1,8 @@
 package com.indago.labeleditor.core.model.tagging;
 
-import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
-import net.imglib2.type.numeric.ARGBType;
 import org.scijava.listeners.Listeners;
+import org.scijava.log.LogService;
+import org.scijava.plugin.Parameter;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
+
+	@Parameter
+	LogService log;
 
 	private final HashMap<L, Set<Object>> tags = new HashMap<>();
 	private final Listeners.List<TagChangeListener> listeners = new Listeners.SynchronizedList<>();
@@ -37,8 +40,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		e.action = action;
 		e.tag = tag;
 		e.label = label;
-		//TODO use scijava (?) to print in debug mode
-		System.out.println("[INFO] " + e.toString());
+		if(log!= null) log.debug(e.toString());
 		listeners.list.forEach(listener -> listener.tagChanged(e));
 	}
 

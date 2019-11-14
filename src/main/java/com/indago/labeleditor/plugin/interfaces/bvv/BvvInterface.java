@@ -4,7 +4,6 @@ import bvv.util.BvvHandle;
 import bvv.util.BvvStackSource;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
@@ -35,7 +34,7 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 		behaviours.install(handle.getTriggerbindings(), "labeleditor");
 	}
 
-	public static <L> LabelEditorController<L> control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BvvHandle bvvHandle, List<BvvStackSource> sources) {
+	public static <L> LabelEditorController<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BvvHandle bvvHandle, List<BvvStackSource> sources) {
 		LabelEditorController<L> actionHandler = new LabelEditorController<>();
 		actionHandler.init(model, view, new BvvInterface<L>(bvvHandle, sources));
 		actionHandler.addDefaultBehaviours();

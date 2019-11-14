@@ -61,7 +61,8 @@ public class E13_HandleMultipleConflicts {
 		drawSphere(labels, new long[]{300, 400}, radius, LABEL7);
 		drawSphere(labels, new long[]{300, 370}, radius, LABEL8);
 
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
 
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL2);
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL7);

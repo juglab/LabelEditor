@@ -3,7 +3,10 @@ package com.indago.labeleditor.core.view;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import org.scijava.Context;
 import org.scijava.InstantiableException;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.PluginIndex;
 import org.scijava.plugin.PluginInfo;
+import org.scijava.plugin.PluginService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +17,19 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	private LabelEditorModel model;
 	private LabelEditorView view;
 
+	@Parameter
+	Context context;
+
 	public void init(LabelEditorModel model, LabelEditorView view) {
 		this.model = model;
 		this.view = view;
 	}
 
 	public void addDefaultRenderers() {
-		//FIXME inject context, not create new one
-		List<PluginInfo<?>> renderers = new Context().getPluginIndex().get(LabelEditorRenderer.class);
+		if(context == null) {
+			context = new Context();
+		}
+		List<PluginInfo<?>> renderers = context.getPluginIndex().get(LabelEditorRenderer.class);
 		renderers.forEach(renderer -> {
 			try {
 				add((LabelEditorRenderer) renderer.createInstance());
@@ -55,6 +63,7 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	}
 
 	private void prepare(LabelEditorRenderer renderer) {
+		if(context != null) context.inject(renderer);
 		renderer.init(model);
 		renderer.updateOnTagChange(model);
 	}

@@ -1,6 +1,7 @@
 package com.indago.labeleditor.plugin.renderers;
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorRenderers;
@@ -54,7 +55,8 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.setPosition(new long[]{1,0});
 		ra.get().add("a");
 		ra.get().add("b");
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
 		model.tagging().addTag("b", "b");
 		int red = ARGBType.rgba(255, 0, 0, 255);
 		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
@@ -99,7 +101,8 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.get().add("b");
 
 		//model
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
 		model.tagging().addTag("b", "b");
 		model.tagging().addTag("a", "a");
 		int red = ARGBType.rgba(255, 0, 0, 100);
@@ -145,7 +148,8 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.get().add("a");
 		ra.get().add("b");
 
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
 		model.tagging().addTag("a", "b");
 		model.tagging().addTag("a", "a");
 		int color = ARGBType.rgba(255, 255, 255, 100);

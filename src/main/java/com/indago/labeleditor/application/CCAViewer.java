@@ -38,7 +38,7 @@ public class CCAViewer<L> implements Command {
 		ImgLabeling<Integer, IntType> labeling = opService.labeling().cca(threshold, structuringElement);
 
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
-		panel.init(data, labeling);
+		panel.init(labeling, data);
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

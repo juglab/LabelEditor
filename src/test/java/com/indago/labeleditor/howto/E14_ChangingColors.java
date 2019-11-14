@@ -38,7 +38,7 @@ public class E14_ChangingColors {
 		}
 		panel = new LabelEditorBdvPanel<>();
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
-		panel.init(imgPlus, labeling);
+		panel.init(labeling, imgPlus);
 		panel.getSources().forEach(source -> source.setDisplayRange(0, 255));
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());

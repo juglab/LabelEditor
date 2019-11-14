@@ -16,7 +16,7 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 	protected void handleClick(int arg0, int arg1) {
 		LabelingType<L> labels = controller.interfaceInstance().getLabelsAtMousePosition(arg0, arg1, model);
 		//TODO start collect tagging events, pause listeners
-		if (labels != null) {
+		if (labels != null && labels.size() > 0) {
 			selectFirst(labels);
 		}
 		//TODO resume model listeners and send collected events
@@ -50,8 +50,11 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 	@Override
 	protected void selectFirst(LabelingType<L> currentLabels) {
 		L label = getFirst(currentLabels);
+		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) {
+			deselect(label);
+			return;
+		}
 		Set<L> conflicts = getConflictingLabels(label);
-		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) return;
 		deselect(conflicts);
 		select(label);
 	}

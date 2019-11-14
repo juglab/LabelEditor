@@ -4,16 +4,21 @@ import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import net.imagej.ImgPlus;
-import net.imagej.axis.Axes;
+import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
 
 import javax.swing.*;
 import java.awt.*;
 
 public abstract class AbstractLabelEditorPanel<L> extends JPanel implements LabelEditorPanel<L> {
+
+	@Parameter
+	protected
+	Context context;
 
 	private boolean panelBuilt = false;
 
@@ -25,31 +30,41 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	}
 
 	@Override
-	public void init(ImgPlus data) {
-		init(data, new DefaultLabelEditorModel<>());
+	public void init(Img data) {
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>();
+		model.setData(data);
+		init(model);
 	}
 
 	@Override
-	public void init(ImgPlus data, ImgLabeling<L, IntType> labels) {
-		init(data, new DefaultLabelEditorModel<>(labels));
+	public void init(ImgLabeling<L, IntType> labels, Img data) {
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>();
+		model.setData(data);
+		model.init(labels);
+		init(model);
 	}
 
 	@Override
 	public void init(ImgLabeling<L, IntType> labels) {
-		init(new DefaultLabelEditorModel<>(labels));
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
+		init(model);
 	}
+
+	@Override
+	public void initFromIndexImage(Img indexImg) {
+		init(new ImgLabeling(indexImg));
+	}
+
+	@Override
+	public void initFromIndexImage(Img data, Img indexImg) {
+		init(new ImgLabeling(indexImg), data);
+	}
+
 
 	@Override
 	public void init(LabelEditorModel<L> model) {
-		init(null, model);
-	}
-
-	@Override
-	public void init(ImgPlus data, LabelEditorModel<L> model) {
 		this.model = model;
-		if(data != null) {
-			setData(data);
-		}
 		if(model.labels() != null) {
 			view.init(model);
 			addRenderings(view);
@@ -64,11 +79,6 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		}
 	}
 
-	protected void setData(ImgPlus data) {
-		if(data == null) return;
-		model.setData(data);
-	}
-
 	protected void buildPanel() {
 		if(panelBuilt) return;
 		panelBuilt = true;
@@ -81,6 +91,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected abstract Component buildInterface();
 
 	protected void addRenderings(LabelEditorView<L> renderingManager) {
+		if(context != null) context.inject(renderingManager.renderers());
 		renderingManager.renderers().addDefaultRenderers();
 	}
 
@@ -91,6 +102,10 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected abstract void displayData();
 
 	protected abstract void clearInterface();
+
+	protected Context context() {
+		return context;
+	}
 
 	public abstract Object getInterfaceHandle();
 
