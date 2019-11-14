@@ -5,6 +5,7 @@ import com.indago.labeleditor.core.view.ViewChangedEvent;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.util.Behaviours;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public interface LabelEditorInterface<L> {
@@ -17,4 +18,6 @@ public interface LabelEditorInterface<L> {
 	void onViewChange(ViewChangedEvent viewChangedEvent);
 
 	Behaviours behaviours();
+
+	Component getComponent();
 }

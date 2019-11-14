@@ -10,10 +10,10 @@ import java.util.List;
 
 public class BvvSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
-	private final BvvInterface<L> bvvInterface;
+	private BvvInterface<L> bvvInterface;
 
-	public BvvSelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, BvvInterface<L> bvvInterface) {
-		super(model, controller);
+	public void init(LabelEditorModel<L> model, LabelEditorController<L> controller, BvvInterface<L> bvvInterface) {
+		super.init(model, controller);
 		this.bvvInterface = bvvInterface;
 	}
 

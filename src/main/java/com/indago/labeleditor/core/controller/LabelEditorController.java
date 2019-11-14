@@ -3,9 +3,6 @@ package com.indago.labeleditor.core.controller;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class LabelEditorController<L> {
 
 	private LabelEditorModel<L> model;
@@ -34,4 +31,8 @@ public class LabelEditorController<L> {
 		return interfaceInstance;
 	}
 
+	public void install(LabelEditorBehaviours behaviour) {
+		behaviour.init(model, this);
+		behaviour.install(interfaceInstance.behaviours(), interfaceInstance.getComponent());
+	}
 }

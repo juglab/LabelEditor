@@ -71,7 +71,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void addBehaviours(LabelEditorController<L> controller) {
 		controller.addDefaultBehaviours();
-		ModificationBehaviours modificationBehaviours = new ModificationBehaviours(model(), control());
+		ModificationBehaviours modificationBehaviours = new ModificationBehaviours();
+		modificationBehaviours.init(model(), control());
 		if(context != null) context.inject(modificationBehaviours);
 		getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override

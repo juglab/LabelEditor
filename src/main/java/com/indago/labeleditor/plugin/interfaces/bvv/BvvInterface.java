@@ -2,14 +2,12 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import bvv.util.BvvHandle;
 import bvv.util.BvvStackSource;
-import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
-import com.indago.labeleditor.plugin.behaviours.SelectionBehaviours;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
@@ -19,7 +17,7 @@ import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
-import java.awt.event.MouseEvent;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -97,7 +95,9 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 
 	@Override
 	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		new BvvSelectionBehaviours<>(model, controller, this).install(behaviours, bvvHandle.getViewerPanel().getDisplay());
+		BvvSelectionBehaviours<L> selectionBehaviours = new BvvSelectionBehaviours<>();
+		selectionBehaviours.init(model, controller, this);
+		selectionBehaviours.install(behaviours, bvvHandle.getViewerPanel().getDisplay());
 	}
 
 	@Override
@@ -113,5 +113,10 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 
 	public BvvHandle getBvvHandle() {
 		return bvvHandle;
+	}
+
+	@Override
+	public Component getComponent() {
+		return bvvHandle.getViewerPanel();
 	}
 }

@@ -12,10 +12,6 @@ import java.util.Set;
 
 public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
-	public ConflictSelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		super(model, controller);
-	}
-
 	@Override
 	protected void handleClick(int arg0, int arg1) {
 		LabelingType<L> labels = controller.interfaceInstance().getLabelsAtMousePosition(arg0, arg1, model);

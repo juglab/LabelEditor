@@ -19,19 +19,21 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class SelectionBehaviours<L> implements LabelEditorBehaviours {
+public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 
-	protected final LabelEditorModel<L> model;
-	protected final LabelEditorController<L> controller;
+	protected LabelEditorModel<L> model;
+	protected LabelEditorController<L> controller;
 	protected LabelingType<L> currentLabels;
 	protected int currentSegment = -1;
 
-	public SelectionBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
+	@Override
+	public void init(LabelEditorModel<L> model, LabelEditorController<L> controller) {
 		this.model = model;
 		this.controller = controller;
 
 	}
 
+	@Override
 	public void install(Behaviours behaviours, Component panel) {
 		behaviours.behaviour(getShiftScrollBehaviour(),"browse labels","shift scroll" );
 		behaviours.behaviour(getClickBehaviour(),"select current label","button1" );

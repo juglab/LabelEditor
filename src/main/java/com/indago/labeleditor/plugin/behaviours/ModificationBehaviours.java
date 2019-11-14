@@ -10,18 +10,29 @@ import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
+import java.awt.*;
+
 public class ModificationBehaviours extends Behaviours implements LabelEditorBehaviours {
 
-	protected final LabelEditorModel model;
-	protected final LabelEditorController controller;
+	protected LabelEditorModel model;
+	protected LabelEditorController controller;
 
 	@Parameter
 	Context context;
 
-	public ModificationBehaviours(LabelEditorModel model, LabelEditorController controller) {
+	public ModificationBehaviours() {
 		super(new InputTriggerConfig(), "labeleditor-modification");
+	}
+
+	@Override
+	public void init(LabelEditorModel model, LabelEditorController controller) {
 		this.model = model;
 		this.controller = controller;
+	}
+
+	@Override
+	public void install(Behaviours behaviours, Component panel) {
+
 	}
 
 	public DeleteLabels getDeleteBehaviour() {

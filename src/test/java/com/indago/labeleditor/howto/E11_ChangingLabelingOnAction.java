@@ -67,7 +67,8 @@ public class E11_ChangingLabelingOnAction {
 		panel.init(new ImgPlus<>(input), model);
 
 		//register custom actions
-		ModificationBehaviours modificationBehaviours = new ModificationBehaviours(model, panel.control());
+		ModificationBehaviours modificationBehaviours = new ModificationBehaviours();
+		modificationBehaviours.init(model, panel.control());
 		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {

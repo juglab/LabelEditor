@@ -17,6 +17,7 @@ import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
+import java.awt.*;
 import java.util.List;
 
 public class BdvInterface<L> implements LabelEditorInterface<L> {
@@ -71,7 +72,9 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	@Override
 	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		new SelectionBehaviours<>(model, controller).install(behaviours, panel.getViewerPanel().getDisplay());
+		SelectionBehaviours<L> selectionBehaviours = new SelectionBehaviours<>();
+		selectionBehaviours.init(model, controller);
+		selectionBehaviours.install(behaviours, panel.getViewerPanel().getDisplay());
 	}
 
 	@Override
@@ -84,4 +87,8 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		return behaviours;
 	}
 
+	@Override
+	public Component getComponent() {
+		return panel.getViewerPanel();
+	}
 }
