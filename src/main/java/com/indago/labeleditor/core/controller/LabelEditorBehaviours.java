@@ -1,5 +1,6 @@
 package com.indago.labeleditor.core.controller;
 
+import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import org.scijava.plugin.SciJavaPlugin;
 import org.scijava.ui.behaviour.util.Behaviours;

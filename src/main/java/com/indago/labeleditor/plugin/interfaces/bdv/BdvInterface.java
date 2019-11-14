@@ -2,6 +2,8 @@ package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
+import bdv.viewer.TimePointListener;
+import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
@@ -20,26 +22,25 @@ import org.scijava.ui.behaviour.util.Behaviours;
 import java.awt.*;
 import java.util.List;
 
-public class BdvInterface<L> implements LabelEditorInterface<L> {
+public class BdvInterface<L> implements LabelEditorInterface<L>, TimePointListener {
 	private final BdvHandlePanel panel;
 	private final List<BdvSource> sources;
 	private final Behaviours behaviours;
+	private final LabelEditorView view;
 	private boolean mode3D;
 
-	public BdvInterface(BdvHandlePanel panel) {
-		this(panel, null);
-	}
-
-	public BdvInterface(BdvHandlePanel panel, List<BdvSource> bdvSources) {
+	public BdvInterface(BdvHandlePanel panel, List<BdvSource> bdvSources, LabelEditorView view) {
 		this.panel = panel;
 		this.sources = bdvSources;
+		this.view = view;
 		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
 		behaviours.install(panel.getTriggerbindings(), "labeleditor");
+		panel.getViewerPanel().addTimePointListener( this );
 	}
 
 	public static <L> LabelEditorController control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BdvHandlePanel panel) {
 		LabelEditorController<L> controller = new LabelEditorController<>();
-		controller.init(model, view, new BdvInterface<>(panel));
+		controller.init(model, view, new BdvInterface<>(panel, null, view));
 		controller.addDefaultBehaviours();
 		controller.interfaceInstance().set3DViewMode(false);
 		return controller;
@@ -75,6 +76,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		SelectionBehaviours<L> selectionBehaviours = new SelectionBehaviours<>();
 		selectionBehaviours.init(model, controller);
 		selectionBehaviours.install(behaviours, panel.getViewerPanel().getDisplay());
+
 	}
 
 	@Override
@@ -90,5 +92,10 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	@Override
 	public Component getComponent() {
 		return panel.getViewerPanel();
+	}
+
+	@Override
+	public void timePointChanged(int timePointIndex) {
+		view.updateTimePoint(timePointIndex);
 	}
 }

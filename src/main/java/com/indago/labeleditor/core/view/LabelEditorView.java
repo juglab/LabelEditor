@@ -68,4 +68,9 @@ public class LabelEditorView<L> {
 		if(listenersPaused) return;
 		listeners.list.forEach(listener -> listener.viewChanged(new ViewChangedEvent()));
 	}
+
+	public void updateTimePoint(int timePointIndex) {
+		renderers.forEach(renderer -> renderer.updateTimePoint(timePointIndex));
+		updateOnLabelingChange();
+	}
 }

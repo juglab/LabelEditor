@@ -1,5 +1,6 @@
 package com.indago.labeleditor.core.model;
 
+import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
 import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
@@ -27,6 +28,8 @@ public interface LabelEditorModel <L> {
 	LabelEditorTagging<L> tagging();
 
 	LabelEditorTagColors colors();
+
+	LabelEditorOptions options();
 
 	List<LabelEditorColorset> getVirtualChannels();
 

@@ -9,9 +9,7 @@ import com.indago.labeleditor.core.AbstractLabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
-import net.imagej.axis.Axes;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import javax.swing.*;
@@ -29,7 +27,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	@Override
 	protected void initController() {
-		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources);
+		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources, view());
 		control().init(model(), view(), viewerInstance);
 		addBehaviours(control());
 		control().interfaceInstance().set3DViewMode(is3DMode());

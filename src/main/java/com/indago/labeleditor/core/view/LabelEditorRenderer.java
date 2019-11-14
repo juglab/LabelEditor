@@ -14,6 +14,8 @@ public interface LabelEditorRenderer<L> extends SciJavaPlugin {
 	void init(LabelEditorModel model);
 	void updateOnTagChange(LabelEditorModel model);
 	void updateOnLabelingChange();
+	void updateTimePoint(int timePointIndex);
+
 	RandomAccessibleInterval getOutput();
 
 	default String getName() {
@@ -21,5 +23,4 @@ public interface LabelEditorRenderer<L> extends SciJavaPlugin {
 		if(annotation != null) return annotation.name();
 		return null;
 	}
-
 }

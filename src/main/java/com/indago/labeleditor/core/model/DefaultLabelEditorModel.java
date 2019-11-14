@@ -1,5 +1,6 @@
 package com.indago.labeleditor.core.model;
 
+import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
 import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
@@ -34,6 +35,8 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
 	private static int colorDefault = ARGBType.rgba(255,255,255,100);
+
+	private LabelEditorOptions options = new LabelEditorOptions();
 
 	@Override
 	public ImgLabeling<L, IntType> labels() {
@@ -155,6 +158,11 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	@Override
 	public void setData(Img data) {
 		this.data = data;
+	}
+
+	@Override
+	public LabelEditorOptions options() {
+		return options;
 	}
 
 //	public Map<L, LabelRegion <L> > labelRegions() {

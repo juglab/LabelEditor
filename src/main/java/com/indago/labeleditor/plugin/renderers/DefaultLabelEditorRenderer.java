@@ -102,6 +102,11 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	}
 
 	@Override
+	public void updateTimePoint(int timePointIndex) {
+		//TODO render only current timepoint
+	}
+
+	@Override
 	public RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
 		return Converters.convert(model.labels().getIndexImg(), converter, new ARGBType() );

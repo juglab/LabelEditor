@@ -1,5 +1,6 @@
 package com.indago.labeleditor.core.controller;
 
+import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 

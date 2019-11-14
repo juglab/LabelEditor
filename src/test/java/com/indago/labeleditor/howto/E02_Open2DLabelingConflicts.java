@@ -60,8 +60,10 @@ public class E02_Open2DLabelingConflicts {
 		model.tagging().addTag(TAG1, LABEL3);
 		model.tagging().addTag(TAG2, LABEL4);
 
-		model.colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,100));
-		model.colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,255,100));
+		model.options().setTimeDimension(2);
+
+		model.colors().get(TAG1).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
+		model.colors().get(TAG2).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(255,0,255,100));
 
 		panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
