@@ -4,7 +4,7 @@ import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
+import com.indago.labeleditor.plugin.behaviours.LabelingModificationBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -33,7 +33,7 @@ public class E11_ChangingLabelingOnAction {
 
 	static class PopUpDemo extends JPopupMenu {
 
-		PopUpDemo(LabelEditorPanel<Integer> panel, ModificationBehaviours modificationBehaviours) {
+		PopUpDemo(LabelEditorPanel<Integer> panel, LabelingModificationBehaviours modificationBehaviours) {
 			JMenuItem item = new JMenuItem("Remove");
 			item.addActionListener(actionEvent -> {
 				modificationBehaviours.getDeleteBehaviour().deleteSelected();
@@ -66,7 +66,7 @@ public class E11_ChangingLabelingOnAction {
 		panel.init(model);
 
 		//register custom actions
-		ModificationBehaviours modificationBehaviours = new ModificationBehaviours();
+		LabelingModificationBehaviours modificationBehaviours = new LabelingModificationBehaviours();
 		modificationBehaviours.init(model, panel.control());
 		panel.getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override

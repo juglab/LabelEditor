@@ -74,6 +74,9 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, colorDefault);
 		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, colorSelected);
 		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, colorMouseOver);
+		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, colorDefault);
+		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, colorSelected);
+		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, colorMouseOver);
 	}
 
 	private void initLabelOrdering(ImgLabeling<L, IntType> labeling) {

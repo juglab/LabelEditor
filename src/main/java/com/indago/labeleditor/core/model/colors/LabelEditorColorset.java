@@ -1,15 +1,14 @@
 package com.indago.labeleditor.core.model.colors;
 
 import bdv.util.VirtualChannels;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
+import net.imglib2.type.numeric.RealType;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class LabelEditorColorset extends HashMap<Object, Integer> implements VirtualChannels.VirtualChannel {
+public class LabelEditorColorset extends HashMap<Object, LabelEditorColor> implements VirtualChannels.VirtualChannel {
 
 	private final LabelEditorTagColors colors;
 
@@ -25,9 +24,14 @@ public class LabelEditorColorset extends HashMap<Object, Integer> implements Vir
 	public void updateSetupParameters() {
 	}
 
-	@Override
-	public Integer put(Object o, Integer integer) {
-		Integer put = super.put(o, integer);
+	public LabelEditorColor put(Object o, int color) {
+		LabelEditorColor put = super.put(o, new LabelEditorColor(color));
+		update();
+		return put;
+	}
+
+	public <T extends RealType<T>> LabelEditorColor put(Object o, int minColor, int maxColor, T min, T max) {
+		LabelEditorColor put = super.put(o, new LabelEditorValueColor<>(minColor, maxColor, min, max));
 		update();
 		return put;
 	}
@@ -38,14 +42,8 @@ public class LabelEditorColorset extends HashMap<Object, Integer> implements Vir
 	}
 
 	@Override
-	public void putAll(Map<?, ? extends Integer> map) {
-		super.putAll(map);
-		update();
-	}
-
-	@Override
-	public Integer remove(Object o) {
-		Integer remove = super.remove(o);
+	public LabelEditorColor remove(Object o) {
+		LabelEditorColor remove = super.remove(o);
 		update();
 		return remove;
 	}
@@ -57,70 +55,10 @@ public class LabelEditorColorset extends HashMap<Object, Integer> implements Vir
 	}
 
 	@Override
-	public Integer putIfAbsent(Object o, Integer integer) {
-		Integer integer1 = super.putIfAbsent(o, integer);
-		update();
-		return integer1;
-	}
-
-	@Override
 	public boolean remove(Object o, Object o1) {
 		boolean remove = super.remove(o, o1);
 		update();
 		return remove;
 	}
 
-	@Override
-	public boolean replace(Object o, Integer integer, Integer v1) {
-		boolean replace = super.replace(o, integer, v1);
-		update();
-		return replace;
-	}
-
-	@Override
-	public Integer replace(Object o, Integer integer) {
-		Integer replace = super.replace(o, integer);
-		update();
-		return replace;
-	}
-
-	@Override
-	public Integer computeIfAbsent(Object o, Function<? super Object, ? extends Integer> function) {
-		Integer integer = super.computeIfAbsent(o, function);
-		update();
-		return integer;
-	}
-
-	@Override
-	public Integer computeIfPresent(Object o, BiFunction<? super Object, ? super Integer, ? extends Integer> biFunction) {
-		Integer integer = super.computeIfPresent(o, biFunction);
-		update();
-		return integer;
-	}
-
-	@Override
-	public Integer compute(Object o, BiFunction<? super Object, ? super Integer, ? extends Integer> biFunction) {
-		Integer compute = super.compute(o, biFunction);
-		update();
-		return compute;
-	}
-
-	@Override
-	public Integer merge(Object o, Integer integer, BiFunction<? super Integer, ? super Integer, ? extends Integer> biFunction) {
-		Integer merge = super.merge(o, integer, biFunction);
-		update();
-		return merge;
-	}
-
-	@Override
-	public void forEach(BiConsumer<? super Object, ? super Integer> biConsumer) {
-		super.forEach(biConsumer);
-		update();
-	}
-
-	@Override
-	public void replaceAll(BiFunction<? super Object, ? super Integer, ? extends Integer> biFunction) {
-		super.replaceAll(biFunction);
-		update();
-	}
 }

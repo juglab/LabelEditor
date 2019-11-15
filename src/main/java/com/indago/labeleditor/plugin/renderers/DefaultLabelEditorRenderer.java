@@ -1,8 +1,11 @@
 package com.indago.labeleditor.plugin.renderers;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.colors.LabelEditorColor;
+import com.indago.labeleditor.core.model.colors.LabelEditorValueColor;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
+import com.indago.labeleditor.core.model.tagging.LabelEditorValueTag;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
@@ -11,6 +14,7 @@ import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.plugin.Plugin;
 
@@ -122,11 +126,32 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 		int[] colors = new int[tags.size()];
 		for (int i = 0; i < colors.length; i++) {
-			LabelEditorColorset colorset = tagColors.get(tags.get(i));
-			if(colorset == null || !colorset.containsKey(targetComponent)) continue;
-			colors[i] = colorset.get(targetComponent);
+			Object tag = tags.get(i);
+			int color = getColor(tagColors, targetComponent, tag);
+			colors[i] = color;
 		}
 		return mixColors(colors);
+	}
+
+	private static int getColor(LabelEditorTagColors tagColors, Object targetComponent, Object tag) {
+		int color = 0;
+		if(tag.getClass().isAssignableFrom(LabelEditorValueTag.class)){
+			LabelEditorColorset colorset = tagColors.get(((LabelEditorValueTag) tag).getIdentifier());
+			LabelEditorColor targetColor = colorset.get(targetComponent);
+			if(targetColor == null) return 0;
+			if(targetColor.getClass().isAssignableFrom(LabelEditorValueColor.class)) {
+				RealType value = ((LabelEditorValueTag) tag).getValue();
+				color = ((LabelEditorValueColor)targetColor).getColor(value);
+			} else {
+				color = targetColor.getColor();
+			}
+		} else {
+			LabelEditorColorset colorset = tagColors.get(tag);
+			if(colorset != null && colorset.containsKey(targetComponent)) {
+				color = colorset.get(targetComponent).getColor();
+			}
+		}
+		return color;
 	}
 
 	public static int mixColors(int[] colors) {
@@ -147,17 +172,6 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 			alpha = alpha + newalpha*(1-alpha);
 		}
 		return ARGBType.rgba((int)red, (int)green, (int)blue, (int)(alpha*255));
-	}
-
-	protected synchronized Set<Object> filterTagsByLabels(Map<L, Set<Object>> tags, Set<L> labels) {
-		Set<Object> set = new HashSet<>();
-		if(tags == null) return set;
-		for (Map.Entry<L, Set<Object>> entry : tags.entrySet()) {
-			if (labels.contains(entry.getKey())) {
-				set.addAll(entry.getValue());
-			}
-		}
-		return set;
 	}
 
 	void printLUT() {
