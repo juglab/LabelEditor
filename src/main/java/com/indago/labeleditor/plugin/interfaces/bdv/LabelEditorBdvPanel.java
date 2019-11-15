@@ -8,7 +8,9 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
+import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.plugin.behaviours.ModificationBehaviours;
+import com.indago.labeleditor.plugin.behaviours.ViewBehaviours;
 import net.imglib2.RandomAccessibleInterval;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
@@ -66,15 +68,12 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void addBehaviours(LabelEditorController<L> controller) {
 		controller.addDefaultBehaviours();
-		ModificationBehaviours modificationBehaviours = new ModificationBehaviours();
-		modificationBehaviours.init(model(), control());
-		if(context() != null) context().inject(modificationBehaviours);
 		getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				if (e.isPopupTrigger()) {
-					BdvPopupMenu menu = new BdvPopupMenu(modificationBehaviours);
+					BdvPopupMenu menu = new BdvPopupMenu(model(), control());
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
@@ -144,17 +143,58 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	class BdvPopupMenu extends JPopupMenu {
 
-		BdvPopupMenu(ModificationBehaviours modificationBehaviours) {
-			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getViewBehaviour().viewSelected()).start(), "View in new window");
-			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getDeleteBehaviour().deleteSelected()).start(), "Delete selected labels");
-			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getSplitBehaviour().splitSelected()).start(), "Split selected labels");
-			addMenuItem(actionEvent -> new Thread( () -> modificationBehaviours.getMergeBehaviour().assignSelectedToFirst()).start(), "Merge selected labels");
+		private final LabelEditorModel<L> model;
+		private final LabelEditorController<L> control;
+
+		BdvPopupMenu(LabelEditorModel<L> model, LabelEditorController<L> control) {
+
+			this.model = model;
+			this.control = control;
+
+			makeSelectMenu();
+			makeEditMenu();
+			makeViewMenu();
+			makeExportMenu();
 		}
 
-		private void addMenuItem(ActionListener actionListener, String label) {
+		private void makeExportMenu() {
+		}
+
+		private void makeViewMenu() {
+			ViewBehaviours viewBehaviours = new ViewBehaviours();
+			viewBehaviours.init(model, control);
+			if(context() != null) context().inject(viewBehaviours);
+			JMenu menu = new JMenu("edit");
+			menu.add(getMenuItem(
+					actionEvent -> new Thread( () -> viewBehaviours.getViewBehaviour().viewSelected()).start(),
+					"View in new window"));
+
+		}
+
+		private void makeEditMenu() {
+			ModificationBehaviours modificationBehaviours = new ModificationBehaviours();
+			modificationBehaviours.init(model, control);
+			if(context() != null) context().inject(modificationBehaviours);
+			JMenu menu = new JMenu("edit");
+			menu.add(getMenuItem(
+					actionEvent -> new Thread( () -> modificationBehaviours.getDeleteBehaviour().deleteSelected()).start(),
+					"Delete selected"));
+			menu.add(getMenuItem(
+					actionEvent -> new Thread( () -> modificationBehaviours.getSplitBehaviour().splitSelected()).start(),
+					"Split selected"));
+			menu.add(getMenuItem(
+					actionEvent -> new Thread( () -> modificationBehaviours.getMergeBehaviour().assignSelectedToFirst()).start(),
+					"Merge selected"));
+		}
+
+		private void makeSelectMenu() {
+			//TODO
+		}
+
+		private JMenuItem getMenuItem(ActionListener actionListener, String label) {
 			JMenuItem item = new JMenuItem(label);
 			item.addActionListener(actionListener);
-			add(item);
+			return item;
 		}
 	}
 

@@ -1,6 +1,5 @@
 package com.indago.labeleditor.plugin.behaviours;
 
-import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
@@ -15,7 +14,7 @@ import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.*;
 
-public class ModificationBehaviours extends Behaviours implements LabelEditorBehaviours {
+public class ViewBehaviours extends Behaviours implements LabelEditorBehaviours {
 
 	protected LabelEditorModel model;
 	protected LabelEditorController controller;
@@ -23,8 +22,8 @@ public class ModificationBehaviours extends Behaviours implements LabelEditorBeh
 	@Parameter
 	Context context;
 
-	public ModificationBehaviours() {
-		super(new InputTriggerConfig(), "labeleditor-modification");
+	public ViewBehaviours() {
+		super(new InputTriggerConfig(), "labeleditor-view");
 	}
 
 	@Override
@@ -38,18 +37,8 @@ public class ModificationBehaviours extends Behaviours implements LabelEditorBeh
 
 	}
 
-	public DeleteLabels getDeleteBehaviour() {
-		return new DeleteLabels(model, controller);
-	}
-
-	public SplitLabels getSplitBehaviour() {
-		SplitLabels behaviour = new SplitLabels(model, controller);
-		if(context != null) context.inject(behaviour);
-		return behaviour;
-	}
-
-	public MergeLabels getMergeBehaviour() {
-		return new MergeLabels(model, controller);
+	public ViewLabels getViewBehaviour() {
+		return new ViewLabels(model, controller);
 	}
 
 }
