@@ -39,23 +39,19 @@ public class E09_BigData {
 
 		Random random = new Random();
 
-		for (int i = 0; i < 10; i++) {
-			try {
-				Views.interval( labels,
-								Intervals.createMinSize(
-										random.nextInt((int) backing.dimension(0)),
-										random.nextInt((int) backing.dimension(1)),
-										random.nextInt((int) backing.dimension(2)),
-										100, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
-			} catch(ArrayIndexOutOfBoundsException ignored) {}
-			try {
+		for (int i = 0; i < 100; i++) {
+			for (int j = 0; j < 100; j++) {
+				int finalI = i;
+				try {
 				Views.interval( labels,
 						Intervals.createMinSize(
 								random.nextInt((int) backing.dimension(0)),
 								random.nextInt((int) backing.dimension(1)),
 								random.nextInt((int) backing.dimension(2)),
-								100, 100, 100 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
-			} catch(ArrayIndexOutOfBoundsException ignored) {}
+								20, 20, 20 ) ).forEach(pixel -> pixel.add( "label"+ finalI) );
+				} catch(ArrayIndexOutOfBoundsException ignored) {}
+			}
+			System.out.println("done with label " + i);
 		}
 
 		System.out.println("Done creating labeling");
