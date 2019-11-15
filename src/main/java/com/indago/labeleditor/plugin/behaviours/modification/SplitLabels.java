@@ -2,10 +2,8 @@ package com.indago.labeleditor.plugin.behaviours.modification;
 
 import com.indago.labeleditor.application.InteractiveWatershedCommand;
 import com.indago.labeleditor.core.controller.LabelEditorController;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.sun.xml.internal.bind.v2.TODO;
 import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
 import net.imglib2.Cursor;
@@ -19,7 +17,6 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.img.basictypeaccess.array.IntArray;
-import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.roi.labeling.LabelRegionCursor;
