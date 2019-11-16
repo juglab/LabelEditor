@@ -28,11 +28,10 @@ import java.util.List;
 
 public class E06_AddToExistingBVV {
 
-	static ImageJ ij = new ImageJ();
-
-	@Test
-	@Ignore
 	public <T extends RealType<T>> void run() throws IOException {
+
+		ImageJ ij = new ImageJ();
+		ij.launch();
 
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		RandomAccessibleInterval inputStack = input;
@@ -68,12 +67,6 @@ public class E06_AddToExistingBVV {
 
 		BvvInterface.control(model, view, source.getBvvHandle(), sources);
 
-	}
-
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
 	}
 
 	public static void main(String... args) throws IOException {

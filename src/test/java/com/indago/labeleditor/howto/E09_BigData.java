@@ -4,6 +4,7 @@ import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
+import net.imagej.ImageJ;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -21,14 +22,12 @@ import java.util.Random;
 
 public class E09_BigData {
 
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel panel;
-
-	@Test
-	@Ignore
 	public void run() {
 
-		DiskCachedCellImg<IntType, ?> backing = new DiskCachedCellImgFactory<>(new IntType()).create( 500, 500, 500 );
+		ImageJ ij = new ImageJ();
+		ij.launch();
+
+		DiskCachedCellImg<IntType, ?> backing = new DiskCachedCellImgFactory<>(new IntType()).create( 1000, 1000, 500 );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 
 		String LABEL1 = "label1";
@@ -64,19 +63,17 @@ public class E09_BigData {
 		model.colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 255, 255, 255));
 		model.colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 255, 255));
 
-		panel = new LabelEditorBdvPanel<>();
+		model.setData(backing);
+
+		LabelEditorPanel panel = new LabelEditorBdvPanel<>();
+		ij.context().inject(panel);
 		panel.init(model);
 
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
-		frame.setMinimumSize(new Dimension(500,500));
+		frame.setMinimumSize(new Dimension(1000,1000));
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		frame.dispose();
-		panel.dispose();
 	}
 
 	public static void main(String...args) {

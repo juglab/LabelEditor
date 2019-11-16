@@ -4,7 +4,7 @@ import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.behaviours.LabelingModificationBehaviours;
+import com.indago.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -27,10 +27,6 @@ import java.io.IOException;
  */
 public class E11_ChangingLabelingOnAction {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorBdvPanel<Integer> panel;
-
 	static class PopUpDemo extends JPopupMenu {
 
 		PopUpDemo(LabelEditorPanel<Integer> panel, LabelingModificationBehaviours modificationBehaviours) {
@@ -45,9 +41,10 @@ public class E11_ChangingLabelingOnAction {
 	/**
 	 * Demonstrates how to register a mouse action.
 	 */
-	@Test
-	@Ignore
 	public void mouseAction() throws IOException {
+
+		ImageJ ij = new ImageJ();
+		ij.launch();
 
 		//open blobs
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
@@ -62,7 +59,7 @@ public class E11_ChangingLabelingOnAction {
 		model.colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,155));
 
 		// build LabelEditorPanel
-		panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
 
 		//register custom actions
@@ -81,17 +78,11 @@ public class E11_ChangingLabelingOnAction {
 		});
 
 		//build frame
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel);
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
-		frame.dispose();
-		panel.dispose();
 	}
 
 	public static void main(String...args) throws IOException {

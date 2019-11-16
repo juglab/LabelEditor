@@ -7,15 +7,16 @@ import com.indago.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import net.imagej.ImgPlus;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.util.Intervals;
+import net.imglib2.view.Views;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -172,4 +173,36 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 //		return orderedLabels;
 //	}
 
+
+	@Override
+	public String toString() {
+		StringBuilder str = new StringBuilder();
+		if(getData() == null) {
+			str.append("\t")
+					.append(".. no dataset")
+					.append("\n");
+		}else {
+			str.append("\t")
+					.append(".. dataset ")
+					.append(Arrays.toString(Intervals.dimensionsAsIntArray(getData())))
+					.append(" ")
+					.append(getData().firstElement().getClass())
+					.append("\n");
+		}
+		str.append("\t")
+				.append(".. labeling ")
+				.append(labels())
+				.append("\n");
+		str.append("\t")
+				.append(".. label sets: ")
+				.append(labels().getMapping().numSets())
+				.append("\n");
+		str.append("\t").append(".. labels: ")
+				.append(labels().getMapping().getLabels().size())
+				.append("\n");
+		str.append("\t").append(".. tags: ")
+				.append(tagging().getAllTags().size())
+				.append("\n");
+		return str.toString();
+	}
 }

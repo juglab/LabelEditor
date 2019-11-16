@@ -2,11 +2,15 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import bvv.util.BvvHandle;
 import bvv.util.BvvStackSource;
+import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
+import com.indago.labeleditor.plugin.behaviours.FocusBehaviours;
+import com.indago.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
+import com.indago.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
@@ -26,6 +30,7 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	private final Behaviours behaviours;
 	private BvvHandle bvvHandle;
 	private List<BvvStackSource> bvvSources;
+	private LabelingType<L> labelsAtCursor;
 
 	public BvvInterface(BvvHandle handle, List<BvvStackSource> sources) {
 		this.bvvHandle = handle;
@@ -48,10 +53,16 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public LabelingType<L> getLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
+	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
 		Set<LabelingType<L>> labelsAtMousePositionInBVV = getLabelsAtMousePositionInBVV(x, y, model);
 		if(labelsAtMousePositionInBVV.size() == 0) return null;
-		return new ArrayList<>(labelsAtMousePositionInBVV).get(0);
+		labelsAtCursor = new ArrayList<>(labelsAtMousePositionInBVV).get(0);
+		return labelsAtCursor;
+	}
+
+	@Override
+	public LabelingType<L> getLabelsAtMousePosition() {
+		return labelsAtCursor;
 	}
 
 	private Set<LabelingType<L>> getLabelsAtMousePositionInBVV(int mx, int my, LabelEditorModel<L> model) {
@@ -94,9 +105,14 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 
 	@Override
 	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		BvvSelectionBehaviours<L> selectionBehaviours = new BvvSelectionBehaviours<>();
-		selectionBehaviours.init(model, controller, this);
-		selectionBehaviours.install(behaviours, bvvHandle.getViewerPanel().getDisplay());
+		install(model, controller, new SelectionBehaviours<>());
+		install(model, controller, new FocusBehaviours<>());
+		install(model, controller, new LabelingModificationBehaviours());
+	}
+
+	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {
+		behavioursAdded.init(model, controller);
+		behavioursAdded.install(behaviours, bvvHandle.getViewerPanel().getDisplay());
 	}
 
 	@Override

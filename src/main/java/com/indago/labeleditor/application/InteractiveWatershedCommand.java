@@ -23,7 +23,6 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.PluginInfo;
 import org.scijava.ui.UIService;
-import org.scijava.widget.Button;
 import org.scijava.widget.InputWidget;
 import org.scijava.widget.NumberWidget;
 

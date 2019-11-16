@@ -26,18 +26,15 @@ import java.io.IOException;
  */
 public class E12_ShowBorder {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel<Integer> panel;
-
-	@Test
-	@Ignore
 	public void run() throws IOException {
+		ImageJ ij = new ImageJ();
+		ij.launch();
+
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		panel = new LabelEditorBdvPanel<Integer>() {
+		LabelEditorPanel<Integer> panel = new LabelEditorBdvPanel<Integer>() {
 			@Override
 			protected void addRenderings(LabelEditorView<Integer> renderingManager) {
 				renderingManager.renderers().add(new BorderLabelEditorRenderer<>());
@@ -49,18 +46,11 @@ public class E12_ShowBorder {
 		panel.model().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,0,255));
 		panel.model().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(255,0,0,255));
 
-
+		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.setContentPane(panel.get());
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
-		frame.dispose();
-		panel.dispose();
 	}
 
 	public static void main(String...args) throws IOException {

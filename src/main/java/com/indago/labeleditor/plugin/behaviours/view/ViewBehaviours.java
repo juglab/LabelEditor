@@ -1,9 +1,8 @@
-package com.indago.labeleditor.plugin.behaviours;
+package com.indago.labeleditor.plugin.behaviours.view;
 
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.plugin.behaviours.modification.TagByProperty;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -11,7 +10,7 @@ import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.*;
 
-public class TagModificationBehaviours extends Behaviours implements LabelEditorBehaviours {
+public class ViewBehaviours extends Behaviours implements LabelEditorBehaviours {
 
 	protected LabelEditorModel model;
 	protected LabelEditorController controller;
@@ -19,8 +18,8 @@ public class TagModificationBehaviours extends Behaviours implements LabelEditor
 	@Parameter
 	Context context;
 
-	public TagModificationBehaviours() {
-		super(new InputTriggerConfig(), "labeleditor-modification");
+	public ViewBehaviours() {
+		super(new InputTriggerConfig(), "labeleditor-view");
 	}
 
 	@Override
@@ -34,8 +33,8 @@ public class TagModificationBehaviours extends Behaviours implements LabelEditor
 
 	}
 
-	public TagByProperty getTagByPropertyBehaviour() {
-		return new TagByProperty(model, controller);
+	public ViewLabels getViewBehaviour() {
+		return new ViewLabels(model);
 	}
 
 }

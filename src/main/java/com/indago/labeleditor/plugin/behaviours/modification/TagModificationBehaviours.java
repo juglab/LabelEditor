@@ -1,12 +1,8 @@
-package com.indago.labeleditor.plugin.behaviours;
+package com.indago.labeleditor.plugin.behaviours.modification;
 
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.plugin.behaviours.modification.DeleteLabels;
-import com.indago.labeleditor.plugin.behaviours.modification.MergeLabels;
-import com.indago.labeleditor.plugin.behaviours.modification.SplitLabels;
-import com.indago.labeleditor.plugin.behaviours.view.ViewLabels;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -14,7 +10,7 @@ import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.*;
 
-public class ViewBehaviours extends Behaviours implements LabelEditorBehaviours {
+public class TagModificationBehaviours extends Behaviours implements LabelEditorBehaviours {
 
 	protected LabelEditorModel model;
 	protected LabelEditorController controller;
@@ -22,8 +18,8 @@ public class ViewBehaviours extends Behaviours implements LabelEditorBehaviours 
 	@Parameter
 	Context context;
 
-	public ViewBehaviours() {
-		super(new InputTriggerConfig(), "labeleditor-view");
+	public TagModificationBehaviours() {
+		super(new InputTriggerConfig(), "labeleditor-modification");
 	}
 
 	@Override
@@ -37,8 +33,8 @@ public class ViewBehaviours extends Behaviours implements LabelEditorBehaviours 
 
 	}
 
-	public ViewLabels getViewBehaviour() {
-		return new ViewLabels(model, controller);
+	public TagByProperty getTagByPropertyBehaviour() {
+		return new TagByProperty(model, controller);
 	}
 
 }

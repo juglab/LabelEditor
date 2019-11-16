@@ -8,7 +8,8 @@ public class LabelEditorOptions {
 		return timeDimension;
 	}
 
-	public void setTimeDimension(int timeDimension) {
+	public LabelEditorOptions setTimeDimension(int timeDimension) {
 		this.timeDimension = timeDimension;
+		return this;
 	}
 }

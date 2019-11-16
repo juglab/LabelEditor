@@ -3,9 +3,9 @@ package com.indago.labeleditor.howto;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.plugin.interfaces.bdv.BdvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -15,8 +15,6 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
 import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,13 +25,10 @@ import java.io.IOException;
  */
 public class E05_AddToExistingBDV {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static BdvHandlePanel panel;
-
-	@Test
-	@Ignore
 	public void run() throws IOException {
+		ImageJ ij = new ImageJ();
+		ij.launch();
+
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		Img thresholded = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
@@ -47,7 +42,8 @@ public class E05_AddToExistingBDV {
 		view.renderers().addDefaultRenderers();
 
 		JPanel viewer = new JPanel(new MigLayout());
-		panel = new BdvHandlePanel(frame, Bdv.options().is2D());
+		JFrame frame = new JFrame("Label editor");
+		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 //		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
 		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), Bdv.options().addTo(panel)));
 
@@ -58,13 +54,6 @@ public class E05_AddToExistingBDV {
 		frame.setContentPane(viewer);
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
-		frame.dispose();
-		panel.close();
 	}
 
 	public static void main(String...args) throws IOException {

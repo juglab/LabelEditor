@@ -5,6 +5,8 @@ import com.indago.labeleditor.core.model.colors.ColorChangedEvent;
 import com.indago.labeleditor.core.model.tagging.TagChangedEvent;
 import org.scijava.listeners.Listeners;
 
+import java.util.List;
+
 public class LabelEditorView<L> {
 
 	private LabelEditorModel<L> model;
@@ -32,11 +34,11 @@ public class LabelEditorView<L> {
 		updateRenderers();
 	}
 
-	private void onTagChange(TagChangedEvent tagChangedEvent) {
+	private void onTagChange(List<TagChangedEvent> tagChangedEvent) {
 		updateRenderers();
 	}
 
-	void updateRenderers() {
+	private void updateRenderers() {
 		if(model == null || model.labels() == null) return;
 		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
 		notifyListeners();
@@ -67,10 +69,5 @@ public class LabelEditorView<L> {
 	private void notifyListeners() {
 		if(listenersPaused) return;
 		listeners.list.forEach(listener -> listener.viewChanged(new ViewChangedEvent()));
-	}
-
-	public void updateTimePoint(int timePointIndex) {
-		renderers.forEach(renderer -> renderer.updateTimePoint(timePointIndex));
-		updateOnLabelingChange();
 	}
 }

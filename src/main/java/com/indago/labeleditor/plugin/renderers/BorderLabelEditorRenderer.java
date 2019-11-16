@@ -16,8 +16,6 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 
 	private RandomAccessibleInterval output;
 
-	public BorderLabelEditorRenderer() {}
-
 	@Override
 	public void init(LabelEditorModel model) {
 		super.init(model);

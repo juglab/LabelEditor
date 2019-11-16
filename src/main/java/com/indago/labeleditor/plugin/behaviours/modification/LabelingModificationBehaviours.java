@@ -1,15 +1,11 @@
-package com.indago.labeleditor.plugin.behaviours;
+package com.indago.labeleditor.plugin.behaviours.modification;
 
-import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.plugin.behaviours.modification.DeleteLabels;
-import com.indago.labeleditor.plugin.behaviours.modification.MergeLabels;
-import com.indago.labeleditor.plugin.behaviours.modification.SplitLabels;
-import com.indago.labeleditor.plugin.behaviours.view.ViewLabels;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
+import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
@@ -35,7 +31,8 @@ public class LabelingModificationBehaviours extends Behaviours implements LabelE
 
 	@Override
 	public void install(Behaviours behaviours, Component panel) {
-
+		behaviours.behaviour((ClickBehaviour) (arg0, arg1) -> getDeleteBehaviour().deleteSelected(),
+				"delete selected labels","DELETE" );
 	}
 
 	public DeleteLabels getDeleteBehaviour() {

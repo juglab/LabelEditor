@@ -2,15 +2,16 @@ package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
-import bdv.viewer.TimePointListener;
-import com.indago.labeleditor.core.LabelEditorOptions;
+import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
-import com.indago.labeleditor.plugin.behaviours.SelectionBehaviours;
+import com.indago.labeleditor.plugin.behaviours.FocusBehaviours;
+import com.indago.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
+import com.indago.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
@@ -22,12 +23,13 @@ import org.scijava.ui.behaviour.util.Behaviours;
 import java.awt.*;
 import java.util.List;
 
-public class BdvInterface<L> implements LabelEditorInterface<L>, TimePointListener {
+public class BdvInterface<L> implements LabelEditorInterface<L> {
 	private final BdvHandlePanel panel;
 	private final List<BdvSource> sources;
 	private final Behaviours behaviours;
 	private final LabelEditorView view;
 	private boolean mode3D;
+	private LabelingType<L> labelsAtCursor;
 
 	public BdvInterface(BdvHandlePanel panel, List<BdvSource> bdvSources, LabelEditorView view) {
 		this.panel = panel;
@@ -35,7 +37,6 @@ public class BdvInterface<L> implements LabelEditorInterface<L>, TimePointListen
 		this.view = view;
 		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
 		behaviours.install(panel.getTriggerbindings(), "labeleditor");
-		panel.getViewerPanel().addTimePointListener( this );
 	}
 
 	public static <L> LabelEditorController control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BdvHandlePanel panel) {
@@ -52,13 +53,24 @@ public class BdvInterface<L> implements LabelEditorInterface<L>, TimePointListen
 	}
 
 	@Override
-	public LabelingType<L> getLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
+	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
 		RandomAccess<LabelingType<L>> ra = model.labels().randomAccess();
-		ra.setPosition(getDataPositionAtMouse());
-		return ra.get();
+		Localizable pos = getDataPositionAtMouse();
+//		if(Intervals.contains(model.labels(), pos)) {
+			ra.setPosition(pos);
+			this.labelsAtCursor = ra.get();
+			return labelsAtCursor;
+//		}
+//		return null;
+	}
+
+	@Override
+	public LabelingType<L> getLabelsAtMousePosition() {
+		return labelsAtCursor;
 	}
 
 	private Localizable getDataPositionAtMouse() {
+		//FIXME currently only works for 2D, 3D and 4D
 		RealPoint mousePointer = new RealPoint(3);
 		panel.getViewerPanel().getGlobalMouseCoordinates( mousePointer );
 		final int x = ( int ) mousePointer.getFloatPosition( 0 );
@@ -73,10 +85,14 @@ public class BdvInterface<L> implements LabelEditorInterface<L>, TimePointListen
 
 	@Override
 	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		SelectionBehaviours<L> selectionBehaviours = new SelectionBehaviours<>();
-		selectionBehaviours.init(model, controller);
-		selectionBehaviours.install(behaviours, panel.getViewerPanel().getDisplay());
+		install(model, controller, new SelectionBehaviours<>());
+		install(model, controller, new FocusBehaviours<>());
+		install(model, controller, new LabelingModificationBehaviours());
+	}
 
+	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {
+		behavioursAdded.init(model, controller);
+		behavioursAdded.install(behaviours, panel.getViewerPanel().getDisplay());
 	}
 
 	@Override
@@ -92,10 +108,5 @@ public class BdvInterface<L> implements LabelEditorInterface<L>, TimePointListen
 	@Override
 	public Component getComponent() {
 		return panel.getViewerPanel();
-	}
-
-	@Override
-	public void timePointChanged(int timePointIndex) {
-		view.updateTimePoint(timePointIndex);
 	}
 }

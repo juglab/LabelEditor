@@ -8,6 +8,7 @@ import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import org.scijava.Context;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -28,6 +29,9 @@ public class CCAViewer<L> implements Command {
 	@Parameter
 	OpService opService;
 
+	@Parameter
+	Context context;
+
 	@Override
 	public void run() {
 		Img threshold = (Img) opService.threshold().otsu(data);
@@ -38,6 +42,7 @@ public class CCAViewer<L> implements Command {
 		ImgLabeling<Integer, IntType> labeling = opService.labeling().cca(threshold, structuringElement);
 
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		context.inject(panel);
 		panel.init(labeling, data);
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());

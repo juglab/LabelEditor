@@ -5,7 +5,7 @@ import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.behaviours.ConflictSelectionBehaviours;
+import com.indago.labeleditor.plugin.behaviours.select.ConflictSelectionBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
@@ -28,11 +28,6 @@ import java.awt.*;
  */
 public class E13_HandleMultipleConflicts {
 
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorBdvPanel<String> panel;
-
-	@Test
-	@Ignore
 	public void run() {
 
 		String LABEL1 = "label1";
@@ -71,9 +66,10 @@ public class E13_HandleMultipleConflicts {
 		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
 //		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(50,50,50,100));
 
-		panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
 		panel.control().install(new ConflictSelectionBehaviours<>());
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
@@ -86,12 +82,6 @@ public class E13_HandleMultipleConflicts {
 		HyperSphere<LabelingType<String>> hyperSphere = new HyperSphere<>(img, ra, radius);
 		for (LabelingType<String> value : hyperSphere)
 			value.add(label);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		frame.dispose();
-		panel.dispose();
 	}
 
 	public static void main(String... args) {

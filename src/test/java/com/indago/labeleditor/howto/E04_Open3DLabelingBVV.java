@@ -1,9 +1,9 @@
 package com.indago.labeleditor.howto;
 
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.interfaces.bvv.LabelEditorBvvPanel;
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
+import com.indago.labeleditor.plugin.interfaces.bvv.LabelEditorBvvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -25,13 +25,10 @@ import java.util.List;
 
 public class E04_Open3DLabelingBVV {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel<Integer> panel;
-
-	@Test
-	@Ignore
 	public <T extends RealType<T>> void run() throws IOException {
+		ImageJ ij = new ImageJ();
+		ij.launch();
+
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		RandomAccessibleInterval inputStack = input;
 		List<RandomAccessibleInterval<T>> stack = new ArrayList<>();
@@ -49,22 +46,17 @@ public class E04_Open3DLabelingBVV {
 			model.tagging().addTag("displayed", label);
 		});
 
-		panel = new LabelEditorBvvPanel<>();
+		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>();
+		ij.context().inject(panel);
 		panel.init(model);
 		panel.model().colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,155));
+
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
 	}
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
-		frame.dispose();
-		panel.dispose();
-	}
-
 
 	public static void main(String... args) throws IOException {
 		new E04_Open3DLabelingBVV().run();

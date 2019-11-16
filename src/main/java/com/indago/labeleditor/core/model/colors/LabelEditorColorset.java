@@ -37,7 +37,6 @@ public class LabelEditorColorset extends HashMap<Object, LabelEditorColor> imple
 	}
 
 	private void update() {
-		//FIXME
 		if(colors != null) colors.notifyListeners();
 	}
 

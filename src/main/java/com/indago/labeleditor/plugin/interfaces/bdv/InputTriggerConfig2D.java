@@ -20,6 +20,7 @@ public class InputTriggerConfig2D {
 		try {
 
 			//FIXME figure out how to modularize the configs / which ones to load
+			//FIXME why should the user not be able to zoom? figure out the right default config
 
 			URL yamlURL = ClassLoader.getSystemResource( "metaseg.yaml" );
 			if ( yamlURL == null ) {

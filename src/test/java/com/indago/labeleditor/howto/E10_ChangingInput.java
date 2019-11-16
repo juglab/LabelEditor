@@ -20,13 +20,9 @@ import java.util.Random;
 
 public class E10_ChangingInput {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorBdvPanel<Integer> panel;
-
-	@Test
-	@Ignore
 	public void run() throws InterruptedException {
+		ImageJ ij = new ImageJ();
+		ij.launch();
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100);
 		RandomAccess<IntType> ra = img.randomAccess();
 		Random random = new Random();
@@ -34,14 +30,15 @@ public class E10_ChangingInput {
 		for (int i = 0; i < 13; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 		}
-		panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		ij.context().inject(panel);
 		panel.init(imgPlus);
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-		for (int i = 0; i < 13; i++) {
+		for (int i = 0; i < 1300; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 			ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
 			panel.init(labeling, imgPlus);
@@ -55,13 +52,6 @@ public class E10_ChangingInput {
 		HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 5);
 		for (IntType value : hyperSphere)
 			try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
-	}
-
-	@AfterClass
-	public static void dispose() {
-		frame.dispose();
-		panel.dispose();
-		ij.context().dispose();
 	}
 
 	public static void main(String... args) throws InterruptedException {

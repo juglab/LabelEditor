@@ -1,11 +1,12 @@
 package com.indago.labeleditor.howto;
 
 
+import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
-import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import net.imagej.ImageJ;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
@@ -14,8 +15,6 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
-import org.junit.AfterClass;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,13 +22,12 @@ import java.awt.*;
 /**
  * How to open an {@link ImgLabeling} in a {@link LabelEditorBdvPanel}.
  */
-public class E02_Open2DLabelingConflicts {
+public class E02_Open2DTimeframes {
 
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel<String> panel;
-
-	@Test
 	public void run() {
+
+		ImageJ ij = new ImageJ();
+		ij.launch();
 
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
@@ -65,23 +63,19 @@ public class E02_Open2DLabelingConflicts {
 		model.colors().get(TAG1).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
 		model.colors().get(TAG2).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(255,0,255,100));
 
-		panel = new LabelEditorBdvPanel<>();
+		LabelEditorPanel<String> panel = new LabelEditorBdvPanel<>();
+		ij.context().inject(panel);
 		panel.init(model);
 
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
 	}
 
-	@AfterClass
-	public static void dispose() {
-		frame.dispose();
-		panel.dispose();
-	}
-
 	public static void main(String... args) {
-		new E02_Open2DLabelingConflicts().run();
+		new E02_Open2DTimeframes().run();
 	}
 
 }

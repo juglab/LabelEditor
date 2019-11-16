@@ -21,6 +21,8 @@ import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.Behaviour;
 
 import javax.swing.*;
@@ -31,12 +33,13 @@ import java.util.Set;
 
 public class ViewLabels<L> implements Behaviour {
 
-	private final LabelEditorController controller;
+	@Parameter
+	Context context;
+
 	private final LabelEditorModel<L> model;
 
-	public ViewLabels(LabelEditorModel model, LabelEditorController controller) {
+	public ViewLabels(LabelEditorModel model) {
 		this.model = model;
-		this.controller = controller;
 	}
 
 	public void viewSelected() {
@@ -62,6 +65,7 @@ public class ViewLabels<L> implements Behaviour {
 		ImgPlus data = createCroppedData(boundingBox);
 
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
+		if(context != null) context.inject(panel);
 		panel.init(cropLabeling, data);
 		JFrame frame = new JFrame("Label Detail Viewer");
 		frame.setContentPane(panel.get());

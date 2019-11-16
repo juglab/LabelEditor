@@ -12,7 +12,6 @@ import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -29,10 +28,6 @@ import java.util.Set;
  */
 public class E08_CustomActions {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorBdvPanel<Integer> panel;
-
 	class PopUpDemo extends JPopupMenu {
 		JMenuItem anItem;
 		public PopUpDemo(LabelEditorPanel<Integer> panel) {
@@ -40,11 +35,10 @@ public class E08_CustomActions {
 			anItem.addActionListener(actionEvent -> {
 				System.out.println("Event!");
 				Set<Integer> labels = panel.model().tagging().getLabels("no");
-				//TODO start collect tagging events, pause listeners
+				panel.model().tagging().pauseListeners();
 				labels.forEach(label -> panel.model().tagging().addTag("special", label));
 //				Views.interval( panel.getModel().getLabels(), Intervals.createMinSize( mouse.getIntPosition(0), mouse.getIntPosition(1), 10, 10 ) ).forEach(pixel -> pixel.add( 100 ) );
-				//TODO resume model listeners and send collected events
-
+				panel.model().tagging().resumeListeners();
 			});
 			add(anItem);
 		}
@@ -56,6 +50,8 @@ public class E08_CustomActions {
 	@Test
 	@Ignore
 	public void mouseAction() throws IOException {
+		ImageJ ij = new ImageJ();
+		ij.launch();
 
 		//open blobs
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
@@ -76,7 +72,8 @@ public class E08_CustomActions {
 
 		model.setData(input);
 
-		panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		ij.context().inject(panel);
 		panel.init(model);
 
 		//register custom actions
@@ -85,7 +82,7 @@ public class E08_CustomActions {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				model.tagging().removeTag("no");
-				for (Integer label : panel.control().interfaceInstance().getLabelsAtMousePosition(e, model)) {
+				for (Integer label : panel.control().interfaceInstance().getLabelsAtMousePosition()) {
 					model.tagging().addTag("yes", label);
 				}
 				if (e.isPopupTrigger()) {
@@ -98,24 +95,18 @@ public class E08_CustomActions {
 			public void mouseReleased(MouseEvent e) {
 				super.mouseReleased(e);
 				model.tagging().removeTag("yes");
-				for (Integer label : panel.control().interfaceInstance().getLabelsAtMousePosition(e, model)) {
+				for (Integer label : panel.control().interfaceInstance().getLabelsAtMousePosition()) {
 					model.tagging().addTag("no", label);
 				}
 			}
 		});
 
 		//build frame
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel);
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
-		frame.dispose();
-		panel.dispose();
 	}
 
 	public static void main(String...args) throws IOException {

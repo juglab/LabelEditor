@@ -17,8 +17,7 @@ import java.awt.*;
 public abstract class AbstractLabelEditorPanel<L> extends JPanel implements LabelEditorPanel<L> {
 
 	@Parameter
-	protected
-	Context context;
+	protected Context context;
 
 	private boolean panelBuilt = false;
 
@@ -77,6 +76,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 		if(model.labels() != null) {
 			displayLabeling();
 			initController();
+			System.out.println("Created LabelEditor BDV panel:\n" + model.toString());
 		}
 	}
 
@@ -92,7 +92,7 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected abstract Component buildInterface();
 
 	protected void addRenderings(LabelEditorView<L> renderingManager) {
-		if(context != null) context.inject(renderingManager.renderers());
+		if(context() != null) context().inject(renderingManager.renderers());
 		renderingManager.renderers().addDefaultRenderers();
 	}
 

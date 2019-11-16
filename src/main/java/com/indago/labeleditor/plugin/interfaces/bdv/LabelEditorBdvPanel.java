@@ -10,6 +10,8 @@ import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.plugin.interfaces.LabelEditorPopupMenu;
 import net.imglib2.RandomAccessibleInterval;
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import javax.swing.*;
@@ -23,6 +25,9 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
+
+	@Parameter
+	private Context context;
 
 	@Override
 	protected void initController() {
@@ -70,8 +75,9 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
 				if (e.isPopupTrigger()) {
-					LabelEditorPopupMenu menu = new LabelEditorPopupMenu(model(), control());
-					if(context != null) context.inject(menu);
+					LabelEditorPopupMenu menu = new LabelEditorPopupMenu(model(), control(), view());
+					if(context() != null) context().inject(menu);
+					menu.populate();
 					menu.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}

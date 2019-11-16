@@ -9,9 +9,6 @@ import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,34 +19,24 @@ import java.io.IOException;
  */
 public class E01_Open2DLabeling {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel panel;
-
-	@Test
-	@Ignore
 	public void run() throws IOException {
+		ImageJ ij = new ImageJ();
+		ij.launch();
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		Img<IntType> thresholded = (Img) ij.op().threshold().otsu(input);
 
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		panel = new LabelEditorBdvPanel<>();
-		// The panel needs a context. In case none is provided, it will create one itself.
-//		ij.context().inject(panel);
-		panel.init(labeling, new ImgPlus<IntType>(input));
+		LabelEditorPanel panel = new LabelEditorBdvPanel<>();
+		// The panel will have extra IJ2 sweetness if you inject it with a context.
+		ij.context().inject(panel);
+		panel.init(labeling, new ImgPlus(input));
 
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
-		frame.dispose();
-		panel.dispose();
 	}
 
 	public static void main(String... args) throws IOException {

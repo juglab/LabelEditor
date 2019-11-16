@@ -22,13 +22,8 @@ import java.util.Random;
 
 public class E14_ChangingColors {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorBdvPanel<Integer> panel;
-
-	@Test
-	@Ignore
 	public void run() throws InterruptedException {
+		ImageJ ij = new ImageJ();
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100);
 		RandomAccess<IntType> ra = img.randomAccess();
 		Random random = new Random();
@@ -36,7 +31,7 @@ public class E14_ChangingColors {
 		for (int i = 0; i < 33; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 		}
-		panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
 		panel.init(labeling, imgPlus);
 		panel.getSources().forEach(source -> source.setDisplayRange(0, 255));
@@ -66,13 +61,6 @@ public class E14_ChangingColors {
 		HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 5);
 		for (IntType value : hyperSphere)
 			try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
-	}
-
-	@AfterClass
-	public static void dispose() {
-		frame.dispose();
-		panel.dispose();
-		ij.context().dispose();
 	}
 
 	public static void main(String... args) throws InterruptedException {

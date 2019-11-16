@@ -24,16 +24,12 @@ import java.util.Random;
  */
 public class E07_CustomTags {
 
-	static ImageJ ij = new ImageJ();
-	static JFrame frame = new JFrame("Label editor");
-	static LabelEditorPanel<Integer> panel;
-
-	@Test
-	@Ignore
 	public void run() throws IOException {
+		ImageJ ij = new ImageJ();
+		ij.launch();
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
-		panel = new LabelEditorBdvPanel<>();
+		LabelEditorPanel<Integer> panel = new LabelEditorBdvPanel<>();
 		ij.context().inject(panel);
 		panel.init(labeling, new ImgPlus(input));
 
@@ -54,17 +50,11 @@ public class E07_CustomTags {
 		panel.model().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,255));
 		panel.model().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,255));
 
+		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-	@AfterClass
-	public static void dispose() {
-		ij.context().dispose();
-		frame.dispose();
-		panel.dispose();
 	}
 
 	public static void main(String...args) throws IOException {

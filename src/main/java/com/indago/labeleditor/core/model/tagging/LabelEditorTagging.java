@@ -1,9 +1,7 @@
 package com.indago.labeleditor.core.model.tagging;
 
-import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import org.scijava.listeners.Listeners;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,10 +9,15 @@ import java.util.Set;
 public interface LabelEditorTagging<L> {
 
 	Map<L, Set<Object>> get();
+
 	void addTag(Object tag, L label);
+
 	void removeTag(Object tag, L label);
+
 	Set<Object> getTags(L label);
+
 	void removeTag(Object tag);
+
 	Set<L> getLabels(Object tag);
 
 	Listeners< TagChangeListener > listeners();
@@ -22,4 +25,6 @@ public interface LabelEditorTagging<L> {
 	void pauseListeners();
 
 	void resumeListeners();
+
+	Set<Object> getAllTags();
 }
