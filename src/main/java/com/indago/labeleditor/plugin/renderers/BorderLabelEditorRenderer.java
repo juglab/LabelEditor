@@ -19,7 +19,7 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	@Override
 	public void init(LabelEditorModel model) {
 		super.init(model);
-		int timeDim = model.options().getTimeDimension();
+		int timeDim = model.getTimeDimension();
 		this.output = new IntTypeBoundary(model.labels().getIndexImg(), timeDim);
 	}
 

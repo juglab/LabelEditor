@@ -29,7 +29,6 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	private LabelEditorController<L> controller;
 	private LabelEditorModel<L> model;
 	private LabelEditorView<L> view = new LabelEditorView<>();
-	private LabelEditorOptions options = new LabelEditorOptions();
 
 	public AbstractLabelEditorPanel() {
 	}

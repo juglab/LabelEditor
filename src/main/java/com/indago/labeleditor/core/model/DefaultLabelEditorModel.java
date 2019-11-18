@@ -1,31 +1,24 @@
 package com.indago.labeleditor.core.model;
 
-import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
 import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
-import net.imglib2.roi.labeling.LabelRegions;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
-import net.imglib2.view.Views;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
@@ -42,8 +35,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
 	private static int colorSelected = ARGBType.rgba(0,100,255,200);
 	private static int colorDefault = ARGBType.rgba(255,255,255,100);
-
-	private LabelEditorOptions options = new LabelEditorOptions();
+	private int timeDimension = -1;
 
 	@Override
 	public ImgLabeling<L, IntType> labels() {
@@ -170,8 +162,13 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public LabelEditorOptions options() {
-		return options;
+	public int getTimeDimension() {
+		return timeDimension;
+	}
+
+	@Override
+	public void setTimeDimension(int dimension) {
+		timeDimension = dimension;
 	}
 
 	@Override

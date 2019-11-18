@@ -1,11 +1,8 @@
 package com.indago.labeleditor.core.model;
 
-import com.indago.labeleditor.core.LabelEditorOptions;
 import com.indago.labeleditor.core.model.colors.LabelEditorColorset;
 import com.indago.labeleditor.core.model.colors.LabelEditorTagColors;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
-import net.imagej.ImgPlus;
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
@@ -29,8 +26,6 @@ public interface LabelEditorModel <L> {
 
 	LabelEditorTagColors colors();
 
-	LabelEditorOptions options();
-
 	List<LabelEditorColorset> getVirtualChannels();
 
 	void setTagComparator(Comparator<Object> comparator);
@@ -42,4 +37,7 @@ public interface LabelEditorModel <L> {
 
 	Img getData();
 	void setData(Img data);
+
+	int getTimeDimension();
+	void setTimeDimension(int dimension);
 }

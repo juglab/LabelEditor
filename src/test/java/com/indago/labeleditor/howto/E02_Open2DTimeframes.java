@@ -58,7 +58,7 @@ public class E02_Open2DTimeframes {
 		model.tagging().addTag(TAG1, LABEL3);
 		model.tagging().addTag(TAG2, LABEL4);
 
-		model.options().setTimeDimension(2);
+		model.setTimeDimension(2);
 
 		model.colors().get(TAG1).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
 		model.colors().get(TAG2).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(255,0,255,100));
