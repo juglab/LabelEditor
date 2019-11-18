@@ -3,6 +3,7 @@ package com.indago.labeleditor.plugin.behaviours.modification;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -23,7 +24,7 @@ public class TagModificationBehaviours extends Behaviours implements LabelEditor
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorController controller) {
+	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {
 		this.model = model;
 		this.controller = controller;
 	}

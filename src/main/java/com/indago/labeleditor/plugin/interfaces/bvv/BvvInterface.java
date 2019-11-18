@@ -6,6 +6,7 @@ import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.tagging.TagChangedEvent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
 import com.indago.labeleditor.plugin.behaviours.FocusBehaviours;
@@ -104,14 +105,14 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		install(model, controller, new SelectionBehaviours<>());
-		install(model, controller, new FocusBehaviours<>());
-		install(model, controller, new LabelingModificationBehaviours());
+	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view) {
+		install(model, controller, view, new SelectionBehaviours<>());
+		install(model, controller, view, new FocusBehaviours<>());
+		install(model, controller, view, new LabelingModificationBehaviours());
 	}
 
-	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {
-		behavioursAdded.init(model, controller);
+	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView view, LabelEditorBehaviours behavioursAdded) {
+		behavioursAdded.init(model, controller, view);
 		behavioursAdded.install(behaviours, bvvHandle.getViewerPanel().getDisplay());
 	}
 
@@ -133,5 +134,9 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	@Override
 	public Component getComponent() {
 		return bvvHandle.getViewerPanel();
+	}
+
+	@Override
+	public void onTagChange(List<TagChangedEvent> tagChangedEvents) {
 	}
 }

@@ -4,6 +4,7 @@ import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorView;
+import com.indago.labeleditor.plugin.behaviours.OptionsBehaviours;
 import com.indago.labeleditor.plugin.behaviours.export.ExportBehaviours;
 import com.indago.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
 import com.indago.labeleditor.plugin.behaviours.select.SelectionBehaviours;
@@ -11,6 +12,7 @@ import com.indago.labeleditor.plugin.behaviours.modification.TagModificationBeha
 import com.indago.labeleditor.plugin.behaviours.view.ViewBehaviours;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
+import org.scijava.ui.behaviour.util.Behaviours;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -29,6 +31,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private static final String MENU_VIEW = "View";
 	private static final String MENU_EDIT = "Edit";
 	private static final String MENU_SELECT = "Select";
+	private static final String MENU_OPTIONS = "Options";
 	private static final String MENU_EXPORT_LABELMAP = "Export label map";
 	private static final String MENU_EXPORT_INDEXIMG = "Export index image";
 	private static final String MENU_EXPORT_SOURCE = "Export source image";
@@ -51,12 +54,20 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 		makeEditMenu();
 		makeViewMenu();
 		makeExportMenu();
+		makeOptionsEntry();
+	}
+
+	private void makeOptionsEntry() {
+		OptionsBehaviours optionsBehaviours = new OptionsBehaviours();
+		optionsBehaviours.init(model, control, view);
+		context.inject(optionsBehaviours);
+		add(getMenuItem(e -> new Thread( () -> optionsBehaviours.showOptions()).start(), MENU_OPTIONS));
 	}
 
 	private void makeExportMenu() {
 		if(context != null) {
 			ExportBehaviours exportBehaviours = new ExportBehaviours();
-			exportBehaviours.init(model, control);
+			exportBehaviours.init(model, control, view);
 			context.inject(exportBehaviours);
 			JMenu menu = new JMenu(MENU_EXPORT);
 			menu.add(getMenuItem(e -> new Thread(exportBehaviours::showLabelMap).start(), MENU_EXPORT_LABELMAP));
@@ -76,7 +87,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 
 	private void makeViewMenu() {
 		ViewBehaviours viewBehaviours = new ViewBehaviours();
-		viewBehaviours.init(model, control);
+		viewBehaviours.init(model, control, view);
 		if(context != null) context.inject(viewBehaviours);
 		JMenu menu = new JMenu(MENU_VIEW);
 		menu.add(getMenuItem(e -> new Thread( () -> viewBehaviours.getViewBehaviour().viewSelected()).start(), MENU_VIEW_SELECTED));
@@ -86,9 +97,9 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private void makeEditMenu() {
 		JMenu menu = new JMenu(MENU_EDIT);
 		LabelingModificationBehaviours modificationBehaviours = new LabelingModificationBehaviours();
-		modificationBehaviours.init(model, control);
+		modificationBehaviours.init(model, control, view);
 		TagModificationBehaviours tagBehaviours = new TagModificationBehaviours();
-		tagBehaviours.init(model, control);
+		tagBehaviours.init(model, control, view);
 		String MENU_EDIT_DELETE = "Delete selected";
 		String MENU_EDIT_MERGE = "Merge selected";
 		menu.add(getMenuItem(e -> new Thread( () -> modificationBehaviours.getDeleteBehaviour().deleteSelected()).start(), MENU_EDIT_DELETE));
@@ -109,7 +120,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private void makeSelectMenu() {
 		JMenu menu = new JMenu(MENU_SELECT);
 		SelectionBehaviours selectionBehaviours = new SelectionBehaviours();
-		selectionBehaviours.init(model, control);
+		selectionBehaviours.init(model, control, view);
 		menu.add(getMenuItem(e -> new Thread(() -> selectionBehaviours.selectAll()).start(), MENU_SELECT_ALL));
 		menu.add(getMenuItem(e -> new Thread( () -> selectionBehaviours.deselectAll()).start(), MENU_SELECT_NONE));
 		menu.add(getMenuItem(e -> new Thread( () -> selectionBehaviours.invertSelection()).start(), MENU_SELECT_INVERT));

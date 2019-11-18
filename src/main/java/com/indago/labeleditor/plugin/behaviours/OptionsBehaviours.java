@@ -1,32 +1,31 @@
-package com.indago.labeleditor.plugin.behaviours.view;
+package com.indago.labeleditor.plugin.behaviours;
 
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
-import org.scijava.Context;
+import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
+import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.*;
 
-public class ViewBehaviours extends Behaviours implements LabelEditorBehaviours {
-
-	protected LabelEditorModel model;
-	protected LabelEditorController controller;
+public class OptionsBehaviours extends Behaviours implements LabelEditorBehaviours {
 
 	@Parameter
-	Context context;
+	CommandService commandService;
 
-	public ViewBehaviours() {
-		super(new InputTriggerConfig(), "labeleditor-view");
+	protected LabelEditorView view;
+
+	public OptionsBehaviours() {
+		super(new InputTriggerConfig(), "labeleditor-export");
 	}
 
 	@Override
 	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {
-		this.model = model;
-		this.controller = controller;
+		this.view = view;
 	}
 
 	@Override
@@ -34,8 +33,12 @@ public class ViewBehaviours extends Behaviours implements LabelEditorBehaviours 
 
 	}
 
-	public ViewLabels getViewBehaviour() {
-		return new ViewLabels(model);
+	public ClickBehaviour getShowOptionsBehaviour() {
+		return (arg0, arg1) -> showOptions();
+	}
+
+	public void showOptions() {
+		commandService.run(LabelEditorOptionsCommand.class, true, "view", view);
 	}
 
 }

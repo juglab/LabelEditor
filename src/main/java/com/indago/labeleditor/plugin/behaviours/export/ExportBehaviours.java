@@ -4,6 +4,7 @@ import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import ij.ImagePlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
@@ -34,7 +35,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorController controller) {
+	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {
 		this.model = model;
 		this.controller = controller;
 	}

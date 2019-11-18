@@ -2,6 +2,7 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.plugin.behaviours.FocusBehaviours;
 import net.imglib2.roi.labeling.LabelingType;
 
@@ -11,8 +12,8 @@ public class BvvFocusBehaviours<L> extends FocusBehaviours<L> {
 
 	private BvvInterface<L> bvvInterface;
 
-	public void init(LabelEditorModel<L> model, LabelEditorController<L> control, BvvInterface<L> bvvInterface) {
-		super.init(model, control);
+	public void init(LabelEditorModel<L> model, LabelEditorController<L> control, LabelEditorView<L> view, BvvInterface<L> bvvInterface) {
+		super.init(model, control, view);
 		this.bvvInterface = bvvInterface;
 	}
 

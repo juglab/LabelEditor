@@ -4,6 +4,7 @@ import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
@@ -39,7 +40,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	protected static final String SELECT_ALL_LABELS_TRIGGERS = "ctrl A";
 
 	@Override
-	public void init(LabelEditorModel<L> model, LabelEditorController<L> controller) {
+	public void init(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view) {
 		this.model = model;
 		this.controller = controller;
 	}

@@ -14,13 +14,15 @@ public class LabelEditorController<L> {
 		this.view = view;
 		if(interfaceInstance != null) {
 			view.listeners().remove(interfaceInstance::onViewChange);
+			model.tagging().listeners().remove(interfaceInstance::onTagChange);
 		}
 		this.interfaceInstance = interfaceInstance;
 		view.listeners().add(interfaceInstance::onViewChange);
+		model.tagging().listeners().add(interfaceInstance::onTagChange);
 	}
 
 	public void addDefaultBehaviours() {
-		interfaceInstance.installBehaviours(model, this);
+		interfaceInstance.installBehaviours(model, this, view);
 	}
 
 	public void triggerLabelingChange() {
@@ -32,7 +34,7 @@ public class LabelEditorController<L> {
 	}
 
 	public void install(LabelEditorBehaviours behaviour) {
-		behaviour.init(model, this);
+		behaviour.init(model, this, view);
 		behaviour.install(interfaceInstance.behaviours(), interfaceInstance.getComponent());
 	}
 }

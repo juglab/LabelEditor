@@ -4,6 +4,7 @@ import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
+import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.util.Behaviours;
 
@@ -19,7 +20,7 @@ public class FocusBehaviours<L> implements LabelEditorBehaviours<L> {
 	private LabelingType<L> lastLabels = null;
 
 	@Override
-	public void init(LabelEditorModel<L> model, LabelEditorController<L> control) {
+	public void init(LabelEditorModel<L> model, LabelEditorController<L> control, LabelEditorView<L> view) {
 		this.model = model;
 		this.control = control;
 	}

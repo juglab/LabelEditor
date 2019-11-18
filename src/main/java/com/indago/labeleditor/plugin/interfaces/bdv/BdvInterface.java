@@ -7,6 +7,7 @@ import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
+import com.indago.labeleditor.core.model.tagging.TagChangedEvent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
 import com.indago.labeleditor.plugin.behaviours.FocusBehaviours;
@@ -17,17 +18,20 @@ import net.imglib2.Point;
 import net.imglib2.RandomAccess;
 import net.imglib2.RealPoint;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.util.Intervals;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class BdvInterface<L> implements LabelEditorInterface<L> {
 	private final BdvHandlePanel panel;
 	private final List<BdvSource> sources;
 	private final Behaviours behaviours;
-	private final LabelEditorView view;
+	private final LabelEditorView<L> view;
 	private boolean mode3D;
 	private LabelingType<L> labelsAtCursor;
 
@@ -56,12 +60,17 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
 		RandomAccess<LabelingType<L>> ra = model.labels().randomAccess();
 		Localizable pos = getDataPositionAtMouse();
-//		if(Intervals.contains(model.labels(), pos)) {
+		if(Intervals.contains(model.labels(), pos)) {
 			ra.setPosition(pos);
+			if(labelsAtCursor != null && ra.get().getIndex().getInteger() == labelsAtCursor.getIndex().getInteger()) {
+				return labelsAtCursor;
+			}
 			this.labelsAtCursor = ra.get();
+			panel.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
 			return labelsAtCursor;
-//		}
-//		return null;
+		}
+		panel.getViewerPanel().getDisplay().setToolTipText(null);
+		return null;
 	}
 
 	@Override
@@ -84,14 +93,14 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller) {
+	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view) {
 		install(model, controller, new SelectionBehaviours<>());
 		install(model, controller, new FocusBehaviours<>());
 		install(model, controller, new LabelingModificationBehaviours());
 	}
 
 	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {
-		behavioursAdded.init(model, controller);
+		behavioursAdded.init(model, controller, view);
 		behavioursAdded.install(behaviours, panel.getViewerPanel().getDisplay());
 	}
 
@@ -108,5 +117,22 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	@Override
 	public Component getComponent() {
 		return panel.getViewerPanel();
+	}
+
+	@Override
+	public void onTagChange(List<TagChangedEvent> tagChangedEvents) {
+		panel.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
+		showToolTip(panel.getViewerPanel().getDisplay());
+	}
+
+	public static void showToolTip(JComponent component) {
+		java.awt.Point locationOnScreen = MouseInfo.getPointerInfo().getLocation();
+		java.awt.Point locationOnComponent = new java.awt.Point(locationOnScreen);
+		SwingUtilities.convertPointFromScreen(locationOnComponent, component);
+		if (component.contains(locationOnComponent)) {
+			ToolTipManager.sharedInstance().mouseMoved(
+					new MouseEvent(component, -1, System.currentTimeMillis(), 0, locationOnComponent.x, locationOnComponent.y,
+							locationOnScreen.x, locationOnScreen.y, 0, false, 0));
+		}
 	}
 }
