@@ -7,6 +7,7 @@ import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import org.scijava.Context;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -18,6 +19,9 @@ import java.io.IOException;
 @Plugin(type = Command.class, name = "ImgLabeling viewer")
 public class ImgLabelingViewer<L> implements Command {
 
+	@Parameter
+	Context context;
+
 	@Parameter(required = false)
 	ImgPlus data;
 
@@ -27,6 +31,7 @@ public class ImgLabelingViewer<L> implements Command {
 	@Override
 	public void run() {
 		LabelEditorBdvPanel<L> panel = new LabelEditorBdvPanel<>();
+		context.inject(panel);
 		panel.init(labeling, data);
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
