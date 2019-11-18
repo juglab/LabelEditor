@@ -4,8 +4,13 @@ import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
+import net.imglib2.Cursor;
+import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
@@ -52,15 +57,28 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	}
 
 	@Override
-	public void initFromIndexImage(Img indexImg) {
-		init(new ImgLabeling(indexImg));
+	public void initFromIndexImage(Img labelMap) {
+		init(makeLabeling(labelMap));
 	}
 
 	@Override
-	public void initFromIndexImage(Img data, Img indexImg) {
-		init(new ImgLabeling(indexImg), data);
+	public void initFromIndexImage(Img data, Img labelMap) {
+		init(makeLabeling(labelMap), data);
 	}
 
+	private static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(Img<T> labelMap) {
+		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create(labelMap);
+		ImgLabeling<IntType, IntType> labeling = new ImgLabeling<>(backing);
+		Cursor<T> cursor = labelMap.localizingCursor();
+		RandomAccess<LabelingType<IntType>> ra = labeling.randomAccess();
+		while(cursor.hasNext()) {
+			int val = cursor.next().getInteger();
+			if(val == 0) continue;
+			ra.setPosition(cursor);
+			ra.get().add(new IntType(val));
+		}
+		return labeling;
+	}
 
 	@Override
 	public void init(LabelEditorModel<L> model) {

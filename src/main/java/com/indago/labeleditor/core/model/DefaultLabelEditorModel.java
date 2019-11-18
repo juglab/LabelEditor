@@ -7,9 +7,12 @@ import com.indago.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTagging;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
+import net.imglib2.Cursor;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelRegion;
+import net.imglib2.roi.labeling.LabelRegions;
+import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
@@ -18,8 +21,11 @@ import net.imglib2.view.Views;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
@@ -82,7 +88,6 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private void initLabelOrdering(ImgLabeling<L, IntType> labeling) {
 		labelComparator = this::compareLabels;
-		//TODO calculating the regions should not be done in the core, but in an addon. By default, the sorting does not need to make sense.
 //		LabelRegions<L> regions = new LabelRegions<>(labeling);
 //		List<LabelRegion<L>> regionSet = new ArrayList<>();
 //		labeling.forEach(labels -> labels.stream().map(regions::getLabelRegion).forEach(labelRegion -> {
@@ -169,40 +174,28 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		return options;
 	}
 
-//	public Map<L, LabelRegion <L> > labelRegions() {
-//		return orderedLabels;
-//	}
-
-
 	@Override
 	public String toString() {
-		StringBuilder str = new StringBuilder();
+		StringBuilder res = new StringBuilder();
 		if(getData() == null) {
-			str.append("\t")
-					.append(".. no dataset")
-					.append("\n");
+			res.append("\t.. no dataset");
 		}else {
-			str.append("\t")
-					.append(".. dataset ")
+			res.append("\t.. dataset ")
 					.append(Arrays.toString(Intervals.dimensionsAsIntArray(getData())))
-					.append(" ")
-					.append(getData().firstElement().getClass())
-					.append("\n");
+					.append(" of type ").append(getData().firstElement().getClass().getName());
 		}
-		str.append("\t")
-				.append(".. labeling ")
-				.append(labels())
-				.append("\n");
-		str.append("\t")
-				.append(".. label sets: ")
-				.append(labels().getMapping().numSets())
-				.append("\n");
-		str.append("\t").append(".. labels: ")
-				.append(labels().getMapping().getLabels().size())
-				.append("\n");
-		str.append("\t").append(".. tags: ")
-				.append(tagging().getAllTags().size())
-				.append("\n");
-		return str.toString();
+		res.append("\n\t.. labeling ")
+				.append(Arrays.toString(Intervals.dimensionsAsIntArray(labels())))
+				.append(" of type ").append(getLabelClass().getName());
+		res.append("\n\t.. label sets: ").append(labels().getMapping().numSets());
+		res.append("\n\t.. labels: ").append(labels().getMapping().getLabels().size());
+		res.append("\n\t.. tags: ").append(tagging().getAllTags().size()).append("\n");
+		return res.toString();
 	}
+
+	private Class<?> getLabelClass() {
+		Iterator<L> iterator = labels().getMapping().getLabels().iterator();
+		return iterator.hasNext() ? iterator.next().getClass() : Object.class;
+	}
+
 }

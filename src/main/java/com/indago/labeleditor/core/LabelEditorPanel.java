@@ -5,6 +5,7 @@ import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.Disposable;
 
@@ -20,9 +21,9 @@ public interface LabelEditorPanel<L> extends Disposable {
 
 	void init(LabelEditorModel<L> model);
 
-	void initFromIndexImage(Img indexImg);
+	<T extends IntegerType<T>> void initFromIndexImage(Img<T> indexImg);
 
-	void initFromIndexImage(Img data, Img indexImg);
+	<T extends IntegerType<T>> void initFromIndexImage(Img data, Img<T> indexImg);
 
 	LabelEditorView<L> view();
 

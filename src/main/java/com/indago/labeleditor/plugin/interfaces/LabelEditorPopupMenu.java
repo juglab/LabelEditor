@@ -29,6 +29,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private static final String MENU_VIEW = "View";
 	private static final String MENU_EDIT = "Edit";
 	private static final String MENU_SELECT = "Select";
+	private static final String MENU_EXPORT_LABELMAP = "Export label map";
 	private static final String MENU_EXPORT_INDEXIMG = "Export index image";
 	private static final String MENU_EXPORT_SOURCE = "Export source image";
 	private static final String MENU_EXPORT_RENDERERS = "Renderers";
@@ -58,6 +59,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 			exportBehaviours.init(model, control);
 			context.inject(exportBehaviours);
 			JMenu menu = new JMenu(MENU_EXPORT);
+			menu.add(getMenuItem(e -> new Thread(exportBehaviours::showLabelMap).start(), MENU_EXPORT_LABELMAP));
 			menu.add(getMenuItem(e -> new Thread(exportBehaviours::showIndexImg).start(), MENU_EXPORT_INDEXIMG));
 			menu.add(getMenuItem(e -> new Thread(exportBehaviours::showData).start(), MENU_EXPORT_SOURCE));
 			if (view.renderers().size() > 0) {

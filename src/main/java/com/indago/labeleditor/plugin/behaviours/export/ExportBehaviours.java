@@ -6,7 +6,11 @@ import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import ij.ImagePlus;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.converter.Converter;
+import net.imglib2.converter.Converters;
 import net.imglib2.img.display.imagej.ImageJFunctions;
+import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.ClickBehaviour;
@@ -14,6 +18,8 @@ import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExportBehaviours extends Behaviours implements LabelEditorBehaviours {
 
@@ -42,6 +48,10 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 		return (arg0, arg1) -> showIndexImg();
 	}
 
+	public ClickBehaviour getExportLabelMapBehaviour() {
+		return (arg0, arg1) -> showLabelMap();
+	}
+
 	public ClickBehaviour getExportSourceImgBehaviour() {
 		return (arg0, arg1) -> showData();
 	}
@@ -52,6 +62,24 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 
 	public void showIndexImg() {
 		show(model.labels().getIndexImg());
+	}
+
+	public void showLabelMap() {
+		show(getLabelMap());
+	}
+
+	public RandomAccessibleInterval<IntType> getLabelMap() {
+		RandomAccessibleInterval<LabelingType<IntType>> labeling = model.labels();
+		Converter<LabelingType<IntType>, IntType> converter = (i, o) -> {
+			if(i.size() == 0) {
+				o.setZero();
+				return;
+			}
+			List<IntType> sortedLabels = new ArrayList<>(i);
+			sortedLabels.sort(model.getLabelComparator());
+			o.set(sortedLabels.get(0));
+		};
+		return Converters.convert(labeling, converter, new IntType());
 	}
 
 	public ImagePlus showRenderer(LabelEditorRenderer renderer) {

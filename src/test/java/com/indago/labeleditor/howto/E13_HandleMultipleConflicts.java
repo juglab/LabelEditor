@@ -7,6 +7,7 @@ import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.behaviours.select.ConflictSelectionBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
+import net.imagej.ImageJ;
 import net.imglib2.RandomAccess;
 import net.imglib2.algorithm.region.hypersphere.HyperSphere;
 import net.imglib2.img.array.ArrayImg;
@@ -16,9 +17,6 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,6 +27,9 @@ import java.awt.*;
 public class E13_HandleMultipleConflicts {
 
 	public void run() {
+
+		ImageJ ij = new ImageJ();
+		ij.launch();
 
 		String LABEL1 = "label1";
 		String LABEL2 = "label2";
@@ -55,7 +56,6 @@ public class E13_HandleMultipleConflicts {
 		drawSphere(labels, new long[]{270, 400}, radius, LABEL6);
 		drawSphere(labels, new long[]{300, 400}, radius, LABEL7);
 		drawSphere(labels, new long[]{300, 370}, radius, LABEL8);
-
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
 		model.init(labels);
 
@@ -67,6 +67,7 @@ public class E13_HandleMultipleConflicts {
 //		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(50,50,50,100));
 
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
+		ij.context().inject(panel);
 		panel.init(model);
 		panel.control().install(new ConflictSelectionBehaviours<>());
 		JFrame frame = new JFrame("Label editor");
