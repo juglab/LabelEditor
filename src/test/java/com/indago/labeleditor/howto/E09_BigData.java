@@ -60,8 +60,8 @@ public class E09_BigData {
 		model.tagging().addTag(LABEL1, TAG1);
 		model.tagging().addTag(LABEL2, TAG2);
 
-		model.colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 255, 255, 255));
-		model.colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 255, 255));
+		model.colors().setFaceColor(TAG1,0, 255, 255, 255);
+		model.colors().setFaceColor(TAG2,255, 0, 255, 255);
 
 		model.setData(backing);
 

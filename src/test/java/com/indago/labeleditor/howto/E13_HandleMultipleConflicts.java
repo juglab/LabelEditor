@@ -61,10 +61,10 @@ public class E13_HandleMultipleConflicts {
 
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL2);
 		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL7);
-		model.colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
-		model.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
-		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,255,100));
-//		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(50,50,50,100));
+
+		model.colors().setSelectedBorderColor(0,255,255,100);
+		model.colors().setDefaultFaceColor(0,0,0,0);
+		model.colors().setDefaultBorderColor(0,255,255,100);
 
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
 		ij.context().inject(panel);

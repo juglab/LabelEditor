@@ -1,8 +1,6 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import com.indago.labeleditor.plugin.renderers.BorderLabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorView;
@@ -11,11 +9,7 @@ import net.imagej.ImgPlus;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,9 +36,9 @@ public class E12_ShowBorder {
 		};
 		panel.init(labeling, new ImgPlus<IntType>(input));
 
-		panel.model().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,0,255,255));
-		panel.model().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(0,255,0,255));
-		panel.model().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(255,0,0,255));
+		panel.model().colors().setDefaultBorderColor(0,0,255,255);
+		panel.model().colors().setMouseOverBorderColor(0,255,0,255);
+		panel.model().colors().setSelectedBorderColor(255,0,0,255);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));

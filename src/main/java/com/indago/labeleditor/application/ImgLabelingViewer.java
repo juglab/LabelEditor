@@ -42,7 +42,7 @@ public class ImgLabelingViewer<L> implements Command {
 
 	public static void main(String... args) throws IOException {
 		ImageJ ij = new ImageJ();
-		Img input = (Img) ij.io().open("https://samples.fiji.sc/blobs.png");
+		Img input = (Img) ij.io().open(ImgLabelingViewer.class.getResource("/blobs.png").getPath());
 		Img<IntType> threshold = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(threshold, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 		ij.command().run(ImgLabelingViewer.class, true, "data", input, "labeling", labeling);

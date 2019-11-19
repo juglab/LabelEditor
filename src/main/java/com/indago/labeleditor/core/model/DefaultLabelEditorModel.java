@@ -32,10 +32,28 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private List<Object> orderedTags = new ArrayList<>();
 
 	private final LabelEditorTagColors tagColors = new LabelEditorTagColors();
-	private static int colorMouseOver = ARGBType.rgba(200,200,200,200);
-	private static int colorSelected = ARGBType.rgba(0,100,255,200);
-	private static int colorDefault = ARGBType.rgba(255,255,255,100);
+
+	private static int faceMouseOver = ARGBType.rgba(200,200,200,200);
+	private static int borderMouseOver = ARGBType.rgba(200,200,200,200);
+	private static int faceSelected = ARGBType.rgba(0,100,255,200);
+	private static int borderSelected = ARGBType.rgba(0,80,225,200);
+	private static int faceDefault = ARGBType.rgba(255,255,255,100);
+	private static int borderDefault = ARGBType.rgba(255,255,255,100);
+
 	private int timeDimension = -1;
+
+	public DefaultLabelEditorModel() {
+		addDefaultColorsets();
+	}
+
+	protected void addDefaultColorsets() {
+		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, faceDefault);
+		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, borderDefault);
+		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, faceSelected);
+		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, borderSelected);
+		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, faceMouseOver);
+		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, borderMouseOver);
+	}
 
 	@Override
 	public ImgLabeling<L, IntType> labels() {
@@ -65,17 +83,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 			initLabelOrdering(labeling);
 			initTagOrdering();
 			tagLabelRelation = new DefaultLabelEditorTagging<L>();
-			addDefaultColorsets();
 		}
-	}
-
-	protected void addDefaultColorsets() {
-		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, colorDefault);
-		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, colorSelected);
-		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, colorMouseOver);
-		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, colorDefault);
-		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, colorSelected);
-		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, colorMouseOver);
 	}
 
 	private void initLabelOrdering(ImgLabeling<L, IntType> labeling) {

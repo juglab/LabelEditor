@@ -25,7 +25,7 @@ public class E15_OpenLabelMap {
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
 		ij.context().inject(panel);
 		panel.initFromIndexImage(input);
-		panel.model().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,255,10));
+		panel.model().colors().setDefaultFaceColor(255,255,255,10);
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

@@ -49,7 +49,7 @@ public class E04_Open3DLabelingBVV {
 		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>();
 		ij.context().inject(panel);
 		panel.init(model);
-		panel.model().colors().get("displayed").put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,155));
+		panel.model().colors().setFaceColor("displayed",255,255,0,155);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());

@@ -1,18 +1,12 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,13 +36,13 @@ public class E07_CustomTags {
 			panel.model().tagging().addTag(label, label);
 //				int brightness = random.nextInt(155);
 //				panel.view().colors().get(label).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(brightness, brightness, brightness, 255));
-			panel.model().colors().get(label).put(LabelEditorTargetComponent.BORDER, ARGBType.rgba(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155));
+			panel.model().colors().setBorderColor(label, random.nextInt(255), random.nextInt(255), random.nextInt(255), 155);
 
 		}
 		panel.model().tagging().resumeListeners();
 		panel.model().colors().resumeListeners();
-		panel.model().colors().get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,255));
-		panel.model().colors().get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,255));
+		panel.model().colors().setMouseOverFaceColor(255,255,0,25);
+		panel.model().colors().setSelectedFaceColor(0,255,255,255);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
