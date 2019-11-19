@@ -111,7 +111,11 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	private int compareLabels(L label1, L label2) {
-		return 0;
+		boolean label1Selected = tagging().getTags(label1).contains(LabelEditorTag.SELECTED);
+		boolean label2Selected = tagging().getTags(label2).contains(LabelEditorTag.SELECTED);
+		if(label1Selected && !label2Selected) return 1;
+		if(!label1Selected && label2Selected) return -1;
+		else return 0;
 //		for (Map.Entry<L, LabelRegion<L>> entry : orderedLabels.entrySet()) {
 //			if(entry.getKey().equals(label1)) return 1;
 //			if(entry.getKey().equals(label2)) return -1;
