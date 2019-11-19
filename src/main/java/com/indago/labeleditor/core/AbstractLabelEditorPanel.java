@@ -100,6 +100,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	protected void buildPanel() {
 		if(panelBuilt) return;
 		panelBuilt = true;
+		setMinimumSize(new Dimension(100, 100));
+		setPreferredSize(new Dimension(500, 500));
 		setLayout( new MigLayout("fill") );
 		this.add( buildInterface(), "span, grow, push" );
 	}
