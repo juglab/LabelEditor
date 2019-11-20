@@ -1,18 +1,15 @@
 package com.indago.labeleditor.application;
 
-import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.integer.IntType;
+import org.scijava.ItemIO;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 
 @Plugin(type = Command.class, name = "Watershed viewer")
@@ -20,6 +17,9 @@ public class WatershedViewer<L> implements Command {
 
 	@Parameter
 	ImgPlus data;
+
+	@Parameter(type = ItemIO.OUTPUT)
+	ImgLabeling labeling;
 
 	@Parameter(description = "CCA structuring element", choices = {"four-connected", "eight-connected"})
 	String structuringElementChoice;
@@ -30,15 +30,7 @@ public class WatershedViewer<L> implements Command {
 	@Override
 	public void run() {
 		boolean eightConnected = structuringElementChoice.equals("eight-connected");
-		ImgLabeling<Integer, IntType> labeling = opService.image().watershed(data, eightConnected, false);
-
-		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
-		panel.init(labeling, data);
-		JFrame frame = new JFrame();
-		frame.setContentPane(panel.get());
-		frame.setMinimumSize(new Dimension(500,500));
-		frame.pack();
-		frame.setVisible(true);
+		labeling = opService.image().watershed(data, eightConnected, false);
 	}
 
 	public static void main(String... args) throws IOException {

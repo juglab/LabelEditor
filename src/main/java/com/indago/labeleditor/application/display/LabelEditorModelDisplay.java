@@ -12,11 +12,4 @@ public class LabelEditorModelDisplay extends AbstractDisplay<LabelEditorModel> {
 		super(LabelEditorModel.class);
 	}
 
-	// --- Optionally it's possible to filter:
-
-	//	@Override
-	//	public boolean canDisplay( Object o )
-	//	{
-	//		return o instanceof Bird;
-	//	}
 }
