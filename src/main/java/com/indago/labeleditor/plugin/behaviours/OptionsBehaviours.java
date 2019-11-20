@@ -20,7 +20,7 @@ public class OptionsBehaviours extends Behaviours implements LabelEditorBehaviou
 	protected LabelEditorView view;
 
 	public OptionsBehaviours() {
-		super(new InputTriggerConfig(), "labeleditor-export");
+		super(new InputTriggerConfig(), "labeleditor-options");
 	}
 
 	@Override

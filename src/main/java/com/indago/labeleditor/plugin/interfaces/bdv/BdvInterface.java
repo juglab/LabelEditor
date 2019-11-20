@@ -11,6 +11,7 @@ import com.indago.labeleditor.core.model.tagging.TagChangedEvent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.view.ViewChangedEvent;
 import com.indago.labeleditor.plugin.behaviours.FocusBehaviours;
+import com.indago.labeleditor.plugin.behaviours.PopupBehaviours;
 import com.indago.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
 import com.indago.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 import net.imglib2.Localizable;
@@ -97,6 +98,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		install(model, controller, new SelectionBehaviours<>());
 		install(model, controller, new FocusBehaviours<>());
 		install(model, controller, new LabelingModificationBehaviours());
+		install(model, controller, new PopupBehaviours());
 	}
 
 	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {

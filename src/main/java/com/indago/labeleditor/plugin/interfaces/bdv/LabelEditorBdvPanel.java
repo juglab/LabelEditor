@@ -70,19 +70,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void addBehaviours(LabelEditorController<L> controller) {
 		controller.addDefaultBehaviours();
-		getInterfaceHandle().getViewerPanel().getDisplay().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				super.mousePressed(e);
-				if (e.isPopupTrigger()) {
-					LabelEditorPopupMenu menu = new LabelEditorPopupMenu(model(), control(), view());
-					if(context() != null) context().inject(menu);
-					menu.populate();
-					menu.show(e.getComponent(), e.getX(), e.getY());
-				}
-			}
-
-		});
 	}
 
 	@Override
