@@ -20,9 +20,7 @@ import org.scijava.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Plugin(type = LabelEditorRenderer.class, name = "labels", priority = 2)
@@ -137,12 +135,12 @@ public class DefaultLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 				RealType value = ((LabelEditorValueTag) tag).getValue();
 				color = ((LabelEditorValueColor)targetColor).getColor(value);
 			} else {
-				color = targetColor.getColor();
+				color = targetColor.get();
 			}
 		} else {
 			LabelEditorColorset colorset = tagColors.get(tag);
 			if(colorset != null && colorset.containsKey(targetComponent)) {
-				color = colorset.get(targetComponent).getColor();
+				color = colorset.get(targetComponent).get();
 			}
 		}
 		return color;

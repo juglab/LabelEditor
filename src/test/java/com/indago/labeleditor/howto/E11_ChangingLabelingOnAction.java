@@ -55,8 +55,7 @@ public class E11_ChangingLabelingOnAction {
 
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
 		model.init(labeling, input);
-		model.labels().getMapping().getLabels().forEach(label -> model.tagging().addTag("displayed", label));
-		model.colors().setFaceColor("displayed",0,255,255,155);
+		model.colors().getDefaultFaceColor().set(0,255,255);
 
 		// build LabelEditorPanel
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();

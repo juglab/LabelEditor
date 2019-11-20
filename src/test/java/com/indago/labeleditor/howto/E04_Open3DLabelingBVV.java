@@ -42,14 +42,10 @@ public class E04_Open3DLabelingBVV {
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
 		model.init(labeling);
 
-		model.labels().getMapping().getLabels().forEach(label -> {
-			model.tagging().addTag("displayed", label);
-		});
-
 		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>();
 		ij.context().inject(panel);
 		panel.init(model);
-		panel.model().colors().setFaceColor("displayed",255,255,0,155);
+		panel.model().colors().getDefaultFaceColor().set(255,255,0,155);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());

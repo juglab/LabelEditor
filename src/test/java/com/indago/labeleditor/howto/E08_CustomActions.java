@@ -66,9 +66,9 @@ public class E08_CustomActions {
 		//set custom colors for tags set in the MouseAdapter
 		model.colors().remove(LabelEditorTag.SELECTED);
 		model.colors().remove(LabelEditorTag.MOUSE_OVER);
-		model.colors().setFaceColor("yes",155, 155, 0, 255);
-		model.colors().setFaceColor("no",0, 155, 255, 255);
-		model.colors().setFaceColor("special",255, 0, 0, 255);
+		model.colors().getFaceColor("yes").set(155, 155, 0, 255);
+		model.colors().getFaceColor("no").set(0, 155, 255, 255);
+		model.colors().getFaceColor("special").set(255, 0, 0, 255);
 
 		model.setData(input);
 

@@ -36,9 +36,9 @@ public class E12_ShowBorder {
 		};
 		panel.init(labeling, new ImgPlus<IntType>(input));
 
-		panel.model().colors().setDefaultBorderColor(0,0,255,255);
-		panel.model().colors().setMouseOverBorderColor(0,255,0,255);
-		panel.model().colors().setSelectedBorderColor(255,0,0,255);
+		panel.model().colors().getDefaultBorderColor().set(0,0,255);
+		panel.model().colors().getFocusBorderColor().set(0,255,0);
+		panel.model().colors().getSelectedBorderColor().set(255,0,0);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));

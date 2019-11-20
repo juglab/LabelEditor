@@ -47,12 +47,12 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	protected void addDefaultColorsets() {
-		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, faceDefault);
-		tagColors.get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.BORDER, borderDefault);
-		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.FACE, faceSelected);
-		tagColors.get(LabelEditorTag.SELECTED).put(LabelEditorTargetComponent.BORDER, borderSelected);
-		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.FACE, faceMouseOver);
-		tagColors.get(LabelEditorTag.MOUSE_OVER).put(LabelEditorTargetComponent.BORDER, borderMouseOver);
+		tagColors.getDefaultFaceColor().set(faceDefault);
+		tagColors.getDefaultBorderColor().set(borderDefault);
+		tagColors.getSelectedFaceColor().set(faceSelected);
+		tagColors.getSelectedBorderColor().set(borderSelected);
+		tagColors.getFocusFaceColor().set(faceMouseOver);
+		tagColors.getFocusBorderColor().set(borderMouseOver);
 	}
 
 	@Override
@@ -88,14 +88,6 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private void initLabelOrdering(ImgLabeling<L, IntType> labeling) {
 		labelComparator = this::compareLabels;
-//		LabelRegions<L> regions = new LabelRegions<>(labeling);
-//		List<LabelRegion<L>> regionSet = new ArrayList<>();
-//		labeling.forEach(labels -> labels.stream().map(regions::getLabelRegion).forEach(labelRegion -> {
-//			if (!regionSet.contains(labelRegion)) regionSet.add(labelRegion);
-//		}));
-//		regionSet.sort((r1, r2) -> (int)(r1.size() - r2.size()));
-//		orderedLabels = new LinkedHashMap<>();
-//		regionSet.forEach(region -> orderedLabels.put(region.getLabel(), region));
 	}
 
 	void initTagOrdering() {
@@ -116,11 +108,6 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		if(label1Selected && !label2Selected) return 1;
 		if(!label1Selected && label2Selected) return -1;
 		else return 0;
-//		for (Map.Entry<L, LabelRegion<L>> entry : orderedLabels.entrySet()) {
-//			if(entry.getKey().equals(label1)) return 1;
-//			if(entry.getKey().equals(label2)) return -1;
-//		}
-//		return 0;
 	}
 
 	int compareTags(Object tag1, Object tag2) {

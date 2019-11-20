@@ -45,10 +45,7 @@ public class E06_AddToExistingBVV {
 
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
 		model.init(labeling);
-		model.labels().getMapping().getLabels().forEach(label -> {
-			model.tagging().addTag("displayed", label);
-		});
-		model.colors().setFaceColor("displayed",255,255,0,55);
+		model.colors().getDefaultFaceColor().set(255,255,0,55);
 
 		LabelEditorView<Integer> view = new LabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();

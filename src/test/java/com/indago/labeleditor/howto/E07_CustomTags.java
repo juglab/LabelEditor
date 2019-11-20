@@ -36,13 +36,13 @@ public class E07_CustomTags {
 			panel.model().tagging().addTag(label, label);
 //				int brightness = random.nextInt(155);
 //				panel.view().colors().get(label).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(brightness, brightness, brightness, 255));
-			panel.model().colors().setBorderColor(label, random.nextInt(255), random.nextInt(255), random.nextInt(255), 155);
+			panel.model().colors().getBorderColor(label).set(random.nextInt(255), random.nextInt(255), random.nextInt(255), 155);
 
 		}
 		panel.model().tagging().resumeListeners();
 		panel.model().colors().resumeListeners();
-		panel.model().colors().setMouseOverFaceColor(255,255,0,25);
-		panel.model().colors().setSelectedFaceColor(0,255,255,255);
+		panel.model().colors().getFocusFaceColor().set(255,255,0,25);
+		panel.model().colors().getSelectedFaceColor().set(0,255,255,255);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());

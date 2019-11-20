@@ -60,8 +60,8 @@ public class E02_Open2DTimeframes {
 
 		model.setTimeDimension(2);
 
-		model.colors().setBorderColor(TAG1,0,255,255,100);
-		model.colors().setBorderColor(TAG2,255,0,255,100);
+		model.colors().getBorderColor(TAG1).set(0,255,255,100);
+		model.colors().getBorderColor(TAG2).set(255,0,255,100);
 
 		LabelEditorPanel<String> panel = new LabelEditorBdvPanel<>();
 		ij.context().inject(panel);

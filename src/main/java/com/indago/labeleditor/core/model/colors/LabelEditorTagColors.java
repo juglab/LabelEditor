@@ -2,7 +2,6 @@ package com.indago.labeleditor.core.model.colors;
 
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import net.imglib2.type.numeric.ARGBType;
 import org.scijava.listeners.Listeners;
 
 import java.util.HashMap;
@@ -40,35 +39,35 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 
 	// convenience methods
 
-	public void setFaceColor(Object tag, int r, int g, int b, int a) {
-		get(tag).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(r, g, b, a));
+	public LabelEditorColor getFaceColor(Object tag) {
+		return get(tag).get(LabelEditorTargetComponent.FACE);
 	}
 
-	public void setBorderColor(Object tag, int r, int g, int b, int a) {
-		get(tag).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(r, g, b, a));
+	public LabelEditorColor getBorderColor(Object tag) {
+		return get(tag).get(LabelEditorTargetComponent.BORDER);
 	}
 
-	public void setMouseOverFaceColor(int r, int g, int b, int a) {
-		setFaceColor(LabelEditorTag.MOUSE_OVER, r, g, b, a);
+	public LabelEditorColor getFocusFaceColor() {
+		return getFaceColor(LabelEditorTag.MOUSE_OVER);
 	}
 
-	public void setSelectedFaceColor(int r, int g, int b, int a) {
-		setFaceColor(LabelEditorTag.SELECTED, r, g, b, a);
+	public LabelEditorColor getSelectedFaceColor() {
+		return getFaceColor(LabelEditorTag.SELECTED);
 	}
 
-	public void setDefaultFaceColor(int r, int g, int b, int a) {
-		setFaceColor(LabelEditorTag.DEFAULT, r, g, b, a);
+	public LabelEditorColor getDefaultFaceColor() {
+		return getFaceColor(LabelEditorTag.DEFAULT);
 	}
 
-	public void setMouseOverBorderColor(int r, int g, int b, int a) {
-		setBorderColor(LabelEditorTag.MOUSE_OVER, r, g, b, a);
+	public LabelEditorColor getFocusBorderColor() {
+		return getBorderColor(LabelEditorTag.MOUSE_OVER);
 	}
 
-	public void setSelectedBorderColor(int r, int g, int b, int a) {
-		setBorderColor(LabelEditorTag.SELECTED, r, g, b, a);
+	public LabelEditorColor getSelectedBorderColor() {
+		return getBorderColor(LabelEditorTag.SELECTED);
 	}
 
-	public void setDefaultBorderColor(int r, int g, int b, int a) {
-		setBorderColor(LabelEditorTag.DEFAULT, r, g, b, a);
+	public LabelEditorColor getDefaultBorderColor() {
+		return getBorderColor(LabelEditorTag.DEFAULT);
 	}
 }
