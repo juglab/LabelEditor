@@ -4,9 +4,6 @@ import bdv.util.VirtualChannels;
 import net.imglib2.type.numeric.RealType;
 
 import java.util.HashMap;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class LabelEditorColorset extends HashMap<Object, LabelEditorColor> implements VirtualChannels.VirtualChannel {
 
@@ -58,6 +55,11 @@ public class LabelEditorColorset extends HashMap<Object, LabelEditorColor> imple
 		boolean remove = super.remove(o, o1);
 		update();
 		return remove;
+	}
+
+	@Override
+	public LabelEditorColor get(Object o) {
+		return computeIfAbsent(o, k -> new LabelEditorColor(0));
 	}
 
 }
