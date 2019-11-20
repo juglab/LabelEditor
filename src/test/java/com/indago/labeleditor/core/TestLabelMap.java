@@ -7,7 +7,6 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.type.numeric.integer.UnsignedShortType;
 import net.imglib2.view.Views;
@@ -27,7 +26,7 @@ public class TestLabelMap {
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
 		panel.initFromIndexImage(input);
 		assertNotNull(panel.model());
-		assertNotNull(panel.model().labels());
+		assertNotNull(panel.model().labeling());
 		ExportBehaviours exportBehaviours = new ExportBehaviours();
 		exportBehaviours.init(panel.model(), panel.control(), panel.view());
 		IterableInterval<IntType> labelMap = Views.iterable(exportBehaviours.getLabelMap());

@@ -36,6 +36,41 @@ public class TestDefaultLabelEditorModel {
 		model.tagging().removeTag(LabelEditorTag.SELECTED, LABEL1);
 		assertEquals(0, model.tagging().getTags(LABEL1).size());
 
+		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL1);
+		model.tagging().addTag(LabelEditorTag.FOCUS, LABEL1);
+
+	}
+
+	@Test
+	public void testLabelComparator() {
+		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( 10, 10 );
+		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
+		String LABEL1 = "label1";
+		String LABEL2 = "label2";
+		String LABEL3 = "label3";
+		String LABEL4 = "label4";
+		labels.firstElement().add(LABEL1);
+		labels.firstElement().add(LABEL2);
+		labels.firstElement().add(LABEL3);
+		labels.firstElement().add(LABEL4);
+
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		model.init(labels);
+
+		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL1);
+		model.tagging().addTag(LabelEditorTag.FOCUS, LABEL2);
+		model.tagging().addTag("mytag", LABEL3);
+
+		List<String> sortedLabels = new ArrayList<>(model.labeling().getMapping().getLabels());
+		sortedLabels.sort(model::compareLabels);
+
+		System.out.println(sortedLabels);
+
+		assertEquals(LABEL2, sortedLabels.get(0));
+		assertEquals(LABEL1, sortedLabels.get(1));
+		assertEquals(LABEL3, sortedLabels.get(2));
+		assertEquals(LABEL4, sortedLabels.get(3));
+
 	}
 
 	@Test
@@ -43,17 +78,17 @@ public class TestDefaultLabelEditorModel {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
 		model.initTagOrdering();
 		Set<Object> tags = new HashSet<>();
+		tags.add(LabelEditorTag.FOCUS);
 		tags.add(LabelEditorTag.SELECTED);
-		tags.add(LabelEditorTag.MOUSE_OVER);
 		tags.add("a");
 		tags.add("b");
 		List<Object> sortedTags = new ArrayList<>(tags);
 		sortedTags.sort(model::compareTags);
 		System.out.println(sortedTags);
-		assertEquals("a", sortedTags.get(0));
-		assertEquals("b", sortedTags.get(1));
-		assertEquals(LabelEditorTag.MOUSE_OVER, sortedTags.get(2));
-		assertEquals(LabelEditorTag.SELECTED, sortedTags.get(3));
+		assertEquals(LabelEditorTag.FOCUS, sortedTags.get(0));
+		assertEquals(LabelEditorTag.SELECTED, sortedTags.get(1));
+		assertEquals("a", sortedTags.get(2));
+		assertEquals("b", sortedTags.get(3));
 
 	}
 

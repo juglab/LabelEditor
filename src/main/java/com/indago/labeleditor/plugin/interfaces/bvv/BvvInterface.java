@@ -2,6 +2,7 @@ package com.indago.labeleditor.plugin.interfaces.bvv;
 
 import bvv.util.BvvHandle;
 import bvv.util.BvvStackSource;
+import com.indago.labeleditor.core.controller.DefaultLabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
@@ -41,7 +42,7 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	public static <L> LabelEditorController<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BvvHandle bvvHandle, List<BvvStackSource> sources) {
-		LabelEditorController<L> actionHandler = new LabelEditorController<>();
+		LabelEditorController<L> actionHandler = new DefaultLabelEditorController<>();
 		actionHandler.init(model, view, new BvvInterface<L>(bvvHandle, sources));
 		actionHandler.addDefaultBehaviours();
 		return actionHandler;
@@ -95,7 +96,7 @@ public class BvvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	private LabelingType<L> getLabelsAtPosition(Localizable pos, LabelEditorModel<L> model) {
-		RandomAccess<LabelingType<L>> ra = model.labels().randomAccess();
+		RandomAccess<LabelingType<L>> ra = model.labeling().randomAccess();
 		ra.setPosition(pos);
 		return ra.get();
 	}

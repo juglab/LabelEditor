@@ -1,16 +1,12 @@
 package com.indago.labeleditor.core;
 
+import com.indago.labeleditor.core.controller.DefaultLabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import net.imglib2.Cursor;
-import net.imglib2.RandomAccess;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
@@ -26,8 +22,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	private boolean panelBuilt = false;
 
-	private LabelEditorController<L> controller;
 	private LabelEditorModel<L> model;
+	private LabelEditorController<L> controller = new DefaultLabelEditorController<>();
 	private LabelEditorView<L> view = new LabelEditorView<>();
 
 	public AbstractLabelEditorPanel() {
@@ -57,40 +53,30 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	@Override
 	public void initFromIndexImage(Img labelMap) {
-		init(makeLabeling(labelMap));
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>();
+		model.initFromIndexImage(labelMap);
+		init(model);
 	}
 
 	@Override
 	public void initFromIndexImage(Img data, Img labelMap) {
-		init(makeLabeling(labelMap), data);
-	}
-
-	private static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(Img<T> labelMap) {
-		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create(labelMap);
-		ImgLabeling<IntType, IntType> labeling = new ImgLabeling<>(backing);
-		Cursor<T> cursor = labelMap.localizingCursor();
-		RandomAccess<LabelingType<IntType>> ra = labeling.randomAccess();
-		while(cursor.hasNext()) {
-			int val = cursor.next().getInteger();
-			if(val == 0) continue;
-			ra.setPosition(cursor);
-			ra.get().add(new IntType(val));
-		}
-		return labeling;
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>();
+		model.initFromIndexImage(labelMap);
+		model.setData(data);
+		init(model);
 	}
 
 	@Override
 	public void init(LabelEditorModel<L> model) {
 		this.model = model;
-		if(model.labels() != null) {
-			view.init(model);
-			addRenderings(view);
-			controller = new LabelEditorController<>();
+		if(model.labeling() != null) {
+			view().init(model);
+			addRenderings(view());
 		}
 		buildPanel();
 		clearInterface();
 		displayData();
-		if(model.labels() != null) {
+		if(model.labeling() != null) {
 			displayLabeling();
 			initController();
 			System.out.println("Created LabelEditor BDV panel:\n" + model.toString());

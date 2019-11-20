@@ -2,39 +2,24 @@ package com.indago.labeleditor.core.controller;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
+import net.imglib2.IterableInterval;
+import net.imglib2.roi.labeling.LabelingType;
 
-public class LabelEditorController<L> {
+import java.util.Set;
 
-	private LabelEditorModel<L> model;
-	private LabelEditorView<L> view;
-	private LabelEditorInterface<L> interfaceInstance;
+public interface LabelEditorController<L> {
 
-	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
-		this.model = model;
-		this.view = view;
-		if(interfaceInstance != null) {
-			view.listeners().remove(interfaceInstance::onViewChange);
-			model.tagging().listeners().remove(interfaceInstance::onTagChange);
-		}
-		this.interfaceInstance = interfaceInstance;
-		view.listeners().add(interfaceInstance::onViewChange);
-		model.tagging().listeners().add(interfaceInstance::onTagChange);
-	}
+	void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance);
 
-	public void addDefaultBehaviours() {
-		interfaceInstance.installBehaviours(model, this, view);
-	}
+	void addDefaultBehaviours();
 
-	public void triggerLabelingChange() {
-		view.updateOnLabelingChange();
-	}
+	void triggerLabelingChange();
 
-	public LabelEditorInterface<L> interfaceInstance() {
-		return interfaceInstance;
-	}
+	LabelEditorInterface<L> interfaceInstance();
 
-	public void install(LabelEditorBehaviours behaviour) {
-		behaviour.init(model, this, view);
-		behaviour.install(interfaceInstance.behaviours(), interfaceInstance.getComponent());
-	}
+	void install(LabelEditorBehaviours behaviour);
+
+	IterableInterval<LabelingType<L>> labelingInScope();
+
+	Set<L> labelSetInScope();
 }

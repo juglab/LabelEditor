@@ -56,35 +56,49 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	private Behaviour getSelectAllBehaviour() {
-		return (ClickBehaviour) (arg0, arg1) -> selectAll();
+		return (ClickBehaviour) (arg0, arg1) -> {
+			model.tagging().pauseListeners();
+			selectAll();
+			model.tagging().resumeListeners();
+		};
 	}
 
 	protected Behaviour getAddFirstLabelToSelectionBehaviour() {
-		return (ClickBehaviour) (arg0, arg1) -> addFirstLabelToSelection(arg0, arg1);
+		return (ClickBehaviour) (arg0, arg1) -> {
+			model.tagging().pauseListeners();
+			addFirstLabelToSelection(arg0, arg1);
+			model.tagging().resumeListeners();
+		};
 	}
 
 	protected Behaviour getSelectFirstLabelBehaviour() {
-		return (ClickBehaviour) (arg0, arg1) -> selectFirstLabel(arg0, arg1);
+		return (ClickBehaviour) (arg0, arg1) -> {
+			model.tagging().pauseListeners();
+			selectFirstLabel(arg0, arg1);
+			model.tagging().resumeListeners();
+		};
 	}
 
 	protected Behaviour getToggleLabelSelectionBehaviour() {
 		return (ScrollBehaviour) (wheelRotation, isHorizontal, x, y) -> {
-			if(!isHorizontal) toggleLabelSelection(wheelRotation > 0, x, y);};
+			if(!isHorizontal) {
+				model.tagging().pauseListeners();
+				toggleLabelSelection(wheelRotation > 0, x, y);
+				model.tagging().resumeListeners();
+			}};
 	}
 
 	public void selectAll() {
-		model.labels().getMapping().getLabels().forEach(this::select);
+		controller.labelSetInScope().forEach(this::select);
 	}
 
 	protected void selectFirstLabel(int x, int y) {
 		LabelingType<L> labels = controller.interfaceInstance().findLabelsAtMousePosition(x, y, model);
-		model.tagging().pauseListeners();
 		if (foundLabels(labels)) {
 			selectFirst(labels);
 		} else {
 			deselectAll();
 		}
-		model.tagging().resumeListeners();
 	}
 
 	private boolean foundLabels(LabelingType<L> labels) {
@@ -93,28 +107,22 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 
 	protected void addFirstLabelToSelection(int x, int y) {
 		LabelingType<L> labels = controller.interfaceInstance().findLabelsAtMousePosition(x, y, model);
-		model.tagging().pauseListeners();
 		if (foundLabels(labels)) {
 			toggleSelectionOfFirst(labels);
 		}
-		model.tagging().resumeListeners();
 	}
 
 	protected void toggleLabelSelection(boolean forwardDirection, int x, int y) {
 		LabelingType<L> labels = controller.interfaceInstance().findLabelsAtMousePosition(x, y, model);
 		if(!foundLabels(labels)) return;
 		if(!anySelected(labels)) {
-			model.tagging().pauseListeners();
 			selectFirst(labels);
-			model.tagging().resumeListeners();
 			return;
 		}
-		model.tagging().pauseListeners();
 		if (forwardDirection)
 			selectNext(labels);
 		else
 			selectPrevious(labels);
-		model.tagging().resumeListeners();
 	}
 
 	protected void selectFirst(LabelingType<L> labels) {
@@ -150,6 +158,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 
 	protected void select(L label) {
 		model.tagging().addTag(LabelEditorTag.SELECTED, label);
+		model.tagging().removeTag(LabelEditorTag.FOCUS, label);
 	}
 
 	protected void selectPrevious(LabelingType<L> labels) {
@@ -181,18 +190,19 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	public void deselectAll() {
-		model.tagging().removeTag(LabelEditorTag.SELECTED);
+		controller.labelSetInScope().forEach(label -> model.tagging().removeTag(LabelEditorTag.SELECTED, label));
 	}
 
 	public void invertSelection() {
-		Set<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
-		Set<L> all = new HashSet(model.labels().getMapping().getLabels());
+		Set<L> all = new HashSet(controller.labelSetInScope());
+		Set<L> selected = model.tagging().filterLabelsWithTag(all, LabelEditorTag.SELECTED);
 		all.removeAll(selected);
 		all.forEach(label -> select(label));
 		selected.forEach(label -> deselect(label));
 	}
 
 	public void selectByTag() {
-		commandService.run(SelectByTagCommand.class, true, "model", model);
+		commandService.run(SelectByTagCommand.class, true,
+				"model", model, "control", controller);
 	}
 }

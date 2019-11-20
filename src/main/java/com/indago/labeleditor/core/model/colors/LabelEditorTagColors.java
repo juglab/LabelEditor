@@ -48,7 +48,7 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 	}
 
 	public LabelEditorColor getFocusFaceColor() {
-		return getFaceColor(LabelEditorTag.MOUSE_OVER);
+		return getFaceColor(LabelEditorTag.FOCUS);
 	}
 
 	public LabelEditorColor getSelectedFaceColor() {
@@ -60,7 +60,7 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 	}
 
 	public LabelEditorColor getFocusBorderColor() {
-		return getBorderColor(LabelEditorTag.MOUSE_OVER);
+		return getBorderColor(LabelEditorTag.FOCUS);
 	}
 
 	public LabelEditorColor getSelectedBorderColor() {

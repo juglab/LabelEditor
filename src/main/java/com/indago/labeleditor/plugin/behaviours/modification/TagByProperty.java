@@ -2,10 +2,8 @@ package com.indago.labeleditor.plugin.behaviours.modification;
 
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
-import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.core.model.tagging.LabelEditorValueTag;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import jdk.nashorn.internal.ir.Labels;
 import net.imagej.ops.OpService;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -28,7 +26,7 @@ public class TagByProperty<L> {
 	}
 
 	public void circularity() {
-		Set<L> labels = model.labels().getMapping().getLabels();
+		Set<L> labels = controller.labelSetInScope();
 		Random random = new Random();
 		labels.forEach(label -> {
 			LabelEditorValueTag circularity = new LabelEditorValueTag<>("circularity", new IntType(random.nextInt(100)));

@@ -62,7 +62,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	public void showIndexImg() {
-		show(model.labels().getIndexImg());
+		show(model.labeling().getIndexImg());
 	}
 
 	public void showLabelMap() {
@@ -70,7 +70,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	public RandomAccessibleInterval<IntType> getLabelMap() {
-		RandomAccessibleInterval<LabelingType<IntType>> labeling = model.labels();
+		RandomAccessibleInterval<LabelingType<IntType>> labeling = model.labeling();
 		Converter<LabelingType<IntType>, IntType> converter = (i, o) -> {
 			if(i.size() == 0) {
 				o.setZero();

@@ -65,16 +65,16 @@ public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 			output = model;
 		}
 		else {
-			ops.copy().imgLabeling(output.labels(), labeling);
+			ops.copy().imgLabeling(output.labeling(), labeling);
 			if(backgroundDarker) {
 				ops.image().invert(output.getData(), data);
 			} else {
 				ops.copy().img(output.getData(), data);
 			}
-			L onlyLabel = output.labels().getMapping().getLabels().iterator().next();
-			SplitLabels.split(onlyLabel, output.labels(), output.getData(), sigma, ops);
+			L onlyLabel = output.labeling().getMapping().getLabels().iterator().next();
+			SplitLabels.split(onlyLabel, output.labeling(), output.getData(), sigma, ops);
 			Random random = new Random();
-			output.labels().getMapping().getLabels().forEach(label -> {
+			output.labeling().getMapping().getLabels().forEach(label -> {
 				output.tagging().addTag(label, label);
 				output.colors().get(label).put(LabelEditorTargetComponent.FACE, randomColor(random));
 			});

@@ -1,4 +1,4 @@
-package com.indago.labeleditor.plugin.renderers;
+package com.indago.labeleditor.plugin.mode.timeslice;
 
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
@@ -9,22 +9,26 @@ import net.imglib2.converter.Converters;
 import net.imglib2.roi.boundary.IntTypeBoundary;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.view.IntervalView;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = LabelEditorRenderer.class, name = "borders", priority = 2)
-public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> {
+@Plugin(type = LabelEditorRenderer.class, name = "time slice borders", priority = 2)
+public class TimeSliceLabelEditorBorderRenderer<L> extends TimeSliceLabelEditorRenderer<L> {
 
 	private RandomAccessibleInterval output;
 
 	@Override
 	public void init(LabelEditorModel model) {
 		super.init(model);
-		this.output = new IntTypeBoundary(model.labeling().getIndexImg(), -1);
+		int timeDim = ((TimeSliceLabelEditorModel)model).getTimeDimension();
+		this.output = new IntTypeBoundary(model.labeling().getIndexImg(), timeDim);
 	}
 
 	@Override
-	public synchronized void updateOnTagChange(LabelEditorModel model) {
-		updateLUT(model.labeling().getMapping(), model.colors(), LabelEditorTargetComponent.BORDER);
+	public void updateOnTagChange(LabelEditorModel model) {
+		TimeSliceLabelEditorModel timeModel = (TimeSliceLabelEditorModel) model;
+		IntervalView intervalView = timeModel.getIndexImgAtTime(timePoint);
+		updateLUT(model, intervalView, LabelEditorTargetComponent.BORDER);
 	}
 
 	@Override
@@ -32,5 +36,4 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
 		return Converters.convert(output, converter, new ARGBType() );
 	}
-
 }

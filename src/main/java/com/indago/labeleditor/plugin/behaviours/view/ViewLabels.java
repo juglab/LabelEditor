@@ -1,7 +1,6 @@
 package com.indago.labeleditor.plugin.behaviours.view;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
@@ -45,7 +44,7 @@ public class ViewLabels<L> implements Behaviour {
 	public void viewSelected() {
 		Set<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
 
-		LabelRegions regions = new LabelRegions<>(model.labels());
+		LabelRegions regions = new LabelRegions<>(model.labeling());
 		Map<L, LabelRegion<L>> regionList = new HashMap<>();
 
 		selected.forEach(label -> {

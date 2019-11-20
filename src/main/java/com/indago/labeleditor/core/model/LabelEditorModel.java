@@ -9,22 +9,25 @@ import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public interface LabelEditorModel <L> {
 
-	void init(Img indexImg);
-
-	void init(Img indexImg, Img data);
+	void init(Img data);
 
 	void init(ImgLabeling<L, IntType> labeling);
 
 	void init(ImgLabeling<L, IntType> labeling, Img data);
 
-	ImgLabeling<L, IntType> labels();
+	ImgLabeling<L, IntType> labeling();
 
 	LabelEditorTagging<L> tagging();
 
 	LabelEditorTagColors colors();
+
+	void initFromIndexImage(Img labelMap);
+
+	void initFromIndexImage(Img data, Img labelMap);
 
 	List<LabelEditorColorset> getVirtualChannels();
 
@@ -37,7 +40,4 @@ public interface LabelEditorModel <L> {
 
 	Img getData();
 	void setData(Img data);
-
-	int getTimeDimension();
-	void setTimeDimension(int dimension);
 }

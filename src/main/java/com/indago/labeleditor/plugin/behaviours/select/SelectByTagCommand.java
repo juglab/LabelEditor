@@ -1,5 +1,6 @@
 package com.indago.labeleditor.plugin.behaviours.select;
 
+import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import org.scijava.command.Command;
@@ -8,10 +9,9 @@ import org.scijava.module.DefaultMutableModuleItem;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,23 +21,29 @@ public class SelectByTagCommand extends InteractiveCommand {
 	@Parameter
 	LabelEditorModel model;
 
+	@Parameter
+	LabelEditorController control;
+
 	Map<String, Object> namedTags;
 
 	@Override
 	public void run() {
-		List chosenTags = new ArrayList<>();
+		Set chosenTags = new HashSet();
 		namedTags.forEach((name, tag) -> {
 			if((Boolean)getInput(name)) {
 				chosenTags.add(tag);
 			}
 		});
-		model.tagging().removeTag(LabelEditorTag.SELECTED);
-		for (Object tag : chosenTags) {
-			Set labelsWithTag = model.tagging().getLabels(tag);
-			labelsWithTag.forEach(label -> {
-				model.tagging().addTag(LabelEditorTag.SELECTED, label);
-			});
-		}
+		Set selectedLabels = model.tagging().filterLabelsWithTag(control.labelSetInScope(), LabelEditorTag.SELECTED);
+		Set toSelect = model.tagging().filterLabelsWithAnyTag(control.labelSetInScope(), chosenTags);
+		Set toUnselect = new HashSet(selectedLabels);
+		toUnselect.removeAll(toSelect);
+		toSelect.remove(selectedLabels);
+
+		model.tagging().pauseListeners();
+		toUnselect.forEach(label -> model.tagging().removeTag(LabelEditorTag.SELECTED, label));
+		toSelect.forEach(label -> model.tagging().addTag(LabelEditorTag.SELECTED, label));
+		model.tagging().resumeListeners();
 	}
 
 	protected void initTagList() {

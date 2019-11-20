@@ -1,20 +1,15 @@
 package com.indago.labeleditor.howto;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
-import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
+import com.indago.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
+import com.indago.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +50,8 @@ public class E09_BigData {
 
 		System.out.println("Done creating labeling");
 
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>();
+		model.setTimeDimension(2);
 		model.init(labels);
 		model.tagging().addTag(LABEL1, TAG1);
 		model.tagging().addTag(LABEL2, TAG2);
@@ -65,7 +61,7 @@ public class E09_BigData {
 
 		model.setData(backing);
 
-		LabelEditorPanel panel = new LabelEditorBdvPanel<>();
+		LabelEditorPanel panel = new TimeSliceLabelEditorBdvPanel<>();
 		ij.context().inject(panel);
 		panel.init(model);
 

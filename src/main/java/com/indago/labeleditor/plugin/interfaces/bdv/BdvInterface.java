@@ -2,6 +2,8 @@ package com.indago.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
+import bdv.viewer.ViewerPanel;
+import com.indago.labeleditor.core.controller.DefaultLabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
@@ -45,7 +47,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	public static <L> LabelEditorController control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BdvHandlePanel panel) {
-		LabelEditorController<L> controller = new LabelEditorController<>();
+		LabelEditorController<L> controller = new DefaultLabelEditorController<>();
 		controller.init(model, view, new BdvInterface<>(panel, null, view));
 		controller.addDefaultBehaviours();
 		controller.interfaceInstance().set3DViewMode(false);
@@ -59,9 +61,9 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	@Override
 	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
-		RandomAccess<LabelingType<L>> ra = model.labels().randomAccess();
+		RandomAccess<LabelingType<L>> ra = model.labeling().randomAccess();
 		Localizable pos = getDataPositionAtMouse();
-		if(Intervals.contains(model.labels(), pos)) {
+		if(Intervals.contains(model.labeling(), pos)) {
 			ra.setPosition(pos);
 			if(labelsAtCursor != null && ra.get().getIndex().getInteger() == labelsAtCursor.getIndex().getInteger()) {
 				return labelsAtCursor;
@@ -117,12 +119,13 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public Component getComponent() {
+	public ViewerPanel getComponent() {
 		return panel.getViewerPanel();
 	}
 
 	@Override
 	public void onTagChange(List<TagChangedEvent> tagChangedEvents) {
+		if(labelsAtCursor == null) return;
 		panel.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
 		showToolTip(panel.getViewerPanel().getDisplay());
 	}

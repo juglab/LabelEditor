@@ -71,7 +71,7 @@ public class SplitLabels<L> implements Behaviour {
 	}
 
 	public <T extends NativeType<T>> void splitInteractively(L label) throws ExecutionException, InterruptedException {
-		LabelRegions regions = new LabelRegions<>(model.labels());
+		LabelRegions regions = new LabelRegions<>(model.labeling());
 		LabelRegion<Integer> region = regions.getLabelRegion(label);
 		IntervalView<BoolType> zeroRegion = Views.zeroMin(region);
 		ImgLabeling<L, IntType> cropLabeling = createCroppedLabeling(label, region);
@@ -82,7 +82,7 @@ public class SplitLabels<L> implements Behaviour {
 				"data", data).get();
 		LabelEditorModel outModel = (LabelEditorModel) out.getOutput("output");
 		if(outModel != null) {
-			System.out.println("new labels: " + outModel.labels().getMapping().getLabels().size());
+			System.out.println("new labels: " + outModel.labeling().getMapping().getLabels().size());
 //			TODO add new labels to model labeling
 //			Set<Object> tags = model.tagging().getTags(label);
 //			newLabeling.forEach(newlabel -> tags.forEach(tag -> model.tagging().addTag(tag, newlabel)));

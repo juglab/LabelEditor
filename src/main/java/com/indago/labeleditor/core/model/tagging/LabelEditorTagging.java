@@ -27,4 +27,8 @@ public interface LabelEditorTagging<L> {
 	void resumeListeners();
 
 	Set<Object> getAllTags();
+
+	Set<L> filterLabelsWithTag(Set<L> labels, Object tag);
+
+	Set filterLabelsWithAnyTag(Set<L> labels, Set<Object> tags);
 }

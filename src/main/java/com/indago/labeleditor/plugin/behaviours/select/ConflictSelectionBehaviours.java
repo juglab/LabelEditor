@@ -1,7 +1,6 @@
 package com.indago.labeleditor.plugin.behaviours.select;
 
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 import net.imglib2.roi.labeling.LabelingType;
 
 import java.util.Collection;
@@ -32,12 +31,12 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 			selectFirst(labels);
 			return;
 		}
-		model.tagging().pauseListeners();
-		if (forwardDirection)
+		if (forwardDirection) {
 			selectNext(labels);
-		else
+		}
+		else {
 			selectPrevious(labels);
-		model.tagging().resumeListeners();
+		}
 	}
 
 	@Override
@@ -47,11 +46,9 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 			deselect(label);
 			return;
 		}
-		model.tagging().pauseListeners();
 		Set<L> conflicts = getConflictingLabels(label);
 		deselect(conflicts);
 		select(label);
-		model.tagging().resumeListeners();
 	}
 
 	private void deselect(Set<L> labels) {
@@ -60,8 +57,8 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
 	private Set<L> getConflictingLabels(L label) {
 		Set<L> res = new HashSet<>();
-		for (int i = 0; i < model.labels().getMapping().numSets(); i++) {
-			Set<L> labelset = model.labels().getMapping().labelsAtIndex(i);
+		for (int i = 0; i < model.labeling().getMapping().numSets(); i++) {
+			Set<L> labelset = model.labeling().getMapping().labelsAtIndex(i);
 			if(labelset.contains(label)) {
 				res.addAll(labelset);
 			}

@@ -42,7 +42,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	private ImgPlus<ARGBType> fakeImg() {
-		return new ImgPlus<>(new DiskCachedCellImgFactory<>(new ARGBType()).create(model().labels()));
+		return new ImgPlus<>(new DiskCachedCellImgFactory<>(new ARGBType()).create(model().labeling()));
 	}
 
 	@Override

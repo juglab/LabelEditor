@@ -31,7 +31,7 @@ public class LabelEditorView<L> {
 
 	public void init(LabelEditorModel<L> model) {
 		this.model = model;
-		if(model.labels() == null) return;
+		if(model.labeling() == null) return;
 		renderers.clear();
 		renderers.init(model, this);
 		model.tagging().listeners().add(this::onTagChange);
@@ -47,14 +47,14 @@ public class LabelEditorView<L> {
 		updateRenderers();
 	}
 
-	private void updateRenderers() {
-		if(model == null || model.labels() == null) return;
+	public void updateRenderers() {
+		if(model == null || model.labeling() == null) return;
 		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
 		notifyListeners();
 	}
 
 	public void updateOnLabelingChange() {
-		if(model == null || model.labels() == null) return;
+		if(model == null || model.labeling() == null) return;
 		renderers.forEach(LabelEditorRenderer::updateOnLabelingChange);
 		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
 		notifyListeners();

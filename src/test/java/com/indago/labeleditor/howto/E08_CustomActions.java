@@ -4,13 +4,11 @@ import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -65,10 +63,10 @@ public class E08_CustomActions {
 		model.init(labeling);
 		//set custom colors for tags set in the MouseAdapter
 		model.colors().remove(LabelEditorTag.SELECTED);
-		model.colors().remove(LabelEditorTag.MOUSE_OVER);
-		model.colors().getFaceColor("yes").set(155, 155, 0, 255);
-		model.colors().getFaceColor("no").set(0, 155, 255, 255);
-		model.colors().getFaceColor("special").set(255, 0, 0, 255);
+		model.colors().remove(LabelEditorTag.FOCUS);
+		model.colors().getFaceColor("yes").set(155, 155, 0);
+		model.colors().getFaceColor("no").set(0, 155, 255);
+		model.colors().getFaceColor("special").set(255, 0, 0);
 
 		model.setData(input);
 

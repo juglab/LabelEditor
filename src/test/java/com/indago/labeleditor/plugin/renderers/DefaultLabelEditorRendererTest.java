@@ -82,7 +82,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		assertEquals(red, outRa.get().get());
 		outRa.setPosition(new long[]{1,0}); // labels {a,b}
 		printColor(outRa.get());
-		assertEquals(green, outRa.get().get());
+		assertEquals(red, outRa.get().get());
 		outRa.setPosition(new long[]{1,1}); // labels {}
 		printColor(outRa.get());
 		assertEquals(0, outRa.get().get());

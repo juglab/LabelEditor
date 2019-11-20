@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 
@@ -41,18 +43,34 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		}
 	}
 
+	protected HashMap<L, Set<Object>> tagMap() {
+		return tags;
+	}
+
 	@Override
 	public Set<Object> getAllTags() {
 		Set<Object> res = new HashSet<>();
-		tags.forEach((label, tags) -> res.addAll(tags));
+		tagMap().forEach((label, tags) -> res.addAll(tags));
 		return res;
 	}
 
-	private void notifyListeners(Object tag, L label, TagChangedEvent.Action action) {
-		TagChangedEvent e = new TagChangedEvent();
-		e.action = action;
-		e.tag = tag;
-		e.label = label;
+	@Override
+	public Set<L> filterLabelsWithTag(Set<L> labels, Object tag) {
+		return labels.stream()
+				.filter(label -> tagMap().containsKey(label)
+						&& tagMap().get(label).contains(tag))
+				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public Set filterLabelsWithAnyTag(Set<L> labels, Set<Object> tags) {
+		return labels.stream()
+				.filter(label -> tagMap().containsKey(label)
+						&& tagMap().get(label).stream().anyMatch(tags::contains))
+				.collect(Collectors.toSet());
+	}
+
+	protected void notifyListeners(TagChangedEvent e) {
 		if(log!= null) log.debug(e.toString());
 		if(listenersPaused) {
 			keptEvents.add(e);
@@ -61,13 +79,21 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		}
 	}
 
+	protected void notifyListeners(Object tag, L label, TagChangedEvent.Action action) {
+		TagChangedEvent e = new TagChangedEvent();
+		e.action = action;
+		e.tag = tag;
+		e.label = label;
+		notifyListeners(e);
+	}
+
 	public Map<L, Set<Object>> get() {
-		return Collections.unmodifiableMap(tags);
+		return Collections.unmodifiableMap(tagMap());
 	}
 
 	@Override
 	public void addTag(Object tag, L label) {
-		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
+		Set<Object> set = tagMap().computeIfAbsent(label, k -> new HashSet<>());
 		if(set.add(tag)) {
 			notifyListeners(tag, label, TagChangedEvent.Action.ADDED);
 		}
@@ -75,7 +101,8 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 
 	@Override
 	public void removeTag(Object tag, L label) {
-		Set<Object> set = tags.computeIfAbsent(label, k -> new HashSet<>());
+		Set<Object> set = tagMap().get(label);
+		if(set == null) return;
 		if( set.removeIf(mytag -> mytag.equals(tag))) {
 			notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);
 		}
@@ -83,12 +110,12 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 
 	@Override
 	public Set<Object> getTags(L label) {
-		return tags.computeIfAbsent(label, k -> new HashSet<>());
+		return tagMap().computeIfAbsent(label, k -> new HashSet<>());
 	}
 
 	@Override
 	public synchronized void removeTag(Object tag) {
-		tags.forEach( (label, tags) -> {
+		tagMap().forEach( (label, tags) -> {
 			if( tags.removeIf(mytag -> mytag.equals(tag))) {
 				notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);
 			}
@@ -99,7 +126,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	@Override
 	public Set<L> getLabels(Object tag) {
 		Set<L> labels = new HashSet<>();
-		tags.forEach((l, tags) -> {
+		tagMap().forEach((l, tags) -> {
 			if(tags.contains(tag)) labels.add(l);
 		});
 		return labels;

@@ -32,7 +32,10 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 		List<PluginInfo<?>> renderers = context.getPluginIndex().get(LabelEditorRenderer.class);
 		renderers.forEach(renderer -> {
 			try {
-				add((LabelEditorRenderer) renderer.createInstance());
+				LabelEditorRenderer instance = (LabelEditorRenderer) renderer.createInstance();
+				if(instance.canDisplay(model)) {
+					add(instance);
+				}
 			} catch (InstantiableException e) {
 				e.printStackTrace();
 			}

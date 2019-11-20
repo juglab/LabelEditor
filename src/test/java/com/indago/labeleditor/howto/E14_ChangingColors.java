@@ -35,12 +35,12 @@ public class E14_ChangingColors {
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-		panel.model().labels().getMapping().getLabels().forEach(label -> {
+		panel.model().labeling().getMapping().getLabels().forEach(label -> {
 			panel.model().tagging().addTag(label, label);
 		});
 		for (int i = 0; i < 13; i++) {
 			panel.model().colors().clear();
-			panel.model().labels().getMapping().getLabels().forEach(label -> {
+			panel.model().labeling().getMapping().getLabels().forEach(label -> {
 				panel.model().colors().getFaceColor(label).set(random.nextInt(155)+100, random.nextInt(155) + 100, random.nextInt(155) + 100, 200);
 			});
 			Thread.sleep(3000);

@@ -17,4 +17,6 @@ public interface LabelEditorRenderer<L> extends SciJavaPlugin {
 		if(annotation != null) return annotation.name();
 		return null;
 	}
+
+	<M extends LabelEditorModel> boolean canDisplay(M model);
 }
