@@ -30,4 +30,9 @@ public class LabelEditorValueTag<T extends RealType<T>> {
 	public Object getIdentifier() {
 		return name;
 	}
+
+	@Override
+	public String toString() {
+		return name + "=" + value;
+	}
 }

@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * How a 3D labeling looks like in the LabelEditor
  */
-public class E08_3DLabeling {
+public class E09_3DLabeling {
 
 	public void run() {
 		ImageJ ij = new ImageJ();
@@ -55,7 +55,7 @@ public class E08_3DLabeling {
 	}
 
 	public static void main(String... args) throws IOException {
-		new E08_3DLabeling().run();
+		new E09_3DLabeling().run();
 	}
 
 

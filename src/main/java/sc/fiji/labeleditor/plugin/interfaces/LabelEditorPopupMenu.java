@@ -62,6 +62,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private void makeOptionsEntry() {
 		if(context != null) {
 			OptionsBehaviours optionsBehaviours = new OptionsBehaviours();
+			context.inject(optionsBehaviours);
 			optionsBehaviours.init(model, control, view);
 			add(getMenuItem(e -> runInNewThread(optionsBehaviours::showOptions), MENU_OPTIONS));
 		}

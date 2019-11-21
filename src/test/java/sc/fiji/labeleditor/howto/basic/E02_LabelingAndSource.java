@@ -19,15 +19,17 @@ public class E02_LabelingAndSource {
 	/**
 	 * You can  open an {@link ImgLabeling} with a matching source {@link Img} via {@link UIService) by creating a {@link LabelEditorModel}.
 	 */
+
 	public void run() throws IOException {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		Img<IntType> binary = (Img) ij.op().threshold().otsu(input);
 
-		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
+		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(
+				binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel model = new DefaultLabelEditorModel(labeling);
+		LabelEditorModel model = new DefaultLabelEditorModel<>(labeling);
 		model.setData(input);
 
 		ij.ui().show(model);

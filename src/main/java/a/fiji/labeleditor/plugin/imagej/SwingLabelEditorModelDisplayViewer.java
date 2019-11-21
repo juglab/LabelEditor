@@ -1,4 +1,4 @@
-package sc.fiji.labeleditor.plugin.imagej;
+package a.fiji.labeleditor.plugin.imagej;
 
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;

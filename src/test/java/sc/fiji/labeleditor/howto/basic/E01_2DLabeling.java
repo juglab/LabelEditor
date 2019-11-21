@@ -22,9 +22,13 @@ public class E01_2DLabeling {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 
 		Img<IntType> binary = (Img) ij.op().threshold().otsu(input);
-		ImgLabeling labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
+
+		ImgLabeling labeling = ij.op().labeling().cca(
+				binary,
+				ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		ij.ui().show(labeling);
+
 	}
 
 	public static void main(String... args) throws IOException {

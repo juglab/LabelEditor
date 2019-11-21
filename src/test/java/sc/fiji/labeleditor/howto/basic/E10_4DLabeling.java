@@ -24,7 +24,7 @@ import java.util.Random;
 /**
  * How a 3D labeling looks like in the LabelEditor
  */
-public class E09_4DLabeling {
+public class E10_4DLabeling {
 
 	/**
 	 * There is nothing specific one has to do to make the LabelEditor display 3D data,
@@ -79,7 +79,7 @@ public class E09_4DLabeling {
 	}
 
 	public static void main(String... args) throws IOException {
-		new E09_4DLabeling().run();
+		new E10_4DLabeling().run();
 	}
 
 

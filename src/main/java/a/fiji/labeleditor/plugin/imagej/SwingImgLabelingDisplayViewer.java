@@ -1,4 +1,4 @@
-package sc.fiji.labeleditor.plugin.imagej;
+package a.fiji.labeleditor.plugin.imagej;
 
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
@@ -13,7 +13,7 @@ import javax.swing.*;
 /**
  * This class creates a {@LabelEditorBdvPanel} for a {@link LabelEditorModel}.
  */
-@Plugin(type = DisplayViewer.class)
+@Plugin(type = DisplayViewer.class, priority = 1.0)
 public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLabeling> {
 
 	@Parameter
@@ -30,7 +30,6 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 
 	@Override
 	protected JPanel createDisplayPanel(ImgLabeling labeling) {
-		System.out.println("context? " + context);
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
 		context.inject(panel);
 		panel.init(labeling);

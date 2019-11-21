@@ -1,4 +1,4 @@
-package sc.fiji.labeleditor.plugin.imagej;
+package a.fiji.labeleditor.plugin.imagej;
 
 import net.imglib2.roi.labeling.ImgLabeling;
 import org.scijava.display.AbstractDisplay;

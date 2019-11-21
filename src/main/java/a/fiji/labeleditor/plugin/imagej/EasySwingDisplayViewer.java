@@ -1,4 +1,4 @@
-package sc.fiji.labeleditor.plugin.imagej;
+package a.fiji.labeleditor.plugin.imagej;
 
 import org.scijava.display.Display;
 import org.scijava.display.event.DisplayDeletedEvent;
