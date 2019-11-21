@@ -8,19 +8,17 @@
 		<version>27.0.1</version>
 	</parent>
 
-	<properties>
-		<package-name>com.indago.labeleditor</package-name>
-		<license.licenseName>Simplified BSD License</license.licenseName>
-		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
 
-		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
-		<releaseProfiles>deploy-to-scijava</releaseProfiles>
-
-	</properties>
-
-	<groupId>com.indago</groupId>
+	<groupId>sc.fiji</groupId>
 	<artifactId>labeleditor</artifactId>
 	<version>0.4.1-SNAPSHOT</version>
+
+	<properties>
+		<package-name>sc.fiji.labeleditor</package-name>
+		<license.licenseName>Simplified BSD License</license.licenseName>
+		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
+		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+	</properties>
 
 	<name>Label Editor</name>
 	<description>UI component for image segmentation label comparison and selection</description>
@@ -114,18 +112,18 @@
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
-    <developer>
-      <id>turek</id>
-      <name>Gabriella Turek</name>
-      <email>turek@@mpi-cbg.de</email>
-      <url>https://wwww.mpi-cbg.de/jug</url>
-      <organization>CSBD</organization>
-      <organizationUrl>http://www.mpi-cbg.de/jug</organizationUrl>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>+1</timezone>
-    </developer>
+		<developer>
+		  <id>turek</id>
+		  <name>Gabriella Turek</name>
+		  <email>turek@@mpi-cbg.de</email>
+		  <url>https://wwww.mpi-cbg.de/jug</url>
+		  <organization>CSBD</organization>
+		  <organizationUrl>http://www.mpi-cbg.de/jug</organizationUrl>
+		  <roles>
+			<role>developer</role>
+		  </roles>
+		  <timezone>+1</timezone>
+		</developer>
 		<developer>
 			<id>tpietzsch</id>
 			<name>Tobias Pietzsch</name>
