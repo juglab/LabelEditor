@@ -55,8 +55,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.setPosition(new long[]{1,0});
 		ra.get().add("a");
 		ra.get().add("b");
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
-		model.init(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTagToLabel("b", "b");
 		int red = ARGBType.rgba(255, 0, 0, 255);
 		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
@@ -101,8 +100,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.get().add("b");
 
 		//model
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
-		model.init(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTagToLabel("b", "b");
 		model.tagging().addTagToLabel("a", "a");
 		int red = ARGBType.rgba(255, 0, 0, 100);
@@ -148,8 +146,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		ra.get().add("a");
 		ra.get().add("b");
 
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
-		model.init(labels);
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTagToLabel("a", "b");
 		model.tagging().addTagToLabel("a", "a");
 		int color = ARGBType.rgba(255, 255, 255, 100);

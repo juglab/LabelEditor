@@ -56,8 +56,7 @@ public class E09_4DLabeling {
 
 		System.out.println("cca done");
 
-		TimeSliceLabelEditorModel model = new TimeSliceLabelEditorModel();
-		model.init(labeling, 3);
+		TimeSliceLabelEditorModel model = new TimeSliceLabelEditorModel(labeling, 3);
 //
 //		ij.ui().show(model);
 

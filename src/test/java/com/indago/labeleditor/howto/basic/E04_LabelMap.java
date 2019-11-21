@@ -16,8 +16,7 @@ public class E04_LabelMap {
 
 		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
 
-		LabelEditorModel model = new DefaultLabelEditorModel();
-		model.initFromLabelMap(input);
+		LabelEditorModel model = DefaultLabelEditorModel.initFromLabelMap(input);
 
 		ij.ui().show(model);
 	}

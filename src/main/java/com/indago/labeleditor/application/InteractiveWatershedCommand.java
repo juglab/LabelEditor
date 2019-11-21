@@ -58,9 +58,8 @@ public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 
 	private void update() {
 		if(output == null && labeling != null) {
-			DefaultLabelEditorModel<L> model = new DefaultLabelEditorModel<>();
-			model.init(ops.copy().imgLabeling(labeling));
-			model.setData( new ImgPlus(ops.copy().img(data)));
+			LabelEditorModel<L> model = new DefaultLabelEditorModel<>(ops.copy().imgLabeling(labeling));
+			model.setData( ops.copy().img(data));
 //			setInput("displayedModel", model);
 			output = model;
 		}

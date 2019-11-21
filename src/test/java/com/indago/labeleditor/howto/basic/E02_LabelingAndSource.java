@@ -27,8 +27,8 @@ public class E02_LabelingAndSource {
 
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel model = new DefaultLabelEditorModel();
-		model.init(labeling, input);
+		LabelEditorModel model = new DefaultLabelEditorModel(labeling);
+		model.setData(input);
 
 		ij.ui().show(model);
 	}

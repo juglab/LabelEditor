@@ -30,8 +30,7 @@ public class E01_AddToExistingBDV {
 		Img binary = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
-		model.init(labeling);
+		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		model.colors().getDefaultFaceColor().set(255,255,0,55);
 

@@ -17,8 +17,7 @@ public class E05_SetTagsAndColors {
 
 		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
 
-		LabelEditorModel<IntType> model = new DefaultLabelEditorModel<>();
-		model.initFromLabelMap(input);
+		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(input);
 
 		String TAG1 = "tag1";
 		String TAG2 = "tag2";

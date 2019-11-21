@@ -31,8 +31,8 @@ public class TestCreatePanel {
 
 	@Test
 	public void run() {
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
-		model.init(labels, data);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		model.setData(data);
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
 		panel.init(model);
 	}

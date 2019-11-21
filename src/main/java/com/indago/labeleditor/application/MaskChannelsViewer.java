@@ -55,16 +55,15 @@ public class MaskChannelsViewer implements Command {
 		ArrayImg<IntType, IntArray> backing = (ArrayImg<IntType, IntArray>) new ArrayImgFactory<>(new IntType()).create( Views.hyperSlice(data, channelDim, 0) );
 //		Img<IntType> backing = new DiskCachedCellImgFactory<>(new IntType()).create(Views.hyperSlice(data, channelDim, 0)); // TODO why can I not do this?
 		ImgLabeling< String, IntType > labeling = new ImgLabeling<>( backing );
-		LabelEditorModel<String> model = new DefaultLabelEditorModel();
-		model.init(labeling);
-		ImgPlus dataImg = null;
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labeling);
+		Img dataImg = null;
 		Map<Object, Integer> colors = new HashMap<>();
 		Random random = new Random();
 		for (int i = 0; i < data.dimension(channelDim); i++) {
 			System.out.println(i);
 			IntervalView slice = Views.hyperSlice(data, channelDim, i);
 			if(i == channelSource) {
-				dataImg = new ImgPlus(ops.convert().float32(slice));
+				dataImg = ops.convert().float32(slice);
 			} else {
 				Img bitSlice = ops.convert().bit(slice);
 				ArrayImg<IntType, IntArray> backingSlice = (ArrayImg<IntType, IntArray>) new ArrayImgFactory<>(new IntType()).create( bitSlice );
@@ -80,7 +79,7 @@ public class MaskChannelsViewer implements Command {
 			}
 		}
 		printDims(labeling);
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel<>();
 		context.inject(panel);
 		model.setData(dataImg);
 		panel.init(model);

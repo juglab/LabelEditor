@@ -3,10 +3,10 @@ package com.indago.labeleditor.howto.advanced;
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
 import com.indago.labeleditor.core.view.LabelEditorView;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.plugin.interfaces.bvv.BvvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
@@ -38,8 +38,7 @@ public class E08_AddToExistingBVV {
 		Img binary = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
-		model.init(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 		model.colors().getDefaultFaceColor().set(255,255,0,55);
 
 		LabelEditorView<Integer> view = new LabelEditorView<>(model);

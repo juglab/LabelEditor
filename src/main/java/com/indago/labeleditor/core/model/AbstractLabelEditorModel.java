@@ -38,24 +38,7 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private final LabelEditorTagColors tagColors = new LabelEditorTagColors();
 
-	@Override
-	public ImgLabeling<L, IntType> labeling() {
-		return labels;
-	}
-
-	@Override
-	public void init(Img data) {
-		this.data = data;
-	}
-
-	@Override
-	public void init(ImgLabeling<L, IntType> labeling, Img data) {
-		this.data = data;
-		init(labeling);
-	}
-
-	@Override
-	public void init(ImgLabeling<L, IntType> labeling) {
+	public AbstractLabelEditorModel(ImgLabeling<L, IntType> labeling) {
 		if(labeling != null) {
 			this.labels = labeling;
 			initLabelOrdering(labeling);
@@ -65,16 +48,11 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public void initFromLabelMap(Img labelMap) {
-		init(makeLabeling(labelMap));
+	public ImgLabeling<L, IntType> labeling() {
+		return labels;
 	}
 
-	@Override
-	public void initFromLabelMap(Img data, Img labelMap) {
-		init(makeLabeling(labelMap), data);
-	}
-
-	private static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(Img<T> labelMap) {
+	protected static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(Img<T> labelMap) {
 		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create(labelMap);
 		ImgLabeling<IntType, IntType> labeling = new ImgLabeling<>(backing);
 		Cursor<T> cursor = labelMap.localizingCursor();

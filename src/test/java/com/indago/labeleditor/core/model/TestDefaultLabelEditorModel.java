@@ -24,8 +24,7 @@ public class TestDefaultLabelEditorModel {
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 		String LABEL1 = "label1";
 
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
-		model.init(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
 		assertNotNull(model.tagging());
 		assertEquals(0, model.tagging().getTags(LABEL1).size());
@@ -54,8 +53,7 @@ public class TestDefaultLabelEditorModel {
 		labels.firstElement().add(LABEL3);
 		labels.firstElement().add(LABEL4);
 
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
-		model.init(labels);
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
 		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL1);
 		model.tagging().addTagToLabel(LabelEditorTag.FOCUS, LABEL2);
@@ -75,7 +73,7 @@ public class TestDefaultLabelEditorModel {
 
 	@Test
 	public void testDefaultTagComparator() {
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
+		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(null);
 		model.initTagOrdering();
 		Set<Object> tags = new HashSet<>();
 		tags.add(LabelEditorTag.FOCUS);

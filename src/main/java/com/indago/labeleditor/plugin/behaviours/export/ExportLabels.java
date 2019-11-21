@@ -5,7 +5,6 @@ import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
-import net.imagej.ImgPlus;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.Point;
@@ -26,8 +25,6 @@ import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.Behaviour;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +39,7 @@ public class ExportLabels<L> implements Behaviour {
 
 	private final LabelEditorModel<L> model;
 
-	public ExportLabels(LabelEditorModel model) {
+	public ExportLabels(LabelEditorModel<L> model) {
 		this.model = model;
 	}
 
@@ -70,12 +67,11 @@ public class ExportLabels<L> implements Behaviour {
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
 		if(context != null) context.inject(panel);
 
-		LabelEditorModel model = new DefaultLabelEditorModel();
+		LabelEditorModel model = new DefaultLabelEditorModel<>(cropLabeling);
 		if(model.getData() != null) {
 			Img data = createCroppedData(boundingBox);
 			model.setData(data);
 		}
-		model.init(cropLabeling);
 
 		ui.show(model);
 

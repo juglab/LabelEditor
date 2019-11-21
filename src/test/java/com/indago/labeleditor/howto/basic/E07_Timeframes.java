@@ -48,9 +48,7 @@ public class E07_Timeframes {
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
 		// create model which can handle time sliced datasets
-		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>();
-		// it is important to provide the model with the time dimension
-		model.init(labels, 2);
+		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>(labels, 2);
 
 		model.tagging().addTagToLabel(TAG1, LABEL1);
 		model.tagging().addTagToLabel(TAG2, LABEL2);

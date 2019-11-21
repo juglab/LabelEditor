@@ -11,17 +11,18 @@ import com.indago.labeleditor.core.controller.LabelEditorInterface;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
+import net.imglib2.img.Img;
 import net.imglib2.type.numeric.ARGBType;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
+public class LabelEditorBvvPanel extends AbstractLabelEditorPanel {
 
 	private BvvHandle bvvHandle;
 	private List< BvvStackSource > bvvSources;
-	private LabelEditorInterface<L> viewerInstance;
+	private LabelEditorInterface viewerInstance;
 
 	@Override
 	protected void initController() {
@@ -68,9 +69,9 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected void displayData() {
-		if(model().getData() != null) {
-			displayInBvv( model().getData(), "RAW" );
+	protected void displayData(Img data) {
+		if(data != null) {
+			displayInBvv( data, "source" );
 		}
 	}
 
@@ -102,7 +103,7 @@ public class LabelEditorBvvPanel<L> extends AbstractLabelEditorPanel<L> {
 	}
 
 	@Override
-	protected void addBehaviours(LabelEditorController<L> controller) {
+	protected void addBehaviours(LabelEditorController controller) {
 		controller.init(model(), view(), viewerInstance);
 		controller.addDefaultBehaviours();
 	}

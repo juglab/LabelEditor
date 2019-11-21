@@ -9,25 +9,14 @@ import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 public interface LabelEditorModel <L> {
-
-	void init(Img data);
-
-	void init(ImgLabeling<L, IntType> labeling);
-
-	void init(ImgLabeling<L, IntType> labeling, Img data);
 
 	ImgLabeling<L, IntType> labeling();
 
 	LabelEditorTagging<L> tagging();
 
 	LabelEditorTagColors colors();
-
-	void initFromLabelMap(Img labelMap);
-
-	void initFromLabelMap(Img data, Img labelMap);
 
 	List<LabelEditorColorset> getVirtualChannels();
 

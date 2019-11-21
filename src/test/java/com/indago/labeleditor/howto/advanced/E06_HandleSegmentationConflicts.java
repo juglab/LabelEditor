@@ -57,8 +57,7 @@ public class E06_HandleSegmentationConflicts {
 		drawSphere(labels, new long[]{270, 400}, radius, LABEL6);
 		drawSphere(labels, new long[]{300, 400}, radius, LABEL7);
 		drawSphere(labels, new long[]{300, 370}, radius, LABEL8);
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
-		model.init(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
 		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL2);
 		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL7);

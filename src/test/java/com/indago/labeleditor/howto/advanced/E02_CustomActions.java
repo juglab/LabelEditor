@@ -37,8 +37,7 @@ public class E02_CustomActions {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		//create model
-		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
-		model.init(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		//set colors
 		model.colors().remove(LabelEditorTag.SELECTED);

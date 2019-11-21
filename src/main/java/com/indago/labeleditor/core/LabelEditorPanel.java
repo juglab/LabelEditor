@@ -11,25 +11,25 @@ import org.scijava.Disposable;
 
 import java.awt.*;
 
-public interface LabelEditorPanel<L> extends Disposable {
+public interface LabelEditorPanel extends Disposable {
 
 	void init(Img data);
 
-	void init(ImgLabeling<L, IntType> labels);
+	<L> void init(ImgLabeling<L, IntType> labels);
 
-	void init(ImgLabeling<L, IntType> labels, Img data);
+	<L> void init(ImgLabeling<L, IntType> labels, Img data);
 
-	void init(LabelEditorModel<L> model);
+	<L> void init(LabelEditorModel<L> model);
 
 	<T extends IntegerType<T>> void initFromLabelMap(Img<T> indexImg);
 
 	<T extends IntegerType<T>> void initFromLabelMap(Img data, Img<T> indexImg);
 
-	LabelEditorView<L> view();
+	LabelEditorView view();
 
-	LabelEditorModel<L> model();
+	LabelEditorModel model();
 
-	LabelEditorController<L> control();
+	LabelEditorController control();
 
 	Container get();
 

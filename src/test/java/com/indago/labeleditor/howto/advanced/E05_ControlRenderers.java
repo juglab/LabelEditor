@@ -35,18 +35,18 @@ public class E05_ControlRenderers {
 		Img binary = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel model = new DefaultLabelEditorModel();
+		LabelEditorModel model = new DefaultLabelEditorModel(labeling);
 
-		model.init(labeling, input);
+		model.setData(input);
 
 		model.colors().getDefaultBorderColor().set(0,0,255);
 		model.colors().getFocusBorderColor().set(0,255,0);
 		model.colors().getSelectedBorderColor().set(255,0,0);
 
 		// in this case, we do not try to find all existing renderers, but instead only add the border renderer
-		LabelEditorPanel<Integer> panel = new LabelEditorBdvPanel<Integer>() {
+		LabelEditorPanel panel = new LabelEditorBdvPanel() {
 			@Override
-			protected void addRenderers(LabelEditorView<Integer> view) {
+			protected void addRenderers(LabelEditorView view) {
 				view.renderers().add(new BorderLabelEditorRenderer<>());
 			}
 		};

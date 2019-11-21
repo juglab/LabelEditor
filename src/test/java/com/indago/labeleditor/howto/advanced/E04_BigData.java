@@ -58,9 +58,7 @@ public class E04_BigData {
 
 		System.out.println("Done creating labeling");
 
-		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>();
-		model.setTimeDimension(2);
-		model.init(labels);
+		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>(labels, 2);
 		model.tagging().addTagToLabel(LABEL1, TAG1);
 		model.tagging().addTagToLabel(LABEL2, TAG2);
 

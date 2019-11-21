@@ -34,10 +34,9 @@ public class E07_Open3DLabelingBVV {
 		Img binary = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
-		model.init(labeling);
+		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
-		LabelEditorPanel<Integer> panel = new LabelEditorBvvPanel<>();
+		LabelEditorPanel panel = new LabelEditorBvvPanel();
 		ij.context().inject(panel);
 		panel.init(model);
 		panel.model().colors().getDefaultFaceColor().set(255,255,0,155);

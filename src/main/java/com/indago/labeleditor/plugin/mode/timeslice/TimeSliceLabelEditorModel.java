@@ -12,7 +12,9 @@ public class TimeSliceLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 
 	private int timeDimension = -1;
 
-	public TimeSliceLabelEditorModel() {
+	public TimeSliceLabelEditorModel(ImgLabeling<L, IntType> labeling, int timeDimension) {
+		super(labeling);
+		this.timeDimension = timeDimension;
 		addDefaultColorsets();
 	}
 
@@ -25,37 +27,8 @@ public class TimeSliceLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 		colors().getFocusBorderColor().set(DefaultColors.focusBorder());
 	}
 
-	public void init(Img data, int timeDimension) {
-		this.timeDimension = timeDimension;
-		super.init(data);
-	}
-
-	public void init(ImgLabeling<L, IntType> labeling, Img data, int timeDimension) {
-		this.timeDimension = timeDimension;
-		super.init(labeling, data);
-	}
-
-	public void init(ImgLabeling<L, IntType> labeling, int timeDimension) {
-		this.timeDimension = timeDimension;
-		super.init(labeling);
-	}
-
-	public void initFromLabelMap(Img labelMap, int timeDimension) {
-		this.timeDimension = timeDimension;
-		super.initFromLabelMap(labelMap);
-	}
-
-	public void initFromLabelMap(Img data, Img labelMap, int timeDimension) {
-		this.timeDimension = timeDimension;
-		super.initFromLabelMap(data, labelMap);
-	}
-
 	public int getTimeDimension() {
 		return timeDimension;
-	}
-
-	public void setTimeDimension(int dimension) {
-		timeDimension = dimension;
 	}
 
 	public IntervalView<IntType> getIndexImgAtTime(long currentTimePoint) {
