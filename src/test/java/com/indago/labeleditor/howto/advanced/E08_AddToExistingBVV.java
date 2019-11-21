@@ -1,11 +1,10 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.advanced;
 
 import bvv.util.Bvv;
 import bvv.util.BvvFunctions;
 import bvv.util.BvvStackSource;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorRenderer;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.plugin.interfaces.bvv.BvvInterface;
@@ -14,19 +13,15 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.Views;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class E06_AddToExistingBVV {
+public class E08_AddToExistingBVV {
 
 	public <T extends RealType<T>> void run() throws IOException {
 
@@ -40,8 +35,8 @@ public class E06_AddToExistingBVV {
 			stack.add(inputStack);
 		}
 		inputStack = Views.stack(stack);
-		Img thresholded = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
-		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
+		Img binary = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
+		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
 		model.init(labeling);
@@ -67,7 +62,7 @@ public class E06_AddToExistingBVV {
 	}
 
 	public static void main(String... args) throws IOException {
-		new E06_AddToExistingBVV().run();
+		new E08_AddToExistingBVV().run();
 	}
 
 

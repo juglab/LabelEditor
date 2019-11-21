@@ -1,10 +1,7 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.basic;
 
 
-import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
-import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
-import com.indago.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.img.array.ArrayImg;
 import net.imglib2.img.array.ArrayImgs;
@@ -14,14 +11,16 @@ import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
- * How to open an {@link ImgLabeling} in a {@link LabelEditorBdvPanel}.
+ * How to open a labeling with separate time frame labels in the LabelEditor
  */
-public class E02_Open2DTimeframes {
+public class E07_Timeframes {
 
+	/**
+	 * If a labeling has separate labels per time point or if the labeling is just too large to interact with all
+	 * time frames at once, you can use a {@link TimeSliceLabelEditorModel} which takes care of only handling the
+	 * currently displayed time frame.
+	 */
 	public void run() {
 
 		ImageJ ij = new ImageJ();
@@ -38,41 +37,34 @@ public class E02_Open2DTimeframes {
 		ArrayImg<IntType, IntArray> backing = ArrayImgs.ints( 500, 500, 2 );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );
 
-		//t1
+		//draw labels to time point 0
 		Views.interval( labels, Intervals.createMinSize( 220, 220, 0, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL1 ) );
 		Views.interval( labels, Intervals.createMinSize( 220, 280, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 280, 280, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL3 ) );
 		Views.interval( labels, Intervals.createMinSize( 280, 220, 0, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL4 ) );
 
-		//t2
+		//draw labels to time point 1
 		Views.interval( labels, Intervals.createMinSize( 320, 320, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
+		// create model which can handle time sliced datasets
 		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>();
+		// it is important to provide the model with the time dimension
 		model.init(labels, 2);
 
-		model.tagging().addTag(TAG1, LABEL1);
-		model.tagging().addTag(TAG2, LABEL2);
-		model.tagging().addTag(TAG1, LABEL3);
-		model.tagging().addTag(TAG2, LABEL4);
+		model.tagging().addTagToLabel(TAG1, LABEL1);
+		model.tagging().addTagToLabel(TAG2, LABEL2);
+		model.tagging().addTagToLabel(TAG1, LABEL3);
+		model.tagging().addTagToLabel(TAG2, LABEL4);
 
+		model.colors().getFaceColor(TAG1).set(0,255,255,100);
+		model.colors().getFaceColor(TAG2).set(255,0,255,100);
 
-		model.colors().getBorderColor(TAG1).set(0,255,255,100);
-		model.colors().getBorderColor(TAG2).set(255,0,255,100);
-
-		LabelEditorPanel<String> panel = new TimeSliceLabelEditorBdvPanel<>();
-		ij.context().inject(panel);
-		panel.init(model);
-
-		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(panel.get());
-		frame.setMinimumSize(new Dimension(500,500));
-		frame.pack();
-		frame.setVisible(true);
+		ij.ui().show(model);
 	}
 
 	public static void main(String... args) {
-		new E02_Open2DTimeframes().run();
+		new E07_Timeframes().run();
 	}
 
 }

@@ -7,7 +7,6 @@ import com.indago.labeleditor.core.controller.DefaultLabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorBehaviours;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.TagChangedEvent;
 import com.indago.labeleditor.core.view.LabelEditorView;
@@ -22,6 +21,8 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RealPoint;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.util.Intervals;
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 
@@ -31,6 +32,10 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class BdvInterface<L> implements LabelEditorInterface<L> {
+
+	@Parameter
+	Context context;
+
 	private final BdvHandlePanel panel;
 	private final List<BdvSource> sources;
 	private final Behaviours behaviours;
@@ -46,7 +51,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		behaviours.install(panel.getTriggerbindings(), "labeleditor");
 	}
 
-	public static <L> LabelEditorController control(DefaultLabelEditorModel<L> model, LabelEditorView<L> view, BdvHandlePanel panel) {
+	public static <L> LabelEditorController control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandlePanel panel) {
 		LabelEditorController<L> controller = new DefaultLabelEditorController<>();
 		controller.init(model, view, new BdvInterface<>(panel, null, view));
 		controller.addDefaultBehaviours();
@@ -104,6 +109,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {
+		if(context != null) context.inject(behavioursAdded);
 		behavioursAdded.init(model, controller, view);
 		behavioursAdded.install(behaviours, panel.getViewerPanel().getDisplay());
 	}

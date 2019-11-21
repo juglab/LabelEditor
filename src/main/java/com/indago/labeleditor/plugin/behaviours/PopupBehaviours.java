@@ -14,14 +14,15 @@ import java.awt.*;
 
 public class PopupBehaviours implements LabelEditorBehaviours {
 
-	private static final String OPEN_POPUP_TRIGGERS = "button3";
-	private static final String OPEN_POPUP_NAME = "LABELEDITOR_OPENPOPUP";
 	@Parameter
 	Context context;
 
 	private LabelEditorView view;
 	private LabelEditorModel model;
 	private LabelEditorController control;
+
+	private static final String OPEN_POPUP_TRIGGERS = "button3";
+	private static final String OPEN_POPUP_NAME = "LABELEDITOR_OPENPOPUP";
 
 	@Override
 	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {

@@ -65,8 +65,8 @@ public class RunLabelEditorPanel {
 
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
 		model.init(labels);
-		model.tagging().addTag(LABEL1, TAG1);
-		model.tagging().addTag(LABEL2, TAG2);
+		model.tagging().addTagToLabel(LABEL1, TAG1);
+		model.tagging().addTagToLabel(LABEL2, TAG2);
 		return model;
 	}
 }

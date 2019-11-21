@@ -8,7 +8,6 @@ import bdv.util.BdvSource;
 import com.indago.labeleditor.core.AbstractLabelEditorPanel;
 import com.indago.labeleditor.core.controller.LabelEditorController;
 import com.indago.labeleditor.core.controller.LabelEditorInterface;
-import com.indago.labeleditor.plugin.interfaces.LabelEditorPopupMenu;
 import net.imglib2.RandomAccessibleInterval;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
@@ -16,8 +15,6 @@ import org.scijava.ui.behaviour.io.InputTriggerConfig;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +29,14 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel<L> {
 	@Override
 	protected void initController() {
 		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources, view());
+		if(context != null) context.inject(control());
 		control().init(model(), view(), viewerInstance);
 		addBehaviours(control());
 		control().interfaceInstance().set3DViewMode(is3DMode());
 	}
 
 	private boolean is3DMode() {
-		if(model().getData() == null) return false;
+//		if(model().getData() == null) return false;
 //		return model().getData().dimensionIndex(Axes.Z) > 0;
 		//TODO make options class with 3D option
 		return false;

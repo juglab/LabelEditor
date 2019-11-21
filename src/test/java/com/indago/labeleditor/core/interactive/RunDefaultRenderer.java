@@ -42,7 +42,7 @@ public class RunDefaultRenderer {
 		ra.get().add("b");
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
 		model.init(labels);
-		model.tagging().addTag("b", "b");
+		model.tagging().addTagToLabel("b", "b");
 		int red = ARGBType.rgba(255, 0, 0, 100);
 		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
 		LabelEditorView<String> view = new LabelEditorView<>(model);

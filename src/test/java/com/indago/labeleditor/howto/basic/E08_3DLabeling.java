@@ -1,4 +1,4 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.basic;
 
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
@@ -18,12 +18,16 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
-public class E03_Open3DLabeling {
+/**
+ * How a 3D labeling looks like in the LabelEditor
+ */
+public class E08_3DLabeling {
 
 	public void run() {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 
+		//create data
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);
 		RandomAccess<IntType> ra = img.randomAccess();
 		Random random = new Random();
@@ -33,8 +37,11 @@ public class E03_Open3DLabeling {
 			for (IntType value : hyperSphere)
 				try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
 		}
+
+		//create labeling
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 		ImgPlus<IntType> imgPlus = new ImgPlus<>(img, "", new AxisType[]{Axes.X, Axes.Y, Axes.Z});
+
 		LabelEditorBdvPanel<IntType> panel = new LabelEditorBdvPanel<>();
 		ij.context().inject(panel);
 		panel.init(labeling, imgPlus);
@@ -50,7 +57,7 @@ public class E03_Open3DLabeling {
 	}
 
 	public static void main(String... args) throws IOException {
-		new E03_Open3DLabeling().run();
+		new E08_3DLabeling().run();
 	}
 
 

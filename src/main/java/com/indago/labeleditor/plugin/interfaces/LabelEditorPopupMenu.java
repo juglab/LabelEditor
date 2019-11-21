@@ -9,14 +9,11 @@ import com.indago.labeleditor.plugin.behaviours.export.ExportBehaviours;
 import com.indago.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
 import com.indago.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 import com.indago.labeleditor.plugin.behaviours.modification.TagModificationBehaviours;
-import com.indago.labeleditor.plugin.behaviours.view.ViewBehaviours;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
-import org.scijava.ui.behaviour.util.Behaviours;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 // TODO - can I do that with net.imagej.plugins.tools.ContextHandler?
 public class LabelEditorPopupMenu<L> extends JPopupMenu {
@@ -33,13 +30,12 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private static final String MENU_EDIT_MERGE = "Merge selected";
 
 	private static final String MENU_EXPORT = "Export";
+	private static final String MENU_EXPORT_SELECTED = "Export selected labels";
 	private static final String MENU_EXPORT_LABELMAP = "Export label map";
 	private static final String MENU_EXPORT_INDEXIMG = "Export index image";
 	private static final String MENU_EXPORT_SOURCE = "Export source image";
 	private static final String MENU_EXPORT_RENDERERS = "Renderers";
 
-	private static final String MENU_VIEW = "View";
-	private static final String MENU_VIEW_SELECTED = "View in new window";
 
 	private static final String MENU_SELECT = "Select";
 	private static final String MENU_SELECT_ALL = "Select all";
@@ -59,15 +55,16 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	public void populate() {
 		makeSelectMenu();
 		makeEditMenu();
-		makeViewMenu();
 		makeExportMenu();
 		makeOptionsEntry();
 	}
 
 	private void makeOptionsEntry() {
-		OptionsBehaviours optionsBehaviours = new OptionsBehaviours();
-		optionsBehaviours.init(model, control, view);
-		add(getMenuItem(e -> runInNewThread(optionsBehaviours::showOptions), MENU_OPTIONS));
+		if(context != null) {
+			OptionsBehaviours optionsBehaviours = new OptionsBehaviours();
+			optionsBehaviours.init(model, control, view);
+			add(getMenuItem(e -> runInNewThread(optionsBehaviours::showOptions), MENU_OPTIONS));
+		}
 	}
 
 	private void makeExportMenu() {
@@ -76,6 +73,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 			exportBehaviours.init(model, control, view);
 			context.inject(exportBehaviours);
 			JMenu menu = new JMenu(MENU_EXPORT);
+			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours.getExportSelectedLabels()::exportSelected), MENU_EXPORT_SELECTED));
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showLabelMap), MENU_EXPORT_LABELMAP));
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showIndexImg), MENU_EXPORT_INDEXIMG));
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showData), MENU_EXPORT_SOURCE));
@@ -89,15 +87,6 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 			}
 			add(menu);
 		}
-	}
-
-	private void makeViewMenu() {
-		ViewBehaviours viewBehaviours = new ViewBehaviours();
-		viewBehaviours.init(model, control, view);
-		if(context != null) context.inject(viewBehaviours);
-		JMenu menu = new JMenu(MENU_VIEW);
-		menu.add(getMenuItem(e -> runInNewThread(viewBehaviours.getViewBehaviour()::viewSelected), MENU_VIEW_SELECTED));
-		add(menu);
 	}
 
 	private void makeEditMenu() {

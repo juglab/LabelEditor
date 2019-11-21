@@ -26,10 +26,12 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	}
 
 	public void addDefaultRenderers() {
+		clear();
 		if(context == null) {
 			context = new Context();
 		}
 		List<PluginInfo<?>> renderers = context.getPluginIndex().get(LabelEditorRenderer.class);
+		renderers.sort((p1, p2) -> (int) (p1.getAnnotation().priority() - p2.getAnnotation().priority()));
 		renderers.forEach(renderer -> {
 			try {
 				LabelEditorRenderer instance = (LabelEditorRenderer) renderer.createInstance();
@@ -40,7 +42,6 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 				e.printStackTrace();
 			}
 		});
-		renderers.sort((p1, p2) -> (int) (p1.getAnnotation().priority() - p2.getAnnotation().priority()));
 	}
 
 	public Optional<LabelEditorRenderer> get(String name) {

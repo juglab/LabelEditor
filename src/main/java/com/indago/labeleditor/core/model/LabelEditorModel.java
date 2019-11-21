@@ -25,9 +25,9 @@ public interface LabelEditorModel <L> {
 
 	LabelEditorTagColors colors();
 
-	void initFromIndexImage(Img labelMap);
+	void initFromLabelMap(Img labelMap);
 
-	void initFromIndexImage(Img data, Img labelMap);
+	void initFromLabelMap(Img data, Img labelMap);
 
 	List<LabelEditorColorset> getVirtualChannels();
 

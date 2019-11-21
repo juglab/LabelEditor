@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -70,6 +69,13 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 				.collect(Collectors.toSet());
 	}
 
+	@Override
+	public void toggleTag(Object tag, L label) {
+		Set<Object> tags = getTags(label);
+		if(tags.contains(tag)) removeTagFromLabel(tag, label);
+		else addTagToLabel(tag, label);
+	}
+
 	protected void notifyListeners(TagChangedEvent e) {
 		if(log!= null) log.debug(e.toString());
 		if(listenersPaused) {
@@ -92,7 +98,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	}
 
 	@Override
-	public void addTag(Object tag, L label) {
+	public void addTagToLabel(Object tag, L label) {
 		Set<Object> set = tagMap().computeIfAbsent(label, k -> new HashSet<>());
 		if(set.add(tag)) {
 			notifyListeners(tag, label, TagChangedEvent.Action.ADDED);
@@ -100,7 +106,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	}
 
 	@Override
-	public void removeTag(Object tag, L label) {
+	public void removeTagFromLabel(Object tag, L label) {
 		Set<Object> set = tagMap().get(label);
 		if(set == null) return;
 		if( set.removeIf(mytag -> mytag.equals(tag))) {
@@ -110,11 +116,11 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 
 	@Override
 	public Set<Object> getTags(L label) {
-		return tagMap().computeIfAbsent(label, k -> new HashSet<>());
+		return Collections.unmodifiableSet(tagMap().computeIfAbsent(label, k -> new HashSet<>()));
 	}
 
 	@Override
-	public synchronized void removeTag(Object tag) {
+	public synchronized void removeTagFromLabel(Object tag) {
 		tagMap().forEach( (label, tags) -> {
 			if( tags.removeIf(mytag -> mytag.equals(tag))) {
 				notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);

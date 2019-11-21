@@ -40,14 +40,14 @@ public class TimeSliceLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 		super.init(labeling);
 	}
 
-	public void initFromIndexImage(Img labelMap, int timeDimension) {
+	public void initFromLabelMap(Img labelMap, int timeDimension) {
 		this.timeDimension = timeDimension;
-		super.initFromIndexImage(labelMap);
+		super.initFromLabelMap(labelMap);
 	}
 
-	public void initFromIndexImage(Img data, Img labelMap, int timeDimension) {
+	public void initFromLabelMap(Img data, Img labelMap, int timeDimension) {
 		this.timeDimension = timeDimension;
-		super.initFromIndexImage(data, labelMap);
+		super.initFromLabelMap(data, labelMap);
 	}
 
 	public int getTimeDimension() {

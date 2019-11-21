@@ -21,9 +21,9 @@ public interface LabelEditorPanel<L> extends Disposable {
 
 	void init(LabelEditorModel<L> model);
 
-	<T extends IntegerType<T>> void initFromIndexImage(Img<T> indexImg);
+	<T extends IntegerType<T>> void initFromLabelMap(Img<T> indexImg);
 
-	<T extends IntegerType<T>> void initFromIndexImage(Img data, Img<T> indexImg);
+	<T extends IntegerType<T>> void initFromLabelMap(Img data, Img<T> indexImg);
 
 	LabelEditorView<L> view();
 

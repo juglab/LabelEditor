@@ -30,7 +30,7 @@ public class TagByProperty<L> {
 		Random random = new Random();
 		labels.forEach(label -> {
 			LabelEditorValueTag circularity = new LabelEditorValueTag<>("circularity", new IntType(random.nextInt(100)));
-			model.tagging().addTag(circularity, label);
+			model.tagging().addTagToLabel(circularity, label);
 			model.colors().get(circularity.getIdentifier()).put(
 					LabelEditorTargetComponent.FACE,
 					ARGBType.rgba(0,0,255,250),

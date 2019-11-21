@@ -1,8 +1,8 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.advanced;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
-import com.indago.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 import com.indago.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorBdvPanel;
+import com.indago.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 import net.imagej.ImageJ;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
@@ -15,8 +15,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
-public class E09_BigData {
+/**
+ * How larger datasets appear in the LabelEditor
+ */
+public class E04_BigData {
 
+	/**
+	 * This example creates a {@link DiskCachedCellImg}, adds 100 labels randomly which should result in ~50.000 labelsets.
+	 * The example also demonstrates how to use the {@link TimeSliceLabelEditorModel} to display larger data.
+	 * In this mode, only the current timeframe is taken into consideration when doing operations like select all, etc.
+	 */
 	public void run() {
 
 		ImageJ ij = new ImageJ();
@@ -34,7 +42,7 @@ public class E09_BigData {
 		Random random = new Random();
 
 		for (int i = 0; i < 100; i++) {
-			for (int j = 0; j < 100; j++) {
+			for (int j = 0; j < 420; j++) {
 				int finalI = i;
 				try {
 				Views.interval( labels,
@@ -42,7 +50,7 @@ public class E09_BigData {
 								random.nextInt((int) backing.dimension(0)),
 								random.nextInt((int) backing.dimension(1)),
 								random.nextInt((int) backing.dimension(2)),
-								20, 20, 20 ) ).forEach(pixel -> pixel.add( "label"+ finalI) );
+								100, 100, 1 ) ).forEach(pixel -> pixel.add( "label"+ finalI) );
 				} catch(ArrayIndexOutOfBoundsException ignored) {}
 			}
 			System.out.println("done with label " + i);
@@ -53,8 +61,8 @@ public class E09_BigData {
 		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>();
 		model.setTimeDimension(2);
 		model.init(labels);
-		model.tagging().addTag(LABEL1, TAG1);
-		model.tagging().addTag(LABEL2, TAG2);
+		model.tagging().addTagToLabel(LABEL1, TAG1);
+		model.tagging().addTagToLabel(LABEL2, TAG2);
 
 		model.colors().getFaceColor(TAG1).set(0, 255, 255);
 		model.colors().getFaceColor(TAG2).set(255, 0, 255);
@@ -73,6 +81,6 @@ public class E09_BigData {
 	}
 
 	public static void main(String...args) {
-		new E09_BigData().run();
+		new E04_BigData().run();
 	}
 }

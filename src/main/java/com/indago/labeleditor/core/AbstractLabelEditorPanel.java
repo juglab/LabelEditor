@@ -52,26 +52,29 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 	}
 
 	@Override
-	public void initFromIndexImage(Img labelMap) {
+	public void initFromLabelMap(Img labelMap) {
 		LabelEditorModel<L> model = new DefaultLabelEditorModel<>();
-		model.initFromIndexImage(labelMap);
+		model.initFromLabelMap(labelMap);
 		init(model);
 	}
 
 	@Override
-	public void initFromIndexImage(Img data, Img labelMap) {
+	public void initFromLabelMap(Img data, Img labelMap) {
 		LabelEditorModel<L> model = new DefaultLabelEditorModel<>();
-		model.initFromIndexImage(labelMap);
+		model.initFromLabelMap(labelMap);
 		model.setData(data);
 		init(model);
 	}
 
 	@Override
 	public void init(LabelEditorModel<L> model) {
+		if(this.model == null) {
+			if(context() != null) context().inject(view().renderers());
+		}
 		this.model = model;
 		if(model.labeling() != null) {
 			view().init(model);
-			addRenderings(view());
+			addRenderers(view());
 		}
 		buildPanel();
 		clearInterface();
@@ -96,9 +99,8 @@ public abstract class AbstractLabelEditorPanel<L> extends JPanel implements Labe
 
 	protected abstract Component buildInterface();
 
-	protected void addRenderings(LabelEditorView<L> renderingManager) {
-		if(context() != null) context().inject(renderingManager.renderers());
-		renderingManager.renderers().addDefaultRenderers();
+	protected void addRenderers(LabelEditorView<L> view) {
+		view.renderers().addDefaultRenderers();
 	}
 
 	abstract protected void addBehaviours(LabelEditorController<L> controller);

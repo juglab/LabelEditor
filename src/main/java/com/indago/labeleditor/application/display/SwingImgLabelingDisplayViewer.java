@@ -19,8 +19,6 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 	@Parameter
 	Context context;
 
-	private LabelEditorModel model = null;
-
 	public SwingImgLabelingDisplayViewer() {
 		super(ImgLabeling.class);
 	}
@@ -32,6 +30,7 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 
 	@Override
 	protected JPanel createDisplayPanel(ImgLabeling labeling) {
+		System.out.println("context? " + context);
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
 		context.inject(panel);
 		panel.init(labeling);

@@ -9,8 +9,8 @@ public class LabelEditorValueColor<T extends RealType<T>> extends LabelEditorCol
 	private final T minVal;
 	private final T maxVal;
 
-	public LabelEditorValueColor(int minColor, int maxColor, T min, T max) {
-		super(maxColor);
+	public LabelEditorValueColor(LabelEditorColorset colorset, int minColor, int maxColor, T min, T max) {
+		super(colorset, maxColor);
 		this.minColor = minColor;
 		this.maxColor = maxColor;
 		this.minVal = min;

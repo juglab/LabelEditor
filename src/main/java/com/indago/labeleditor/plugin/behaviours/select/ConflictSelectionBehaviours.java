@@ -52,7 +52,7 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 	}
 
 	private void deselect(Set<L> labels) {
-		labels.forEach(label -> model.tagging().removeTag(LabelEditorTag.SELECTED, label));
+		labels.forEach(label -> model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
 	}
 
 	private Set<L> getConflictingLabels(L label) {

@@ -41,8 +41,8 @@ public class SelectByTagCommand extends InteractiveCommand {
 		toSelect.remove(selectedLabels);
 
 		model.tagging().pauseListeners();
-		toUnselect.forEach(label -> model.tagging().removeTag(LabelEditorTag.SELECTED, label));
-		toSelect.forEach(label -> model.tagging().addTag(LabelEditorTag.SELECTED, label));
+		toUnselect.forEach(label -> model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
+		toSelect.forEach(label -> model.tagging().addTagToLabel(LabelEditorTag.SELECTED, label));
 		model.tagging().resumeListeners();
 	}
 

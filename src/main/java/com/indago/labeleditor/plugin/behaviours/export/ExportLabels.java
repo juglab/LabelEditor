@@ -1,6 +1,7 @@
-package com.indago.labeleditor.plugin.behaviours.view;
+package com.indago.labeleditor.plugin.behaviours.export;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
+import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
@@ -22,6 +23,7 @@ import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
+import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.Behaviour;
 
 import javax.swing.*;
@@ -30,18 +32,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ViewLabels<L> implements Behaviour {
+public class ExportLabels<L> implements Behaviour {
 
 	@Parameter
 	Context context;
 
+	@Parameter
+	UIService ui;
+
 	private final LabelEditorModel<L> model;
 
-	public ViewLabels(LabelEditorModel model) {
+	public ExportLabels(LabelEditorModel model) {
 		this.model = model;
 	}
 
-	public void viewSelected() {
+	public void exportSelected() {
 		Set<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
 
 		LabelRegions regions = new LabelRegions<>(model.labeling());
@@ -61,20 +66,22 @@ public class ViewLabels<L> implements Behaviour {
 //		Regions.sample()
 
 		ImgLabeling<L, IntType> cropLabeling = createCroppedLabeling(selected, boundingBox, regionList);
-		ImgPlus data = createCroppedData(boundingBox);
 
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
 		if(context != null) context.inject(panel);
-		panel.init(cropLabeling, data);
-		JFrame frame = new JFrame("Label Detail Viewer");
-		frame.setContentPane(panel.get());
-		frame.setMinimumSize(new Dimension(500,500));
-		frame.pack();
-		frame.setVisible(true);
+
+		LabelEditorModel model = new DefaultLabelEditorModel();
+		if(model.getData() != null) {
+			Img data = createCroppedData(boundingBox);
+			model.setData(data);
+		}
+		model.init(cropLabeling);
+
+		ui.show(model);
 
 	}
 
-	private <T extends NativeType<T>> ImgPlus createCroppedData(Interval boundingBox) {
+	private <T extends NativeType<T>> Img<T> createCroppedData(Interval boundingBox) {
 		Img<T> dataImg = model.getData().factory().create(boundingBox);
 		Cursor<T> dataInCursor = Views.zeroMin(Views.interval(model.getData(), boundingBox)).localizingCursor();
 		RandomAccess<T> dataOutRA = dataImg.randomAccess();
@@ -83,7 +90,7 @@ public class ViewLabels<L> implements Behaviour {
 			dataOutRA.setPosition(dataInCursor);
 			dataOutRA.get().set(val);
 		}
-		return new ImgPlus(dataImg);
+		return dataImg;
 	}
 
 	private ImgLabeling<L, IntType> createCroppedLabeling(Set<L> labels, Interval boundingBox, Map<L, LabelRegion<L>> regionList) {

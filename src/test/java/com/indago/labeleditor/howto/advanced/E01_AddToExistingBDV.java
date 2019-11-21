@@ -1,20 +1,17 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.advanced;
 
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import com.indago.labeleditor.plugin.interfaces.bdv.BdvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
-import org.junit.AfterClass;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,15 +20,15 @@ import java.io.IOException;
 /**
  * How to display a labeling in an existing BDV instance
  */
-public class E05_AddToExistingBDV {
+public class E01_AddToExistingBDV {
 
 	public void run() throws IOException {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
-		Img thresholded = (Img) ij.op().threshold().otsu(input);
-		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
+		Img binary = (Img) ij.op().threshold().otsu(input);
+		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
 		model.init(labeling);
@@ -57,7 +54,7 @@ public class E05_AddToExistingBDV {
 	}
 
 	public static void main(String...args) throws IOException {
-		new E05_AddToExistingBDV().run();
+		new E01_AddToExistingBDV().run();
 	}
 
 }

@@ -65,12 +65,12 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public void initFromIndexImage(Img labelMap) {
+	public void initFromLabelMap(Img labelMap) {
 		init(makeLabeling(labelMap));
 	}
 
 	@Override
-	public void initFromIndexImage(Img data, Img labelMap) {
+	public void initFromLabelMap(Img data, Img labelMap) {
 		init(makeLabeling(labelMap), data);
 	}
 

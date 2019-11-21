@@ -1,10 +1,9 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.advanced;
 
 
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.model.tagging.LabelEditorTag;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.behaviours.select.ConflictSelectionBehaviours;
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
@@ -15,17 +14,19 @@ import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * How to open an {@link ImgLabeling} in a {@link LabelEditorBdvPanel}.
+ * How to use the conflict selection mode
  */
-public class E13_HandleMultipleConflicts {
+public class E06_HandleSegmentationConflicts {
 
+	/**
+	 * In conflict selection mode only labels which are in conflict with your newly selected label will be deselected.
+	 */
 	public void run() {
 
 		ImageJ ij = new ImageJ();
@@ -59,17 +60,20 @@ public class E13_HandleMultipleConflicts {
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>();
 		model.init(labels);
 
-		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL2);
-		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL7);
+		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL2);
+		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL7);
 
 		model.colors().getSelectedBorderColor().set(0,255,255,100);
 		model.colors().getDefaultFaceColor().set(0,0,0,0);
 		model.colors().getDefaultBorderColor().set(0,255,255,100);
 
 		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
+
 		ij.context().inject(panel);
+
 		panel.init(model);
 		panel.control().install(new ConflictSelectionBehaviours<>());
+
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
@@ -86,7 +90,7 @@ public class E13_HandleMultipleConflicts {
 	}
 
 	public static void main(String... args) {
-		new E13_HandleMultipleConflicts().run();
+		new E06_HandleSegmentationConflicts().run();
 	}
 
 }

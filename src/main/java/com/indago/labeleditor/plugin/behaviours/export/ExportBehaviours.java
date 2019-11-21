@@ -11,7 +11,10 @@ import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.numeric.IntegerType;
+import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
+import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.ClickBehaviour;
@@ -30,6 +33,9 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	@Parameter
 	UIService ui;
 
+	@Parameter
+	Context context;
+
 	public ExportBehaviours() {
 		super(new InputTriggerConfig(), "labeleditor-export");
 	}
@@ -43,6 +49,12 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	@Override
 	public void install(Behaviours behaviours, Component panel) {
 
+	}
+
+	public ExportLabels getExportSelectedLabels() {
+		ExportLabels exportLabels = new ExportLabels(model);
+		context.inject(exportLabels);
+		return exportLabels;
 	}
 
 	public ClickBehaviour getExportIndexImgBehaviour() {
@@ -69,16 +81,20 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 		show(getLabelMap());
 	}
 
-	public RandomAccessibleInterval<IntType> getLabelMap() {
-		RandomAccessibleInterval<LabelingType<IntType>> labeling = model.labeling();
-		Converter<LabelingType<IntType>, IntType> converter = (i, o) -> {
+	public <T extends RealType<T>> RandomAccessibleInterval<IntType> getLabelMap() {
+		RandomAccessibleInterval<LabelingType<T>> labeling = model.labeling();
+		Converter<LabelingType<T>, IntType> converter = (i, o) -> {
 			if(i.size() == 0) {
 				o.setZero();
 				return;
 			}
-			List<IntType> sortedLabels = new ArrayList<>(i);
+			List<T> sortedLabels = new ArrayList<>(i);
 			sortedLabels.sort(model.getLabelComparator());
-			o.set(sortedLabels.get(0));
+			try {
+				o.set((int) sortedLabels.get(0).getRealFloat());
+			} catch(ClassCastException e) {
+				o.set((int) (Object)sortedLabels.get(0));
+			}
 		};
 		return Converters.convert(labeling, converter, new IntType());
 	}

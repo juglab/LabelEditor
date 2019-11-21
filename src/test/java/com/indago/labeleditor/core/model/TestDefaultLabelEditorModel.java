@@ -30,14 +30,14 @@ public class TestDefaultLabelEditorModel {
 		assertNotNull(model.tagging());
 		assertEquals(0, model.tagging().getTags(LABEL1).size());
 
-		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL1);
+		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL1);
 		assertEquals(1, model.tagging().getTags(LABEL1).size());
 
-		model.tagging().removeTag(LabelEditorTag.SELECTED, LABEL1);
+		model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, LABEL1);
 		assertEquals(0, model.tagging().getTags(LABEL1).size());
 
-		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL1);
-		model.tagging().addTag(LabelEditorTag.FOCUS, LABEL1);
+		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL1);
+		model.tagging().addTagToLabel(LabelEditorTag.FOCUS, LABEL1);
 
 	}
 
@@ -57,9 +57,9 @@ public class TestDefaultLabelEditorModel {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>();
 		model.init(labels);
 
-		model.tagging().addTag(LabelEditorTag.SELECTED, LABEL1);
-		model.tagging().addTag(LabelEditorTag.FOCUS, LABEL2);
-		model.tagging().addTag("mytag", LABEL3);
+		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL1);
+		model.tagging().addTagToLabel(LabelEditorTag.FOCUS, LABEL2);
+		model.tagging().addTagToLabel("mytag", LABEL3);
 
 		List<String> sortedLabels = new ArrayList<>(model.labeling().getMapping().getLabels());
 		sortedLabels.sort(model::compareLabels);

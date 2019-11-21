@@ -18,8 +18,6 @@ public class SwingLabelEditorModelDisplayViewer extends EasySwingDisplayViewer< 
 	@Parameter
 	Context context;
 
-	private LabelEditorModel model = null;
-
 	public SwingLabelEditorModelDisplayViewer() {
 		super(LabelEditorModel.class);
 	}

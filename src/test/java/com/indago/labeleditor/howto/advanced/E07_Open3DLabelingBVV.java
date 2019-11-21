@@ -1,21 +1,16 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.advanced;
 
 import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
-import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
 import com.indago.labeleditor.plugin.interfaces.bvv.LabelEditorBvvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.Views;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class E04_Open3DLabelingBVV {
+public class E07_Open3DLabelingBVV {
 
 	public <T extends RealType<T>> void run() throws IOException {
 		ImageJ ij = new ImageJ();
@@ -36,8 +31,8 @@ public class E04_Open3DLabelingBVV {
 			stack.add(inputStack);
 		}
 		inputStack = Views.stack(stack);
-		Img thresholded = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
-		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(thresholded, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
+		Img binary = (Img) ij.op().threshold().otsu(Views.iterable(inputStack));
+		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>();
 		model.init(labeling);
@@ -55,7 +50,7 @@ public class E04_Open3DLabelingBVV {
 	}
 
 	public static void main(String... args) throws IOException {
-		new E04_Open3DLabelingBVV().run();
+		new E07_Open3DLabelingBVV().run();
 	}
 
 

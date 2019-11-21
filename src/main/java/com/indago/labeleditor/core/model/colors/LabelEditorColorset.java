@@ -22,18 +22,18 @@ public class LabelEditorColorset extends HashMap<Object, LabelEditorColor> imple
 	}
 
 	public LabelEditorColor put(Object o, int color) {
-		LabelEditorColor put = super.put(o, new LabelEditorColor(color));
+		LabelEditorColor put = super.put(o, new LabelEditorColor(this, color));
 		update();
 		return put;
 	}
 
 	public <T extends RealType<T>> LabelEditorColor put(Object o, int minColor, int maxColor, T min, T max) {
-		LabelEditorColor put = super.put(o, new LabelEditorValueColor<>(minColor, maxColor, min, max));
+		LabelEditorColor put = super.put(o, new LabelEditorValueColor<>(this, minColor, maxColor, min, max));
 		update();
 		return put;
 	}
 
-	private void update() {
+	protected void update() {
 		if(colors != null) colors.notifyListeners();
 	}
 
@@ -59,7 +59,7 @@ public class LabelEditorColorset extends HashMap<Object, LabelEditorColor> imple
 
 	@Override
 	public LabelEditorColor get(Object o) {
-		return computeIfAbsent(o, k -> new LabelEditorColor(0));
+		return computeIfAbsent(o, k -> new LabelEditorColor(this, 0));
 	}
 
 }

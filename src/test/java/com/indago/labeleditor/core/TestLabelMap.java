@@ -24,7 +24,7 @@ public class TestLabelMap {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
-		panel.initFromIndexImage(input);
+		panel.initFromLabelMap(input);
 		assertNotNull(panel.model());
 		assertNotNull(panel.model().labeling());
 		ExportBehaviours exportBehaviours = new ExportBehaviours();

@@ -157,8 +157,8 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	protected void select(L label) {
-		model.tagging().addTag(LabelEditorTag.SELECTED, label);
-		model.tagging().removeTag(LabelEditorTag.FOCUS, label);
+		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, label);
+		model.tagging().removeTagFromLabel(LabelEditorTag.FOCUS, label);
 	}
 
 	protected void selectPrevious(LabelingType<L> labels) {
@@ -186,11 +186,11 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	protected void deselect(L label) {
-		model.tagging().removeTag(LabelEditorTag.SELECTED, label);
+		model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label);
 	}
 
 	public void deselectAll() {
-		controller.labelSetInScope().forEach(label -> model.tagging().removeTag(LabelEditorTag.SELECTED, label));
+		controller.labelSetInScope().forEach(label -> model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
 	}
 
 	public void invertSelection() {

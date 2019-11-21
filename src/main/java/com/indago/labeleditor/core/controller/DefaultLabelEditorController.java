@@ -4,10 +4,15 @@ import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorView;
 import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
 
 import java.util.Set;
 
 public class DefaultLabelEditorController<L> implements LabelEditorController<L> {
+
+	@Parameter
+	Context context;
 
 	protected LabelEditorModel<L> model;
 	protected LabelEditorView<L> view;
@@ -22,6 +27,7 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 			model.tagging().listeners().remove(interfaceInstance::onTagChange);
 		}
 		this.interfaceInstance = interfaceInstance;
+		if(context != null) context.inject(interfaceInstance);
 		view.listeners().add(interfaceInstance::onViewChange);
 		model.tagging().listeners().add(interfaceInstance::onTagChange);
 	}
@@ -43,6 +49,7 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 
 	@Override
 	public void install(LabelEditorBehaviours behaviour) {
+		if(context != null) context.inject(behaviour);
 		behaviour.init(model, this, view);
 		behaviour.install(interfaceInstance.behaviours(), interfaceInstance.getComponent());
 	}

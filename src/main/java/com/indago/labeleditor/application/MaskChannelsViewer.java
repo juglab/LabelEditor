@@ -1,6 +1,5 @@
 package com.indago.labeleditor.application;
 
-import com.indago.labeleditor.core.LabelEditorPanel;
 import com.indago.labeleditor.core.model.DefaultLabelEditorModel;
 import com.indago.labeleditor.core.model.LabelEditorModel;
 import com.indago.labeleditor.core.view.LabelEditorTargetComponent;
@@ -20,12 +19,9 @@ import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.scijava.Context;
-import org.scijava.InstantiableException;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.scijava.plugin.PluginService;
-import org.scijava.plugin.SciJavaPlugin;
 
 import javax.swing.*;
 import java.awt.*;
@@ -78,7 +74,7 @@ public class MaskChannelsViewer implements Command {
 				int randomColor = ARGBType.rgba(random.nextInt(155) + 100, random.nextInt(155) + 100, random.nextInt(255) + 100, 100);
 				colors.put(tag, randomColor);
 				labelingSlice.getMapping().getLabels().forEach(labelset -> {
-					model.tagging().addTag(tag, labelset);
+					model.tagging().addTagToLabel(tag, labelset);
 				});
 				ops.labeling().merge(labeling, labeling, labelingSlice);
 			}

@@ -1,4 +1,4 @@
-package com.indago.labeleditor.howto;
+package com.indago.labeleditor.howto.advanced;
 
 import com.indago.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
@@ -15,34 +15,38 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
-public class E14_ChangingColors {
+/**
+ * How to make the LabelEditor display a new labeling
+ */
+public class E03_ChangingInput {
 
 	public void run() throws InterruptedException {
+
 		ImageJ ij = new ImageJ();
+		ij.launch();
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100);
 		RandomAccess<IntType> ra = img.randomAccess();
 		Random random = new Random();
 		ImgPlus<IntType> imgPlus = new ImgPlus<>(img);
-		for (int i = 0; i < 33; i++) {
+		for (int i = 0; i < 13; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 		}
+
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
-		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
-		panel.init(labeling, imgPlus);
-		panel.getSources().forEach(source -> source.setDisplayRange(0, 255));
+		ij.context().inject(panel);
+		panel.init(imgPlus);
+
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);
-		panel.model().labeling().getMapping().getLabels().forEach(label -> {
-			panel.model().tagging().addTag(label, label);
-		});
-		for (int i = 0; i < 13; i++) {
-			panel.model().colors().clear();
-			panel.model().labeling().getMapping().getLabels().forEach(label -> {
-				panel.model().colors().getFaceColor(label).set(random.nextInt(155)+100, random.nextInt(155) + 100, random.nextInt(155) + 100, 200);
-			});
+
+		for (int i = 0; i < 1300; i++) {
+			drawRandomSphere(imgPlus, ra, random);
+			ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
+			panel.init(labeling, imgPlus);
+			panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 			Thread.sleep(3000);
 		}
 	}
@@ -55,6 +59,6 @@ public class E14_ChangingColors {
 	}
 
 	public static void main(String... args) throws InterruptedException {
-		new E14_ChangingColors().run();
+		new E03_ChangingInput().run();
 	}
 }

@@ -10,13 +10,13 @@ public interface LabelEditorTagging<L> {
 
 	Map<L, Set<Object>> get();
 
-	void addTag(Object tag, L label);
+	void addTagToLabel(Object tag, L label);
 
-	void removeTag(Object tag, L label);
+	void removeTagFromLabel(Object tag, L label);
 
 	Set<Object> getTags(L label);
 
-	void removeTag(Object tag);
+	void removeTagFromLabel(Object tag);
 
 	Set<L> getLabels(Object tag);
 
@@ -31,4 +31,6 @@ public interface LabelEditorTagging<L> {
 	Set<L> filterLabelsWithTag(Set<L> labels, Object tag);
 
 	Set filterLabelsWithAnyTag(Set<L> labels, Set<Object> tags);
+
+	void toggleTag(Object tag, L label);
 }
