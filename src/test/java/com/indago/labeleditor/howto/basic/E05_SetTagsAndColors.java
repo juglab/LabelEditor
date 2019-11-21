@@ -26,10 +26,8 @@ public class E05_SetTagsAndColors {
 		model.tagging().addTagToLabel(TAG1, new IntType(1));
 		model.tagging().addTagToLabel(TAG1, new IntType(7));
 		model.tagging().addTagToLabel(TAG1, new IntType(14));
-		model.tagging().addTagToLabel(TAG1, new IntType(21));
 
 		model.tagging().addTagToLabel(TAG2, new IntType(3));
-		model.tagging().addTagToLabel(TAG2, new IntType(9));
 		model.tagging().addTagToLabel(TAG2, new IntType(13));
 		model.tagging().addTagToLabel(TAG2, new IntType(28));
 

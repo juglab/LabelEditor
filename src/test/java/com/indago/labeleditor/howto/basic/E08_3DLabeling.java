@@ -28,23 +28,24 @@ public class E08_3DLabeling {
 		ij.launch();
 
 		//create data
-		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(100, 100, 100);
+		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(500, 500, 500);
 		RandomAccess<IntType> ra = img.randomAccess();
 		Random random = new Random();
-		for (int i = 0; i < 13; i++) {
-			ra.setPosition(new int[]{random.nextInt(100), random.nextInt(100), random.nextInt(100)});
-			HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 5);
+		for (int i = 0; i < 42; i++) {
+			System.out.println(i);
+			ra.setPosition(new int[]{random.nextInt(500), random.nextInt(500), random.nextInt(500)});
+			HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 42);
 			for (IntType value : hyperSphere)
 				try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
 		}
 
 		//create labeling
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
-		ImgPlus<IntType> imgPlus = new ImgPlus<>(img, "", new AxisType[]{Axes.X, Axes.Y, Axes.Z});
 
 		LabelEditorBdvPanel<IntType> panel = new LabelEditorBdvPanel<>();
+		panel.setMode3D(true);
 		ij.context().inject(panel);
-		panel.init(labeling, imgPlus);
+		panel.init(labeling);
 
 		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 

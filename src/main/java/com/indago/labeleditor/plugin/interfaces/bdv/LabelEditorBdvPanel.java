@@ -26,6 +26,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 
 	@Parameter
 	private Context context;
+	private boolean mode3D = false;
 
 	@Override
 	protected void initController() {
@@ -36,10 +37,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 	}
 
 	private boolean is3DMode() {
-//		if(model().getData() == null) return false;
-//		return model().getData().dimensionIndex(Axes.Z) > 0;
-		//TODO make options class with 3D option
-		return false;
+		return mode3D;
 	}
 
 	@Override
@@ -130,4 +128,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 		if(getInterfaceHandle() != null) getInterfaceHandle().close();
 	}
 
+	public void setMode3D(boolean set3D) {
+		mode3D = true;
+	}
 }
