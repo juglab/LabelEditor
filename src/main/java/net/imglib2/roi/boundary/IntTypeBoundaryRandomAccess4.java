@@ -46,8 +46,6 @@ import net.imglib2.view.Views;
  * pixel with different values in their 4-neighborhood (or n-dimensional equivalent)
  * and returns 0 for all other pixels.
  *
- * @param <T>
- *
  * @author Tobias Pietzsch
  * @author Deborah Schmidt
  */

@@ -11,7 +11,7 @@ import org.scijava.ui.viewer.DisplayViewer;
 import javax.swing.*;
 
 /**
- * This class creates a {@TimeSliceLabelEditorBdvPanel} for a {@link TimeSliceLabelEditorModel}.
+ * This class creates a {@link TimeSliceLabelEditorBdvPanel} for a {@link TimeSliceLabelEditorModel}.
  */
 @Plugin(type = DisplayViewer.class, priority = 1.0)
 public class SwingTimeSliceLabelEditorModelDisplayViewer extends EasySwingDisplayViewer<TimeSliceLabelEditorModel> {
