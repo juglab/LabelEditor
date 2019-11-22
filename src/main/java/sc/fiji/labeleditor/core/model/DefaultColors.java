@@ -8,5 +8,5 @@ public class DefaultColors {
 	public static int defaultFace() { return ARGBType.rgba(42,42,42,50); }
 	public static int defaultBorder() { return ARGBType.rgba(0,255,255,142); }
 	public static int focusBorder() { return ARGBType.rgba(200,200,200,200); }
-	public static int focusFace() { return ARGBType.rgba(200,200,200,200); }
+	public static int focusFace() { return ARGBType.rgba(255,255,255,77); }
 }
