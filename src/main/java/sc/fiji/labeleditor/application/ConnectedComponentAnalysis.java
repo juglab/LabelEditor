@@ -28,7 +28,7 @@ public class ConnectedComponentAnalysis extends DynamicCommand {
 	Img<BitType> binaryInput;
 
 	@Parameter(type = ItemIO.OUTPUT)
-	private LabelEditorModel output;
+	private ImgLabeling<Integer, IntType> output;
 
 	@Parameter(label = "CCA structuring element", choices = {"four-connected", "eight-connected"}, required = false)
 	String structuringElementChoice = "four-connected";
@@ -64,10 +64,9 @@ public class ConnectedComponentAnalysis extends DynamicCommand {
 					resRA.get().addAll(val);
 				}
 			}
-			output = new TimeSliceLabelEditorModel<>(cca, binaryInput, 2);
 		} else {
 			opService.labeling().cca(cca, binaryInput, structuringElement);
-			output = new DefaultLabelEditorModel<>(cca, binaryInput);
 		}
+		output = cca;
 	}
 }

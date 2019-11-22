@@ -1,6 +1,5 @@
 package sc.fiji.labeleditor.application;
 
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import net.imagej.Dataset;
 import net.imagej.DefaultDataset;
 import net.imagej.ImageJ;
@@ -11,8 +10,8 @@ import net.imagej.workflow.ImageWorkflowStep;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
+import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.logic.BitType;
-import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
 import org.scijava.Initializable;
 import org.scijava.ItemIO;
@@ -21,8 +20,10 @@ import org.scijava.module.Module;
 import org.scijava.module.ModuleException;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.scijava.ui.DialogPrompt;
 import org.scijava.ui.UIService;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,9 +38,6 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 
 	@Parameter(type = ItemIO.OUTPUT)
 	LabelEditorModel model;
-
-	@Parameter
-	UIService uiService;
 
 	ImageWorkflowStep threshold = new ImageWorkflowStep("Threshold", "<html>First, we transform the image into binary format.<br>Please choose from the following options:<br></html>");
 	ImageWorkflowStep cca = new ImageWorkflowStep("CCA", "<html>Connected Component Analysis is used to detect objects.<br>Please choose from the following options:<br></html>");
@@ -92,9 +90,13 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 		//cca
 		Module ccaCommand = runCommand(cca, ConnectedComponentAnalysis.class, "binaryInput", binaryImg);
 
-		model = (LabelEditorModel) ccaCommand.getOutput("output");
-		opService.copy().rai(model.getData(), input);
+		ImgLabeling labeling = (ImgLabeling) ccaCommand.getOutput("output");
 
+		if((Boolean) ccaCommand.getInput("processInSlices")) {
+			model = new TimeSliceLabelEditorModel(labeling, input, 2);
+		} else {
+			model = new DefaultLabelEditorModel(labeling, input);
+		}
 	}
 
 	@Override
