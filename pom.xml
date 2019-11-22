@@ -22,7 +22,7 @@
 
 	<name>Label Editor</name>
 	<description>UI component for image segmentation label comparison and selection</description>
-	<url>https:github.com/juglab/labeleditor</url>
+	<url>https:github.com/juglab/LabelEditor</url>
 	<inceptionYear>2019</inceptionYear>
 	<organization>
 		<name>CSBD</name>
@@ -157,18 +157,18 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/juglab/labeleditor</connection>
-		<developerConnection>scm:git:git@github.com:juglab/labeleditor</developerConnection>
-		<url>https://github.com/juglab/labeleditor</url>
+		<connection>scm:git:git://github.com/juglab/LabelEditor</connection>
+		<developerConnection>scm:git:git@github.com:juglab/LabelEditor</developerConnection>
+		<url>https://github.com/juglab/LabelEditor</url>
 	  <tag>HEAD</tag>
   </scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/juglab/labeleditor/issues</url>
+		<url>https://github.com/juglab/LabelEditor/issues</url>
 	</issueManagement>
 	<ciManagement>
 		<system>Travis CI</system>
-		<url>https://travis-ci.com/juglab/labeleditor</url>
+		<url>https://travis-ci.com/juglab/LabelEditor</url>
 	</ciManagement>
 
 	<repositories>
