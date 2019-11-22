@@ -71,20 +71,24 @@ public class ExportLabels<L> implements Behaviour {
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
 		if(context != null) context.inject(panel);
 
-		LabelEditorModel model;
-		if(this.model.getData() != null) {
+		LabelEditorModel<L> exportModel;
+		if(model.getData() != null) {
 			RandomAccessibleInterval data = createCroppedData(boundingBox);
-			model = new DefaultLabelEditorModel<>(cropLabeling, data);
+			exportModel = new DefaultLabelEditorModel<>(cropLabeling, data);
 		} else {
-			model = new DefaultLabelEditorModel<>(cropLabeling);
+			exportModel = new DefaultLabelEditorModel<>(cropLabeling);
+		}
+		for(L label : exportModel.labeling().getMapping().getLabels()) {
+			Set<Object> oldTags = model.tagging().getTags(label);
+			oldTags.forEach(tag -> exportModel.tagging().addTagToLabel(tag, label));
 		}
 
-		ui.show(model);
+		ui.show(exportModel);
 
 	}
 
 	private RandomAccessibleInterval createCroppedData(Interval boundingBox) {
-		return ops.copy().rai(Views.interval(model.getData(), boundingBox));
+		return ops.copy().rai(Views.zeroMin(Views.interval(model.getData(), boundingBox)));
 	}
 
 	private ImgLabeling<L, IntType> createCroppedLabeling(Set<L> labels, Interval boundingBox, Map<L, LabelRegion<L>> regionList) {
@@ -94,10 +98,10 @@ public class ExportLabels<L> implements Behaviour {
 		for (int i = 0; i < boundingBox.numDimensions(); i++) {
 			offset.setPosition(-boundingBox.min(i), i);
 		}
+		RandomAccess<LabelingType<L>> outRA = cropLabeling.randomAccess();
 		labels.forEach(label -> {
 			LabelRegion<L> region = regionList.get(label);
 			LabelRegionCursor inCursor = region.localizingCursor();
-			RandomAccess<LabelingType<L>> outRA = cropLabeling.randomAccess();
 			while(inCursor.hasNext()) {
 				inCursor.next();
 				outRA.setPosition(inCursor);
