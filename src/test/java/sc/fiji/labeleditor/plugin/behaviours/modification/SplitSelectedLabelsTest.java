@@ -21,7 +21,7 @@ public class SplitSelectedLabelsTest {
 	public void splitSelected() {
 
 		ImageJ ij = new ImageJ();
-		ij.launch();
+//		ij.launch();
 
 		Img data = ij.op().create().img(new long[]{300, 300});
 
@@ -42,10 +42,10 @@ public class SplitSelectedLabelsTest {
 
 		SplitLabels.split(label, labeling, data, 1, ij.op());
 
-		//TODO why is this not 2?
+		//TODO should become 2?
 		assertEquals(3, labeling.getMapping().getLabels().size());
 
-		ij.ui().show(labeling.getIndexImg());
+//		ij.ui().show(labeling.getIndexImg());
 	}
 
 	private void drawSphere(Img<DoubleType> img, long[] position, int radius) {

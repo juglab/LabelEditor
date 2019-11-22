@@ -1,11 +1,5 @@
 package sc.fiji.labeleditor.plugin.behaviours.export;
 
-import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
-import ij.ImagePlus;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
@@ -19,6 +13,11 @@ import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
+import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
+import sc.fiji.labeleditor.core.controller.LabelEditorController;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -98,10 +97,10 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 		return Converters.convert(labeling, converter, new IntType());
 	}
 
-	public ImagePlus showRenderer(LabelEditorRenderer renderer) {
+	public void showRenderer(LabelEditorRenderer renderer) {
 		//TODO replace this as soon as SCIFIO can display ARGB
 		//ui.show(renderer.getOutput());
-		return ImageJFunctions.show(renderer.getOutput());
+		ImageJFunctions.show(renderer.getOutput());
 	}
 
 	public void showData() {

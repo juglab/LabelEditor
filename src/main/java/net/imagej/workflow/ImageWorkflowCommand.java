@@ -32,10 +32,6 @@ import java.util.concurrent.ExecutionException;
 public abstract class ImageWorkflowCommand implements Command, Cancelable {
 
 	@Parameter
-	protected
-	RandomAccessibleInterval input;
-
-	@Parameter
 	protected OpService opService;
 
 	@Parameter
@@ -60,6 +56,8 @@ public abstract class ImageWorkflowCommand implements Command, Cancelable {
 
 	public abstract String getTitle();
 
+	public abstract RandomAccessibleInterval getInput();
+
 	public abstract void run(RandomAccessibleInterval img) throws Exception;
 
 	@Override
@@ -80,14 +78,14 @@ public abstract class ImageWorkflowCommand implements Command, Cancelable {
 	protected abstract List<ImageWorkflowStep> getSteps();
 
 	protected RandomAccessibleInterval createTestImage() {
-		long[] min = new long[input.numDimensions()];
-		long[] max = new long[input.numDimensions()];
+		long[] min = new long[getInput().numDimensions()];
+		long[] max = new long[getInput().numDimensions()];
 		for (int i = 0; i < min.length; i++) {
 			min[i] = 0;
 			max[i] = 9;
 		}
 		Interval interval = new FinalInterval(min, max);
-		return opService.copy().rai(Views.interval(input, interval));
+		return opService.copy().rai(Views.interval(getInput(), interval));
 	}
 
 	private void harvestInputsDuringTestRun(RandomAccessibleInterval testImg) {
@@ -105,7 +103,7 @@ public abstract class ImageWorkflowCommand implements Command, Cancelable {
 		testRun = false;
 		commandWorkflow.startMainRun();
 		try {
-			run(input);
+			run(getInput());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

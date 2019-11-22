@@ -32,6 +32,8 @@ import java.util.concurrent.ExecutionException;
 @Plugin(type = Command.class, menuPath = "Analyze>Objects Counter (IJ2)")
 public class ObjectsCounter extends ImageWorkflowCommand implements Initializable {
 
+	@Parameter
+	protected Img input;
 
 	@Parameter(type = ItemIO.OUTPUT)
 	LabelEditorModel model;
@@ -46,9 +48,6 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 
 	@Override
 	public void initialize() {
-		if(input.numDimensions() > 3) {
-			uiService.showDialog("Cannot process images > 3D for now.", DialogPrompt.MessageType.ERROR_MESSAGE);
-		}
 		steps = new ArrayList<>();
 		steps.add(threshold);
 		steps.add(cca);
@@ -60,7 +59,17 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 	}
 
 	@Override
+	public RandomAccessibleInterval getInput() {
+		return input;
+	}
+
+	@Override
 	public void run(RandomAccessibleInterval input) throws InterruptedException, ExecutionException, ModuleException {
+
+		if(input.numDimensions() > 3) {
+			cancel("Cannot process images > 3D for now.");
+			return;
+		}
 
 		Img<BitType> binaryImg;
 		if(!BitType.class.isAssignableFrom(input.randomAccess().get().getClass())) {
@@ -69,6 +78,7 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 			Dataset binaryDataset = new DefaultDataset(context, new ImgPlus((Img)thresholdInput));
 			runCommand(threshold, Binarize.class,
 					"inputData", binaryDataset,
+					"inputMask", null,
 					"changeInput", true,
 					"maskColor", Binarize.WHITE,
 					"fillBg", true,
@@ -96,10 +106,7 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 		ImageJ ij = new ImageJ();
 		ij.launch();
 		Img input = (Img) ij.io().open(ObjectsCounter.class.getResource("/blobs.png").getPath());
-		Img source = (Img) ij.io().open("/home/random/Development/imagej/project/3DAnalysisFIBSegmentation/High_glucose_Cell_1_complete-crop.tif");
-		IntervalView inputslice = Views.hyperSlice(source, 2, 1);
-//		input = (Img) ij.op().threshold().otsu(input);
-		ij.command().run(ObjectsCounter.class, true, "input", inputslice);
+		ij.command().run(ObjectsCounter.class, true, "input", input);
 	}
 
 }
