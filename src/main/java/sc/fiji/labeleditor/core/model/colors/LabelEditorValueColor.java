@@ -4,10 +4,10 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 
 public class LabelEditorValueColor<T extends RealType<T>> extends LabelEditorColor {
-	private final int minColor;
-	private final int maxColor;
-	private final T minVal;
-	private final T maxVal;
+	private int minColor;
+	private int maxColor;
+	private T minVal;
+	private T maxVal;
 
 	public LabelEditorValueColor(LabelEditorColorset colorset, int minColor, int maxColor, T min, T max) {
 		super(colorset, maxColor);
@@ -15,6 +15,10 @@ public class LabelEditorValueColor<T extends RealType<T>> extends LabelEditorCol
 		this.maxColor = maxColor;
 		this.minVal = min;
 		this.maxVal = max;
+	}
+
+	public LabelEditorValueColor(LabelEditorColorset colorset) {
+		super(colorset, null);
 	}
 
 	public int getColor(RealType value) {
@@ -32,5 +36,25 @@ public class LabelEditorValueColor<T extends RealType<T>> extends LabelEditorCol
 		int b = (int) (minB + (maxB-minB)*pct);
 		int a = (int) (minA + (maxA-minA)*pct);
 		return ARGBType.rgba(r,g,b,a);
+	}
+
+	public LabelEditorValueColor setMinColor(int red, int green, int blue, int alpha) {
+		minColor = ARGBType.rgba(red, green, blue, alpha);
+		return this;
+	}
+
+	public LabelEditorValueColor setMaxColor(int red, int green, int blue, int alpha) {
+		maxColor = ARGBType.rgba(red, green, blue, alpha);
+		return this;
+	}
+
+	public LabelEditorValueColor setMinValue(T val) {
+		minVal = val;
+		return this;
+	}
+
+	public LabelEditorValueColor setMaxValue(T val) {
+		maxVal = val;
+		return this;
 	}
 }

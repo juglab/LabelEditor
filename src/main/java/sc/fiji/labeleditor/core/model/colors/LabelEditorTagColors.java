@@ -4,6 +4,7 @@ import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 import org.scijava.listeners.Listeners;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
@@ -14,7 +15,7 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 	public LabelEditorTagColors() {
 	}
 
-	public LabelEditorColorset get(Object tag) {
+	public LabelEditorColorset getColorset(Object tag) {
 		return computeIfAbsent(tag, k -> new LabelEditorColorset(this));
 	}
 
@@ -40,11 +41,11 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 	// convenience methods
 
 	public LabelEditorColor getFaceColor(Object tag) {
-		return get(tag).get(LabelEditorTargetComponent.FACE);
+		return getColorset(tag).get(LabelEditorTargetComponent.FACE);
 	}
 
 	public LabelEditorColor getBorderColor(Object tag) {
-		return get(tag).get(LabelEditorTargetComponent.BORDER);
+		return getColorset(tag).get(LabelEditorTargetComponent.BORDER);
 	}
 
 	public LabelEditorColor getFocusFaceColor() {
@@ -69,5 +70,16 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 
 	public LabelEditorColor getDefaultBorderColor() {
 		return getBorderColor(LabelEditorTag.DEFAULT);
+	}
+
+	public LabelEditorValueColor makeValueBorderColor(Object valueTagIdentifier) {
+		LabelEditorColorset colorset = getColorset(valueTagIdentifier);
+		LabelEditorValueColor color = new LabelEditorValueColor<>(colorset);
+		colorset.put(LabelEditorTargetComponent.BORDER, color);
+		return color;
+	}
+
+	public Collection<LabelEditorColorset> getVirtualChannels() {
+		return values();
 	}
 }

@@ -58,9 +58,9 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTagToLabel("b", "b");
 		int red = ARGBType.rgba(255, 0, 0, 255);
-		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
+		model.colors().getFaceColor("b").set(red);
 		int green = ARGBType.rgba(0, 255, 0, 255);
-		model.colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, green);
+		model.colors().getDefaultFaceColor().set(green);
 
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
@@ -105,9 +105,9 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.tagging().addTagToLabel("a", "a");
 		int red = ARGBType.rgba(255, 0, 0, 100);
 		int transparent = ARGBType.rgba(0, 0, 0, 0);
-		model.colors().get("a").put(LabelEditorTargetComponent.FACE, transparent);
-		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
-		model.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
+		model.colors().getFaceColor("a").set(transparent);
+		model.colors().getFaceColor("b").set(red);
+		model.colors().getDefaultFaceColor().set(0);
 
 		//view
 		LabelEditorView<String> view = new LabelEditorView<>(model);
@@ -151,8 +151,8 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.tagging().addTagToLabel("a", "a");
 		int color = ARGBType.rgba(255, 255, 255, 100);
 		int mixedColor = ARGBType.rgba(255, 255, 255, 160);
-		model.colors().get("a").put(LabelEditorTargetComponent.FACE, color);
-		model.colors().get(LabelEditorTag.DEFAULT).remove(LabelEditorTargetComponent.FACE);
+		model.colors().getFaceColor("a").set(color);
+		model.colors().getDefaultFaceColor().set(0);
 
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
@@ -179,8 +179,8 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		LabelEditorTagColors tagColors = new LabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
-		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 0, 0, 100));
-		tagColors.get(tag2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 255, 0, 100));
+		tagColors.getFaceColor(tag1).set(255, 0, 0, 100);
+		tagColors.getFaceColor(tag2).set(0, 255, 0, 100);
 		List<Object> noSet = new ArrayList<>();
 		int colorNoTag = DefaultLabelEditorRenderer.mixColors(noSet, tagColors, LabelEditorTargetComponent.FACE);
 		assertEquals(0, ARGBType.red(colorNoTag));
@@ -202,8 +202,8 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		LabelEditorTagColors tagColors = new LabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
-		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0, 0, 0, 0));
-		tagColors.get(tag2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 155, 0, 100));
+		tagColors.getFaceColor(tag1).set(0, 0, 0, 0);
+		tagColors.getFaceColor(tag2).set(255, 155, 0, 100);
 		List<Object> noSet = new ArrayList<>();
 		int colorNoTag = DefaultLabelEditorRenderer.mixColors(noSet, tagColors, LabelEditorTargetComponent.FACE);
 		assertEquals(0, ARGBType.red(colorNoTag));
@@ -247,8 +247,8 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		LabelEditorTagColors tagColors = new LabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
-		tagColors.get(tag1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 255, 255, 100));
-		tagColors.get(tag2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255, 255, 255, 100));
+		tagColors.getFaceColor(tag1).set(255, 255, 255, 100);
+		tagColors.getFaceColor(tag2).set(255, 255, 255, 100);
 		List<Object> noSet = new ArrayList<>();
 		int colorNoTag = DefaultLabelEditorRenderer.mixColors(noSet, tagColors, LabelEditorTargetComponent.FACE);
 		assertEquals(0, ARGBType.red(colorNoTag));

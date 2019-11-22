@@ -40,8 +40,8 @@ public class E02_CustomActions {
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		//set colors
-		model.colors().remove(LabelEditorTag.SELECTED);
-		model.colors().remove(LabelEditorTag.FOCUS);
+		model.colors().getColorset(LabelEditorTag.SELECTED).clear();
+		model.colors().getColorset(LabelEditorTag.FOCUS).clear();
 		model.colors().getFaceColor("special").set(255, 0, 0);
 
 		model.setData(input);

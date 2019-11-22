@@ -43,7 +43,7 @@ public class SwingLabelEditorModelBdvWidget extends SwingInputWidget<LabelEditor
 				panel.getSources().forEach(source -> source.setDisplayRange(0, 255));
 				panel.getSources().get(0).setDisplayRange(min.getRealDouble(), max.getRealDouble());
 			}
-			panel.model().colors().get(LabelEditorTag.DEFAULT).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,0,0,255));
+			panel.model().colors().getDefaultFaceColor().set(255,0,0);
 		}
 		else panel.view().updateOnLabelingChange();
 	}

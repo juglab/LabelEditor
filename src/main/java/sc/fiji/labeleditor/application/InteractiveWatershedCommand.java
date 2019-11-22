@@ -75,7 +75,7 @@ public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 			Random random = new Random();
 			output.labeling().getMapping().getLabels().forEach(label -> {
 				output.tagging().addTagToLabel(label, label);
-				output.colors().get(label).put(LabelEditorTargetComponent.FACE, randomColor(random));
+				output.colors().getFaceColor(label).set(randomColor(random));
 			});
 		}
 	}

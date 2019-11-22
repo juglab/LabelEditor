@@ -1,5 +1,7 @@
 package sc.fiji.labeleditor.howto.basic;
 
+import net.imglib2.algorithm.labeling.ConnectedComponents;
+import net.imglib2.roi.labeling.ImgLabeling;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import net.imagej.ImageJ;
@@ -15,9 +17,14 @@ public class E05_SetTagsAndColors {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 
-		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
+		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 
-		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(input);
+		Img<IntType> binary = (Img) ij.op().threshold().otsu(input);
+
+		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(
+				binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
+
+		LabelEditorModel model = new DefaultLabelEditorModel<>(labeling);
 
 		String TAG1 = "tag1";
 		String TAG2 = "tag2";

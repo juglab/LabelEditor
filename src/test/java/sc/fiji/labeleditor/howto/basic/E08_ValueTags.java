@@ -42,15 +42,14 @@ public class E08_ValueTags {
 
 			model.tagging().addTagToLabel(randomValue, label);
 
-			// now assign a color range to this value tag
-			model.colors().get(randomValue.getIdentifier()).put(
-					LabelEditorTargetComponent.FACE,
-					ARGBType.rgba(0,0,255,250),
-					ARGBType.rgba(255,0,0,250),
-					new IntType(0), new IntType(100)
-			);
-
 		});
+
+		// now assign a color range to this value tag
+		model.colors().makeValueBorderColor("random")
+				.setMinColor(0,0,255,250)
+				.setMaxColor(255,0,0,250)
+				.setMinValue(new IntType(0))
+				.setMaxValue(new IntType(100));
 
 		ij.ui().show(model);
 	}

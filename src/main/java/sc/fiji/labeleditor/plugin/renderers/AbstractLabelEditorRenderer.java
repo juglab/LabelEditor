@@ -127,7 +127,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 	private static int getColor(LabelEditorTagColors tagColors, Object targetComponent, Object tag) {
 		int color = 0;
 		if(LabelEditorValueTag.class.isAssignableFrom(tag.getClass())){
-			LabelEditorColorset colorset = tagColors.get(((LabelEditorValueTag) tag).getIdentifier());
+			LabelEditorColorset colorset = tagColors.getColorset(((LabelEditorValueTag) tag).getIdentifier());
 			LabelEditorColor targetColor = colorset.get(targetComponent);
 			if(targetColor == null) return 0;
 			if(LabelEditorValueColor.class.isAssignableFrom(targetColor.getClass())) {
@@ -137,7 +137,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 				color = targetColor.get();
 			}
 		} else {
-			LabelEditorColorset colorset = tagColors.get(tag);
+			LabelEditorColorset colorset = tagColors.getColorset(tag);
 			if(colorset != null && colorset.containsKey(targetComponent)) {
 				color = colorset.get(targetComponent).get();
 			}

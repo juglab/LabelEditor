@@ -83,7 +83,7 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	@Override
 	public List<LabelEditorColorset> getVirtualChannels() {
-		return new ArrayList<>(tagColors.values());
+		return new ArrayList<>(tagColors.getVirtualChannels());
 	}
 
 	/**

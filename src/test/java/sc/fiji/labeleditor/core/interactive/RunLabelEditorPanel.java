@@ -1,9 +1,5 @@
 package sc.fiji.labeleditor.core.interactive;
 
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
-import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import io.scif.img.IO;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
@@ -13,11 +9,13 @@ import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.NativeType;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,8 +31,8 @@ public class RunLabelEditorPanel {
 	public static void main(String... args) {
 		ImgPlus img = buildData();
 		LabelEditorModel model = buildModel(img);
-		model.colors().get(TAG1).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(255,255,0,50));
-		model.colors().get(TAG2).put(LabelEditorTargetComponent.FACE, ARGBType.rgba(0,255,255,50));
+		model.colors().getFaceColor(TAG1).set(255,255,0,50);
+		model.colors().getFaceColor(TAG2).set(0,255,255,50);
 		model.setData(img);
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();

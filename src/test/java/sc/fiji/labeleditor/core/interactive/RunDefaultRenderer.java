@@ -1,11 +1,6 @@
 package sc.fiji.labeleditor.core.interactive;
 
 import bdv.util.BdvFunctions;
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderers;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
-import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -20,6 +15,10 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderers;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
+import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,7 +42,7 @@ public class RunDefaultRenderer {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 		model.tagging().addTagToLabel("b", "b");
 		int red = ARGBType.rgba(255, 0, 0, 100);
-		model.colors().get("b").put(LabelEditorTargetComponent.FACE, red);
+		model.colors().getFaceColor("b").set(red);
 		LabelEditorView<String> view = new LabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderers = view.renderers();

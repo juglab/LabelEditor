@@ -1,9 +1,5 @@
 package sc.fiji.labeleditor.application;
 
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
-import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
@@ -22,6 +18,9 @@ import org.scijava.Context;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,7 +82,7 @@ public class MaskChannelsViewer implements Command {
 		context.inject(panel);
 		model.setData(dataImg);
 		panel.init(model);
-		colors.forEach((tag, color) -> panel.model().colors().get(tag).put(LabelEditorTargetComponent.FACE, color));
+		colors.forEach((tag, color) -> panel.model().colors().getFaceColor(tag).set(color));
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));
