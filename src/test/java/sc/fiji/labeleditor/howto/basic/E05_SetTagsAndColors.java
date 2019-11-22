@@ -30,17 +30,17 @@ public class E05_SetTagsAndColors {
 		String TAG2 = "tag2";
 		String TAG3 = "tag3";
 
-		model.tagging().addTagToLabel(TAG1, new IntType(1));
-		model.tagging().addTagToLabel(TAG1, new IntType(7));
-		model.tagging().addTagToLabel(TAG1, new IntType(14));
+		model.tagging().addTagToLabel(TAG1, new Integer(1));
+		model.tagging().addTagToLabel(TAG1, new Integer(7));
+		model.tagging().addTagToLabel(TAG1, new Integer(14));
 
-		model.tagging().addTagToLabel(TAG2, new IntType(3));
-		model.tagging().addTagToLabel(TAG2, new IntType(13));
-		model.tagging().addTagToLabel(TAG2, new IntType(28));
+		model.tagging().addTagToLabel(TAG2, new Integer(3));
+		model.tagging().addTagToLabel(TAG2, new Integer(13));
+		model.tagging().addTagToLabel(TAG2, new Integer(28));
 
-		model.tagging().addTagToLabel(TAG3, new IntType(5));
-		model.tagging().addTagToLabel(TAG3, new IntType(18));
-		model.tagging().addTagToLabel(TAG3, new IntType(25));
+		model.tagging().addTagToLabel(TAG3, new Integer(5));
+		model.tagging().addTagToLabel(TAG3, new Integer(18));
+		model.tagging().addTagToLabel(TAG3, new Integer(25));
 
 		model.colors().getFaceColor(TAG1).set(255,50, 0);
 		model.colors().getFaceColor(TAG2).set(0,50, 255);

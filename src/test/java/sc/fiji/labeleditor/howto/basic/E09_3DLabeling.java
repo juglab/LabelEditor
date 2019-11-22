@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * How a 3D labeling looks like in the LabelEditor
+ * How to active the 3D mode of the LabelEditor
  */
 public class E09_3DLabeling {
 
@@ -24,7 +24,7 @@ public class E09_3DLabeling {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 
-		//create data
+		//create image with spheres at random positions
 		Img<IntType> img = new ArrayImgFactory<>(new IntType()).create(500, 500, 500);
 		RandomAccess<IntType> ra = img.randomAccess();
 		Random random = new Random();
@@ -39,13 +39,22 @@ public class E09_3DLabeling {
 		//create labeling
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
+		// for 3D mode, one cannot use the ui service yet, so we create our own panel..
 		LabelEditorBdvPanel<IntType> panel = new LabelEditorBdvPanel<>();
+
+		// .. and enable the 3D mode
 		panel.setMode3D(true);
+
+		// (don't forget to inject the context to get all the IJ2 goodies, but it should also work (with a limited set of features) without this)
 		ij.context().inject(panel);
+
+		// initialize the panel..
 		panel.init(labeling);
 
+		// .. maybe set the display range for the inputs..
 		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 
+		// .. and create a frame to show the panel.
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

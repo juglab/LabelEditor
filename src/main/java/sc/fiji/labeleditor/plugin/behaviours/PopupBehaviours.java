@@ -1,14 +1,14 @@
 package sc.fiji.labeleditor.plugin.behaviours;
 
+import org.scijava.Context;
+import org.scijava.plugin.Parameter;
+import org.scijava.ui.behaviour.ClickBehaviour;
+import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.LabelEditorPopupMenu;
-import org.scijava.Context;
-import org.scijava.plugin.Parameter;
-import org.scijava.ui.behaviour.ClickBehaviour;
-import org.scijava.ui.behaviour.util.Behaviours;
 
 import java.awt.*;
 
