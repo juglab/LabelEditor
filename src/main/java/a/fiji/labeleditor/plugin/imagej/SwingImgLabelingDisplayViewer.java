@@ -11,7 +11,7 @@ import org.scijava.ui.viewer.DisplayViewer;
 import javax.swing.*;
 
 /**
- * This class creates a {@LabelEditorBdvPanel} for a {@link LabelEditorModel}.
+ * This class creates a {@link LabelEditorBdvPanel} for a {@link LabelEditorModel}.
  */
 @Plugin(type = DisplayViewer.class, priority = 1.0)
 public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLabeling> {
