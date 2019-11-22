@@ -90,7 +90,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 	}
 
 	@Override
-	protected void displayData(Img data) {
+	protected void displayData(RandomAccessibleInterval data) {
 		if(data != null) {
 			displayInBdv( data, "source" );
 		}

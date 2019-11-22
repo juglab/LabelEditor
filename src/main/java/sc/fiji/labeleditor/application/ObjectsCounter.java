@@ -93,7 +93,7 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 		Module ccaCommand = runCommand(cca, ConnectedComponentAnalysis.class, "binaryInput", binaryImg);
 
 		model = (LabelEditorModel) ccaCommand.getOutput("output");
-		model.setData((Img)opService.copy().rai(input));
+		opService.copy().rai(model.getData(), input);
 
 	}
 

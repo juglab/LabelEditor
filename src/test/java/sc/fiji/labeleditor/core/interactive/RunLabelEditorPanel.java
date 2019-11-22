@@ -33,7 +33,6 @@ public class RunLabelEditorPanel {
 		LabelEditorModel model = buildModel(img);
 		model.colors().getFaceColor(TAG1).set(255,255,0,50);
 		model.colors().getFaceColor(TAG2).set(0,255,255,50);
-		model.setData(img);
 		JFrame frame = new JFrame("Label editor");
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
@@ -61,7 +60,7 @@ public class RunLabelEditorPanel {
 		Views.interval( labels, Intervals.createMinSize( 320, 320, 1, 100, 100, 1 ) ).forEach(pixel -> pixel.add( LABEL2 ) );
 		Views.interval( labels, Intervals.createMinSize( 300, 300, 1, 100, 100, 1 ) ).forEach( pixel -> pixel.add( LABEL1 ) );
 
-		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels, data);
 		model.tagging().addTagToLabel(LABEL1, TAG1);
 		model.tagging().addTagToLabel(LABEL2, TAG2);
 		return model;

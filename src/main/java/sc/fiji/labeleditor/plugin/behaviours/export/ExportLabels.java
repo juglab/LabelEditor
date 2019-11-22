@@ -1,5 +1,7 @@
 package sc.fiji.labeleditor.plugin.behaviours.export;
 
+import net.imagej.ops.OpService;
+import net.imglib2.RandomAccessibleInterval;
 import sc.fiji.labeleditor.core.LabelEditorPanel;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -37,6 +39,9 @@ public class ExportLabels<L> implements Behaviour {
 	@Parameter
 	UIService ui;
 
+	@Parameter
+	OpService ops;
+
 	private final LabelEditorModel<L> model;
 
 	public ExportLabels(LabelEditorModel<L> model) {
@@ -60,33 +65,26 @@ public class ExportLabels<L> implements Behaviour {
 				boundingBox = Intervals.union(boundingBox, region);
 			}
 		}
-//		Regions.sample()
 
 		ImgLabeling<L, IntType> cropLabeling = createCroppedLabeling(selected, boundingBox, regionList);
 
 		LabelEditorPanel panel = new LabelEditorBdvPanel();
 		if(context != null) context.inject(panel);
 
-		LabelEditorModel model = new DefaultLabelEditorModel<>(cropLabeling);
-		if(model.getData() != null) {
-			Img data = createCroppedData(boundingBox);
-			model.setData(data);
+		LabelEditorModel model;
+		if(this.model.getData() != null) {
+			RandomAccessibleInterval data = createCroppedData(boundingBox);
+			model = new DefaultLabelEditorModel<>(cropLabeling, data);
+		} else {
+			model = new DefaultLabelEditorModel<>(cropLabeling);
 		}
 
 		ui.show(model);
 
 	}
 
-	private <T extends NativeType<T>> Img<T> createCroppedData(Interval boundingBox) {
-		Img<T> dataImg = model.getData().factory().create(boundingBox);
-		Cursor<T> dataInCursor = Views.zeroMin(Views.interval(model.getData(), boundingBox)).localizingCursor();
-		RandomAccess<T> dataOutRA = dataImg.randomAccess();
-		while(dataInCursor.hasNext()) {
-			T val = dataInCursor.next();
-			dataOutRA.setPosition(dataInCursor);
-			dataOutRA.get().set(val);
-		}
-		return dataImg;
+	private RandomAccessibleInterval createCroppedData(Interval boundingBox) {
+		return ops.copy().rai(Views.interval(model.getData(), boundingBox));
 	}
 
 	private ImgLabeling<L, IntType> createCroppedLabeling(Set<L> labels, Interval boundingBox, Map<L, LabelRegion<L>> regionList) {

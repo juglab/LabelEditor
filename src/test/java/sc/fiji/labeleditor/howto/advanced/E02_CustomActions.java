@@ -37,14 +37,12 @@ public class E02_CustomActions {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		//create model
-		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling, input);
 
 		//set colors
 		model.colors().getColorset(LabelEditorTag.SELECTED).clear();
 		model.colors().getColorset(LabelEditorTag.FOCUS).clear();
 		model.colors().getFaceColor("special").set(255, 0, 0);
-
-		model.setData(input);
 
 		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
 		ij.context().inject(panel);

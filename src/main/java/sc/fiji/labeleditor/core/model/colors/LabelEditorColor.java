@@ -17,6 +17,10 @@ public class LabelEditorColor {
 
 	public void set(int color) {
 		this.color = color;
+		update();
+	}
+
+	protected void update() {
 		colorset.update();
 	}
 

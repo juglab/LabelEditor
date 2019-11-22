@@ -75,7 +75,7 @@ public class SplitLabels<L> implements Behaviour {
 		LabelRegion<Integer> region = regions.getLabelRegion(label);
 		IntervalView<BoolType> zeroRegion = Views.zeroMin(region);
 		ImgLabeling<L, IntType> cropLabeling = createCroppedLabeling(label, region);
-		ImgPlus data = createCroppedData(region, zeroRegion);
+		RandomAccessibleInterval data = createCroppedData(region, zeroRegion);
 		CommandModule out = commandService.run(
 				InteractiveWatershedCommand.class, true,
 				"labeling", cropLabeling,
@@ -99,16 +99,8 @@ public class SplitLabels<L> implements Behaviour {
 //		Set<L> newlabels = split(label, model.labels(), model.getData(), 1, opService);
 	}
 
-	private <T extends NativeType<T>> ImgPlus createCroppedData(LabelRegion<Integer> region, IntervalView<BoolType> zeroRegion) {
-		Img<T> dataImg = opService.create().img(zeroRegion, (T) model.getData().firstElement());
-		Cursor<T> dataInCursor = Views.zeroMin(Views.interval(model.getData(), region)).localizingCursor();
-		RandomAccess<T> dataOutRA = dataImg.randomAccess();
-		while(dataInCursor.hasNext()) {
-			T val = dataInCursor.next();
-			dataOutRA.setPosition(dataInCursor);
-			dataOutRA.get().set(val);
-		}
-		return new ImgPlus(dataImg);
+	private RandomAccessibleInterval createCroppedData(LabelRegion<Integer> region, IntervalView<BoolType> zeroRegion) {
+		return opService.copy().rai(Views.zeroMin(Views.interval(model.getData(), region)));
 	}
 
 	private ImgLabeling<L, IntType> createCroppedLabeling(L label, LabelRegion<Integer> region) {

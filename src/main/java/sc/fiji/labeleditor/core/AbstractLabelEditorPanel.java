@@ -1,16 +1,17 @@
 package sc.fiji.labeleditor.core;
 
-import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
+import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
+import sc.fiji.labeleditor.core.controller.LabelEditorController;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,8 +39,7 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	@Override
 	public <L> void init(ImgLabeling<L, IntType> labels, Img data) {
-		LabelEditorModel<L> model = new DefaultLabelEditorModel<>(labels);
-		model.setData(data);
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>(labels, data);
 		init(model);
 	}
 
@@ -57,8 +57,7 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	@Override
 	public void initFromLabelMap(Img data, Img labelMap) {
-		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap);
-		model.setData(data);
+		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap, data);
 		init(model);
 	}
 
@@ -107,7 +106,7 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	protected abstract void displayLabeling();
 
-	protected abstract void displayData(Img data);
+	protected abstract void displayData(RandomAccessibleInterval data);
 
 	protected abstract void clearInterface();
 

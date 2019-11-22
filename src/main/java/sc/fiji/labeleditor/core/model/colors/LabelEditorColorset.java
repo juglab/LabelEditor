@@ -28,7 +28,9 @@ public class LabelEditorColorset extends HashMap<Object, LabelEditorColor> imple
 	}
 
 	public <T extends RealType<T>> LabelEditorColor put(Object o, int minColor, int maxColor, T min, T max) {
-		LabelEditorColor put = super.put(o, new LabelEditorValueColor<>(this, minColor, maxColor, min, max));
+		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(this, min, max);
+		color.setMinColor(minColor).setMaxColor(maxColor);
+		LabelEditorColor put = super.put(o, color);
 		update();
 		return put;
 	}

@@ -1,12 +1,8 @@
 package sc.fiji.labeleditor.core.model;
 
-import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
-import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
-import sc.fiji.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -15,6 +11,12 @@ import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
+import net.imglib2.view.Views;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
+import sc.fiji.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,7 @@ import java.util.Set;
 public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	protected ImgLabeling<L, IntType > labels;
-	private Img data;
+	private RandomAccessibleInterval data;
 	private Map<L, LabelRegion<L>> orderedLabels;
 	protected LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
@@ -37,6 +39,11 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 	private List<Object> orderedTags = new ArrayList<>();
 
 	private final LabelEditorTagColors tagColors = new LabelEditorTagColors();
+
+	public AbstractLabelEditorModel(ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data) {
+		this(labeling);
+		this.data = data;
+	}
 
 	public AbstractLabelEditorModel(ImgLabeling<L, IntType> labeling) {
 		if(labeling != null) {
@@ -52,10 +59,10 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 		return labels;
 	}
 
-	protected static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(Img<T> labelMap) {
+	protected static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(RandomAccessibleInterval<T> labelMap) {
 		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create(labelMap);
 		ImgLabeling<IntType, IntType> labeling = new ImgLabeling<>(backing);
-		Cursor<T> cursor = labelMap.localizingCursor();
+		Cursor<T> cursor = Views.iterable(labelMap).localizingCursor();
 		RandomAccess<LabelingType<IntType>> ra = labeling.randomAccess();
 		while(cursor.hasNext()) {
 			int val = cursor.next().getInteger();
@@ -147,12 +154,11 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public Img getData() {
+	public RandomAccessibleInterval getData() {
 		return data;
 	}
 
-	@Override
-	public void setData(Img data) {
+	protected void setData(RandomAccessibleInterval data) {
 		this.data = data;
 	}
 
@@ -169,7 +175,7 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 		}else {
 			res.append("\n\t.. dataset ")
 					.append(Arrays.toString(Intervals.dimensionsAsIntArray(getData())))
-					.append(" of type ").append(getData().firstElement().getClass().getName());
+					.append(" of type ").append(getData().randomAccess().get().getClass().getName());
 		}
 		res.append("\n\t.. labeling ")
 				.append(Arrays.toString(Intervals.dimensionsAsIntArray(labeling())))

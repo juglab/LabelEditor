@@ -64,11 +64,10 @@ public class ConnectedComponentAnalysis extends DynamicCommand {
 					resRA.get().addAll(val);
 				}
 			}
-			output = new TimeSliceLabelEditorModel<>(cca, 2);
+			output = new TimeSliceLabelEditorModel<>(cca, binaryInput, 2);
 		} else {
 			opService.labeling().cca(cca, binaryInput, structuringElement);
-			output = new DefaultLabelEditorModel<>(cca);
+			output = new DefaultLabelEditorModel<>(cca, binaryInput);
 		}
-		output.setData(binaryInput);
 	}
 }

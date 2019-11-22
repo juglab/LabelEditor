@@ -1,8 +1,9 @@
 package sc.fiji.labeleditor.core.model.colors;
 
+import net.imglib2.type.numeric.RealType;
+import org.scijava.listeners.Listeners;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
-import org.scijava.listeners.Listeners;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 		listenersPaused = false;
 	}
 
-	void notifyListeners() {
+	public void notifyListeners() {
 		ColorChangedEvent e = new ColorChangedEvent();
 		listeners.list.forEach(listener -> listener.tagChanged(e));
 	}
@@ -72,11 +73,19 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 		return getBorderColor(LabelEditorTag.DEFAULT);
 	}
 
-	public LabelEditorValueColor makeValueBorderColor(Object valueTagIdentifier) {
+	public<T extends RealType<T>> LabelEditorValueColor<T> makeValueBorderColor(Object valueTagIdentifier) {
 		LabelEditorColorset colorset = getColorset(valueTagIdentifier);
-		LabelEditorValueColor color = new LabelEditorValueColor<>(colorset);
+		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset);
 		colorset.put(LabelEditorTargetComponent.BORDER, color);
 		return color;
+	}
+
+	public <T extends RealType<T>> LabelEditorValueColor<T> makeValueFaceColor(Object valueTagIdentifier, T minVal, T maxVal) {
+		LabelEditorColorset colorset = getColorset(valueTagIdentifier);
+		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset, minVal, maxVal);
+		colorset.put(LabelEditorTargetComponent.FACE, color);
+		return color;
+
 	}
 
 	public Collection<LabelEditorColorset> getVirtualChannels() {

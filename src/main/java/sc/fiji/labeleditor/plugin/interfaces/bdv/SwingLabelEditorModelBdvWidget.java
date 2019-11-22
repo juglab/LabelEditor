@@ -1,22 +1,20 @@
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
-import net.imglib2.img.Img;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.array.ArrayImgFactory;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Pair;
+import net.imglib2.view.Views;
 import org.scijava.Priority;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.swing.widget.SwingInputWidget;
 import org.scijava.widget.InputWidget;
 import org.scijava.widget.WidgetModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 @Plugin(type = InputWidget.class, priority = Priority.HIGH)
 public class SwingLabelEditorModelBdvWidget extends SwingInputWidget<LabelEditorModel> {
@@ -35,9 +33,9 @@ public class SwingLabelEditorModelBdvWidget extends SwingInputWidget<LabelEditor
 			labelingLoaded = true;
 			LabelEditorModel value = (LabelEditorModel) model.getValue();
 			panel.init(value);
-			Img data = panel.model().getData();
+			RandomAccessibleInterval data = panel.model().getData();
 			if(data != null) {
-				Pair minmax = ops.stats().minMax(data);
+				Pair minmax = ops.stats().minMax(Views.iterable(data));
 				RealType min = (RealType) minmax.getA();
 				RealType max = (RealType) minmax.getB();
 				panel.getSources().forEach(source -> source.setDisplayRange(0, 255));

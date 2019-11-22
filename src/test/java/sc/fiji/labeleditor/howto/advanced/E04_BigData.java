@@ -58,14 +58,12 @@ public class E04_BigData {
 
 		System.out.println("Done creating labeling");
 
-		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>(labels, 2);
+		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>(labels, backing, 2);
 		model.tagging().addTagToLabel(LABEL1, TAG1);
 		model.tagging().addTagToLabel(LABEL2, TAG2);
 
 		model.colors().getFaceColor(TAG1).set(0, 255, 255);
 		model.colors().getFaceColor(TAG2).set(255, 0, 255);
-
-		model.setData(backing);
 
 		LabelEditorPanel panel = new TimeSliceLabelEditorBdvPanel<>();
 		ij.context().inject(panel);

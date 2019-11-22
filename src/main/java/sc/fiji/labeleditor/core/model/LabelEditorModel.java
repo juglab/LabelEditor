@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.core.model;
 
+import net.imglib2.RandomAccessibleInterval;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
@@ -27,6 +28,5 @@ public interface LabelEditorModel <L> {
 	Comparator<Object> getTagComparator();
 	Comparator<L> getLabelComparator();
 
-	Img getData();
-	void setData(Img data);
+	RandomAccessibleInterval getData();
 }

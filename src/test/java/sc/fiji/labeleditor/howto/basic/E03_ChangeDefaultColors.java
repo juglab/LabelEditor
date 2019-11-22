@@ -27,8 +27,7 @@ public class E03_ChangeDefaultColors {
 
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel model = new DefaultLabelEditorModel(labeling);
-		model.setData(input);
+		LabelEditorModel model = new DefaultLabelEditorModel<>(labeling, input);
 
 		model.colors().getDefaultBorderColor().set(0, 255, 255);
 		model.colors().getDefaultFaceColor().set(0,0,0,0);

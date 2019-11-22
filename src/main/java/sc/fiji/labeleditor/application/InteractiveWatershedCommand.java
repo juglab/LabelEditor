@@ -1,5 +1,7 @@
 package sc.fiji.labeleditor.application;
 
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.view.Views;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
@@ -34,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 
 	@Parameter
-	ImgPlus data;
+	RandomAccessibleInterval data;
 
 	@Parameter
 	private ImgLabeling<L, IntType> labeling;
@@ -58,17 +60,16 @@ public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 
 	private void update() {
 		if(output == null && labeling != null) {
-			LabelEditorModel<L> model = new DefaultLabelEditorModel<>(ops.copy().imgLabeling(labeling));
-			model.setData( ops.copy().img(data));
+			LabelEditorModel<L> model = new DefaultLabelEditorModel<>(ops.copy().imgLabeling(labeling), ops.copy().rai(data));
 //			setInput("displayedModel", model);
 			output = model;
 		}
 		else {
 			ops.copy().imgLabeling(output.labeling(), labeling);
 			if(backgroundDarker) {
-				ops.image().invert(output.getData(), data);
+				ops.image().invert(Views.iterable(output.getData()), Views.iterable(data));
 			} else {
-				ops.copy().img(output.getData(), data);
+				ops.copy().rai(output.getData(), data);
 			}
 			L onlyLabel = output.labeling().getMapping().getLabels().iterator().next();
 			SplitLabels.split(onlyLabel, output.labeling(), output.getData(), sigma, ops);

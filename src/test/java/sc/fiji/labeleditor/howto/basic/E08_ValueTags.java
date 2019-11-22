@@ -9,6 +9,8 @@ import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.ui.UIService;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorValueColor;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorValueTag;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
@@ -30,8 +32,7 @@ public class E08_ValueTags {
 		Img<IntType> binary = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
-		model.setData(input);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling, input);
 
 		Random random = new Random();
 		labeling.getMapping().getLabels().forEach(label -> {
@@ -44,12 +45,13 @@ public class E08_ValueTags {
 
 		});
 
-		// now assign a color range to this value tag
-		model.colors().makeValueBorderColor("random")
-				.setMinColor(0,0,255,250)
-				.setMaxColor(255,0,0,250)
-				.setMinValue(new IntType(0))
-				.setMaxValue(new IntType(100));
+		// create a color for this value tag by passing the tag identifier and the min / max values of this tag
+		LabelEditorValueColor<IntType> color = model.colors().makeValueFaceColor("random", new IntType(0), new IntType(100));
+		// set the min and max colors for the specified value range
+		color.setMinColor(0,0,255,250);
+		color.setMaxColor(255,0,0,250);
+
+		model.colors().getSelectedFaceColor().set(255,255,255);
 
 		ij.ui().show(model);
 	}

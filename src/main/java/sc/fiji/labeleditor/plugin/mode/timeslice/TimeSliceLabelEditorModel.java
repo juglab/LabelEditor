@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.plugin.mode.timeslice;
 
+import net.imglib2.RandomAccessibleInterval;
 import sc.fiji.labeleditor.core.model.AbstractLabelEditorModel;
 import sc.fiji.labeleditor.core.model.DefaultColors;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -13,6 +14,12 @@ public class TimeSliceLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 
 	public TimeSliceLabelEditorModel(ImgLabeling<L, IntType> labeling, int timeDimension) {
 		super(labeling);
+		this.timeDimension = timeDimension;
+		addDefaultColorsets();
+	}
+
+	public TimeSliceLabelEditorModel(ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data, int timeDimension) {
+		super(labeling, data);
 		this.timeDimension = timeDimension;
 		addDefaultColorsets();
 	}
