@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
- * This command always processes one {@link RandomAccessibleInterval}. The output(s) should be defined by the classes extending this class.
- * The image processing workflow should be called in the {@link #run(RandomAccessibleInterval)} method.
+ * The image processing workflow should be defined in the {@link #run(RandomAccessibleInterval)} method.
  * Any inputs of commands handled via (@link {@link #runCommand} will be harvested by the {@link #commandWorkflow}.
  * When an {@link ImageWorkflowCommand} is called, the {@link #run()} method will first execute the workflow on a small part of the input image
  * and during this procedure harvest the inputs of the relevant commands. It will then execute the same workflow with the whole image,
