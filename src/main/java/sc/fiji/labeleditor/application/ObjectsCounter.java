@@ -20,7 +20,6 @@ import org.scijava.module.Module;
 import org.scijava.module.ModuleException;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.scijava.ui.UIService;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
@@ -53,7 +52,7 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 
 	@Override
 	public String getTitle() {
-		return "Object Counter (IJ2)";
+		return "Objects Counter (IJ2)";
 	}
 
 	@Override
