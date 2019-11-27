@@ -5,18 +5,20 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
-import sc.fiji.labeleditor.core.AbstractLabelEditorPanel;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
+import bdv.util.VirtualChannels;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
+import sc.fiji.labeleditor.core.AbstractLabelEditorPanel;
+import sc.fiji.labeleditor.core.controller.LabelEditorController;
+import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
@@ -71,21 +73,12 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 	@Override
 	protected void displayLabeling() {
 		if(view().renderers().size() == 0) return;
-		//TODO make virtual channels work
-//		List<LUTChannel> virtualChannels = renderer.getVirtualChannels();
+		Collection<LabelEditorColorset> virtualChannels = model().colors().getVirtualChannels();
+		//TODO finish integrating virtual channels to change colors
 //		if(virtualChannels != null) {
-//			List<BdvVirtualChannelSource> sources = BdvFunctions.show(
-//					labelColorImg,
-//					virtualChannels,
-//					"solution",
-//					Bdv.options().addTo(bdvGetHandlePanel()));
-//			final Bdv bdv = sources.get( 0 );
-//			for (int i = 0; i < virtualChannels.size(); ++i ) {
-//				virtualChannels.get( i ).setPlaceHolderOverlayInfo( sources.get( i ).getPlaceHolderOverlayInfo() );
-//				virtualChannels.get( i ).setViewerPanel( bdv.getBdvHandle().getViewerPanel() );
-//			}
+//			view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), virtualChannels, renderer.getName()));
 //		} else {
-		view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), renderer.getName()));
+			view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), renderer.getName()));
 //		}
 	}
 
@@ -106,6 +99,19 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 		source.setActive( true );
 	}
 
+	private void displayInBdv(final RandomAccessibleInterval img, Collection<LabelEditorColorset> colorsets,
+	                          final String title ) {
+		List<VirtualChannels.VirtualChannel> virtualChannels = new ArrayList<>();
+		List<LabelEditorColorset> listColorsets = new ArrayList<>();
+		listColorsets.addAll(colorsets);
+		virtualChannels.addAll(listColorsets);
+		List<BdvSource> source = BdvFunctions.show(img, virtualChannels, title, Bdv.options().addTo(getInterfaceHandle()));
+		getSources().addAll( source );
+//		for (int i = 0; i < listColorsets.size(); i++) {
+//			getInterfaceHandle().getBdvHandle().getSetupAssignments().getConverterSetups().get(i).getColor()
+//		}
+		source.forEach(s -> s.setActive(true) );
+	}
 	@Override
 	protected void clearInterface() {
 		for ( final BdvSource source : getSources()) {
