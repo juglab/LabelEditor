@@ -73,8 +73,8 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 	@Override
 	protected void displayLabeling() {
 		if(view().renderers().size() == 0) return;
-		Collection<LabelEditorColorset> virtualChannels = model().colors().getVirtualChannels();
 		//TODO finish integrating virtual channels to change colors
+//		Collection<LabelEditorColorset> virtualChannels = model().colors().getVirtualChannels();
 //		if(virtualChannels != null) {
 //			view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), virtualChannels, renderer.getName()));
 //		} else {
@@ -112,6 +112,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 //		}
 		source.forEach(s -> s.setActive(true) );
 	}
+
 	@Override
 	protected void clearInterface() {
 		for ( final BdvSource source : getSources()) {
