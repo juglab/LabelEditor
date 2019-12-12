@@ -154,7 +154,7 @@ public class SwingImageWorkflow implements ImageWorkflow {
 	}
 
 	@Override
-	public void setTestStep(ImageWorkflowStep step) {
+	public void setPreviewStep(ImageWorkflowStep step) {
 		setSelectedTab(step);
 	}
 

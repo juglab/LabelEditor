@@ -22,7 +22,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 
 @Plugin(type = Command.class, name = "Connected Component Analysis")
-public class ConnectedComponentAnalysis extends DynamicCommand {
+public class ConnectedComponentAnalysis implements Command {
 
 	@Parameter
 	Img<BitType> binaryInput;
@@ -41,8 +41,6 @@ public class ConnectedComponentAnalysis extends DynamicCommand {
 
 	@Override
 	public void run() {
-
-		System.out.println(processInSlices);
 
 		ConnectedComponents.StructuringElement structuringElement = ConnectedComponents.StructuringElement.FOUR_CONNECTED;
 		if(structuringElementChoice.equals("eight-connected")) {

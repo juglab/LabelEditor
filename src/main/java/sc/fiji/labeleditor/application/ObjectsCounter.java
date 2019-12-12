@@ -5,7 +5,8 @@ import net.imagej.DefaultDataset;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.plugins.commands.binary.Binarize;
-import net.imagej.workflow.ImageWorkflowCommand;
+import net.imagej.workflow.DefaultImageWorkflowCommand;
+import net.imagej.workflow.DefaultImageWorkflowStep;
 import net.imagej.workflow.ImageWorkflowStep;
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Plugin(type = Command.class, menuPath = "Analyze>Objects Counter (IJ2)")
-public class ObjectsCounter extends ImageWorkflowCommand implements Initializable {
+public class ObjectsCounter extends DefaultImageWorkflowCommand implements Initializable {
 
 	@Parameter
 	protected Img input;
@@ -38,8 +39,8 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 	@Parameter(type = ItemIO.OUTPUT)
 	LabelEditorModel model;
 
-	ImageWorkflowStep threshold = new ImageWorkflowStep("Threshold", "<html>First, we transform the image into binary format.<br>Please choose from the following options:<br></html>");
-	ImageWorkflowStep cca = new ImageWorkflowStep("CCA", "<html>Connected Component Analysis is used to detect objects.<br>Please choose from the following options:<br></html>");
+	ImageWorkflowStep threshold = new DefaultImageWorkflowStep("Threshold", "<html>First, we transform the image into binary format.<br>Please choose from the following options:<br></html>");
+	ImageWorkflowStep cca = new DefaultImageWorkflowStep("CCA", "<html>Connected Component Analysis is used to detect objects.<br>Please choose from the following options:<br></html>");
 
 	private List<ImageWorkflowStep> steps;
 
@@ -99,7 +100,7 @@ public class ObjectsCounter extends ImageWorkflowCommand implements Initializabl
 	}
 
 	@Override
-	protected List<ImageWorkflowStep> getSteps() {
+	public List<ImageWorkflowStep> getSteps() {
 		return steps;
 	}
 
