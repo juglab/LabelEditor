@@ -1,4 +1,4 @@
-package a.fiji.labeleditor.plugin.imagej;
+package sc.fiji.labeleditor.plugin.imagej.imagej;
 
 import sc.fiji.labeleditor.core.LabelEditorPanel;
 import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorBdvPanel;
