@@ -4,6 +4,7 @@ import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
 import net.imagej.ImageJ;
@@ -34,7 +35,7 @@ public class E01_AddToExistingBDV {
 
 		model.colors().getDefaultFaceColor().set(255,255,0,55);
 
-		LabelEditorView<Integer> view = new LabelEditorView<>(model);
+		LabelEditorView<Integer> view = new DefaultLabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();
 
 		JPanel viewer = new JPanel(new MigLayout());

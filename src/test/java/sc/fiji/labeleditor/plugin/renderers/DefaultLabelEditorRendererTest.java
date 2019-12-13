@@ -4,6 +4,7 @@ import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderers;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
@@ -62,7 +63,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		int green = ARGBType.rgba(0, 255, 0, 255);
 		model.colors().getDefaultFaceColor().set(green);
 
-		LabelEditorView<String> view = new LabelEditorView<>(model);
+		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();
 		assertEquals(1, renderings.size());
@@ -110,7 +111,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.colors().getDefaultFaceColor().set(0);
 
 		//view
-		LabelEditorView<String> view = new LabelEditorView<>(model);
+		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();
 		assertEquals(1, renderings.size());
@@ -154,7 +155,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.colors().getFaceColor("a").set(color);
 		model.colors().getDefaultFaceColor().set(0);
 
-		LabelEditorView<String> view = new LabelEditorView<>(model);
+		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderings = view.renderers();
 		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();

@@ -16,6 +16,7 @@ import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderers;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
@@ -43,7 +44,7 @@ public class RunDefaultRenderer {
 		model.tagging().addTagToLabel("b", "b");
 		int red = ARGBType.rgba(255, 0, 0, 100);
 		model.colors().getFaceColor("b").set(red);
-		LabelEditorView<String> view = new LabelEditorView<>(model);
+		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
 		LabelEditorRenderers renderers = view.renderers();
 		assertEquals(1, renderers.size());

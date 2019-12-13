@@ -11,6 +11,7 @@ import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	private LabelEditorModel model;
 	private LabelEditorController controller = new DefaultLabelEditorController<>();
-	private LabelEditorView view = new LabelEditorView<>();
+	private LabelEditorView view = new DefaultLabelEditorView<>();
 
 	public AbstractLabelEditorPanel() {
 	}
