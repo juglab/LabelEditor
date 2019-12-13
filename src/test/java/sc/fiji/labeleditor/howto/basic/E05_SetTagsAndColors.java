@@ -24,7 +24,7 @@ public class E05_SetTagsAndColors {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(
 				binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel model = new DefaultLabelEditorModel<>(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		String TAG1 = "tag1";
 		String TAG2 = "tag2";

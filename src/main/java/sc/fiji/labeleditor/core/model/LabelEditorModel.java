@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.core.model;
 
+import de.embl.cba.table.select.SelectionModel;
 import net.imglib2.RandomAccessibleInterval;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
@@ -29,4 +30,7 @@ public interface LabelEditorModel <L> {
 	Comparator<L> getLabelComparator();
 
 	RandomAccessibleInterval getData();
+
+	SelectionModel<L> getSelectionModel();
+	void setSelectionModel(SelectionModel<L> model);
 }

@@ -1,9 +1,11 @@
 package sc.fiji.labeleditor.core.model;
 
+import de.embl.cba.table.select.SelectionModel;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 
 public class DefaultLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 
@@ -34,5 +36,4 @@ public class DefaultLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 		colors().getFocusFaceColor().set(DefaultColors.focusFace());
 		colors().getFocusBorderColor().set(DefaultColors.focusBorder());
 	}
-
 }

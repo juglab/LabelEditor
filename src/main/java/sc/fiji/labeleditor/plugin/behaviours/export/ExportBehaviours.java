@@ -18,6 +18,7 @@ import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
+import sc.fiji.labeleditor.plugin.table.LabelEditorTable;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -67,8 +68,16 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 		return (arg0, arg1) -> showData();
 	}
 
+	public ClickBehaviour getExportTableBehaviour() {
+		return (arg0, arg1) -> showTables();
+	}
+
 	public ClickBehaviour getExportRendererBehaviour(LabelEditorRenderer renderer) {
 		return (arg0, arg1) -> showRenderer(renderer);
+	}
+
+	public void showTables() {
+		new LabelEditorTable(model).show();
 	}
 
 	public void showIndexImg() {

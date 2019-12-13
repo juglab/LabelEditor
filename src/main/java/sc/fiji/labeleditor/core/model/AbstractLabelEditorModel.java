@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.core.model;
 
+import de.embl.cba.table.select.SelectionModel;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
@@ -17,6 +18,7 @@ import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
+import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
+public abstract class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	protected ImgLabeling<L, IntType > labels;
 	private RandomAccessibleInterval data;
@@ -35,6 +37,7 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 	protected LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
+	private SelectionModel<L> selectionModel;
 
 	private List<Object> orderedTags = new ArrayList<>();
 
@@ -51,7 +54,12 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 			initLabelOrdering(labeling);
 			initTagOrdering();
 			initTagging();
+			initSelectionModel();
 		}
+	}
+
+	protected void initSelectionModel() {
+		selectionModel = new SelectionBehaviours<>();
 	}
 
 	@Override
@@ -189,6 +197,16 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 	private Class<?> getLabelClass() {
 		Iterator<L> iterator = labeling().getMapping().getLabels().iterator();
 		return iterator.hasNext() ? iterator.next().getClass() : Object.class;
+	}
+
+	@Override
+	public SelectionModel<L> getSelectionModel() {
+		return selectionModel;
+	}
+
+	@Override
+	public void setSelectionModel(SelectionModel<L> model) {
+		selectionModel = model;
 	}
 
 }

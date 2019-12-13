@@ -1,10 +1,8 @@
 package sc.fiji.labeleditor.plugin.behaviours.select;
 
-import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
+import de.embl.cba.table.select.Listeners;
+import de.embl.cba.table.select.SelectionListener;
+import de.embl.cba.table.select.SelectionModel;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
@@ -12,6 +10,11 @@ import org.scijava.ui.behaviour.Behaviour;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.ScrollBehaviour;
 import org.scijava.ui.behaviour.util.Behaviours;
+import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
+import sc.fiji.labeleditor.core.controller.LabelEditorController;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,13 +25,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
+public class SelectionBehaviours<L> implements SelectionModel< L >, LabelEditorBehaviours<L> {
 
 	@Parameter
 	CommandService commandService;
 
 	protected LabelEditorModel<L> model;
 	protected LabelEditorController<L> controller;
+
+	private final Listeners.List<SelectionListener> listeners = new Listeners.SynchronizedList<>();
+	private boolean listenersPaused = false;
 
 	protected static final String TOGGLE_LABEL_SELECTION_NAME = "LABELEDITOR_TOGGLELABELSELECTION";
 	protected static final String TOGGLE_LABEL_SELECTION_TRIGGERS = "shift scroll";
@@ -97,7 +103,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 		if (foundLabels(labels)) {
 			selectFirst(labels);
 		} else {
-			deselectAll();
+			clearSelection();
 		}
 	}
 
@@ -128,14 +134,14 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	protected void selectFirst(LabelingType<L> labels) {
 		L label = getFirst(labels);
 		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) return;
-		deselectAll();
+		clearSelection();
 		select(label);
 	}
 
 	protected void toggleSelectionOfFirst(LabelingType<L> labels) {
 		L label = getFirst(labels);
 		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) {
-			deselect(label);
+			setSelected(label, false);
 		} else {
 			select(label);
 		}
@@ -148,8 +154,101 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 		return orderedLabels.get(0);
 	}
 
-	protected boolean isSelected(L label) {
+	public boolean isSelected(L label) {
 		return model.tagging().getTags(label).contains(LabelEditorTag.SELECTED);
+	}
+
+	@Override
+	public void setSelected(L label, boolean select) {
+		if(select) {
+			model.tagging().addTagToLabel(LabelEditorTag.SELECTED, label);
+		} else {
+			model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label);
+		}
+		notifyListeners();
+		notifyListeners(label);
+	}
+
+	@Override
+	public void toggle(L label) {
+		if(isSelected(label)) {
+			model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label);
+		} else {
+			model.tagging().addTagToLabel(LabelEditorTag.SELECTED, label);
+		}
+		notifyListeners();
+	}
+
+	@Override
+	public void focus(L label) {
+		model.tagging().addTagToLabel(LabelEditorTag.FOCUS, label);
+	}
+
+	@Override
+	public boolean isFocused(L label) {
+		return model.tagging().getTags(label).contains(LabelEditorTag.FOCUS);
+	}
+
+	@Override
+	public boolean setSelected(Collection<L> labels, boolean select) {
+		labels.forEach(label -> {
+			model.tagging().addTagToLabel(LabelEditorTag.SELECTED, label);
+		});
+		notifyListeners();
+		return true;
+	}
+
+	private void notifyListeners() {
+		listeners.list.forEach(listener -> {
+			listener.selectionChanged();
+		});
+	}
+
+	private void notifyListeners(L label) {
+		listeners.list.forEach(listener -> {
+			listener.focusChanged();
+		});
+	}
+
+	@Override
+	public boolean clearSelection() {
+		model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED);
+		notifyListeners();
+		return false;
+	}
+
+	@Override
+	public Set<L> getSelected() {
+		return model.tagging().getLabels(LabelEditorTag.SELECTED);
+	}
+
+	@Override
+	public L getFocused() {
+		Set<L> labels = model.tagging().getLabels(LabelEditorTag.FOCUS);
+		if(labels == null) return null;
+		return labels.iterator().next();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		Set<L> selected = getSelected();
+		if(selected == null) return true;
+		return selected.size() == 0;
+	}
+
+	@Override
+	public Listeners<SelectionListener> listeners() {
+		return listeners;
+	}
+
+	@Override
+	public void resumeListeners() {
+		listenersPaused = false;
+	}
+
+	@Override
+	public void pauseListeners() {
+		listenersPaused = true;
 	}
 
 	protected boolean anySelected(LabelingType<L> labels) {
@@ -157,8 +256,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	protected void select(L label) {
-		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, label);
-		model.tagging().removeTagFromLabel(LabelEditorTag.FOCUS, label);
+		setSelected(label, true);
 	}
 
 	protected void selectPrevious(LabelingType<L> labels) {
@@ -174,7 +272,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 			if (isSelected(label)) {
 				foundSelected = true;
 				if(iterator.hasNext()) {
-					deselect(label);
+					setSelected(label, false);
 				}
 			} else {
 				if (foundSelected) {
@@ -185,20 +283,12 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 		}
 	}
 
-	protected void deselect(L label) {
-		model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label);
-	}
-
-	public void deselectAll() {
-		controller.labelSetInScope().forEach(label -> model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
-	}
-
 	public void invertSelection() {
 		Set<L> all = new HashSet(controller.labelSetInScope());
 		Set<L> selected = model.tagging().filterLabelsWithTag(all, LabelEditorTag.SELECTED);
 		all.removeAll(selected);
-		all.forEach(label -> select(label));
-		selected.forEach(label -> deselect(label));
+		setSelected(all, true);
+		setSelected(selected, false);
 	}
 
 	public void selectByTag() {

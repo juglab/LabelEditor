@@ -34,8 +34,8 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private static final String MENU_EXPORT_LABELMAP = "Export label map";
 	private static final String MENU_EXPORT_INDEXIMG = "Export index image";
 	private static final String MENU_EXPORT_SOURCE = "Export source image";
+	private static final String MENU_EXPORT_TABLE = "Export as table";
 	private static final String MENU_EXPORT_RENDERERS = "Renderers";
-
 
 	private static final String MENU_SELECT = "Select";
 	private static final String MENU_SELECT_ALL = "Select all";
@@ -78,6 +78,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showLabelMap), MENU_EXPORT_LABELMAP));
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showIndexImg), MENU_EXPORT_INDEXIMG));
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showData), MENU_EXPORT_SOURCE));
+			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showTables), MENU_EXPORT_TABLE));
 			if (view.renderers().size() > 0) {
 				JMenu renderers = new JMenu(MENU_EXPORT_RENDERERS);
 				for (LabelEditorRenderer renderer : view.renderers()) {
@@ -116,7 +117,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 		SelectionBehaviours selectionBehaviours = new SelectionBehaviours();
 		selectionBehaviours.init(model, control, view);
 		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::selectAll), MENU_SELECT_ALL));
-		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::deselectAll), MENU_SELECT_NONE));
+		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::clearSelection), MENU_SELECT_NONE));
 		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::invertSelection), MENU_SELECT_INVERT));
 		if(context != null) {
 			context.inject(selectionBehaviours);

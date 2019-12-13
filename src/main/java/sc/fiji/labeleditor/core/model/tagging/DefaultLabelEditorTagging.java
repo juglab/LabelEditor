@@ -77,7 +77,8 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	}
 
 	protected void notifyListeners(TagChangedEvent e) {
-		if(log!= null) log.debug(e.toString());
+//		if(log!= null) log.debug(e.toString());
+		System.out.println(e.toString());
 		if(listenersPaused) {
 			keptEvents.add(e);
 		} else {

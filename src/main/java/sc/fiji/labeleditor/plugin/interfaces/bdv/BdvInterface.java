@@ -103,7 +103,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	@Override
 	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view) {
-		install(model, controller, new SelectionBehaviours());
+		install(model, controller, (LabelEditorBehaviours) model.getSelectionModel());
 		install(model, controller, new FocusBehaviours<>());
 		install(model, controller, new LabelingModificationBehaviours());
 		install(model, controller, new PopupBehaviours());

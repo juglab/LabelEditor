@@ -43,7 +43,7 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 	protected void selectFirst(LabelingType<L> labels) {
 		L label = getFirst(labels);
 		if(model.tagging().getTags(label).contains(LabelEditorTag.SELECTED)) {
-			deselect(label);
+			setSelected(label, true);
 			return;
 		}
 		Set<L> conflicts = getConflictingLabels(label);

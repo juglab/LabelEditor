@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.core.view;
 
+import org.scijava.plugin.PluginService;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import org.scijava.Context;
 import org.scijava.InstantiableException;
@@ -29,7 +30,7 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 			context = new Context();
 		}
 		List<PluginInfo<?>> renderers = context.getPluginIndex().get(LabelEditorRenderer.class);
-		renderers.sort((p1, p2) -> (int) (p1.getAnnotation().priority() - p2.getAnnotation().priority()));
+//		renderers.sort((p1, p2) -> (int) (p1.getAnnotation().priority() - p2.getAnnotation().priority()));
 		renderers.forEach(renderer -> {
 			try {
 				LabelEditorRenderer instance = (LabelEditorRenderer) renderer.createInstance();
