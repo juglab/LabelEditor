@@ -28,7 +28,12 @@ public class LabelEditorValueColor<T extends RealType<T>> extends LabelEditorCol
 		float maxG = ARGBType.green(maxColor);
 		float maxB = ARGBType.blue(maxColor);
 		float maxA = ARGBType.alpha(maxColor);
-		float pct = (value.getRealFloat()-minVal.getRealFloat())/(maxVal.getRealFloat()-minVal.getRealFloat());
+		float minFloat = minVal.getRealFloat();
+		float maxFloat = maxVal.getRealFloat();
+		float valueFloat = value.getRealFloat();
+		if(valueFloat < minFloat) valueFloat = minFloat;
+		if(valueFloat > maxFloat) valueFloat = maxFloat;
+		float pct = (valueFloat - minFloat)/(maxFloat - minFloat);
 		int r = (int) (minR + (maxR-minR)*pct);
 		int g = (int) (minG + (maxG-minG)*pct);
 		int b = (int) (minB + (maxB-minB)*pct);
