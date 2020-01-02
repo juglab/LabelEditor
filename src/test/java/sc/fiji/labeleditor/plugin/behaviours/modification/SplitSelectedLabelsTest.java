@@ -46,6 +46,8 @@ public class SplitSelectedLabelsTest {
 		assertEquals(3, labeling.getMapping().getLabels().size());
 
 //		ij.ui().show(labeling.getIndexImg());
+
+		ij.context().dispose();
 	}
 
 	private void drawSphere(Img<DoubleType> img, long[] position, int radius) {

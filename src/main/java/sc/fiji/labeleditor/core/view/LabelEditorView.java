@@ -1,10 +1,11 @@
 package sc.fiji.labeleditor.core.view;
 
 import net.imglib2.roi.labeling.LabelingType;
+import org.scijava.Disposable;
 import org.scijava.listeners.Listeners;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
-public interface LabelEditorView<L> {
+public interface LabelEditorView<L> extends Disposable {
 
 	void init(LabelEditorModel<L> model);
 

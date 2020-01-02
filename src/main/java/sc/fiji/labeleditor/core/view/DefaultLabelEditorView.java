@@ -124,4 +124,9 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 	public void setShowTagsInToolTip(boolean showTagsInToolTip) {
 		this.showTagsInToolTip = showTagsInToolTip;
 	}
+
+	@Override
+	public void dispose() {
+		renderers().dispose();
+	}
 }

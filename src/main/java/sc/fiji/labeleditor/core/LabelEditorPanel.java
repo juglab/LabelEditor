@@ -33,5 +33,10 @@ public interface LabelEditorPanel extends Disposable {
 
 	Container get();
 
-//	setConfig(.yaml)
+	@Override
+	default void dispose() {
+		view().dispose();
+	}
+
+	//	setConfig(.yaml)
 }

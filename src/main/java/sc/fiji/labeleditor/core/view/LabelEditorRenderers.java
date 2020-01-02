@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.core.view;
 
+import org.scijava.Disposable;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import org.scijava.Context;
 import org.scijava.InstantiableException;
@@ -10,13 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
+public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> implements Disposable {
 
 	private LabelEditorModel model;
 	private LabelEditorView view;
 
 	@Parameter
 	Context context;
+
+	boolean contextCreated = false;
 
 	public void init(LabelEditorModel model, LabelEditorView view) {
 		this.model = model;
@@ -26,20 +29,15 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	public void addDefaultRenderers() {
 		clear();
 		if(context == null) {
-			context = new Context();
+			context = new Context(true);
+			contextCreated = true;
 		}
-		List<PluginInfo<?>> renderers = context.getPluginIndex().get(LabelEditorRenderer.class);
-		renderers.sort((p1, p2) -> (int) (p1.getAnnotation().priority() - p2.getAnnotation().priority()));
-		renderers.forEach(renderer -> {
-			try {
-				LabelEditorRenderer instance = (LabelEditorRenderer) renderer.createInstance();
-				if(instance.canDisplay(model)) {
-					add(instance);
-				}
-			} catch (InstantiableException e) {
-				e.printStackTrace();
-			}
-		});
+		List<PluginInfo<?>> renderers = discoverRenderers();
+		renderers.forEach(this::addRenderer);
+	}
+
+	private List<PluginInfo<?>> discoverRenderers() {
+		return context.getPluginIndex().get(LabelEditorRenderer.class);
 	}
 
 	public Optional<LabelEditorRenderer> get(String name) {
@@ -50,6 +48,17 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 	public LabelEditorRenderer set(int i, LabelEditorRenderer renderer) {
 		prepare(renderer);
 		return super.set(i, renderer);
+	}
+
+	private void addRenderer(PluginInfo<?> renderer) {
+		try {
+			LabelEditorRenderer instance = (LabelEditorRenderer) renderer.createInstance();
+			if (instance.canDisplay(model)) {
+				add(instance);
+			}
+		} catch (InstantiableException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -68,5 +77,12 @@ public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> {
 		if(context != null) context.inject(renderer);
 		renderer.init(model);
 		renderer.updateOnTagChange(model);
+	}
+
+	@Override
+	public void dispose() {
+		if(contextCreated) {
+			context.dispose();
+		}
 	}
 }

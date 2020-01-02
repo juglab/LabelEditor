@@ -132,7 +132,9 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 
 	@Override
 	public void dispose() {
+		super.dispose();
 		if(getInterfaceHandle() != null) getInterfaceHandle().close();
+		bdvHandlePanel.close();
 	}
 
 	public void setMode3D(boolean set3D) {
