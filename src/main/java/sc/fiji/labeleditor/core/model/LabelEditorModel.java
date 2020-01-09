@@ -14,19 +14,19 @@ import java.util.List;
 public interface LabelEditorModel <L> {
 
 	ImgLabeling<L, IntType> labeling();
-
 	LabelEditorTagging<L> tagging();
-
 	LabelEditorTagColors colors();
 
 	List<LabelEditorColorset> getVirtualChannels();
 
 	void setTagComparator(Comparator<Object> comparator);
-
 	void setLabelComparator(Comparator<L> comparator);
 
 	Comparator<Object> getTagComparator();
 	Comparator<L> getLabelComparator();
 
 	RandomAccessibleInterval getData();
+
+	String getName();
+	void setName(String name);
 }

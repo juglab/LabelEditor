@@ -39,6 +39,7 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 	private List<Object> orderedTags = new ArrayList<>();
 
 	private final LabelEditorTagColors tagColors = new LabelEditorTagColors();
+	private String name;
 
 	public AbstractLabelEditorModel(ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data) {
 		this(labeling);
@@ -158,6 +159,16 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 		return data;
 	}
 
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	protected void setData(RandomAccessibleInterval data) {
 		this.data = data;
 	}
@@ -168,6 +179,11 @@ public class AbstractLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	@Override
 	public String toString() {
+		if(name == null) return getInfo();
+		return name;
+	}
+
+	public String getInfo() {
 		StringBuilder res = new StringBuilder();
 		res.append("\t.. of type " + getClass().getName());
 		if(getData() == null) {
