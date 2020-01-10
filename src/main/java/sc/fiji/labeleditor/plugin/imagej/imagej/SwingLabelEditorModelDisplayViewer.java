@@ -29,7 +29,7 @@ public class SwingLabelEditorModelDisplayViewer extends EasySwingDisplayViewer< 
 
 	@Override
 	protected JPanel createDisplayPanel(LabelEditorModel model) {
-		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel<>();
 		context.inject(panel);
 		panel.init(model);
 		return panel;

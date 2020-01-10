@@ -30,7 +30,7 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 
 	@Override
 	protected JPanel createDisplayPanel(ImgLabeling labeling) {
-		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel<>();
 		context.inject(panel);
 		panel.init(labeling);
 		return panel;
