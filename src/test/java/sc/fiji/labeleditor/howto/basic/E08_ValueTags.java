@@ -35,21 +35,25 @@ public class E08_ValueTags {
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling, input);
 
 		Random random = new Random();
-		labeling.getMapping().getLabels().forEach(label -> {
-
-			//for each label, assign a tag with a random value between 0 and 100
+		int i = 0;
+		for (Integer label : labeling.getMapping().getLabels()) {//for each label, assign a tag with a random value between 0 and 100
 
 			LabelEditorValueTag randomValue = new LabelEditorValueTag<>("random", new IntType(random.nextInt(100)));
 
 			model.tagging().addTagToLabel(randomValue, label);
+			model.tagging().addTagToLabel(new LabelEditorValueTag<>("index", new IntType(i)), label);
 
-		});
+			i++;
+		}
 
 		// create a color for this value tag by passing the tag identifier and the min / max values of this tag
 		LabelEditorValueColor<IntType> color = model.colors().makeValueFaceColor("random", new IntType(0), new IntType(100));
 		// set the min and max colors for the specified value range
 		color.setMinColor(0,0,255,250);
-		color.setMaxColor(255,0,0,250);
+		color.setMaxColor(0,0,0,0);
+		LabelEditorValueColor<IntType> indexColor = model.colors().makeValueFaceColor("index", new IntType(0), new IntType(100));
+		indexColor.setMinColor(0,255,0,255);
+		indexColor.setMaxColor(0,0,0,0);
 
 		model.colors().getSelectedFaceColor().set(255,255,255);
 

@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.core;
 
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.plugin.behaviours.export.ExportBehaviours;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
@@ -23,12 +24,11 @@ public class TestLabelMap {
 	public void loadIndexImg() throws IOException {
 		ImageJ ij = new ImageJ();
 		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
-		LabelEditorPanel panel = new LabelEditorBdvPanel();
-		panel.initFromLabelMap(input);
-		assertNotNull(panel.model());
-		assertNotNull(panel.model().labeling());
+		DefaultLabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(input);
+		assertNotNull(model);
+		assertNotNull(model.labeling());
 		ExportBehaviours exportBehaviours = new ExportBehaviours();
-		exportBehaviours.init(panel.model(), panel.view(), panel.control());
+		exportBehaviours.init(model, null, null);
 		IterableInterval<IntType> labelMap = Views.iterable(exportBehaviours.getLabelMap());
 		Cursor<IntType> resCursor = labelMap.localizingCursor();
 		RandomAccess<UnsignedShortType> origRa = input.randomAccess();
