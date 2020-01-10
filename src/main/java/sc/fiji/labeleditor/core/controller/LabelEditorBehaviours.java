@@ -8,7 +8,7 @@ import org.scijava.ui.behaviour.util.Behaviours;
 import java.awt.*;
 
 public interface LabelEditorBehaviours<L> extends SciJavaPlugin {
-	void init(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view);
+	void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> controller);
 
 	void install(Behaviours behaviours, Component panel);
 }

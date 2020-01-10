@@ -24,7 +24,7 @@ public class TagModificationBehaviours extends Behaviours implements LabelEditor
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {
+	public void init(LabelEditorModel model, LabelEditorView view, LabelEditorController controller) {
 		this.model = model;
 		this.controller = controller;
 	}

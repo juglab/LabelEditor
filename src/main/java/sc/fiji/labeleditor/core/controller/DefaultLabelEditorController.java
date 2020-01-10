@@ -50,7 +50,7 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 	@Override
 	public void install(LabelEditorBehaviours behaviour) {
 		if(context != null) context.inject(behaviour);
-		behaviour.init(model, this, view);
+		behaviour.init(model, view, this);
 		behaviour.install(interfaceInstance.behaviours(), interfaceInstance.getComponent());
 	}
 

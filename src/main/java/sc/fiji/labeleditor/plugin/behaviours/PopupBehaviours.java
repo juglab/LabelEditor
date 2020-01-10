@@ -17,18 +17,18 @@ public class PopupBehaviours implements LabelEditorBehaviours {
 	@Parameter
 	Context context;
 
-	private LabelEditorView view;
 	private LabelEditorModel model;
+	private LabelEditorView view;
 	private LabelEditorController control;
 
 	private static final String OPEN_POPUP_TRIGGERS = "button3";
 	private static final String OPEN_POPUP_NAME = "LABELEDITOR_OPENPOPUP";
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {
+	public void init(LabelEditorModel model, LabelEditorView view, LabelEditorController controller) {
 		this.model = model;
-		this.control = controller;
 		this.view = view;
+		this.control = controller;
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class PopupBehaviours implements LabelEditorBehaviours {
 	}
 
 	private void openPopupAt(int x, int y) {
-		LabelEditorPopupMenu menu = new LabelEditorPopupMenu(model, control, view);
+		LabelEditorPopupMenu menu = new LabelEditorPopupMenu(model, view, control);
 		if(context != null) context.inject(menu);
 		menu.populate();
 		menu.show(control.interfaceInstance().getComponent(), x, y);

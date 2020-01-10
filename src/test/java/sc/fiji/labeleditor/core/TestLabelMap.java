@@ -28,7 +28,7 @@ public class TestLabelMap {
 		assertNotNull(panel.model());
 		assertNotNull(panel.model().labeling());
 		ExportBehaviours exportBehaviours = new ExportBehaviours();
-		exportBehaviours.init(panel.model(), panel.control(), panel.view());
+		exportBehaviours.init(panel.model(), panel.view(), panel.control());
 		IterableInterval<IntType> labelMap = Views.iterable(exportBehaviours.getLabelMap());
 		Cursor<IntType> resCursor = labelMap.localizingCursor();
 		RandomAccess<UnsignedShortType> origRa = input.randomAccess();

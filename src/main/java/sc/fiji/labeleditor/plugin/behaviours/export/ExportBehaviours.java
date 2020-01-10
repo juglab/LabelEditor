@@ -26,7 +26,6 @@ import java.util.List;
 public class ExportBehaviours extends Behaviours implements LabelEditorBehaviours {
 
 	protected LabelEditorModel model;
-	protected LabelEditorController controller;
 
 	@Parameter
 	UIService ui;
@@ -39,9 +38,8 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {
+	public void init(LabelEditorModel model, LabelEditorView view, LabelEditorController controller) {
 		this.model = model;
-		this.controller = controller;
 	}
 
 	@Override

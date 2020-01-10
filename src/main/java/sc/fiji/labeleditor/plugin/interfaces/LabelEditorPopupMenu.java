@@ -46,7 +46,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private static final String MENU_OPTIONS = "Options";
 
 
-	public LabelEditorPopupMenu(LabelEditorModel<L> model, LabelEditorController<L> control, LabelEditorView view) {
+	public LabelEditorPopupMenu(LabelEditorModel<L> model, LabelEditorView view, LabelEditorController<L> control) {
 		this.model = model;
 		this.control = control;
 		this.view = view;
@@ -63,7 +63,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 		if(context != null) {
 			OptionsBehaviours optionsBehaviours = new OptionsBehaviours();
 			context.inject(optionsBehaviours);
-			optionsBehaviours.init(model, control, view);
+			optionsBehaviours.init(model, view, control);
 			add(getMenuItem(e -> runInNewThread(optionsBehaviours::showOptions), MENU_OPTIONS));
 		}
 	}
@@ -71,7 +71,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private void makeExportMenu() {
 		if(context != null) {
 			ExportBehaviours exportBehaviours = new ExportBehaviours();
-			exportBehaviours.init(model, control, view);
+			exportBehaviours.init(model, view, control);
 			context.inject(exportBehaviours);
 			JMenu menu = new JMenu(MENU_EXPORT);
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours.getExportSelectedLabels()::exportSelected), MENU_EXPORT_SELECTED));
@@ -93,9 +93,9 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private void makeEditMenu() {
 		JMenu menu = new JMenu(MENU_EDIT);
 		LabelingModificationBehaviours modificationBehaviours = new LabelingModificationBehaviours();
-		modificationBehaviours.init(model, control, view);
+		modificationBehaviours.init(model, view, control);
 		TagModificationBehaviours tagBehaviours = new TagModificationBehaviours();
-		tagBehaviours.init(model, control, view);
+		tagBehaviours.init(model, view, control);
 		menu.add(getMenuItem(e -> runWhilePausingListeners(modificationBehaviours.getDeleteBehaviour()::deleteSelected), MENU_EDIT_DELETE));
 		menu.add(getMenuItem(e -> runWhilePausingListeners(modificationBehaviours.getMergeBehaviour()::assignSelectedToFirst), MENU_EDIT_MERGE));
 		if(context != null) {
@@ -114,7 +114,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private void makeSelectMenu() {
 		JMenu menu = new JMenu(MENU_SELECT);
 		SelectionBehaviours selectionBehaviours = new SelectionBehaviours();
-		selectionBehaviours.init(model, control, view);
+		selectionBehaviours.init(model, view, control);
 		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::selectAll), MENU_SELECT_ALL));
 		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::deselectAll), MENU_SELECT_NONE));
 		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::invertSelection), MENU_SELECT_INVERT));

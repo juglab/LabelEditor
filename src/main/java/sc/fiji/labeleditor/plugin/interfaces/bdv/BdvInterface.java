@@ -1,7 +1,6 @@
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.BdvHandle;
-import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
 import bdv.viewer.ViewerPanel;
 import net.imglib2.Localizable;
@@ -111,7 +110,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {
 		if(context != null) context.inject(behavioursAdded);
-		behavioursAdded.init(model, controller, view);
+		behavioursAdded.init(model, view, controller);
 		behavioursAdded.install(behaviours, bdvHandle.getViewerPanel().getDisplay());
 	}
 

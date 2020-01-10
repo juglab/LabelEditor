@@ -40,7 +40,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	protected static final String SELECT_ALL_LABELS_TRIGGERS = "ctrl A";
 
 	@Override
-	public void init(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view) {
+	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> controller) {
 		this.model = model;
 		this.controller = controller;
 	}

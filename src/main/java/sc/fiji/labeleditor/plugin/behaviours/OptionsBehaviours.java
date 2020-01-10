@@ -24,7 +24,7 @@ public class OptionsBehaviours extends Behaviours implements LabelEditorBehaviou
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorController controller, LabelEditorView view) {
+	public void init(LabelEditorModel model, LabelEditorView view, LabelEditorController controller) {
 		this.view = view;
 	}
 

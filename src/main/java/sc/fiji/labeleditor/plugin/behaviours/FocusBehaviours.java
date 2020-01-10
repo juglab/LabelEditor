@@ -20,7 +20,7 @@ public class FocusBehaviours<L> implements LabelEditorBehaviours<L> {
 	private LabelingType<L> lastLabels = null;
 
 	@Override
-	public void init(LabelEditorModel<L> model, LabelEditorController<L> control, LabelEditorView<L> view) {
+	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> control) {
 		this.model = model;
 		this.control = control;
 	}
