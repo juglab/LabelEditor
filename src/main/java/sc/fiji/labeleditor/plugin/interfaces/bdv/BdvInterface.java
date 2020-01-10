@@ -1,6 +1,8 @@
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
+import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
+import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import bdv.viewer.ViewerPanel;
 import net.imglib2.Localizable;
@@ -13,12 +15,16 @@ import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
+import sc.fiji.labeleditor.core.DefaultInteractiveLabeling;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
 import sc.fiji.labeleditor.plugin.behaviours.FocusBehaviours;
@@ -57,6 +63,17 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		controller.addDefaultBehaviours();
 		controller.interfaceInstance().set3DViewMode(false);
 		return controller;
+	}
+
+	public static <L> InteractiveLabeling control(DefaultLabelEditorModel<L> model, BdvHandle handle) {
+		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
+		view.renderers().addDefaultRenderers();
+		LabelEditorController<L> control = new DefaultLabelEditorController<>();
+		control.init(model, view, new BdvInterface<>(handle, null, view));
+		control.addDefaultBehaviours();
+		control.interfaceInstance().set3DViewMode(false);
+		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), BdvOptions.options().addTo(handle)));
+		return new DefaultInteractiveLabeling(model, view, control);
 	}
 
 	@Override

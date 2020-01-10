@@ -6,6 +6,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
+import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
 import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
@@ -21,6 +22,9 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	@Parameter
 	protected Context context;
+
+	@Parameter
+	protected ObjectService objectService;
 
 	private boolean panelBuilt = false;
 
@@ -64,7 +68,6 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	@Override
 	public <L> void init(LabelEditorModel<L> model) {
-		//TODO this is not pretty
 		if(this.model == null) {
 			if(context() != null) {
 				context().inject(view().renderers());
@@ -75,6 +78,9 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 		if(model.labeling() != null) {
 			view().init(model);
 			addRenderers(view());
+		}
+		if(objectService != null) {
+			objectService.addObject(new DefaultInteractiveLabeling(model(), view(), control()));
 		}
 		buildPanel();
 		clearInterface();

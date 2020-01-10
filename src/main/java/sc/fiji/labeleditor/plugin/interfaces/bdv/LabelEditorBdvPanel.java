@@ -73,13 +73,7 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 	@Override
 	protected void displayLabeling() {
 		if(view().renderers().size() == 0) return;
-		//TODO finish integrating virtual channels to change colors
-//		Collection<LabelEditorColorset> virtualChannels = model().colors().getVirtualChannels();
-//		if(virtualChannels != null) {
-//			view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), virtualChannels, renderer.getName()));
-//		} else {
-			view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), renderer.getName()));
-//		}
+		view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), renderer.getName()));
 	}
 
 	@Override
@@ -97,20 +91,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 				Bdv.options().addTo( getInterfaceHandle() ) );
 		getSources().add( source );
 		source.setActive( true );
-	}
-
-	private void displayInBdv(final RandomAccessibleInterval img, Collection<LabelEditorColorset> colorsets,
-	                          final String title ) {
-		List<VirtualChannels.VirtualChannel> virtualChannels = new ArrayList<>();
-		List<LabelEditorColorset> listColorsets = new ArrayList<>();
-		listColorsets.addAll(colorsets);
-		virtualChannels.addAll(listColorsets);
-		List<BdvSource> source = BdvFunctions.show(img, virtualChannels, title, Bdv.options().addTo(getInterfaceHandle()));
-		getSources().addAll( source );
-//		for (int i = 0; i < listColorsets.size(); i++) {
-//			getInterfaceHandle().getBdvHandle().getSetupAssignments().getConverterSetups().get(i).getColor()
-//		}
-		source.forEach(s -> s.setActive(true) );
 	}
 
 	@Override
