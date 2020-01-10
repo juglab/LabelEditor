@@ -5,7 +5,6 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
-import bdv.util.VirtualChannels;
 import net.imglib2.RandomAccessibleInterval;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
@@ -13,15 +12,16 @@ import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import sc.fiji.labeleditor.core.AbstractLabelEditorPanel;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
-import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
-public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
+public class LabelEditorBdvPanel extends AbstractLabelEditorPanel {
 
 	private BdvHandlePanel bdvHandlePanel;
 	private List< BdvSource > bdvSources = new ArrayList<>();
@@ -31,11 +31,11 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 	private boolean mode3D = false;
 
 	@Override
-	protected void initController() {
-		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources, view());
-		control().init(model(), view(), viewerInstance);
-		addBehaviours(control());
-		control().interfaceInstance().set3DViewMode(is3DMode());
+	protected <L> void initController(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> control) {
+		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, bdvSources, view);
+		control.init(model, view, viewerInstance);
+		addBehaviours(control);
+		control.interfaceInstance().set3DViewMode(is3DMode());
 	}
 
 	private boolean is3DMode() {
@@ -71,13 +71,13 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 	}
 
 	@Override
-	protected void displayLabeling() {
-		if(view().renderers().size() == 0) return;
-		view().renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), renderer.getName()));
+	protected void display(LabelEditorView view) {
+		if(view.renderers().size() == 0) return;
+		view.renderers().forEach(renderer -> displayInBdv(renderer.getOutput(), renderer.getName()));
 	}
 
 	@Override
-	protected void displayData(RandomAccessibleInterval data) {
+	protected void display(RandomAccessibleInterval data) {
 		if(data != null) {
 			displayInBdv( data, "source" );
 		}
@@ -91,14 +91,6 @@ public class LabelEditorBdvPanel<L> extends AbstractLabelEditorPanel {
 				Bdv.options().addTo( getInterfaceHandle() ) );
 		getSources().add( source );
 		source.setActive( true );
-	}
-
-	@Override
-	protected void clearInterface() {
-		for ( final BdvSource source : getSources()) {
-			source.removeFromBdv();
-		}
-		getSources().clear();
 	}
 
 	@Override

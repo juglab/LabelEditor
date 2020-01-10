@@ -1,8 +1,5 @@
 package sc.fiji.labeleditor.core;
 
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -15,6 +12,9 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Before;
 import org.junit.Test;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 public class TestCreatePanel {
 
@@ -32,21 +32,14 @@ public class TestCreatePanel {
 	@Test
 	public void run() {
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels, data);
-		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
-		panel.init(model);
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
+		panel.add(model);
 	}
 
 	@Test
 	public void useEmptyConstructor() {
-		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
-		panel.init(labels, data);
-		panel.dispose();
-	}
-
-	@Test
-	public void showOnlyData() {
-		LabelEditorBdvPanel<Object> panel = new LabelEditorBdvPanel<>();
-		panel.init(data);
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
+		panel.add(labels, data);
 		panel.dispose();
 	}
 

@@ -1,13 +1,12 @@
 package sc.fiji.labeleditor.plugin.mode.timeslice;
 
+import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
-public class TimeSliceLabelEditorBdvPanel<L> extends LabelEditorBdvPanel<L> {
-
-	private TimeSliceLabelEditorController controller = new TimeSliceLabelEditorController();
+public class TimeSliceLabelEditorBdvPanel extends LabelEditorBdvPanel {
 
 	@Override
-	public TimeSliceLabelEditorController<L> control() {
-		return controller;
+	public <L> LabelEditorController<L> createController() {
+		return new TimeSliceLabelEditorController<>();
 	}
 }

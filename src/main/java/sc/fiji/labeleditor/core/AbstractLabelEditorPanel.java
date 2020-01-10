@@ -17,6 +17,8 @@ import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEditorPanel {
 
@@ -28,80 +30,71 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	private boolean panelBuilt = false;
 
-	private LabelEditorModel model;
-	private LabelEditorController controller = new DefaultLabelEditorController<>();
-	private LabelEditorView view = new DefaultLabelEditorView<>();
+	private List<InteractiveLabeling> labelings = new ArrayList<>();
 
 	public AbstractLabelEditorPanel() {
-	}
-
-	@Override
-	public void init(Img data) {
-		buildPanel();
-		clearInterface();
-		displayData(data);
-	}
-
-	@Override
-	public <L> void init(ImgLabeling<L, IntType> labels, Img data) {
-		LabelEditorModel<L> model = new DefaultLabelEditorModel<>(labels, data);
-		init(model);
-	}
-
-	@Override
-	public <L> void init(ImgLabeling<L, IntType> labels) {
-		LabelEditorModel<L> model = new DefaultLabelEditorModel<>(labels);
-		init(model);
-	}
-
-	@Override
-	public void initFromLabelMap(Img labelMap) {
-		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap);
-		init(model);
-	}
-
-	@Override
-	public void initFromLabelMap(Img data, Img labelMap) {
-		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap, data);
-		init(model);
-	}
-
-	@Override
-	public <L> void init(LabelEditorModel<L> model) {
-		if(this.model == null) {
-			if(context() != null) {
-				context().inject(view().renderers());
-				context().inject(control());
-			}
-		}
-		this.model = model;
-		if(model.labeling() != null) {
-			view().init(model);
-			addRenderers(view());
-		}
-		if(objectService != null) {
-			objectService.addObject(new DefaultInteractiveLabeling(model(), view(), control()));
-		}
-		buildPanel();
-		clearInterface();
-		displayData(model.getData());
-		if(model.labeling() != null) {
-			displayLabeling();
-			initController();
-			System.out.println("Created LabelEditor panel of type " + getClass().getName() + " with model:\n" + model.toString());
-		}
-	}
-
-	protected void buildPanel() {
-		if(panelBuilt) return;
-		panelBuilt = true;
 		setMinimumSize(new Dimension(100, 100));
 		setPreferredSize(new Dimension(500, 500));
 		setLayout( new MigLayout("fill") );
 		this.add( buildInterface(), "span, grow, push" );
 	}
 
-	protected abstract void initController();
+	@Override
+	public <L> InteractiveLabeling add(ImgLabeling<L, IntType> labels, Img data) {
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>(labels, data);
+		return add(model);
+	}
+
+	@Override
+	public <L> InteractiveLabeling add(ImgLabeling<L, IntType> labels) {
+		LabelEditorModel<L> model = new DefaultLabelEditorModel<>(labels);
+		return add(model);
+	}
+
+	@Override
+	public InteractiveLabeling addFromLabelMap(Img labelMap) {
+		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap);
+		return add(model);
+	}
+
+	@Override
+	public InteractiveLabeling addFromLabelMap(Img data, Img labelMap) {
+		LabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap, data);
+		return add(model);
+	}
+
+	@Override
+	public <L> InteractiveLabeling add(LabelEditorModel<L> model) {
+		LabelEditorView<L> view = createView();
+		view.init(model);
+		addRenderers(view);
+		view.renderers().addDefaultRenderers();
+		LabelEditorController<L> control = createController();
+		if(context() != null) {
+			context().inject(view.renderers());
+			context().inject(control);
+		}
+		initController(model, view, control);
+		display(model.getData());
+		display(view);
+		DefaultInteractiveLabeling labeling = new DefaultInteractiveLabeling(model, view, control);
+		labelings.add(labeling);
+		if(objectService != null) {
+			objectService.addObject(labeling);
+		}
+		System.out.println("Created LabelEditor panel of type " + getClass().getName() + " with model:\n" + model.toString());
+		return labeling;
+	}
+
+	protected <L> LabelEditorView<L> createView() {
+		return new DefaultLabelEditorView<>();
+	}
+
+	protected <L> LabelEditorController<L> createController() {
+		return new DefaultLabelEditorController<>();
+	}
+
+	protected abstract <L> void initController(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> controller);
 
 	protected abstract Component buildInterface();
 
@@ -111,11 +104,9 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	abstract protected void addBehaviours(LabelEditorController controller);
 
-	protected abstract void displayLabeling();
+	protected abstract void display(RandomAccessibleInterval data);
 
-	protected abstract void displayData(RandomAccessibleInterval data);
-
-	protected abstract void clearInterface();
+	protected abstract void display(LabelEditorView view);
 
 	protected Context context() {
 		return context;
@@ -124,18 +115,8 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 	public abstract Object getInterfaceHandle();
 
 	@Override
-	public LabelEditorModel model() {
-		return model;
-	}
-
-	@Override
-	public LabelEditorView view() {
-		return view;
-	}
-
-	@Override
-	public LabelEditorController control() {
-		return controller;
+	public void dispose() {
+		labelings.forEach(labeling -> labeling.view().dispose());
 	}
 
 	@Override

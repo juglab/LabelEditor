@@ -77,9 +77,9 @@ public class MaskChannelsViewer implements Command {
 			}
 		}
 		printDims(labeling);
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
 		context.inject(panel);
-		panel.init(model);
+		panel.add(model);
 		JFrame frame = new JFrame();
 		frame.setContentPane(panel.get());
 		frame.setMinimumSize(new Dimension(500,500));

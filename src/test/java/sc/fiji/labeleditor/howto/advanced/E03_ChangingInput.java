@@ -1,6 +1,5 @@
 package sc.fiji.labeleditor.howto.advanced;
 
-import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccess;
@@ -10,6 +9,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,9 +32,8 @@ public class E03_ChangingInput {
 			drawRandomSphere(imgPlus, ra, random);
 		}
 
-		LabelEditorBdvPanel<Integer> panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
 		ij.context().inject(panel);
-		panel.init(imgPlus);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
@@ -45,7 +44,7 @@ public class E03_ChangingInput {
 		for (int i = 0; i < 1300; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 			ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
-			panel.init(labeling, imgPlus);
+			panel.add(labeling, imgPlus);
 			panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 			Thread.sleep(3000);
 		}

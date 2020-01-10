@@ -1,12 +1,12 @@
 package sc.fiji.labeleditor.plugin.imagej.imagej;
 
-import sc.fiji.labeleditor.core.LabelEditorPanel;
-import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorBdvPanel;
-import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.viewer.DisplayViewer;
+import sc.fiji.labeleditor.core.LabelEditorPanel;
+import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorBdvPanel;
+import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 
 import javax.swing.*;
 
@@ -30,9 +30,9 @@ public class SwingTimeSliceLabelEditorModelDisplayViewer extends EasySwingDispla
 
 	@Override
 	protected JPanel createDisplayPanel(TimeSliceLabelEditorModel model) {
-		LabelEditorPanel panel = new TimeSliceLabelEditorBdvPanel<>();
+		LabelEditorPanel panel = new TimeSliceLabelEditorBdvPanel();
 		context.inject(panel);
-		panel.init(model);
+		panel.add(model);
 		return (JPanel) panel.get();
 	}
 

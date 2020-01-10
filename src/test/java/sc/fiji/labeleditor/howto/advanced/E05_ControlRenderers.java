@@ -49,7 +49,7 @@ public class E05_ControlRenderers {
 			}
 		};
 		ij.context().inject(panel);
-		panel.init(model);
+		panel.add(model);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));

@@ -37,8 +37,8 @@ public class RunLabelEditorPanel {
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel<>();
-		labelEditorPanel.init(model);
+		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel();
+		labelEditorPanel.add(model);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
 		frame.pack();

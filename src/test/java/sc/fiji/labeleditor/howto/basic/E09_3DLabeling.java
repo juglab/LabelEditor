@@ -40,7 +40,7 @@ public class E09_3DLabeling {
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		// for 3D mode, one cannot use the ui service yet, so we create our own panel..
-		LabelEditorBdvPanel<IntType> panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
 
 		// .. and enable the 3D mode
 		panel.setMode3D(true);
@@ -49,7 +49,7 @@ public class E09_3DLabeling {
 		ij.context().inject(panel);
 
 		// initialize the panel..
-		panel.init(labeling);
+		panel.add(labeling);
 
 		// .. maybe set the display range for the inputs..
 		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));

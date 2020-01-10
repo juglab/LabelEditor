@@ -1,6 +1,7 @@
 package sc.fiji.labeleditor.howto.advanced;
 
 
+import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
@@ -66,12 +67,12 @@ public class E06_HandleSegmentationConflicts {
 		model.colors().getDefaultFaceColor().set(0,0,0,0);
 		model.colors().getDefaultBorderColor().set(0,255,255,100);
 
-		LabelEditorBdvPanel<String> panel = new LabelEditorBdvPanel<>();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
 
 		ij.context().inject(panel);
 
-		panel.init(model);
-		panel.control().install(new ConflictSelectionBehaviours<>());
+		InteractiveLabeling interactiveLabeling = panel.add(model);
+		interactiveLabeling.control().install(new ConflictSelectionBehaviours<>());
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());
