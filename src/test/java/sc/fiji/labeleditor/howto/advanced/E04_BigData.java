@@ -1,8 +1,5 @@
 package sc.fiji.labeleditor.howto.advanced;
 
-import sc.fiji.labeleditor.core.LabelEditorPanel;
-import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorBdvPanel;
-import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 import net.imagej.ImageJ;
 import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
@@ -10,9 +7,8 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Random;
 
 /**
@@ -65,15 +61,7 @@ public class E04_BigData {
 		model.colors().getFaceColor(TAG1).set(0, 255, 255);
 		model.colors().getFaceColor(TAG2).set(255, 0, 255);
 
-		LabelEditorPanel panel = new TimeSliceLabelEditorBdvPanel<>();
-		ij.context().inject(panel);
-		panel.init(model);
-
-		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(panel.get());
-		frame.setMinimumSize(new Dimension(1000,1000));
-		frame.pack();
-		frame.setVisible(true);
+		ij.ui().show(model);
 	}
 
 	public static void main(String...args) {
