@@ -2,7 +2,6 @@ package sc.fiji.labeleditor.core;
 
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.plugin.behaviours.export.ExportBehaviours;
-import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;

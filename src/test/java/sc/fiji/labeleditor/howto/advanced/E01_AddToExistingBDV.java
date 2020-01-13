@@ -36,6 +36,7 @@ public class E01_AddToExistingBDV {
 		model.colors().getDefaultFaceColor().set(255,255,0,55);
 
 		LabelEditorView<Integer> view = new DefaultLabelEditorView<>(model);
+		ij.context().inject(view);
 		view.renderers().addDefaultRenderers();
 
 		JPanel viewer = new JPanel(new MigLayout());
