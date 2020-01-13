@@ -1,11 +1,11 @@
 package sc.fiji.labeleditor.core.view;
 
-import org.scijava.Disposable;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import org.scijava.Context;
+import org.scijava.Disposable;
 import org.scijava.InstantiableException;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.PluginInfo;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,16 +14,14 @@ import java.util.Optional;
 public class LabelEditorRenderers extends ArrayList<LabelEditorRenderer> implements Disposable {
 
 	private LabelEditorModel model;
-	private LabelEditorView view;
 
 	@Parameter
 	Context context;
 
 	boolean contextCreated = false;
 
-	public void init(LabelEditorModel model, LabelEditorView view) {
+	public void init(LabelEditorModel model) {
 		this.model = model;
-		this.view = view;
 	}
 
 	public void addDefaultRenderers() {

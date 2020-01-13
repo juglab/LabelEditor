@@ -33,7 +33,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		this.model = model;
 		if(model.labeling() == null) return;
 		renderers.clear();
-		renderers.init(model, this);
+		renderers.init(model);
 		model.tagging().listeners().add(this::onTagChange);
 		model.colors().listeners().add(this::onColorChange);
 		notifyListeners();
