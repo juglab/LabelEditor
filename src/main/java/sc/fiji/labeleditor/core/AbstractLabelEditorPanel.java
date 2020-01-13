@@ -28,11 +28,14 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 	@Parameter
 	protected ObjectService objectService;
 
-	private boolean panelBuilt = false;
-
 	private List<InteractiveLabeling> labelings = new ArrayList<>();
 
+	private boolean initialized = false;
+
 	public AbstractLabelEditorPanel() {
+	}
+
+	private void initialize() {
 		setMinimumSize(new Dimension(100, 100));
 		setPreferredSize(new Dimension(500, 500));
 		setLayout( new MigLayout("fill") );
@@ -65,29 +68,49 @@ public abstract class AbstractLabelEditorPanel extends JPanel implements LabelEd
 
 	@Override
 	public <L> InteractiveLabeling add(LabelEditorModel<L> model) {
-		LabelEditorView<L> view = createView();
-		view.init(model);
-		addRenderers(view);
-		view.renderers().addDefaultRenderers();
-		LabelEditorController<L> control = createController();
-		if(context() != null) {
-			context().inject(view.renderers());
-			context().inject(control);
+		if(!initialized) {
+			initialized = true;
+			initialize();
 		}
-		initController(model, view, control);
+		LabelEditorView<L> view = initView(model);
+		LabelEditorController<L> control = initControl(model, view);
 		display(model.getData());
 		display(view);
-		DefaultInteractiveLabeling labeling = new DefaultInteractiveLabeling(model, view, control);
-		labelings.add(labeling);
-		if(objectService != null) {
-			objectService.addObject(labeling);
-		}
+		InteractiveLabeling labeling = createAndRegisterInteractiveLabeling(model, view, control);
 		System.out.println("Created LabelEditor panel of type " + getClass().getName() + " with model:\n" + model.toString());
 		return labeling;
 	}
 
+	private <L> InteractiveLabeling createAndRegisterInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> control) {
+		InteractiveLabeling labeling = new DefaultInteractiveLabeling(model, view, control);
+		labelings.add(labeling);
+		if(objectService != null) {
+			objectService.addObject(labeling);
+		}
+		return labeling;
+	}
+
+	private <L> LabelEditorView<L> initView(LabelEditorModel<L> model) {
+		LabelEditorView<L> view = createView();
+		view.init(model);
+		if(context() != null) {
+			context().inject(view.renderers());
+		}
+		addRenderers(view);
+		return view;
+	}
+
 	protected <L> LabelEditorView<L> createView() {
 		return new DefaultLabelEditorView<>();
+	}
+
+	private <L> LabelEditorController<L> initControl(LabelEditorModel<L> model, LabelEditorView<L> view) {
+		LabelEditorController<L> control = createController();
+		if(context() != null) {
+			context().inject(control);
+		}
+		initController(model, view, control);
+		return control;
 	}
 
 	protected <L> LabelEditorController<L> createController() {
