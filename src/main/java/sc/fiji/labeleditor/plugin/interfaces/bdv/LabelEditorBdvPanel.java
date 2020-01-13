@@ -6,7 +6,6 @@ import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import net.imglib2.RandomAccessibleInterval;
-import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import sc.fiji.labeleditor.core.AbstractLabelEditorPanel;
@@ -27,7 +26,6 @@ public class LabelEditorBdvPanel extends AbstractLabelEditorPanel {
 	private List< BdvSource > bdvSources = new ArrayList<>();
 
 	@Parameter
-	private Context context;
 	private boolean mode3D = false;
 
 	@Override
