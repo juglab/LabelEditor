@@ -21,7 +21,6 @@ import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
@@ -65,7 +64,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		return controller;
 	}
 
-	public static <L> InteractiveLabeling control(DefaultLabelEditorModel<L> model, BdvHandle handle) {
+	public static <L> InteractiveLabeling control(LabelEditorModel<L> model, BdvHandle handle) {
 		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
 		view.renderers().addDefaultRenderers();
 		LabelEditorController<L> control = new DefaultLabelEditorController<>();
