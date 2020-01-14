@@ -1,4 +1,4 @@
-package sc.fiji.labeleditor.plugin.imagej.imagej;
+package sc.fiji.labeleditor.plugin.imagej;
 
 import net.imglib2.roi.labeling.ImgLabeling;
 import org.scijava.Priority;
