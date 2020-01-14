@@ -9,6 +9,7 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import javax.swing.*;
@@ -44,7 +45,7 @@ public class E03_ChangingInput {
 		for (int i = 0; i < 1300; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 			ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
-			panel.add(labeling, imgPlus);
+			panel.add(new DefaultLabelEditorModel<>(labeling, imgPlus));
 			panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 			Thread.sleep(3000);
 		}

@@ -1,17 +1,16 @@
 package sc.fiji.labeleditor.howto.advanced;
 
-import sc.fiji.labeleditor.core.LabelEditorPanel;
+import net.imagej.ImageJ;
+import net.imglib2.algorithm.labeling.ConnectedComponents;
+import net.imglib2.img.Img;
+import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.type.numeric.integer.IntType;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import sc.fiji.labeleditor.plugin.renderers.BorderLabelEditorRenderer;
-import net.imagej.ImageJ;
-import net.imglib2.algorithm.labeling.ConnectedComponents;
-import net.imglib2.img.Img;
-import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.integer.IntType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,7 +41,7 @@ public class E05_ControlRenderers {
 		model.colors().getSelectedBorderColor().set(255,0,0);
 
 		// in this case, we do not try to find all existing renderers, but instead only add the border renderer
-		LabelEditorPanel panel = new LabelEditorBdvPanel() {
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel() {
 			@Override
 			protected void addRenderers(LabelEditorView view) {
 				view.renderers().add(new BorderLabelEditorRenderer<>());

@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.howto.basic;
 
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccess;
@@ -49,7 +50,7 @@ public class E09_3DLabeling {
 		ij.context().inject(panel);
 
 		// initialize the panel..
-		panel.add(labeling);
+		panel.add(new DefaultLabelEditorModel<>(labeling));
 
 		// .. maybe set the display range for the inputs..
 		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));

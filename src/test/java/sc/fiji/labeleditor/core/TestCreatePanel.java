@@ -36,11 +36,4 @@ public class TestCreatePanel {
 		panel.add(model);
 	}
 
-	@Test
-	public void useEmptyConstructor() {
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
-		panel.add(labels, data);
-		panel.dispose();
-	}
-
 }

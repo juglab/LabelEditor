@@ -1,16 +1,10 @@
 package sc.fiji.labeleditor.plugin.behaviours.export;
 
 import net.imagej.ops.OpService;
-import net.imglib2.RandomAccessibleInterval;
-import sc.fiji.labeleditor.core.LabelEditorPanel;
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
-import net.imglib2.Cursor;
 import net.imglib2.Interval;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
@@ -18,7 +12,6 @@ import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.roi.labeling.LabelRegionCursor;
 import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.type.NativeType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
@@ -26,6 +19,10 @@ import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.Behaviour;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
+import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +65,7 @@ public class ExportLabels<L> implements Behaviour {
 
 		ImgLabeling<L, IntType> cropLabeling = createCroppedLabeling(selected, boundingBox, regionList);
 
-		LabelEditorPanel panel = new LabelEditorBdvPanel();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
 		if(context != null) context.inject(panel);
 
 		LabelEditorModel<L> exportModel;
