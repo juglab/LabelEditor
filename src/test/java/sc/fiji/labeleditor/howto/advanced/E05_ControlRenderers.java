@@ -44,7 +44,7 @@ public class E05_ControlRenderers {
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context()) {
 			@Override
 			protected void addRenderers(LabelEditorView view) {
-				view.renderers().add(new BorderLabelEditorRenderer<>());
+				view.add(new BorderLabelEditorRenderer<>());
 			}
 		};
 		panel.add(model);

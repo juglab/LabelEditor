@@ -3,6 +3,7 @@ package sc.fiji.labeleditor.core.view;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Disposable;
 import org.scijava.listeners.Listeners;
+import sc.fiji.labeleditor.plugin.renderers.BorderLabelEditorRenderer;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface LabelEditorView<L> extends Disposable {
 	void setShowTagsInToolTip(boolean showTagsInToolTip);
 
 	void addDefaultRenderers();
+
+	void add(LabelEditorRenderer<L> renderer);
 }

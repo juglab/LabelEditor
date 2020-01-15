@@ -15,6 +15,7 @@ import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -62,7 +63,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 	}
 
 	public List<LabelEditorRenderer<L>> renderers() {
-		return renderers;
+		return Collections.unmodifiableList(renderers);
 	}
 
 	public Listeners< ViewChangeListener > listeners() {
@@ -147,7 +148,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		}
 	}
 
-	private void add(LabelEditorRenderer<L> renderer) {
+	public void add(LabelEditorRenderer<L> renderer) {
 		prepare(renderer);
 		renderers.add(renderer);
 	}
