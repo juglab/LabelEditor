@@ -15,25 +15,24 @@ import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 @Plugin(type = LabelEditorRenderer.class, name = "time slice borders", priority = 2)
 public class TimeSliceLabelEditorBorderRenderer<L> extends TimeSliceLabelEditorRenderer<L> {
 
-	private RandomAccessibleInterval output;
+	private RandomAccessibleInterval<IntType> output;
 
 	@Override
-	public void init(LabelEditorModel model) {
+	public void init(LabelEditorModel<L> model) {
 		super.init(model);
-		int timeDim = ((TimeSliceLabelEditorModel)model).getTimeDimension();
-		this.output = new IntTypeBoundary(model.labeling().getIndexImg(), timeDim);
+		int timeDim = ((TimeSliceLabelEditorModel<L>)model).getTimeDimension();
+		this.output = new IntTypeBoundary<>(model.labeling().getIndexImg(), timeDim);
 	}
 
 	@Override
-	public void updateOnTagChange(LabelEditorModel model) {
-		TimeSliceLabelEditorModel timeModel = (TimeSliceLabelEditorModel) model;
-		IntervalView intervalView = timeModel.getIndexImgAtTime(timePoint);
+	public void updateOnTagChange(LabelEditorModel<L> model) {
+		TimeSliceLabelEditorModel<L> timeModel = (TimeSliceLabelEditorModel<L>) model;
+		IntervalView<IntType> intervalView = timeModel.getIndexImgAtTime(timePoint);
 		updateLUT(model, intervalView, LabelEditorTargetComponent.BORDER);
 	}
 
-	@Override
 	public RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
-		return Converters.convert(output, converter, new ARGBType() );
+		return Converters.convert(output, converter, new ARGBType());
 	}
 }

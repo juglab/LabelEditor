@@ -43,10 +43,7 @@ public class E09_3DLabeling {
 		// for 3D mode, one cannot use the ui service yet, so we create our own panel..
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context());
 
-		// .. and enable the 3D mode
-		panel.setMode3D(true);
-
-		// initialize the panel..
+		// .. add model to panel
 		panel.add(new DefaultLabelEditorModel<>(labeling));
 
 		// .. maybe set the display range for the inputs..
@@ -54,7 +51,7 @@ public class E09_3DLabeling {
 
 		// .. and create a frame to show the panel.
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(panel.get());
+		frame.setContentPane(panel);
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);

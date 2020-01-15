@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.plugin.imagej;
 
+import bdv.util.BdvOptions;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -29,7 +30,7 @@ public class SwingLabelEditorModelDisplayViewer extends EasySwingDisplayViewer< 
 
 	@Override
 	protected JPanel createDisplayPanel(LabelEditorModel model) {
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(context);
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(context, new BdvOptions().is2D());
 		panel.add(model);
 		return panel;
 	}

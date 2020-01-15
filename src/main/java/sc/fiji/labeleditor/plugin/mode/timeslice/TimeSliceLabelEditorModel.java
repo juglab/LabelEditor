@@ -9,7 +9,7 @@ import sc.fiji.labeleditor.core.model.AbstractLabelEditorModel;
 
 public class TimeSliceLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 
-	private int timeDimension = -1;
+	private final int timeDimension;
 
 	public TimeSliceLabelEditorModel(ImgLabeling<L, IntType> labeling, int timeDimension) {
 		super(labeling);

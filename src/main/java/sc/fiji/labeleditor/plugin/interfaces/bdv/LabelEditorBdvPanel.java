@@ -2,6 +2,7 @@ package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
+import bdv.util.BdvHandle;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
@@ -44,31 +45,36 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 
 	private BdvHandlePanel bdvHandlePanel;
 
-	private boolean mode3D = false;
-
 	public LabelEditorBdvPanel() {
-		initialize();
+		this(null, Bdv.options());
 	}
 
 	public LabelEditorBdvPanel(Context context) {
-		context.inject(this);
-		initialize();
+		this(context, Bdv.options());
 	}
 
-	private void initialize() {
+	public LabelEditorBdvPanel(BdvOptions options) {
+		this(null, options);
+	}
+
+	public LabelEditorBdvPanel(Context context, BdvOptions options) {
+		if(context != null) context.inject(this);
+		initialize(options);
+	}
+
+	private void initialize(BdvOptions options) {
+		adjustOptions(options);
 		setMinimumSize(new Dimension(100, 100));
 		setPreferredSize(new Dimension(500, 500));
 		setLayout( new MigLayout("fill") );
+		bdvHandlePanel = new BdvHandlePanel(null, options);
+		Component viewer = bdvHandlePanel.getViewerPanel();
+		this.add( viewer, "span, grow, push" );
+	}
 
-		BdvOptions options = Bdv.options().accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
-		if(!is3DMode()) {
-			System.out.println("2D mode");
-			bdvHandlePanel = new BdvHandlePanel(null, options.is2D());
-		} else {
-			System.out.println("3D mode");
-			bdvHandlePanel = new BdvHandlePanel( null, options);
-		}
-		this.add( bdvHandlePanel.getViewerPanel(), "span, grow, push" );
+	protected void adjustOptions(BdvOptions options) {
+		options.accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
+	}
 	}
 
 	public <L> InteractiveLabeling add(LabelEditorModel<L> model) {
@@ -76,7 +82,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		LabelEditorController<L> control = initControl(model, view);
 		InteractiveLabeling labeling = createAndRegisterInteractiveLabeling(model, view, control);
 		ArrayList<BdvSource> sources = new ArrayList<>();
-		sources.add(display(model.getData(), "data"));
+		if(model.getData() != null) sources.add(display(model.getData(), "data"));
 		if(view.renderers().size() > 0)
 			view.renderers().forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName())));
 		this.sources.put(labeling, sources);
@@ -117,7 +123,6 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, view);
 		control.init(model, view, viewerInstance);
 		addBehaviours(control);
-		control.interfaceInstance().set3DViewMode(is3DMode());
 	}
 
 	protected void addBehaviours(LabelEditorController controller) {
@@ -141,18 +146,6 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 			objectService.addObject(labeling);
 		}
 		return labeling;
-	}
-
-	public Container get() {
-		return this;
-	}
-
-	private boolean is3DMode() {
-		return mode3D;
-	}
-
-	public void setMode3D(boolean set3D) {
-		mode3D = set3D;
 	}
 
 	@Override

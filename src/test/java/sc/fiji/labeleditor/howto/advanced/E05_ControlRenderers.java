@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.howto.advanced;
 
+import bdv.util.BdvOptions;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
@@ -41,7 +42,7 @@ public class E05_ControlRenderers {
 		model.colors().getSelectedBorderColor().set(255,0,0);
 
 		// in this case, we do not try to find all existing renderers, but instead only add the border renderer
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context()) {
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D()) {
 			@Override
 			protected void addRenderers(LabelEditorView view) {
 				view.add(new BorderLabelEditorRenderer<>());
@@ -51,7 +52,7 @@ public class E05_ControlRenderers {
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));
-		frame.setContentPane(panel.get());
+		frame.setContentPane(panel);
 		frame.pack();
 		frame.setVisible(true);
 	}

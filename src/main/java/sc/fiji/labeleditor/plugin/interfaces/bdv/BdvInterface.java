@@ -3,7 +3,6 @@ package sc.fiji.labeleditor.plugin.interfaces.bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
 import bdv.util.BdvOptions;
-import bdv.util.BdvSource;
 import bdv.viewer.ViewerPanel;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
@@ -58,7 +57,6 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		LabelEditorController<L> controller = new DefaultLabelEditorController<>();
 		controller.init(model, view, new BdvInterface<>(bdvHandle, view));
 		controller.addDefaultBehaviours();
-		controller.interfaceInstance().set3DViewMode(false);
 		return controller;
 	}
 
@@ -69,14 +67,8 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		LabelEditorController<L> control = new DefaultLabelEditorController<>();
 		control.init(model, view, new BdvInterface<>(handle, view));
 		control.addDefaultBehaviours();
-		control.interfaceInstance().set3DViewMode(false);
 		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), BdvOptions.options().addTo(handle)));
 		return new DefaultInteractiveLabeling(model, view, control);
-	}
-
-	@Override
-	public void set3DViewMode(boolean mode3D) {
-		this.mode3D = mode3D;
 	}
 
 	@Override

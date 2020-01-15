@@ -15,7 +15,6 @@ public interface LabelEditorInterface<L> extends Disposable {
 	LabelingType<L> getLabelsAtMousePosition();
 	//TODO 3d position?
 	LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model);
-	void set3DViewMode(boolean mode3D);
 	void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view);
 	void onViewChange(ViewChangedEvent viewChangedEvent);
 

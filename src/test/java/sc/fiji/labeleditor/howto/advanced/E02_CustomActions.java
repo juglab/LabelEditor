@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.howto.advanced;
 
+import bdv.util.BdvOptions;
 import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -45,7 +46,7 @@ public class E02_CustomActions {
 		model.colors().getColorset(LabelEditorTag.FOCUS).clear();
 		model.colors().getFaceColor("special").set(255, 0, 0);
 
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context());
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D());
 		InteractiveLabeling interactiveLabeling = panel.add(model);
 
 //		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));

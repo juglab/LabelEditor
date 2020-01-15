@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.plugin.imagej;
 
+import bdv.util.BdvOptions;
 import net.imglib2.roi.labeling.ImgLabeling;
 import org.scijava.Context;
 import org.scijava.Disposable;
@@ -32,7 +33,7 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 
 	@Override
 	protected JPanel createDisplayPanel(ImgLabeling labeling) {
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(context);
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(context, new BdvOptions().is2D());
 		panel.add(new DefaultLabelEditorModel<>(labeling));
 		return panel;
 	}

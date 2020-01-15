@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.howto.advanced;
 
+import bdv.util.BdvOptions;
 import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.RandomAccess;
@@ -33,10 +34,10 @@ public class E03_ChangingInput {
 			drawRandomSphere(imgPlus, ra, random);
 		}
 
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context());
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D());
 
 		JFrame frame = new JFrame("Label editor");
-		frame.setContentPane(panel.get());
+		frame.setContentPane(panel);
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.pack();
 		frame.setVisible(true);

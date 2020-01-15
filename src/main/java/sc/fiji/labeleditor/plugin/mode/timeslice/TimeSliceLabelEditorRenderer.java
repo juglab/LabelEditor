@@ -1,14 +1,14 @@
 package sc.fiji.labeleditor.plugin.mode.timeslice;
 
 import bdv.viewer.TimePointListener;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
-import sc.fiji.labeleditor.plugin.renderers.AbstractLabelEditorRenderer;
 import net.imglib2.Cursor;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import org.scijava.plugin.Plugin;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
+import sc.fiji.labeleditor.plugin.renderers.AbstractLabelEditorRenderer;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -24,13 +24,13 @@ public class TimeSliceLabelEditorRenderer<L> extends AbstractLabelEditorRenderer
 	}
 
 	@Override
-	public void updateOnTagChange(LabelEditorModel model) {
-		TimeSliceLabelEditorModel timeModel = (TimeSliceLabelEditorModel) model;
-		IntervalView intervalView = timeModel.getIndexImgAtTime(timePoint);
+	public void updateOnTagChange(LabelEditorModel<L> model) {
+		TimeSliceLabelEditorModel<L> timeModel = (TimeSliceLabelEditorModel<L>) model;
+		IntervalView<IntType> intervalView = timeModel.getIndexImgAtTime(timePoint);
 		updateLUT(model, intervalView, LabelEditorTargetComponent.FACE);
 	}
 
-	protected void updateLUT(LabelEditorModel model, IntervalView slice, Object targetComponent) {
+	protected void updateLUT(LabelEditorModel<L> model, IntervalView<IntType> slice, Object targetComponent) {
 
 		if(lut == null || lut.length != model.labeling().getMapping().numSets()) {
 			lut = new int[model.labeling().getMapping().numSets()];
