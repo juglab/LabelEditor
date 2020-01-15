@@ -4,29 +4,29 @@ import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 
-public class DefaultInteractiveLabeling implements InteractiveLabeling {
-	private LabelEditorModel model;
-	private LabelEditorView view;
-	private LabelEditorController control;
+public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L> {
+	private LabelEditorModel<L> model;
+	private LabelEditorView<L> view;
+	private LabelEditorController<L> control;
 
-	public DefaultInteractiveLabeling(LabelEditorModel model, LabelEditorView view, LabelEditorController control) {
+	public DefaultInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> control) {
 		this.model = model;
 		this.view = view;
 		this.control = control;
 	}
 
 	@Override
-	public LabelEditorModel model() {
+	public LabelEditorModel<L> model() {
 		return model;
 	}
 
 	@Override
-	public LabelEditorView view() {
+	public LabelEditorView<L> view() {
 		return view;
 	}
 
 	@Override
-	public LabelEditorController control() {
+	public LabelEditorController<L> control() {
 		return control;
 	}
 

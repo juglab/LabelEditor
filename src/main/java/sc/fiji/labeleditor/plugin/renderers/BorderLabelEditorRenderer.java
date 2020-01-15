@@ -17,13 +17,13 @@ public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> 
 	private RandomAccessibleInterval output;
 
 	@Override
-	public void init(LabelEditorModel model) {
+	public void init(LabelEditorModel<L> model) {
 		super.init(model);
 		this.output = new IntTypeBoundary(model.labeling().getIndexImg(), -1);
 	}
 
 	@Override
-	public synchronized void updateOnTagChange(LabelEditorModel model) {
+	public synchronized void updateOnTagChange(LabelEditorModel<L> model) {
 		updateLUT(model.labeling().getMapping(), model.colors(), LabelEditorTargetComponent.BORDER);
 	}
 

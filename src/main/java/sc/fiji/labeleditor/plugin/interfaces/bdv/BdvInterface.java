@@ -42,15 +42,13 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	Context context;
 
 	private final BdvHandle bdvHandle;
-	private final List<BdvSource> sources;
 	private final Behaviours behaviours;
 	private final LabelEditorView<L> view;
 	private boolean mode3D;
 	private LabelingType<L> labelsAtCursor;
 
-	public BdvInterface(BdvHandle bdvHandle, List<BdvSource> bdvSources, LabelEditorView view) {
+	public BdvInterface(BdvHandle bdvHandle, LabelEditorView view) {
 		this.bdvHandle = bdvHandle;
-		this.sources = bdvSources;
 		this.view = view;
 		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
 		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor");
@@ -58,17 +56,18 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	public static <L> LabelEditorController control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle) {
 		LabelEditorController<L> controller = new DefaultLabelEditorController<>();
-		controller.init(model, view, new BdvInterface<>(bdvHandle, null, view));
+		controller.init(model, view, new BdvInterface<>(bdvHandle, view));
 		controller.addDefaultBehaviours();
 		controller.interfaceInstance().set3DViewMode(false);
 		return controller;
 	}
 
-	public static <L> InteractiveLabeling control(LabelEditorModel<L> model, BdvHandle handle) {
+	public static <L> InteractiveLabeling control(LabelEditorModel<L> model, BdvHandle handle, Context context) {
 		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
-		view.renderers().addDefaultRenderers();
+		if(context != null) context.inject(view);
+		view.addDefaultRenderers();
 		LabelEditorController<L> control = new DefaultLabelEditorController<>();
-		control.init(model, view, new BdvInterface<>(handle, null, view));
+		control.init(model, view, new BdvInterface<>(handle, view));
 		control.addDefaultBehaviours();
 		control.interfaceInstance().set3DViewMode(false);
 		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), BdvOptions.options().addTo(handle)));
@@ -161,5 +160,10 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 					new MouseEvent(component, -1, System.currentTimeMillis(), 0, locationOnComponent.x, locationOnComponent.y,
 							locationOnScreen.x, locationOnScreen.y, 0, false, 0));
 		}
+	}
+
+	@Override
+	public void dispose() {
+		view.dispose();
 	}
 }

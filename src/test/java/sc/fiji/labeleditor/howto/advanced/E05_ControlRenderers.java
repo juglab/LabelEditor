@@ -41,13 +41,12 @@ public class E05_ControlRenderers {
 		model.colors().getSelectedBorderColor().set(255,0,0);
 
 		// in this case, we do not try to find all existing renderers, but instead only add the border renderer
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel() {
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context()) {
 			@Override
 			protected void addRenderers(LabelEditorView view) {
 				view.renderers().add(new BorderLabelEditorRenderer<>());
 			}
 		};
-		ij.context().inject(panel);
 		panel.add(model);
 
 		JFrame frame = new JFrame("Label editor");

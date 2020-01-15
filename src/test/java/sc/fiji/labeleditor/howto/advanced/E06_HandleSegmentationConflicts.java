@@ -67,9 +67,7 @@ public class E06_HandleSegmentationConflicts {
 		model.colors().getDefaultFaceColor().set(0,0,0,0);
 		model.colors().getDefaultBorderColor().set(0,255,255,100);
 
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
-
-		ij.context().inject(panel);
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context());
 
 		InteractiveLabeling interactiveLabeling = panel.add(model);
 		interactiveLabeling.control().install(new ConflictSelectionBehaviours<>());

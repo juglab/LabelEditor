@@ -17,9 +17,11 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderers;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -46,7 +48,7 @@ public class RunDefaultRenderer {
 		model.colors().getFaceColor("b").set(red);
 		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
-		LabelEditorRenderers renderers = view.renderers();
+		List<LabelEditorRenderer<String>> renderers = view.renderers();
 		assertEquals(1, renderers.size());
 		RandomAccessibleInterval<ARGBType> rendering = renderers.get(0).getOutput();
 

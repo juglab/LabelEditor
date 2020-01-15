@@ -10,12 +10,10 @@ public class DefaultLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data) {
 		super(labeling);
 		setData(data);
-		addDefaultColorsets();
 	}
 
 	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labeling) {
 		super(labeling);
-		addDefaultColorsets();
 	}
 
 	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval labelMap) {
@@ -24,15 +22,6 @@ public class DefaultLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 
 	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval labelMap, RandomAccessibleInterval data) {
 		return new DefaultLabelEditorModel<IntType>(makeLabeling(labelMap), data);
-	}
-
-	protected void addDefaultColorsets() {
-		colors().getDefaultFaceColor().set(DefaultColors.defaultFace());
-		colors().getDefaultBorderColor().set(DefaultColors.defaultBorder());
-		colors().getSelectedFaceColor().set(DefaultColors.selectedFace());
-		colors().getSelectedBorderColor().set(DefaultColors.selectedBorder());
-		colors().getFocusFaceColor().set(DefaultColors.focusFace());
-		colors().getFocusBorderColor().set(DefaultColors.focusBorder());
 	}
 
 }

@@ -65,9 +65,6 @@ public class ExportLabels<L> implements Behaviour {
 
 		ImgLabeling<L, IntType> cropLabeling = createCroppedLabeling(selected, boundingBox, regionList);
 
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
-		if(context != null) context.inject(panel);
-
 		LabelEditorModel<L> exportModel;
 		if(model.getData() != null) {
 			RandomAccessibleInterval data = createCroppedData(boundingBox);

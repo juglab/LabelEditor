@@ -5,7 +5,6 @@ import org.scijava.listeners.Listeners;
 import java.util.Map;
 import java.util.Set;
 
-//TODO is this interface needed?
 public interface LabelEditorTagging<L> {
 
 	Map<L, Set<Object>> get();

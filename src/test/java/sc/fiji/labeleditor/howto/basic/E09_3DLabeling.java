@@ -41,13 +41,10 @@ public class E09_3DLabeling {
 		ImgLabeling<IntType, IntType> labeling = ij.op().labeling().cca(img, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		// for 3D mode, one cannot use the ui service yet, so we create our own panel..
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context());
 
 		// .. and enable the 3D mode
 		panel.setMode3D(true);
-
-		// (don't forget to inject the context to get all the IJ2 goodies, but it should also work (with a limited set of features) without this)
-		ij.context().inject(panel);
 
 		// initialize the panel..
 		panel.add(new DefaultLabelEditorModel<>(labeling));

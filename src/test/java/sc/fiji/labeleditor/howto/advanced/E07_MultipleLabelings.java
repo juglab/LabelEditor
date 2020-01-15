@@ -44,8 +44,8 @@ public class E07_MultipleLabelings {
 		JFrame frame = new JFrame("Label editor");
 		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 
-		BdvInterface.control(model1, panel.getBdvHandle());
-		BdvInterface.control(model2, panel.getBdvHandle());
+		BdvInterface.control(model1, panel.getBdvHandle(), ij.context());
+		BdvInterface.control(model2, panel.getBdvHandle(), ij.context());
 		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
 
 		viewer.add( panel.getViewerPanel(), "span, grow, push" );

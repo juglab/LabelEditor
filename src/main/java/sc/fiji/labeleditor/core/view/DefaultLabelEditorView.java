@@ -1,12 +1,19 @@
 package sc.fiji.labeleditor.core.view;
 
+import net.imglib2.roi.labeling.LabelingType;
+import org.scijava.Context;
+import org.scijava.InstantiableException;
+import org.scijava.listeners.Listeners;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.PluginInfo;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.colors.ColorChangedEvent;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
-import net.imglib2.roi.labeling.LabelingType;
-import org.scijava.listeners.Listeners;
+import sc.fiji.labeleditor.plugin.renderers.BorderLabelEditorRenderer;
+import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,25 +22,19 @@ import java.util.Set;
 
 public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 
+	@Parameter
+	protected Context context;
+
 	private LabelEditorModel<L> model;
-	private final LabelEditorRenderers renderers = new LabelEditorRenderers();
+	private final List<LabelEditorRenderer<L>> renderers = new ArrayList<>();
 	private final Listeners.List<ViewChangeListener> listeners = new Listeners.SynchronizedList<>();
 	private boolean listenersPaused = false;
 	private boolean showToolTip = true;
 	private boolean showLabelsInToolTip = true;
 	private boolean showTagsInToolTip = true;
 
-	public DefaultLabelEditorView() {}
-
 	public DefaultLabelEditorView(LabelEditorModel<L> model) {
-		init(model);
-	}
-
-	public void init(LabelEditorModel<L> model) {
 		this.model = model;
-		if(model.labeling() == null) return;
-		renderers.clear();
-		renderers.init(model);
 		model.tagging().listeners().add(this::onTagChange);
 		model.colors().listeners().add(this::onColorChange);
 		notifyListeners();
@@ -60,7 +61,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		notifyListeners();
 	}
 
-	public LabelEditorRenderers renderers() {
+	public List<LabelEditorRenderer<L>> renderers() {
 		return renderers;
 	}
 
@@ -125,8 +126,36 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		this.showTagsInToolTip = showTagsInToolTip;
 	}
 
-	@Override
-	public void dispose() {
-		renderers().dispose();
+	public void addDefaultRenderers() {
+		renderers.clear();
+		if(context == null) {
+			add(new DefaultLabelEditorRenderer<>());
+			add(new BorderLabelEditorRenderer<>());
+		} else {
+			context.getPluginIndex().get(LabelEditorRenderer.class).forEach(this::add);
+		}
 	}
+
+	private void add(PluginInfo<?> renderer) {
+		try {
+			LabelEditorRenderer<L> instance = (LabelEditorRenderer<L>) renderer.createInstance();
+			if (instance.canDisplay(model)) {
+				add(instance);
+			}
+		} catch (InstantiableException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void add(LabelEditorRenderer<L> renderer) {
+		prepare(renderer);
+		renderers.add(renderer);
+	}
+
+	private void prepare(LabelEditorRenderer<L> renderer) {
+		if(context != null) context.inject(renderer);
+		renderer.init(model);
+		renderer.updateOnTagChange(model);
+	}
+
 }

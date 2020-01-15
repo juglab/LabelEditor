@@ -1,8 +1,5 @@
 package sc.fiji.labeleditor.plugin.mode.timeslice;
 
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
@@ -11,6 +8,9 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import org.scijava.plugin.Plugin;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
 @Plugin(type = LabelEditorRenderer.class, name = "time slice borders", priority = 2)
 public class TimeSliceLabelEditorBorderRenderer<L> extends TimeSliceLabelEditorRenderer<L> {

@@ -1,6 +1,7 @@
 package sc.fiji.labeleditor.core.interactive;
 
 import io.scif.img.IO;
+import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -19,6 +20,7 @@ import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class RunLabelEditorPanel {
 
@@ -28,8 +30,9 @@ public class RunLabelEditorPanel {
 	private static String TAG1 = "tag1";
 	private static String TAG2 = "tag2";
 
-	public static void main(String... args) {
-		ImgPlus img = buildData();
+	public static void main(String... args) throws IOException {
+		ImageJ ij = new ImageJ();
+		Img img = (Img) ij.io().open(LabelEditorBdvPanel.class.getResource("/raw.tif").getPath());
 		LabelEditorModel model = buildModel(img);
 		model.colors().getFaceColor(TAG1).set(255,255,0,50);
 		model.colors().getFaceColor(TAG2).set(0,255,255,50);
@@ -37,7 +40,7 @@ public class RunLabelEditorPanel {
 		JPanel parent = new JPanel();
 		frame.setContentPane(parent);
 		frame.setMinimumSize(new Dimension(500,500));
-		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel();
+		LabelEditorBdvPanel labelEditorPanel = new LabelEditorBdvPanel(ij.context());
 		labelEditorPanel.add(model);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		parent.add(labelEditorPanel);
@@ -45,12 +48,7 @@ public class RunLabelEditorPanel {
 		frame.setVisible(true);
 	}
 
-	private static <T extends RealType<T> & NativeType<T>> ImgPlus<T> buildData() {
-		Img input = IO.openImgs(LabelEditorBdvPanel.class.getResource("/raw.tif").getPath()).get(0);
-		return new ImgPlus<T>(input, "input", new AxisType[]{Axes.X, Axes.Y, Axes.TIME});
-	}
-
-	private static <T extends RealType<T> & NativeType<T>> LabelEditorModel<String> buildModel(ImgPlus data) {
+	private static <T extends RealType<T> & NativeType<T>> LabelEditorModel<String> buildModel(Img data) {
 
 		DiskCachedCellImg<IntType, ?> backing = new DiskCachedCellImgFactory<>(new IntType()).create( data.dimension(0), data.dimension(1), data.dimension(2) );
 		ImgLabeling< String, IntType > labels = new ImgLabeling<>( backing );

@@ -4,8 +4,8 @@ import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 
-public interface InteractiveLabeling {
-	LabelEditorModel model();
-	LabelEditorView view();
-	LabelEditorController control();
+public interface InteractiveLabeling<L> {
+	LabelEditorModel<L> model();
+	LabelEditorView<L> view();
+	LabelEditorController<L> control();
 }

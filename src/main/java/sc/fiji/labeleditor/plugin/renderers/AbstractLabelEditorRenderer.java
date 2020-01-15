@@ -26,15 +26,15 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 
 	protected int[] lut;
 	boolean debug = false;
-	protected LabelEditorModel model;
+	protected LabelEditorModel<L> model;
 
 	@Override
-	public void init(LabelEditorModel model) {
+	public void init(LabelEditorModel<L> model) {
 		this.model = model;
 	}
 
 	@Override
-	public void updateOnTagChange(LabelEditorModel model) {
+	public void updateOnTagChange(LabelEditorModel<L> model) {
 		updateLUT(model.labeling().getMapping(), model.colors(), LabelEditorTargetComponent.FACE);
 	}
 
@@ -70,7 +70,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		int[] labelColors = new int[sortedLabels.size()];
 		for (int j = 0; j < labelColors.length; j++) {
 
-			Set labelTags = model.tagging().getTags(sortedLabels.get(j));
+			Set<Object> labelTags = model.tagging().getTags(sortedLabels.get(j));
 			ArrayList<Object> sortedTags = new ArrayList<>(labelTags);
 			sortedTags.sort(model.getTagComparator());
 			sortedTags.add(LabelEditorTag.DEFAULT);

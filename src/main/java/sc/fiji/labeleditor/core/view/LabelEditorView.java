@@ -3,17 +3,16 @@ package sc.fiji.labeleditor.core.view;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Disposable;
 import org.scijava.listeners.Listeners;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
+
+import java.util.List;
 
 public interface LabelEditorView<L> extends Disposable {
-
-	void init(LabelEditorModel<L> model);
 
 	void updateRenderers();
 
 	void updateOnLabelingChange();
 
-	LabelEditorRenderers renderers();
+	List< LabelEditorRenderer<L> > renderers();
 
 	Listeners< ViewChangeListener > listeners();
 
@@ -24,4 +23,6 @@ public interface LabelEditorView<L> extends Disposable {
 	void setShowLabelsInToolTip(boolean showLabelsInToolTip);
 
 	void setShowTagsInToolTip(boolean showTagsInToolTip);
+
+	void addDefaultRenderers();
 }

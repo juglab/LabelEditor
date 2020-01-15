@@ -54,10 +54,10 @@ public class E08_MultipleViewers {
 		BdvHandlePanel panel1 = new BdvHandlePanel(frame, Bdv.options());
 		BdvHandlePanel panel2 = new BdvHandlePanel(frame, Bdv.options());
 
-		BdvInterface.control(model1, panel1.getBdvHandle());
-		BdvInterface.control(model2, panel1.getBdvHandle());
-		BdvInterface.control(model1, panel2.getBdvHandle());
-		BdvInterface.control(model2, panel2.getBdvHandle());
+		BdvInterface.control(model1, panel1.getBdvHandle(), ij.context());
+		BdvInterface.control(model2, panel1.getBdvHandle(), ij.context());
+		BdvInterface.control(model1, panel2.getBdvHandle(), ij.context());
+		BdvInterface.control(model2, panel2.getBdvHandle(), ij.context());
 		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel1));
 		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel2));
 

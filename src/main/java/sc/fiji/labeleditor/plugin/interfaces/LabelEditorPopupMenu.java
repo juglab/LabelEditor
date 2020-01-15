@@ -19,11 +19,11 @@ import java.awt.event.ActionListener;
 public class LabelEditorPopupMenu<L> extends JPopupMenu {
 
 	@Parameter
-	Context context;
+	private Context context;
 
 	private final LabelEditorModel<L> model;
 	private final LabelEditorController<L> control;
-	private final LabelEditorView view;
+	private final LabelEditorView<L> view;
 
 	private static final String MENU_EDIT = "Edit";
 	private static final String MENU_EDIT_DELETE = "Delete selected";
@@ -46,7 +46,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	private static final String MENU_OPTIONS = "Options";
 
 
-	public LabelEditorPopupMenu(LabelEditorModel<L> model, LabelEditorView view, LabelEditorController<L> control) {
+	public LabelEditorPopupMenu(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> control) {
 		this.model = model;
 		this.control = control;
 		this.view = view;
@@ -80,7 +80,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 			menu.add(getMenuItem(e -> runInNewThread(exportBehaviours::showData), MENU_EXPORT_SOURCE));
 			if (view.renderers().size() > 0) {
 				JMenu renderers = new JMenu(MENU_EXPORT_RENDERERS);
-				for (LabelEditorRenderer renderer : view.renderers()) {
+				for (LabelEditorRenderer<L> renderer : view.renderers()) {
 					renderers.add(getMenuItem(e -> new Thread(() ->
 							exportBehaviours.showRenderer(renderer)).start(), "Export " + renderer.getName()));
 				}
@@ -113,7 +113,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 
 	private void makeSelectMenu() {
 		JMenu menu = new JMenu(MENU_SELECT);
-		SelectionBehaviours selectionBehaviours = new SelectionBehaviours();
+		SelectionBehaviours<L> selectionBehaviours = new SelectionBehaviours<>();
 		selectionBehaviours.init(model, view, control);
 		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::selectAll), MENU_SELECT_ALL));
 		menu.add(getMenuItem(e -> runWhilePausingListeners(selectionBehaviours::deselectAll), MENU_SELECT_NONE));
@@ -126,7 +126,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 	}
 
 	private void runInNewThread(Runnable method) {
-		new Thread(() -> method.run()).start();
+		new Thread(method).start();
 	}
 
 	private void runWhilePausingListeners(Runnable method) {

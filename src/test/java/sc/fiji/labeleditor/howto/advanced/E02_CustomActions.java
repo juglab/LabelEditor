@@ -45,8 +45,7 @@ public class E02_CustomActions {
 		model.colors().getColorset(LabelEditorTag.FOCUS).clear();
 		model.colors().getFaceColor("special").set(255, 0, 0);
 
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
-		ij.context().inject(panel);
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context());
 		InteractiveLabeling interactiveLabeling = panel.add(model);
 
 //		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));

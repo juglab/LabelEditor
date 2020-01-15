@@ -1,16 +1,17 @@
 package sc.fiji.labeleditor.core.view;
 
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.ARGBType;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.SciJavaPlugin;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 public interface LabelEditorRenderer<L> extends SciJavaPlugin {
-	void init(LabelEditorModel model);
-	void updateOnTagChange(LabelEditorModel model);
+	void init(LabelEditorModel<L> model);
+	void updateOnTagChange(LabelEditorModel<L> model);
 	void updateOnLabelingChange();
 
-	RandomAccessibleInterval getOutput();
+	RandomAccessibleInterval<ARGBType> getOutput();
 
 	default String getName() {
 		Plugin annotation = getClass().getAnnotation(Plugin.class);

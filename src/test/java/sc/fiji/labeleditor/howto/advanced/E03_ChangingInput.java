@@ -33,8 +33,7 @@ public class E03_ChangingInput {
 			drawRandomSphere(imgPlus, ra, random);
 		}
 
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
-		ij.context().inject(panel);
+		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context());
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel.get());

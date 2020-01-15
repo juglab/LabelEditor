@@ -1,13 +1,5 @@
 package sc.fiji.labeleditor.plugin.renderers;
 
-import org.junit.Ignore;
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
-import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderers;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
@@ -25,7 +17,15 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
-		LabelEditorRenderers renderings = view.renderers();
+		List<LabelEditorRenderer<String>> renderings = view.renderers();
 		assertEquals(1, renderings.size());
 		((DefaultLabelEditorRenderer)renderings.get(0)).printLUT();
 		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
@@ -115,7 +115,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		//view
 		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
-		LabelEditorRenderers renderings = view.renderers();
+		List<LabelEditorRenderer<String>> renderings = view.renderers();
 		assertEquals(1, renderings.size());
 		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
 		assertNotNull(rendering);
@@ -160,7 +160,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
 		view.renderers().add(new DefaultLabelEditorRenderer<>());
-		LabelEditorRenderers renderings = view.renderers();
+		List<LabelEditorRenderer<String>> renderings = view.renderers();
 		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
 		RandomAccess<ARGBType> outRa = rendering.randomAccess();
 		outRa.setPosition(new long[]{0,0}); // labels {a}

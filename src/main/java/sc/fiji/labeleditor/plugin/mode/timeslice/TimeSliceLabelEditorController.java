@@ -62,7 +62,7 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 		} catch (ClassCastException e) {
 			System.err.println("Model is no TimeSliceLabelEditorModel. Operation will be performed on the whole labeling instead of only one timepoint.");
 		}
-		return null;
+		return model.labeling();
 	}
 
 	@Override
