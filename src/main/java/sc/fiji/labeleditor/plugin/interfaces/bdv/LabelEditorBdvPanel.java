@@ -70,16 +70,10 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model) {
-		return initControl(model, initView(model));
-	}
-
-	private <L> LabelEditorView<L> initView(LabelEditorModel<L> model) {
 		LabelEditorView<L> view = createView(model);
-		if(context != null) {
-			context.inject(view);
-		}
+		if(context != null) context.inject(view);
 		addRenderers(view);
-		return view;
+		return initControl(model, view);
 	}
 
 	protected <L> LabelEditorView<L> createView(LabelEditorModel<L> model) {
@@ -90,18 +84,16 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		view.addDefaultRenderers();
 	}
 
-	private <L> InteractiveLabeling<L> initControl(LabelEditorModel<L> model, LabelEditorView<L> view) {
-		LabelEditorController<L> control = createController();
-		if(context != null) {
-			context.inject(control);
-		}
-		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, view);
+	private InteractiveLabeling initControl(LabelEditorModel model, LabelEditorView view) {
+		LabelEditorController control = createController();
+		if(context != null) context.inject(control);
+		LabelEditorInterface viewerInstance = new BdvInterface<>(bdvHandlePanel, view);
 		InteractiveLabeling labeling = control.init(model, view, viewerInstance);
 		addBehaviours(control);
 		return labeling;
 	}
 
-	protected <L> LabelEditorController<L> createController() {
+	protected LabelEditorController createController() {
 		return new DefaultLabelEditorController<>();
 	}
 

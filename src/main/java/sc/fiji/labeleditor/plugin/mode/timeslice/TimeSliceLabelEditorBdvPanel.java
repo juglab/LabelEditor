@@ -24,7 +24,7 @@ public class TimeSliceLabelEditorBdvPanel extends LabelEditorBdvPanel {
 	}
 
 	@Override
-	public <L> LabelEditorController<L> createController() {
+	public LabelEditorController createController() {
 		return new TimeSliceLabelEditorController<>();
 	}
 }
