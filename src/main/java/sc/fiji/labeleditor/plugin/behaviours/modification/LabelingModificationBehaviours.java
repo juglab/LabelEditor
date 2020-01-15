@@ -1,33 +1,29 @@
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
-import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 
 import java.awt.*;
 
-public class LabelingModificationBehaviours extends Behaviours implements LabelEditorBehaviours {
-
-	protected LabelEditorModel model;
-	protected LabelEditorController controller;
+public class LabelingModificationBehaviours<L> extends Behaviours implements LabelEditorBehaviours<L> {
 
 	@Parameter
-	Context context;
+	private Context context;
+
+	private InteractiveLabeling<L> labeling;
 
 	public LabelingModificationBehaviours() {
 		super(new InputTriggerConfig(), "labeleditor-modification");
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorView view, LabelEditorController controller) {
-		this.model = model;
-		this.controller = controller;
+	public void init(InteractiveLabeling<L> labeling) {
+		this.labeling = labeling;
 	}
 
 	@Override
@@ -37,17 +33,17 @@ public class LabelingModificationBehaviours extends Behaviours implements LabelE
 	}
 
 	public DeleteLabels getDeleteBehaviour() {
-		return new DeleteLabels(model, controller);
+		return new DeleteLabels<>(labeling);
 	}
 
 	public SplitLabels getSplitBehaviour() {
-		SplitLabels behaviour = new SplitLabels(model, controller);
+		SplitLabels behaviour = new SplitLabels<>(labeling);
 		if(context != null) context.inject(behaviour);
 		return behaviour;
 	}
 
 	public MergeLabels getMergeBehaviour() {
-		return new MergeLabels(model, controller);
+		return new MergeLabels<>(labeling);
 	}
 
 }

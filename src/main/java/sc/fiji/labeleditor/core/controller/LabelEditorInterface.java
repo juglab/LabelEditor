@@ -17,7 +17,6 @@ import java.util.List;
 public interface LabelEditorInterface<L> extends Disposable {
 	//TODO 3d position?
 	LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model);
-	void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view);
 	void onViewChange(ViewChangedEvent viewChangedEvent);
 
 	Behaviours behaviours();
@@ -26,5 +25,7 @@ public interface LabelEditorInterface<L> extends Disposable {
 
 	void onTagChange(List<TagChangedEvent> tagChangedEvents);
 
-	void display(InteractiveLabeling interactiveLabeling);
+	void display(InteractiveLabeling<L> interactiveLabeling);
+
+	void installBehaviours(InteractiveLabeling<L> labeling);
 }

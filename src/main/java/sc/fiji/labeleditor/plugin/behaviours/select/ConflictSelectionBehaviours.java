@@ -1,7 +1,7 @@
 package sc.fiji.labeleditor.plugin.behaviours.select;
 
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imglib2.roi.labeling.LabelingType;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
 import java.util.Collection;
 import java.util.HashSet;

@@ -10,7 +10,7 @@ import org.scijava.plugin.Plugin;
 public class LabelEditorOptionsCommand extends InteractiveCommand {
 
 	@Parameter
-	LabelEditorView view;
+	private LabelEditorView view;
 
 	private static final String TOOLTIPS_FULL = "labels and tags";
 	private static final String TOOLTIPS_LABELS = "labels";

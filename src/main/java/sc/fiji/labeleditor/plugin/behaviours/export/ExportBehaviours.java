@@ -13,11 +13,10 @@ import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -38,8 +37,8 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorView view, LabelEditorController controller) {
-		this.model = model;
+	public void init(InteractiveLabeling labeling) {
+		this.model = labeling.model();
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.plugin.behaviours.select;
 
+import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -40,9 +41,9 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	protected static final String SELECT_ALL_LABELS_TRIGGERS = "ctrl A";
 
 	@Override
-	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> controller) {
-		this.model = model;
-		this.controller = controller;
+	public void init(InteractiveLabeling<L> labeling) {
+		this.model = labeling.model();
+		this.controller = labeling.control();
 	}
 
 	@Override

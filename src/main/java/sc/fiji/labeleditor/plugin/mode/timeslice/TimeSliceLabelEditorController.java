@@ -34,16 +34,16 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 
 	private void timePointChanged(int index) {
 		this.timePoint = index;
-		for (LabelEditorRenderer renderer : view.renderers()) {
+		for (LabelEditorRenderer renderer : labeling.view().renderers()) {
 			if(renderer instanceof TimePointListener) {
 				((TimePointListener) renderer).timePointChanged(index);
 			}
 		}
-		view.updateRenderers();
+		labeling.view().updateRenderers();
 		new Thread(() -> {
 			processingLabelsInScope = true;
 			labelsInScope.clear();
-			boolean[] setDone = new boolean[model.labeling().getMapping().numSets()];
+			boolean[] setDone = new boolean[labeling.model().labeling().getMapping().numSets()];
 			Cursor<LabelingType<L>> cursor = labelingInScope().cursor();
 			while(cursor.hasNext()) {
 				int val = cursor.next().getIndex().getInteger();
@@ -60,11 +60,11 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 	@Override
 	public IterableInterval<LabelingType<L>> labelingInScope() {
 		try {
-			return ((TimeSliceLabelEditorModel<L>) model).getLabelingAtTime(timePoint);
+			return ((TimeSliceLabelEditorModel<L>) labeling.model()).getLabelingAtTime(timePoint);
 		} catch (ClassCastException e) {
 			System.err.println("Model is no TimeSliceLabelEditorModel. Operation will be performed on the whole labeling instead of only one timepoint.");
 		}
-		return model.labeling();
+		return labeling.model().labeling();
 	}
 
 	@Override

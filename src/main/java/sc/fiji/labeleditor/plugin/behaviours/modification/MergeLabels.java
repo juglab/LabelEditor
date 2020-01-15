@@ -1,29 +1,26 @@
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.Behaviour;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
 import java.util.Set;
 
 public class MergeLabels<L> implements Behaviour {
 
-	private final LabelEditorController<L> controller;
-	private final LabelEditorModel<L> model;
+	private final InteractiveLabeling<L> labeling;
 
-	public MergeLabels(LabelEditorModel<L> model, LabelEditorController<L> controller) {
-		this.model = model;
-		this.controller = controller;
+	public MergeLabels(InteractiveLabeling<L> labeling) {
+		this.labeling = labeling;
 	}
 
 	public void assignSelectedToFirst() {
-		Set<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
-		assignToFirst(selected, controller.labelingInScope());
-		controller.triggerLabelingChange();
+		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
+		assignToFirst(selected, labeling.control().labelingInScope());
+		labeling.view().updateOnLabelingChange();
 	}
 
 	private static <L> void assignToFirst(Set<L> labels, IterableInterval<LabelingType<L>> labeling) {

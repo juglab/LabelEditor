@@ -1,35 +1,32 @@
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.Behaviour;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
 import java.util.Set;
 
 public class DeleteLabels<L> implements Behaviour {
 
-	private final LabelEditorController<L> controller;
-	private final LabelEditorModel<L> model;
+	private final InteractiveLabeling<L> labeling;
 
-	public DeleteLabels(LabelEditorModel<L> model, LabelEditorController controller) {
-		this.model = model;
-		this.controller = controller;
+	public DeleteLabels(InteractiveLabeling<L> labeling) {
+		this.labeling = labeling;
 	}
 
 	public void deleteSelected() {
-		Set selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
-		delete(selected, controller.labelingInScope());
-		controller.triggerLabelingChange();
+		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
+		delete(selected, labeling.control().labelingInScope());
+		labeling.view().updateOnLabelingChange();
 	}
 
-	static <L> void delete(Set<L> labels, IterableInterval labeling) {
+	private static <L> void delete(Set<L> labels, IterableInterval<LabelingType<L>> labeling) {
 		Cursor<LabelingType<L>> cursor = labeling.cursor();
 		while (cursor.hasNext()) {
-			LabelingType val = cursor.next();
+			LabelingType<L> val = cursor.next();
 			val.removeAll(labels);
 		}
 	}
@@ -37,7 +34,7 @@ public class DeleteLabels<L> implements Behaviour {
 	static <L> void delete(L label, IterableInterval<LabelingType<L>> labeling) {
 		Cursor<LabelingType<L>> cursor = labeling.cursor();
 		while (cursor.hasNext()) {
-			LabelingType val = cursor.next();
+			LabelingType<L> val = cursor.next();
 			val.remove(label);
 		}
 	}

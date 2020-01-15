@@ -68,7 +68,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		return controller;
 	}
 
-	public static <L> InteractiveLabeling control(LabelEditorModel<L> model, BdvHandle handle, Context context) {
+	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, BdvHandle handle, Context context) {
 		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
 		if(context != null) context.inject(view);
 		view.addDefaultRenderers();
@@ -76,7 +76,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		control.init(model, view, new BdvInterface<>(handle, view));
 		control.addDefaultBehaviours();
 		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), BdvOptions.options().addTo(handle)));
-		return new DefaultInteractiveLabeling(model, view, control);
+		return new DefaultInteractiveLabeling<>(model, view, control);
 	}
 
 	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
@@ -107,16 +107,16 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void installBehaviours(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorView<L> view) {
-		install(model, controller, new SelectionBehaviours());
-		install(model, controller, new FocusBehaviours<>());
-		install(model, controller, new LabelingModificationBehaviours());
-		install(model, controller, new PopupBehaviours());
+	public void installBehaviours(InteractiveLabeling<L> labeling) {
+		install(labeling, new SelectionBehaviours<>());
+		install(labeling, new FocusBehaviours<>());
+		install(labeling, new LabelingModificationBehaviours<>());
+		install(labeling, new PopupBehaviours<>());
 	}
 
-	private void install(LabelEditorModel<L> model, LabelEditorController<L> controller, LabelEditorBehaviours behavioursAdded) {
+	private void install(InteractiveLabeling<L> labeling, LabelEditorBehaviours<L> behavioursAdded) {
 		if(context != null) context.inject(behavioursAdded);
-		behavioursAdded.init(model, view, controller);
+		behavioursAdded.init(labeling);
 		behavioursAdded.install(behaviours, bdvHandle.getViewerPanel().getDisplay());
 	}
 

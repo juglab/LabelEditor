@@ -16,15 +16,13 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 	@Parameter
 	Context context;
 
-	protected LabelEditorModel<L> model;
-	protected LabelEditorView<L> view;
 	protected LabelEditorInterface<L> interfaceInstance;
+
+	protected InteractiveLabeling<L> labeling;
 
 	@Override
 	public InteractiveLabeling init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
-		this.model = model;
-		this.view = view;
-		InteractiveLabeling labeling = new DefaultInteractiveLabeling<>(model, view, this);
+		labeling = new DefaultInteractiveLabeling<>(model, view, this);
 		if(interfaceInstance != null) {
 			view.listeners().remove(interfaceInstance::onViewChange);
 			model.tagging().listeners().remove(interfaceInstance::onTagChange);
@@ -39,12 +37,7 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 
 	@Override
 	public void addDefaultBehaviours() {
-		interfaceInstance.installBehaviours(model, this, view);
-	}
-
-	@Override
-	public void triggerLabelingChange() {
-		view.updateOnLabelingChange();
+		interfaceInstance.installBehaviours(labeling);
 	}
 
 	@Override
@@ -55,18 +48,18 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 	@Override
 	public void install(LabelEditorBehaviours behaviour) {
 		if(context != null) context.inject(behaviour);
-		behaviour.init(model, view, this);
+		behaviour.init(labeling);
 		behaviour.install(interfaceInstance.behaviours(), interfaceInstance.getComponent());
 	}
 
 	@Override
 	public IterableInterval<LabelingType<L>> labelingInScope() {
-		return model.labeling();
+		return labeling.model().labeling();
 	}
 
 	@Override
 	public Set<L> labelSetInScope() {
-		return model.labeling().getMapping().getLabels();
+		return labeling.model().labeling().getMapping().getLabels();
 	}
 
 }

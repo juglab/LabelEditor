@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
+import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -24,9 +25,9 @@ public class TagModificationBehaviours extends Behaviours implements LabelEditor
 	}
 
 	@Override
-	public void init(LabelEditorModel model, LabelEditorView view, LabelEditorController controller) {
-		this.model = model;
-		this.controller = controller;
+	public void init(InteractiveLabeling labeling) {
+		this.model = labeling.model();
+		this.controller = labeling.control();
 	}
 
 	@Override

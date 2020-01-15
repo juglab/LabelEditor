@@ -27,7 +27,8 @@ public class TestLabelMap {
 		assertNotNull(model);
 		assertNotNull(model.labeling());
 		ExportBehaviours exportBehaviours = new ExportBehaviours();
-		exportBehaviours.init(model, null, null);
+		InteractiveLabeling labeling = new DefaultInteractiveLabeling<>(model, null, null);
+		exportBehaviours.init(labeling);
 		IterableInterval<IntType> labelMap = Views.iterable(exportBehaviours.getLabelMap());
 		Cursor<IntType> resCursor = labelMap.localizingCursor();
 		RandomAccess<UnsignedShortType> origRa = input.randomAccess();

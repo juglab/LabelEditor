@@ -1,10 +1,5 @@
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
-import sc.fiji.labeleditor.application.InteractiveWatershedCommand;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import net.imagej.ImgPlus;
 import net.imagej.ops.OpService;
 import net.imglib2.Cursor;
 import net.imglib2.Interval;
@@ -24,7 +19,6 @@ import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
-import net.imglib2.type.logic.BoolType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.IntervalView;
@@ -34,6 +28,10 @@ import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.Behaviour;
+import sc.fiji.labeleditor.application.InteractiveWatershedCommand;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,8 +39,6 @@ import java.util.concurrent.ExecutionException;
 
 public class SplitLabels<L> implements Behaviour {
 
-	private final LabelEditorController controller;
-	private final LabelEditorModel<L> model;
 	@Parameter
 	private OpService opService;
 	@Parameter
@@ -50,16 +46,17 @@ public class SplitLabels<L> implements Behaviour {
 	@Parameter
 	private UIService uiService;
 
-	public SplitLabels(LabelEditorModel model, LabelEditorController controller) {
-		this.model = model;
-		this.controller = controller;
+	private final InteractiveLabeling<L> labeling;
+
+	public SplitLabels(InteractiveLabeling<L> labeling) {
+		this.labeling = labeling;
 	}
 
 	public void splitSelected() {
 		if(opService == null) {
 			throw new RuntimeException("No OpService available. You have to inject your LabelEditorPanel with a context to use this behaviour.");
 		}
-		Set<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
+		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
 		selected.forEach(label -> {
 			try {
 				splitInteractively(label);
@@ -67,15 +64,14 @@ public class SplitLabels<L> implements Behaviour {
 				e.printStackTrace();
 			}
 		});
-		controller.triggerLabelingChange();
+		labeling.view().updateOnLabelingChange();
 	}
 
 	public <T extends NativeType<T>> void splitInteractively(L label) throws ExecutionException, InterruptedException {
-		LabelRegions regions = new LabelRegions<>(model.labeling());
-		LabelRegion<Integer> region = regions.getLabelRegion(label);
-		IntervalView<BoolType> zeroRegion = Views.zeroMin(region);
+		LabelRegions<L> regions = new LabelRegions<>(labeling.model().labeling());
+		LabelRegion<L> region = regions.getLabelRegion(label);
 		ImgLabeling<L, IntType> cropLabeling = createCroppedLabeling(label, region);
-		RandomAccessibleInterval data = createCroppedData(region, zeroRegion);
+		RandomAccessibleInterval data = createCroppedData(region);
 		CommandModule out = commandService.run(
 				InteractiveWatershedCommand.class, true,
 				"labeling", cropLabeling,
@@ -86,7 +82,7 @@ public class SplitLabels<L> implements Behaviour {
 //			TODO add new labels to model labeling
 //			Set<Object> tags = model.tagging().getTags(label);
 //			newLabeling.forEach(newlabel -> tags.forEach(tag -> model.tagging().addTag(tag, newlabel)));
-			controller.triggerLabelingChange();
+			labeling.view().updateOnLabelingChange();
 		}
 
 
@@ -99,11 +95,11 @@ public class SplitLabels<L> implements Behaviour {
 //		Set<L> newlabels = split(label, model.labels(), model.getData(), 1, opService);
 	}
 
-	private RandomAccessibleInterval createCroppedData(LabelRegion<Integer> region, IntervalView<BoolType> zeroRegion) {
-		return opService.copy().rai(Views.zeroMin(Views.interval(model.getData(), region)));
+	private RandomAccessibleInterval createCroppedData(LabelRegion<L> region) {
+		return opService.copy().rai(Views.zeroMin(Views.interval(labeling.model().getData(), region)));
 	}
 
-	private ImgLabeling<L, IntType> createCroppedLabeling(L label, LabelRegion<Integer> region) {
+	private ImgLabeling<L, IntType> createCroppedLabeling(L label, LabelRegion<L> region) {
 		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create( Views.zeroMin(region) );
 		ImgLabeling<L, IntType> cropLabeling = new ImgLabeling<>(backing);
 		Point offset = new Point(region.numDimensions());
