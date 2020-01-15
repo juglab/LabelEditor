@@ -1,14 +1,18 @@
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
+import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
 import bdv.util.BdvOptions;
+import bdv.util.BdvSource;
 import bdv.viewer.ViewerPanel;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.util.Intervals;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
@@ -33,7 +37,10 @@ import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BdvInterface<L> implements LabelEditorInterface<L> {
 
@@ -43,8 +50,9 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	private final BdvHandle bdvHandle;
 	private final Behaviours behaviours;
 	private final LabelEditorView<L> view;
-	private boolean mode3D;
 	private LabelingType<L> labelsAtCursor;
+
+	private final Map<InteractiveLabeling, List<BdvSource>> sources = new HashMap<>();
 
 	public BdvInterface(BdvHandle bdvHandle, LabelEditorView view) {
 		this.bdvHandle = bdvHandle;
@@ -71,7 +79,6 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		return new DefaultInteractiveLabeling(model, view, control);
 	}
 
-	@Override
 	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
 		RandomAccess<LabelingType<L>> ra = model.labeling().randomAccess();
 		Localizable pos = getDataPositionAtMouse();
@@ -88,11 +95,6 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		return null;
 	}
 
-	@Override
-	public LabelingType<L> getLabelsAtMousePosition() {
-		return labelsAtCursor;
-	}
-
 	private Localizable getDataPositionAtMouse() {
 		//FIXME currently only works for 2D, 3D and 4D
 		RealPoint mousePointer = new RealPoint(3);
@@ -100,11 +102,8 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		final int x = ( int ) mousePointer.getFloatPosition( 0 );
 		final int y = ( int ) mousePointer.getFloatPosition( 1 );
 		int time = bdvHandle.getViewerPanel().getState().getCurrentTimepoint();
-		if(mode3D) {
-			final int z = ( int ) mousePointer.getFloatPosition( 2 );
-			return new Point(x, y, z, time);
-		}
-		return new Point(x, y, time);
+		final int z = ( int ) mousePointer.getFloatPosition( 2 );
+		return new Point(x, y, z, time);
 	}
 
 	@Override
@@ -143,6 +142,25 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		showToolTip(bdvHandle.getViewerPanel().getDisplay());
 	}
 
+	@Override
+	public void display(InteractiveLabeling labeling) {
+		ArrayList<BdvSource> sources = new ArrayList<>();
+		if(labeling.model().getData() != null) sources.add(display(labeling.model().getData(), "data"));
+		if(view.renderers().size() > 0)
+			view.renderers().forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName())));
+		this.sources.put(labeling, sources);
+	}
+
+	private BdvSource display(RandomAccessibleInterval<ARGBType> rai, String name) {
+		if(rai == null) return null;
+		final BdvSource source = BdvFunctions.show(
+				rai,
+				name,
+				Bdv.options().addTo( bdvHandle ) );
+		source.setActive( true );
+		return source;
+	}
+
 	public static void showToolTip(JComponent component) {
 		java.awt.Point locationOnScreen = MouseInfo.getPointerInfo().getLocation();
 		java.awt.Point locationOnComponent = new java.awt.Point(locationOnScreen);
@@ -157,5 +175,9 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	@Override
 	public void dispose() {
 		view.dispose();
+	}
+
+	public Map<InteractiveLabeling, List<BdvSource>> getSources() {
+		return sources;
 	}
 }

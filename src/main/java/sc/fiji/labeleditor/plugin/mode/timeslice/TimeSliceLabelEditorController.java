@@ -1,15 +1,16 @@
 package sc.fiji.labeleditor.plugin.mode.timeslice;
 
 import bdv.viewer.TimePointListener;
+import net.imglib2.Cursor;
+import net.imglib2.IterableInterval;
+import net.imglib2.roi.labeling.LabelingType;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
-import net.imglib2.Cursor;
-import net.imglib2.IterableInterval;
-import net.imglib2.roi.labeling.LabelingType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,16 +19,17 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 
 	private long timePoint = 0;
 	private Set<L> labelsInScope = new HashSet<>();
-	boolean processingLabelsInScope = false;
+	private boolean processingLabelsInScope = false;
 
-	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
-		super.init(model, view, interfaceInstance);
+	public InteractiveLabeling init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
+		InteractiveLabeling res = super.init(model, view, interfaceInstance);
 		try {
 			BdvInterface bdv = (BdvInterface) interfaceInstance;
 			bdv.getComponent().addTimePointListener(this::timePointChanged);
 		} catch (ClassCastException e) {
 			System.err.println("Cannot add a timepoint listener to interface " + interfaceInstance.getClass().getName());
 		}
+		return res;
 	}
 
 	private void timePointChanged(int index) {

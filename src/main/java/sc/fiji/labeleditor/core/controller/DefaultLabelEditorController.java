@@ -1,5 +1,7 @@
 package sc.fiji.labeleditor.core.controller;
 
+import sc.fiji.labeleditor.core.DefaultInteractiveLabeling;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import net.imglib2.IterableInterval;
@@ -19,17 +21,20 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 	protected LabelEditorInterface<L> interfaceInstance;
 
 	@Override
-	public void init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
+	public InteractiveLabeling init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
 		this.model = model;
 		this.view = view;
+		InteractiveLabeling labeling = new DefaultInteractiveLabeling<>(model, view, this);
 		if(interfaceInstance != null) {
 			view.listeners().remove(interfaceInstance::onViewChange);
 			model.tagging().listeners().remove(interfaceInstance::onTagChange);
+			this.interfaceInstance = interfaceInstance;
+			if(context != null) context.inject(interfaceInstance);
+			view.listeners().add(interfaceInstance::onViewChange);
+			model.tagging().listeners().add(interfaceInstance::onTagChange);
+			interfaceInstance.display(labeling);
 		}
-		this.interfaceInstance = interfaceInstance;
-		if(context != null) context.inject(interfaceInstance);
-		view.listeners().add(interfaceInstance::onViewChange);
-		model.tagging().listeners().add(interfaceInstance::onTagChange);
+		return labeling;
 	}
 
 	@Override

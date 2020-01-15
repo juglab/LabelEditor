@@ -2,6 +2,7 @@ package sc.fiji.labeleditor.plugin.mode.timeslice;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
@@ -29,7 +30,7 @@ public class TimeSliceLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
 		return Views.hyperSlice(labeling().getIndexImg(), getTimeDimension(), currentTimePoint);
 	}
 
-	public IntervalView getLabelingAtTime(long currentTimePoint) {
+	public IntervalView<LabelingType<L>> getLabelingAtTime(long currentTimePoint) {
 		return Views.hyperSlice(labeling(), getTimeDimension(), currentTimePoint);
 	}
 }

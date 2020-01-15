@@ -1,19 +1,15 @@
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.Bdv;
-import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
-import net.imglib2.RandomAccessibleInterval;
 import net.miginfocom.swing.MigLayout;
 import org.scijava.Context;
 import org.scijava.Disposable;
 import org.scijava.command.CommandService;
-import org.scijava.object.ObjectService;
 import org.scijava.plugin.Parameter;
-import sc.fiji.labeleditor.core.DefaultInteractiveLabeling;
 import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
@@ -35,13 +31,9 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	private Context context;
 
 	@Parameter
-	private ObjectService objectService;
-
-	@Parameter
 	private CommandService commandService;
 
 	private final Map<String, InteractiveLabeling> labelings = new HashMap<>();
-	private final Map<InteractiveLabeling, List<BdvSource>> sources = new HashMap<>();
 
 	private BdvHandlePanel bdvHandlePanel;
 
@@ -77,16 +69,8 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 	}
 
-	public <L> InteractiveLabeling add(LabelEditorModel<L> model) {
-		LabelEditorView<L> view = initView(model);
-		LabelEditorController<L> control = initControl(model, view);
-		InteractiveLabeling labeling = createAndRegisterInteractiveLabeling(model, view, control);
-		ArrayList<BdvSource> sources = new ArrayList<>();
-		if(model.getData() != null) sources.add(display(model.getData(), "data"));
-		if(view.renderers().size() > 0)
-			view.renderers().forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName())));
-		this.sources.put(labeling, sources);
-		return labeling;
+	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model) {
+		return initControl(model, initView(model));
 	}
 
 	private <L> LabelEditorView<L> initView(LabelEditorModel<L> model) {
@@ -106,46 +90,23 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		view.addDefaultRenderers();
 	}
 
-	private <L> LabelEditorController<L> initControl(LabelEditorModel<L> model, LabelEditorView<L> view) {
+	private <L> InteractiveLabeling<L> initControl(LabelEditorModel<L> model, LabelEditorView<L> view) {
 		LabelEditorController<L> control = createController();
 		if(context != null) {
 			context.inject(control);
 		}
-		initController(model, view, control);
-		return control;
+		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, view);
+		InteractiveLabeling labeling = control.init(model, view, viewerInstance);
+		addBehaviours(control);
+		return labeling;
 	}
 
 	protected <L> LabelEditorController<L> createController() {
 		return new DefaultLabelEditorController<>();
 	}
 
-	private <L> void initController(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> control) {
-		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel, view);
-		control.init(model, view, viewerInstance);
-		addBehaviours(control);
-	}
-
 	protected void addBehaviours(LabelEditorController controller) {
 		controller.addDefaultBehaviours();
-	}
-
-	private BdvSource display(final RandomAccessibleInterval rai, String title) {
-		if(rai == null) return null;
-		final BdvSource source = BdvFunctions.show(
-				rai,
-				title,
-				Bdv.options().addTo( bdvHandlePanel ) );
-		source.setActive( true );
-		return source;
-	}
-
-	private <L> InteractiveLabeling createAndRegisterInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorController<L> control) {
-		InteractiveLabeling labeling = new DefaultInteractiveLabeling(model, view, control);
-		labelings.put(model.getName(), labeling);
-		if(objectService != null) {
-			objectService.addObject(labeling);
-		}
-		return labeling;
 	}
 
 	@Override
@@ -156,7 +117,10 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 
 	public List<BdvSource> getSources() {
 		List<BdvSource> res = new ArrayList<>();
-		sources.forEach((interactiveLabeling, bdvSources) -> res.addAll(bdvSources));
+		labelings.forEach((name, labeling) -> {
+			BdvInterface<?> labelEditorInterface = (BdvInterface) labeling.control().interfaceInstance();
+			labelEditorInterface.getSources().values().forEach(res::addAll);
+		});
 		return res;
 	}
 }

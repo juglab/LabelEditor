@@ -47,14 +47,14 @@ public class E02_CustomActions {
 		model.colors().getFaceColor("special").set(255, 0, 0);
 
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D());
-		InteractiveLabeling interactiveLabeling = panel.add(model);
+		InteractiveLabeling<Integer> interactiveLabeling = panel.add(model);
 
 //		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 
 		interactiveLabeling.control().interfaceInstance().behaviours().behaviour((ClickBehaviour) (x, y) -> {
 
 				//get labels at current mouse position
-				LabelingType<Integer> labels = interactiveLabeling.control().interfaceInstance().getLabelsAtMousePosition();
+				LabelingType<Integer> labels = interactiveLabeling.control().interfaceInstance().findLabelsAtMousePosition(x, y, model);
 
 				//pausing the tagging listeners while changing tags improves performance
 				model.tagging().pauseListeners();
