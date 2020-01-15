@@ -78,7 +78,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 			labelColors[j] = mixColorsAdditive(sortedTags, tagColors, targetComponent);
 		}
 
-		return mixColorsOverlay(labelColors);
+		return ColorMixingUtils.mixColorsOverlay(labelColors);
 	}
 
 	private void printLUT(LabelingMapping<L> mapping, int[] lut) {
@@ -115,24 +115,26 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 
 	public static int mixColorsAdditive(List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent) {
 
-		int[] colors = new int[tags.size()];
-		for (int i = 0; i < colors.length; i++) {
-			Object tag = tags.get(i);
-			int color = getColor(tagColors, targetComponent, tag);
-			colors[i] = color;
-		}
-		return mixColorsAdditive(colors);
+		int[] colors = getTagColors(tags, tagColors, targetComponent);
+		return ColorMixingUtils.mixColorsAdditive(colors);
 	}
 
 	public static int mixColorsOverlay(List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent) {
 
+		int[] colors = getTagColors(tags, tagColors, targetComponent);
+		return ColorMixingUtils.mixColorsOverlay(colors);
+	}
+
+	private static int[] getTagColors(List< Object > tags,
+			LabelEditorTagColors tagColors, Object targetComponent)
+	{
 		int[] colors = new int[tags.size()];
 		for (int i = 0; i < colors.length; i++) {
 			Object tag = tags.get(i);
 			int color = getColor(tagColors, targetComponent, tag);
 			colors[i] = color;
 		}
-		return mixColorsOverlay(colors);
+		return colors;
 	}
 
 	private static int getColor(LabelEditorTagColors tagColors, Object targetComponent, Object tag) {
@@ -154,48 +156,6 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 			}
 		}
 		return color;
-	}
-
-	//https://en.wikipedia.org/wiki/Alpha_compositing
-	//https://wikimedia.org/api/rest_v1/media/math/render/svg/12ea004023a1756851fc7caa0351416d2ba03bae
-	public static int mixColorsOverlay(int[] colors) {
-		float red = 0;
-		float green = 0;
-		float blue = 0;
-		float alpha = 0;
-		for (int color : colors) {
-			if(color == 0) continue;
-			float newred = ARGBType.red(color);
-			float newgreen = ARGBType.green(color);
-			float newblue = ARGBType.blue(color);
-			float newalpha = ((float)ARGBType.alpha(color))/255.f;
-			if(alpha < 0.0001 && newalpha < 0.0001) continue;
-			red = (red*alpha+newred*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
-			green = (green*alpha+newgreen*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
-			blue = (blue*alpha+newblue*newalpha*(1-alpha))/(alpha + newalpha*(1-alpha));
-			alpha = alpha + newalpha*(1-alpha);
-		}
-		return ARGBType.rgba((int)red, (int)green, (int)blue, (int)(alpha*255));
-	}
-
-	public static int mixColorsAdditive(int[] colors) {
-		float red = 0;
-		float green = 0;
-		float blue = 0;
-		float alpha = 0;
-		for (int color : colors) {
-			if(color == 0) continue;
-			float newred = ARGBType.red(color);
-			float newgreen = ARGBType.green(color);
-			float newblue = ARGBType.blue(color);
-			float newalpha = ((float)ARGBType.alpha(color))/255.f;
-			if(alpha < 0.0001 && newalpha < 0.0001) continue;
-			red = Math.min(255, red + newred*newalpha);
-			green = Math.min(255, green + newgreen*newalpha);
-			blue = Math.min(255, blue + newblue*newalpha);
-			alpha = alpha + newalpha*(1-alpha);
-		}
-		return ARGBType.rgba((int)red, (int)green, (int)blue, (int)(alpha*255));
 	}
 
 	void printLUT() {
