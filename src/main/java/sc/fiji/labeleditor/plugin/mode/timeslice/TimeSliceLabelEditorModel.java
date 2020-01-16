@@ -6,9 +6,9 @@ import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import net.imglib2.view.Views;
-import sc.fiji.labeleditor.core.model.AbstractLabelEditorModel;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 
-public class TimeSliceLabelEditorModel<L> extends AbstractLabelEditorModel<L> {
+public class TimeSliceLabelEditorModel<L> extends DefaultLabelEditorModel<L> {
 
 	private final int timeDimension;
 

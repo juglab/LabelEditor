@@ -87,8 +87,4 @@ public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
 		return color;
 
 	}
-
-	public Collection<LabelEditorColorset> getVirtualChannels() {
-		return values();
-	}
 }
