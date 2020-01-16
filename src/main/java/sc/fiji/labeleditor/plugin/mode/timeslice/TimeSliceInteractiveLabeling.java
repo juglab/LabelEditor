@@ -4,8 +4,8 @@ import bdv.viewer.TimePointListener;
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
-import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
+import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
@@ -15,14 +15,18 @@ import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorController<L> {
+public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<L> {
 
 	private long timePoint = 0;
 	private Set<L> labelsInScope = new HashSet<>();
 	private boolean processingLabelsInScope = false;
 
-	public InteractiveLabeling init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
-		InteractiveLabeling res = super.init(model, view, interfaceInstance);
+	public TimeSliceInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view) {
+		super(model, view);
+	}
+
+	public InteractiveLabeling init(LabelEditorInterface<L> interfaceInstance) {
+		InteractiveLabeling res = super.init(interfaceInstance);
 		try {
 			BdvInterface bdv = (BdvInterface) interfaceInstance;
 			bdv.getComponent().addTimePointListener(this::timePointChanged);
@@ -34,16 +38,16 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 
 	private void timePointChanged(int index) {
 		this.timePoint = index;
-		for (LabelEditorRenderer renderer : labeling.view().renderers()) {
+		for (LabelEditorRenderer renderer : view().renderers()) {
 			if(renderer instanceof TimePointListener) {
 				((TimePointListener) renderer).timePointChanged(index);
 			}
 		}
-		labeling.view().updateRenderers();
+		view().updateRenderers();
 		new Thread(() -> {
 			processingLabelsInScope = true;
 			labelsInScope.clear();
-			boolean[] setDone = new boolean[labeling.model().labeling().getMapping().numSets()];
+			boolean[] setDone = new boolean[model().labeling().getMapping().numSets()];
 			Cursor<LabelingType<L>> cursor = getLabelingInScope().cursor();
 			while(cursor.hasNext()) {
 				int val = cursor.next().getIndex().getInteger();
@@ -60,11 +64,11 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 	@Override
 	public IterableInterval<LabelingType<L>> getLabelingInScope() {
 		try {
-			return ((TimeSliceLabelEditorModel<L>) labeling.model()).getLabelingAtTime(timePoint);
+			return ((TimeSliceLabelEditorModel<L>) model()).getLabelingAtTime(timePoint);
 		} catch (ClassCastException e) {
 			System.err.println("Model is no TimeSliceLabelEditorModel. Operation will be performed on the whole labeling instead of only one timepoint.");
 		}
-		return labeling.model().labeling();
+		return model().labeling();
 	}
 
 	@Override

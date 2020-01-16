@@ -2,7 +2,6 @@ package sc.fiji.labeleditor.core.controller;
 
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.util.Behaviours;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
 import sc.fiji.labeleditor.core.view.LabelEditorView;

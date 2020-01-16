@@ -1,7 +1,7 @@
 package sc.fiji.labeleditor.howto.advanced;
 
 import bdv.util.BdvOptions;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
@@ -51,10 +51,10 @@ public class E02_CustomActions {
 
 //		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 
-		interactiveLabeling.control().interfaceInstance().behaviours().behaviour((ClickBehaviour) (x, y) -> {
+		interactiveLabeling.interfaceInstance().behaviours().behaviour((ClickBehaviour) (x, y) -> {
 
 				//get labels at current mouse position
-				LabelingType<Integer> labels = interactiveLabeling.control().interfaceInstance().findLabelsAtMousePosition(x, y, model);
+				LabelingType<Integer> labels = interactiveLabeling.interfaceInstance().findLabelsAtMousePosition(x, y, model);
 
 				//pausing the tagging listeners while changing tags improves performance
 				model.tagging().pauseListeners();

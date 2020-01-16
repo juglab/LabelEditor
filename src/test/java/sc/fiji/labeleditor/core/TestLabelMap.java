@@ -1,5 +1,7 @@
 package sc.fiji.labeleditor.core;
 
+import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.plugin.behaviours.export.ExportBehaviours;
 import net.imagej.ImageJ;
@@ -27,7 +29,7 @@ public class TestLabelMap {
 		assertNotNull(model);
 		assertNotNull(model.labeling());
 		ExportBehaviours exportBehaviours = new ExportBehaviours();
-		InteractiveLabeling labeling = new DefaultInteractiveLabeling<>(model, null, null);
+		InteractiveLabeling labeling = new DefaultInteractiveLabeling<>(model, null);
 		exportBehaviours.init(labeling);
 		IterableInterval<IntType> labelMap = Views.iterable(exportBehaviours.getLabelMap());
 		Cursor<IntType> resCursor = labelMap.localizingCursor();

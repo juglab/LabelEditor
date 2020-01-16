@@ -2,7 +2,7 @@ package sc.fiji.labeleditor.plugin.behaviours;
 
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.util.Behaviours;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
@@ -39,7 +39,7 @@ public class FocusBehaviours<L> implements LabelEditorBehaviours<L> {
 	protected synchronized void focusFirstLabelAtPosition(int x, int y) {
 		try {
 			labeling.model().tagging().pauseListeners();
-			LabelingType<L> labels = labeling.control().interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
+			LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
 			if(labels != null) {
 				if(currentSegment == labels.getIndex().getInteger()) {
 					labeling.model().tagging().resumeListeners();

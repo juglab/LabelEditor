@@ -10,9 +10,8 @@ import org.scijava.Context;
 import org.scijava.Disposable;
 import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
-import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
+import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
@@ -73,7 +72,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		LabelEditorView<L> view = createView(model);
 		if(context != null) context.inject(view);
 		addRenderers(view);
-		return initControl(model, view);
+		return initLabeling(model, view);
 	}
 
 	protected <L> LabelEditorView<L> createView(LabelEditorModel<L> model) {
@@ -84,18 +83,18 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		view.addDefaultRenderers();
 	}
 
-	private <L> InteractiveLabeling<L> initControl(LabelEditorModel<L> model, LabelEditorView<L> view) {
-		LabelEditorController<L> control = createController();
-		if(context != null) context.inject(control);
+	private <L> InteractiveLabeling<L> initLabeling(LabelEditorModel<L> model, LabelEditorView<L> view) {
 		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel);
-		InteractiveLabeling<L> labeling = control.init(model, view, viewerInstance);
-		addBehaviours(control.interfaceInstance(), labeling);
+		InteractiveLabeling<L> labeling = createInteractiveLabeling(model, view);
+		if(context != null) context.inject(labeling);
+		labeling.init(viewerInstance);
+		addBehaviours(labeling.interfaceInstance(), labeling);
 		labelings.put(labeling.model().getName(), labeling);
 		return labeling;
 	}
 
-	protected <L> LabelEditorController<L> createController() {
-		return new DefaultLabelEditorController<>();
+	protected <L> InteractiveLabeling<L> createInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view) {
+		return new DefaultInteractiveLabeling<>(model, view);
 	}
 
 	protected <L> void addBehaviours(LabelEditorInterface<L> interfaceInstance, InteractiveLabeling<L> labeling) {
@@ -110,7 +109,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	public List<BdvSource> getSources() {
 		List<BdvSource> res = new ArrayList<>();
 		labelings.forEach((name, labeling) -> {
-			BdvInterface<?> labelEditorInterface = (BdvInterface) labeling.control().interfaceInstance();
+			BdvInterface<?> labelEditorInterface = (BdvInterface) labeling.interfaceInstance();
 			labelEditorInterface.getSources().values().forEach(res::addAll);
 		});
 		return res;

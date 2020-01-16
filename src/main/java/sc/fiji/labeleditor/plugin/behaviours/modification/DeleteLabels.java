@@ -4,7 +4,7 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.Behaviour;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
 import java.util.Set;
@@ -19,7 +19,7 @@ public class DeleteLabels<L> implements Behaviour {
 
 	public void deleteSelected() {
 		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
-		delete(selected, labeling.control().getLabelingInScope());
+		delete(selected, labeling.getLabelingInScope());
 		labeling.view().updateOnLabelingChange();
 	}
 

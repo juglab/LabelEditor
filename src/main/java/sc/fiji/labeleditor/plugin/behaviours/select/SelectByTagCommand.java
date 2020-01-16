@@ -1,13 +1,13 @@
 package sc.fiji.labeleditor.plugin.behaviours.select;
 
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import org.scijava.command.Command;
 import org.scijava.command.InteractiveCommand;
 import org.scijava.module.DefaultMutableModuleItem;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class SelectByTagCommand extends InteractiveCommand {
 	LabelEditorModel model;
 
 	@Parameter
-	LabelEditorController control;
+	InteractiveLabeling labeling;
 
 	Map<String, Object> namedTags;
 
@@ -34,8 +34,8 @@ public class SelectByTagCommand extends InteractiveCommand {
 				chosenTags.add(tag);
 			}
 		});
-		Set selectedLabels = model.tagging().filterLabelsWithTag(control.getLabelSetInScope(), LabelEditorTag.SELECTED);
-		Set toSelect = model.tagging().filterLabelsWithAnyTag(control.getLabelSetInScope(), chosenTags);
+		Set selectedLabels = model.tagging().filterLabelsWithTag(labeling.getLabelSetInScope(), LabelEditorTag.SELECTED);
+		Set toSelect = model.tagging().filterLabelsWithAnyTag(labeling.getLabelSetInScope(), chosenTags);
 		Set toUnselect = new HashSet(selectedLabels);
 		toUnselect.removeAll(toSelect);
 		toSelect.remove(selectedLabels);

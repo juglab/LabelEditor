@@ -2,7 +2,7 @@ package sc.fiji.labeleditor.howto.advanced;
 
 
 import bdv.util.BdvOptions;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
@@ -71,7 +71,7 @@ public class E06_HandleSegmentationConflicts {
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D());
 
 		InteractiveLabeling interactiveLabeling = panel.add(model);
-		interactiveLabeling.control().interfaceInstance().install(new ConflictSelectionBehaviours<>(), interactiveLabeling);
+		interactiveLabeling.interfaceInstance().install(new ConflictSelectionBehaviours<>(), interactiveLabeling);
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel);

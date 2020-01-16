@@ -4,25 +4,37 @@ import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
-import sc.fiji.labeleditor.core.DefaultInteractiveLabeling;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.util.Set;
 
-public class DefaultLabelEditorController<L> implements LabelEditorController<L> {
+public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L> {
 
 	@Parameter
 	Context context;
 
 	protected LabelEditorInterface<L> interfaceInstance;
+	private LabelEditorModel<L> model;
+	private LabelEditorView<L> view;
 
-	protected InteractiveLabeling<L> labeling;
+	public DefaultInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view) {
+		this.model = model;
+		this.view = view;
+	}
 
 	@Override
-	public InteractiveLabeling init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
-		labeling = new DefaultInteractiveLabeling<>(model, view, this);
+	public LabelEditorModel<L> model() {
+		return model;
+	}
+
+	@Override
+	public LabelEditorView<L> view() {
+		return view;
+	}
+
+	@Override
+	public InteractiveLabeling<L> init(LabelEditorInterface<L> interfaceInstance) {
 		if(interfaceInstance != null) {
 			view.listeners().remove(interfaceInstance::onViewChange);
 			model.tagging().listeners().remove(interfaceInstance::onTagChange);
@@ -32,7 +44,7 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 			model.tagging().listeners().add(interfaceInstance::onTagChange);
 			interfaceInstance.display(view);
 		}
-		return labeling;
+		return this;
 	}
 
 	@Override
@@ -42,12 +54,16 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 
 	@Override
 	public IterableInterval<LabelingType<L>> getLabelingInScope() {
-		return labeling.model().labeling();
+		return model().labeling();
 	}
 
 	@Override
 	public Set<L> getLabelSetInScope() {
-		return labeling.model().labeling().getMapping().getLabels();
+		return model().labeling().getMapping().getLabels();
 	}
 
+	@Override
+	public String toString() {
+		return model().getName();
+	}
 }

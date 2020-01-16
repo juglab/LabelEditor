@@ -1,21 +1,17 @@
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
-import sc.fiji.labeleditor.core.InteractiveLabeling;
-import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 
 import java.awt.*;
 
-public class TagModificationBehaviours extends Behaviours implements LabelEditorBehaviours {
+public class TagModificationBehaviours<L> extends Behaviours implements LabelEditorBehaviours<L> {
 
-	protected LabelEditorModel model;
-	protected LabelEditorController controller;
+	protected InteractiveLabeling<L> labeling;
 
 	@Parameter
 	Context context;
@@ -25,9 +21,8 @@ public class TagModificationBehaviours extends Behaviours implements LabelEditor
 	}
 
 	@Override
-	public void init(InteractiveLabeling labeling) {
-		this.model = labeling.model();
-		this.controller = labeling.control();
+	public void init(InteractiveLabeling<L> labeling) {
+		this.labeling = labeling;
 	}
 
 	@Override
@@ -36,7 +31,7 @@ public class TagModificationBehaviours extends Behaviours implements LabelEditor
 	}
 
 	public TagByProperty getTagByPropertyBehaviour() {
-		return new TagByProperty(model, controller);
+		return new TagByProperty<>(labeling);
 	}
 
 }

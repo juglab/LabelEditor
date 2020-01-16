@@ -4,7 +4,7 @@ import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.util.Behaviours;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.plugin.interfaces.LabelEditorPopupMenu;
 
@@ -37,7 +37,7 @@ public class PopupBehaviours<L> implements LabelEditorBehaviours<L> {
 		LabelEditorPopupMenu<L> menu = new LabelEditorPopupMenu<>(labeling);
 		if(context != null) context.inject(menu);
 		menu.populate();
-		menu.show(labeling.control().interfaceInstance().getComponent(), x, y);
+		menu.show(labeling.interfaceInstance().getComponent(), x, y);
 	}
 
 }

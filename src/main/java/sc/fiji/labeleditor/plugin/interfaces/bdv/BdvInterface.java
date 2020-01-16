@@ -16,10 +16,9 @@ import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
-import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
+import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
-import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
@@ -59,9 +58,9 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle) {
-		LabelEditorController<L> controller = new DefaultLabelEditorController<>();
 		BdvInterface<L> interfaceInstance = new BdvInterface<>(bdvHandle);
-		InteractiveLabeling<L> interactiveLabeling = controller.init(model, view, interfaceInstance);
+		InteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view);
+		interactiveLabeling.init(interfaceInstance);
 		interfaceInstance.installBehaviours(interactiveLabeling);
 		return interactiveLabeling;
 	}

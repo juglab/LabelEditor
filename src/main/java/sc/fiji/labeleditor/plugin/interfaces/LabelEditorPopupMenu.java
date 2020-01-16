@@ -2,7 +2,7 @@ package sc.fiji.labeleditor.plugin.interfaces;
 
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.plugin.behaviours.OptionsBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.export.ExportBehaviours;
