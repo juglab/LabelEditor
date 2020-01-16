@@ -1,13 +1,13 @@
 package sc.fiji.labeleditor.core.controller;
 
-import sc.fiji.labeleditor.core.DefaultInteractiveLabeling;
-import sc.fiji.labeleditor.core.InteractiveLabeling;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
+import sc.fiji.labeleditor.core.DefaultInteractiveLabeling;
+import sc.fiji.labeleditor.core.InteractiveLabeling;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.util.Set;
 
@@ -33,11 +33,6 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 			interfaceInstance.display(view);
 		}
 		return labeling;
-	}
-
-	@Override
-	public void addDefaultBehaviours() {
-		interfaceInstance.installBehaviours(labeling);
 	}
 
 	@Override

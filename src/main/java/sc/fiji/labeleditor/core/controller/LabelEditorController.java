@@ -12,8 +12,6 @@ public interface LabelEditorController<L> {
 
 	InteractiveLabeling<L> init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance);
 
-	void addDefaultBehaviours();
-
 	LabelEditorInterface<L> interfaceInstance();
 
 	void install(LabelEditorBehaviours behaviour);

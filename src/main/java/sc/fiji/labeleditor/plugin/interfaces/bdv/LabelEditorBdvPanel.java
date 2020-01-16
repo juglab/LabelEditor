@@ -89,7 +89,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		if(context != null) context.inject(control);
 		LabelEditorInterface viewerInstance = new BdvInterface<>(bdvHandlePanel, view);
 		InteractiveLabeling labeling = control.init(model, view, viewerInstance);
-		addBehaviours(control);
+		addBehaviours(control.interfaceInstance(), labeling);
 		return labeling;
 	}
 
@@ -97,8 +97,8 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		return new DefaultLabelEditorController<>();
 	}
 
-	protected void addBehaviours(LabelEditorController controller) {
-		controller.addDefaultBehaviours();
+	protected void addBehaviours(LabelEditorInterface interfaceInstance, InteractiveLabeling labeling) {
+		interfaceInstance.installBehaviours(labeling);
 	}
 
 	@Override
