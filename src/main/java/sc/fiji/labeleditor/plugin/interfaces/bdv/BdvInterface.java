@@ -96,8 +96,8 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		bdvHandle.getViewerPanel().getGlobalMouseCoordinates( mousePointer );
 		final int x = ( int ) mousePointer.getFloatPosition( 0 );
 		final int y = ( int ) mousePointer.getFloatPosition( 1 );
-		int time = bdvHandle.getViewerPanel().getState().getCurrentTimepoint();
 		final int z = ( int ) mousePointer.getFloatPosition( 2 );
+		int time = bdvHandle.getViewerPanel().getState().getCurrentTimepoint();
 		return new Point(x, y, z, time);
 	}
 
@@ -116,7 +116,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void install(LabelEditorBehaviours behaviour, InteractiveLabeling labeling) {
+	public void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling) {
 		if(context != null) context.inject(behaviour);
 		behaviour.init(labeling);
 		behaviour.install(behaviours(), getComponent());

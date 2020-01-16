@@ -17,7 +17,7 @@ public interface LabelEditorInterface<L> {
 
 	Behaviours behaviours();
 
-	void install(LabelEditorBehaviours behaviour, InteractiveLabeling labeling);
+	void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling);
 
 	Component getComponent();
 
