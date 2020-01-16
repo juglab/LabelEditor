@@ -44,7 +44,7 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 			processingLabelsInScope = true;
 			labelsInScope.clear();
 			boolean[] setDone = new boolean[labeling.model().labeling().getMapping().numSets()];
-			Cursor<LabelingType<L>> cursor = labelingInScope().cursor();
+			Cursor<LabelingType<L>> cursor = getLabelingInScope().cursor();
 			while(cursor.hasNext()) {
 				int val = cursor.next().getIndex().getInteger();
 				if(setDone[val]) continue;
@@ -58,7 +58,7 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 	}
 
 	@Override
-	public IterableInterval<LabelingType<L>> labelingInScope() {
+	public IterableInterval<LabelingType<L>> getLabelingInScope() {
 		try {
 			return ((TimeSliceLabelEditorModel<L>) labeling.model()).getLabelingAtTime(timePoint);
 		} catch (ClassCastException e) {
@@ -68,7 +68,7 @@ public class TimeSliceLabelEditorController<L> extends DefaultLabelEditorControl
 	}
 
 	@Override
-	public Set<L> labelSetInScope() {
+	public Set<L> getLabelSetInScope() {
 		while(processingLabelsInScope){}
 		return labelsInScope;
 	}

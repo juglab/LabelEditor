@@ -5,7 +5,6 @@ import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorController;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
@@ -90,7 +89,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	public void selectAll() {
-		controller.labelSetInScope().forEach(this::select);
+		controller.getLabelSetInScope().forEach(this::select);
 	}
 
 	protected void selectFirstLabel(int x, int y) {
@@ -191,11 +190,11 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	public void deselectAll() {
-		controller.labelSetInScope().forEach(label -> model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
+		controller.getLabelSetInScope().forEach(label -> model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
 	}
 
 	public void invertSelection() {
-		Set<L> all = new HashSet(controller.labelSetInScope());
+		Set<L> all = new HashSet(controller.getLabelSetInScope());
 		Set<L> selected = model.tagging().filterLabelsWithTag(all, LabelEditorTag.SELECTED);
 		all.removeAll(selected);
 		all.forEach(label -> select(label));

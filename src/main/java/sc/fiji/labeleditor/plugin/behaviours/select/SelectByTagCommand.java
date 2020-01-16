@@ -34,8 +34,8 @@ public class SelectByTagCommand extends InteractiveCommand {
 				chosenTags.add(tag);
 			}
 		});
-		Set selectedLabels = model.tagging().filterLabelsWithTag(control.labelSetInScope(), LabelEditorTag.SELECTED);
-		Set toSelect = model.tagging().filterLabelsWithAnyTag(control.labelSetInScope(), chosenTags);
+		Set selectedLabels = model.tagging().filterLabelsWithTag(control.getLabelSetInScope(), LabelEditorTag.SELECTED);
+		Set toSelect = model.tagging().filterLabelsWithAnyTag(control.getLabelSetInScope(), chosenTags);
 		Set toUnselect = new HashSet(selectedLabels);
 		toUnselect.removeAll(toSelect);
 		toSelect.remove(selectedLabels);

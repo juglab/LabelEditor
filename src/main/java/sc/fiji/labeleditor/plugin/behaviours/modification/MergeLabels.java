@@ -19,7 +19,7 @@ public class MergeLabels<L> implements Behaviour {
 
 	public void assignSelectedToFirst() {
 		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
-		assignToFirst(selected, labeling.control().labelingInScope());
+		assignToFirst(selected, labeling.control().getLabelingInScope());
 		labeling.view().updateOnLabelingChange();
 	}
 

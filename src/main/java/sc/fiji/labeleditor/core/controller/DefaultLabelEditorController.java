@@ -48,12 +48,12 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 	}
 
 	@Override
-	public IterableInterval<LabelingType<L>> labelingInScope() {
+	public IterableInterval<LabelingType<L>> getLabelingInScope() {
 		return labeling.model().labeling();
 	}
 
 	@Override
-	public Set<L> labelSetInScope() {
+	public Set<L> getLabelSetInScope() {
 		return labeling.model().labeling().getMapping().getLabels();
 	}
 

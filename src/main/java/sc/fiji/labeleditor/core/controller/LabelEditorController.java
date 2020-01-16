@@ -16,7 +16,7 @@ public interface LabelEditorController<L> {
 
 	void install(LabelEditorBehaviours behaviour);
 
-	IterableInterval<LabelingType<L>> labelingInScope();
+	IterableInterval<LabelingType<L>> getLabelingInScope();
 
-	Set<L> labelSetInScope();
+	Set<L> getLabelSetInScope();
 }

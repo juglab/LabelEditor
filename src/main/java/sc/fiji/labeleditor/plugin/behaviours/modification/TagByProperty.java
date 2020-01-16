@@ -26,7 +26,7 @@ public class TagByProperty<L> {
 	}
 
 	public void circularity() {
-		Set<L> labels = controller.labelSetInScope();
+		Set<L> labels = controller.getLabelSetInScope();
 		Random random = new Random();
 		labels.forEach(label -> {
 			LabelEditorValueTag circularity = new LabelEditorValueTag<>("circularity", new IntType(random.nextInt(100)));
