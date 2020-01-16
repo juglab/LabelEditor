@@ -48,21 +48,19 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	private final BdvHandle bdvHandle;
 	private final Behaviours behaviours;
-	private final LabelEditorView<L> view;
 	private LabelingType<L> labelsAtCursor;
 
 	private final Map<LabelEditorView<L>, List<BdvSource>> sources = new HashMap<>();
 
-	public BdvInterface(BdvHandle bdvHandle, LabelEditorView<L> view) {
+	public BdvInterface(BdvHandle bdvHandle) {
 		this.bdvHandle = bdvHandle;
-		this.view = view;
 		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
 		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor");
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle) {
 		LabelEditorController<L> controller = new DefaultLabelEditorController<>();
-		BdvInterface<L> interfaceInstance = new BdvInterface<>(bdvHandle, view);
+		BdvInterface<L> interfaceInstance = new BdvInterface<>(bdvHandle);
 		InteractiveLabeling<L> interactiveLabeling = controller.init(model, view, interfaceInstance);
 		interfaceInstance.installBehaviours(interactiveLabeling);
 		return interactiveLabeling;
@@ -84,10 +82,12 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 				return labelsAtCursor;
 			}
 			this.labelsAtCursor = ra.get();
-			bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
+			//FIXME
+//			bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
 			return labelsAtCursor;
 		}
-		bdvHandle.getViewerPanel().getDisplay().setToolTipText(null);
+		//FIXME
+//		bdvHandle.getViewerPanel().getDisplay().setToolTipText(null);
 		return null;
 	}
 
@@ -117,6 +117,13 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
+	public void install(LabelEditorBehaviours behaviour, InteractiveLabeling labeling) {
+		if(context != null) context.inject(behaviour);
+		behaviour.init(labeling);
+		behaviour.install(behaviours(), getComponent());
+	}
+
+	@Override
 	public void onViewChange(ViewChangedEvent viewChangedEvent) {
 		bdvHandle.getViewerPanel().requestRepaint();
 	}
@@ -133,9 +140,10 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	@Override
 	public void onTagChange(List<TagChangedEvent> tagChangedEvents) {
-		if(labelsAtCursor == null) return;
-		bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
-		showToolTip(bdvHandle.getViewerPanel().getDisplay());
+		//FIXME
+//		if(labelsAtCursor == null) return;
+//		bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
+//		showToolTip(bdvHandle.getViewerPanel().getDisplay());
 	}
 
 	@Override
@@ -163,11 +171,6 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 					new MouseEvent(component, -1, System.currentTimeMillis(), 0, locationOnComponent.x, locationOnComponent.y,
 							locationOnScreen.x, locationOnScreen.y, 0, false, 0));
 		}
-	}
-
-	@Override
-	public void dispose() {
-		view.dispose();
 	}
 
 	public Map<LabelEditorView<L>, List<BdvSource>> getSources() {

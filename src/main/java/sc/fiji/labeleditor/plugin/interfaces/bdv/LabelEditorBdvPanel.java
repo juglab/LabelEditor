@@ -84,26 +84,26 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		view.addDefaultRenderers();
 	}
 
-	private InteractiveLabeling initControl(LabelEditorModel model, LabelEditorView view) {
-		LabelEditorController control = createController();
+	private <L> InteractiveLabeling<L> initControl(LabelEditorModel<L> model, LabelEditorView<L> view) {
+		LabelEditorController<L> control = createController();
 		if(context != null) context.inject(control);
-		LabelEditorInterface viewerInstance = new BdvInterface<>(bdvHandlePanel, view);
-		InteractiveLabeling labeling = control.init(model, view, viewerInstance);
+		LabelEditorInterface<L> viewerInstance = new BdvInterface<>(bdvHandlePanel);
+		InteractiveLabeling<L> labeling = control.init(model, view, viewerInstance);
 		addBehaviours(control.interfaceInstance(), labeling);
+		labelings.put(labeling.model().getName(), labeling);
 		return labeling;
 	}
 
-	protected LabelEditorController createController() {
+	protected <L> LabelEditorController<L> createController() {
 		return new DefaultLabelEditorController<>();
 	}
 
-	protected void addBehaviours(LabelEditorInterface interfaceInstance, InteractiveLabeling labeling) {
+	protected <L> void addBehaviours(LabelEditorInterface<L> interfaceInstance, InteractiveLabeling<L> labeling) {
 		interfaceInstance.installBehaviours(labeling);
 	}
 
 	@Override
 	public void dispose() {
-		labelings.forEach((name,  labeling) -> labeling.view().dispose());
 		if(bdvHandlePanel != null) bdvHandlePanel.close();
 	}
 

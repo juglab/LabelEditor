@@ -41,13 +41,6 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 	}
 
 	@Override
-	public void install(LabelEditorBehaviours behaviour) {
-		if(context != null) context.inject(behaviour);
-		behaviour.init(labeling);
-		behaviour.install(interfaceInstance.behaviours(), interfaceInstance.getComponent());
-	}
-
-	@Override
 	public IterableInterval<LabelingType<L>> getLabelingInScope() {
 		return labeling.model().labeling();
 	}
