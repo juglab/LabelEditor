@@ -2,6 +2,7 @@
 package sc.fiji.labeleditor.scripts;
 
 import net.imagej.ImageJ;
+import org.junit.Ignore;
 import org.junit.Test;
 import sc.fiji.labeleditor.core.InteractiveLabeling;
 
@@ -18,6 +19,7 @@ public class RunScript_E03_ChangeDefaultColors {
 	}
 
 	@Test
+	@Ignore //FIXME
 	public void run() throws FileNotFoundException, ScriptException {
 		ImageJ ij = new ImageJ();
 		ij.ui().showUI();

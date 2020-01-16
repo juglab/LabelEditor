@@ -3,6 +3,7 @@ package sc.fiji.labeleditor.scripts;
 
 import net.imagej.ImageJ;
 import net.imglib2.img.Img;
+import org.junit.Ignore;
 import org.junit.Test;
 import sc.fiji.labeleditor.core.InteractiveLabeling;
 
@@ -19,6 +20,7 @@ public class RunScript_E04_LabelMap {
 	}
 
 	@Test
+	@Ignore //FIXME
 	public void run() throws IOException, ScriptException {
 		ImageJ ij = new ImageJ();
 		ij.ui().showUI();
