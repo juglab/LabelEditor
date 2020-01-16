@@ -21,6 +21,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.colors.DefaultLabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
@@ -180,7 +181,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testMixColors() {
-		LabelEditorTagColors tagColors = new LabelEditorTagColors();
+		LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
 		tagColors.getFaceColor(tag1).set(255, 0, 0, 100);
@@ -203,7 +204,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testMixTransparentColors() {
-		LabelEditorTagColors tagColors = new LabelEditorTagColors();
+		LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
 		tagColors.getFaceColor(tag1).set(0, 0, 0, 0);
@@ -248,7 +249,7 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	@Test
 	public void testMixSameColors() {
-		LabelEditorTagColors tagColors = new LabelEditorTagColors();
+		LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 		String tag1 = "tag1";
 		String tag2 = "tag2";
 		tagColors.getFaceColor(tag1).set(255, 255, 255, 100);

@@ -12,6 +12,7 @@ import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import sc.fiji.labeleditor.core.model.colors.DefaultLabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
@@ -37,7 +38,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private List<Object> orderedTags = new ArrayList<>();
 
-	private final LabelEditorTagColors tagColors = new LabelEditorTagColors();
+	private final LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 	private String name;
 
 	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data) {

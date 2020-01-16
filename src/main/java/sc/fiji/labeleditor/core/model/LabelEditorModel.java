@@ -13,6 +13,7 @@ public interface LabelEditorModel <L> {
 	ImgLabeling<L, IntType> labeling();
 	LabelEditorTagging<L> tagging();
 	LabelEditorTagColors colors();
+
 	Comparator<Object> getTagComparator();
 	Comparator<L> getLabelComparator();
 

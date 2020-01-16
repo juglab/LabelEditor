@@ -5,82 +5,57 @@ import org.scijava.listeners.Listeners;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
-import java.util.Collection;
-import java.util.HashMap;
+public interface LabelEditorTagColors {
+	LabelEditorColorset getColorset(Object tag);
 
-public class LabelEditorTagColors extends HashMap<Object, LabelEditorColorset> {
+	Listeners<ColorChangeListener> listeners();
 
-	private final Listeners.List<ColorChangeListener> listeners = new Listeners.SynchronizedList<>();
-	private boolean listenersPaused = false;
+	void pauseListeners();
 
-	public LabelEditorTagColors() {
-	}
+	void resumeListeners();
 
-	public LabelEditorColorset getColorset(Object tag) {
-		return computeIfAbsent(tag, k -> new LabelEditorColorset(this));
-	}
+	void notifyListeners();
 
-	// listeners
-
-	public Listeners<ColorChangeListener> listeners() {
-		return listeners;
-	}
-
-	public void pauseListeners() {
-		listenersPaused = true;
-	}
-
-	public void resumeListeners() {
-		listenersPaused = false;
-	}
-
-	public void notifyListeners() {
-		ColorChangedEvent e = new ColorChangedEvent();
-		listeners.list.forEach(listener -> listener.tagChanged(e));
-	}
-
-	// convenience methods
-
-	public LabelEditorColor getFaceColor(Object tag) {
+	default LabelEditorColor getFaceColor(Object tag) {
 		return getColorset(tag).get(LabelEditorTargetComponent.FACE);
 	}
 
-	public LabelEditorColor getBorderColor(Object tag) {
+	default LabelEditorColor getBorderColor(Object tag) {
 		return getColorset(tag).get(LabelEditorTargetComponent.BORDER);
 	}
 
-	public LabelEditorColor getFocusFaceColor() {
+	default LabelEditorColor getFocusFaceColor() {
 		return getFaceColor(LabelEditorTag.FOCUS);
 	}
 
-	public LabelEditorColor getSelectedFaceColor() {
+	default LabelEditorColor getSelectedFaceColor() {
 		return getFaceColor(LabelEditorTag.SELECTED);
 	}
 
-	public LabelEditorColor getDefaultFaceColor() {
+	default LabelEditorColor getDefaultFaceColor() {
 		return getFaceColor(LabelEditorTag.DEFAULT);
 	}
 
-	public LabelEditorColor getFocusBorderColor() {
+	default LabelEditorColor getFocusBorderColor() {
 		return getBorderColor(LabelEditorTag.FOCUS);
 	}
 
-	public LabelEditorColor getSelectedBorderColor() {
+	default LabelEditorColor getSelectedBorderColor() {
 		return getBorderColor(LabelEditorTag.SELECTED);
 	}
 
-	public LabelEditorColor getDefaultBorderColor() {
+	default LabelEditorColor getDefaultBorderColor() {
 		return getBorderColor(LabelEditorTag.DEFAULT);
 	}
 
-	public<T extends RealType<T>> LabelEditorValueColor<T> makeValueBorderColor(Object valueTagIdentifier) {
+	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueBorderColor(Object valueTagIdentifier) {
 		LabelEditorColorset colorset = getColorset(valueTagIdentifier);
 		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset);
 		colorset.put(LabelEditorTargetComponent.BORDER, color);
 		return color;
 	}
 
-	public <T extends RealType<T>> LabelEditorValueColor<T> makeValueFaceColor(Object valueTagIdentifier, T minVal, T maxVal) {
+	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueFaceColor(Object valueTagIdentifier, T minVal, T maxVal) {
 		LabelEditorColorset colorset = getColorset(valueTagIdentifier);
 		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset, minVal, maxVal);
 		colorset.put(LabelEditorTargetComponent.FACE, color);
