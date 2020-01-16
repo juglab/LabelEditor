@@ -3,7 +3,6 @@ package sc.fiji.labeleditor.plugin.interfaces.bdv;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
-import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import bdv.viewer.ViewerPanel;
 import net.imglib2.Localizable;
@@ -12,13 +11,11 @@ import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
 import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.util.Intervals;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
-import sc.fiji.labeleditor.core.DefaultInteractiveLabeling;
 import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.DefaultLabelEditorController;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
@@ -27,6 +24,7 @@ import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
 import sc.fiji.labeleditor.plugin.behaviours.FocusBehaviours;
@@ -38,6 +36,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,27 +44,27 @@ import java.util.Map;
 public class BdvInterface<L> implements LabelEditorInterface<L> {
 
 	@Parameter
-	Context context;
+	private Context context;
 
 	private final BdvHandle bdvHandle;
 	private final Behaviours behaviours;
 	private final LabelEditorView<L> view;
 	private LabelingType<L> labelsAtCursor;
 
-	private final Map<InteractiveLabeling, List<BdvSource>> sources = new HashMap<>();
+	private final Map<LabelEditorView<L>, List<BdvSource>> sources = new HashMap<>();
 
-	public BdvInterface(BdvHandle bdvHandle, LabelEditorView view) {
+	public BdvInterface(BdvHandle bdvHandle, LabelEditorView<L> view) {
 		this.bdvHandle = bdvHandle;
 		this.view = view;
 		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
 		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor");
 	}
 
-	public static <L> LabelEditorController control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle) {
+	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle) {
 		LabelEditorController<L> controller = new DefaultLabelEditorController<>();
-		controller.init(model, view, new BdvInterface<>(bdvHandle, view));
+		InteractiveLabeling<L> interactiveLabeling = controller.init(model, view, new BdvInterface<>(bdvHandle, view));
 		controller.addDefaultBehaviours();
-		return controller;
+		return interactiveLabeling;
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, BdvHandle handle, Context context) {
@@ -73,10 +72,9 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		if(context != null) context.inject(view);
 		view.addDefaultRenderers();
 		LabelEditorController<L> control = new DefaultLabelEditorController<>();
-		control.init(model, view, new BdvInterface<>(handle, view));
+		InteractiveLabeling<L> interactiveLabeling = control.init(model, view, new BdvInterface<>(handle, view));
 		control.addDefaultBehaviours();
-		view.renderers().forEach(renderer -> BdvFunctions.show(renderer.getOutput(), renderer.getName(), BdvOptions.options().addTo(handle)));
-		return new DefaultInteractiveLabeling<>(model, view, control);
+		return interactiveLabeling;
 	}
 
 	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
@@ -143,21 +141,18 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void display(InteractiveLabeling labeling) {
+	public void display(LabelEditorView<L> view) {
 		ArrayList<BdvSource> sources = new ArrayList<>();
-		if(labeling.model().getData() != null) sources.add(display(labeling.model().getData(), "data"));
-		if(view.renderers().size() > 0)
-			view.renderers().forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName())));
-		this.sources.put(labeling, sources);
+		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());
+		Collections.reverse(renderers);
+		renderers.forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName())));
+		this.sources.put(view, sources);
 	}
 
-	private BdvSource display(RandomAccessibleInterval<ARGBType> rai, String name) {
+	private BdvSource display(RandomAccessibleInterval rai, String name) {
 		if(rai == null) return null;
-		final BdvSource source = BdvFunctions.show(
-				rai,
-				name,
-				Bdv.options().addTo( bdvHandle ) );
-		source.setActive( true );
+		final BdvSource source = BdvFunctions.show(rai, name, Bdv.options().addTo(bdvHandle));
+		source.setActive(true);
 		return source;
 	}
 
@@ -177,7 +172,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		view.dispose();
 	}
 
-	public Map<InteractiveLabeling, List<BdvSource>> getSources() {
+	public Map<LabelEditorView<L>, List<BdvSource>> getSources() {
 		return sources;
 	}
 }

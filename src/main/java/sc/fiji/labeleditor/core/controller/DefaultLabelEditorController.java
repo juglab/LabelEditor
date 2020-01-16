@@ -30,7 +30,7 @@ public class DefaultLabelEditorController<L> implements LabelEditorController<L>
 			if(context != null) context.inject(interfaceInstance);
 			view.listeners().add(interfaceInstance::onViewChange);
 			model.tagging().listeners().add(interfaceInstance::onTagChange);
-			interfaceInstance.display(labeling);
+			interfaceInstance.display(view);
 		}
 		return labeling;
 	}

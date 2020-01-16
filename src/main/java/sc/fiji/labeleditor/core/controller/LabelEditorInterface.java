@@ -1,13 +1,11 @@
 package sc.fiji.labeleditor.core.controller;
 
-import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Disposable;
 import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
 
@@ -25,7 +23,7 @@ public interface LabelEditorInterface<L> extends Disposable {
 
 	void onTagChange(List<TagChangedEvent> tagChangedEvents);
 
-	void display(InteractiveLabeling<L> interactiveLabeling);
+	void display(LabelEditorView<L> view);
 
 	void installBehaviours(InteractiveLabeling<L> labeling);
 }

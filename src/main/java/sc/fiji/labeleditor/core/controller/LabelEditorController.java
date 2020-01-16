@@ -10,7 +10,7 @@ import java.util.Set;
 
 public interface LabelEditorController<L> {
 
-	InteractiveLabeling init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance);
+	InteractiveLabeling<L> init(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance);
 
 	void addDefaultBehaviours();
 
