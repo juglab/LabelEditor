@@ -14,7 +14,7 @@ public class DefaultLabelEditorTagColors extends HashMap<Object, LabelEditorColo
 
 	@Override
 	public LabelEditorColorset getColorset(Object tag) {
-		return computeIfAbsent(tag, k -> new LabelEditorColorset(this));
+		return computeIfAbsent(tag, k -> new DefaultLabelEditorColorset(this));
 	}
 
 	// listeners

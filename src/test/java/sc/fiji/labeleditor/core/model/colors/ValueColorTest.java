@@ -11,7 +11,7 @@ public class ValueColorTest {
 
 	@Test
 	public void testValueTag() {
-		LabelEditorColorset colorset = new LabelEditorColorset(null);
+		LabelEditorColorset colorset = new DefaultLabelEditorColorset(null);
 		LabelEditorValueColor<IntType> color = new LabelEditorValueColor<>(colorset, new IntType(0), new IntType(100));
 		colorset.put(LabelEditorTargetComponent.FACE, color);
 		color.setMinColor(0,0,255,255);
