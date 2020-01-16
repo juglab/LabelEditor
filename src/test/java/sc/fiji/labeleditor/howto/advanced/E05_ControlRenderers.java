@@ -6,8 +6,10 @@ import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
@@ -44,8 +46,10 @@ public class E05_ControlRenderers {
 		// in this case, we do not try to find all existing renderers, but instead only add the border renderer
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D()) {
 			@Override
-			protected void addRenderers(LabelEditorView view) {
+			public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model) {
+				LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
 				view.add(new BorderLabelEditorRenderer<>());
+				return add(model, view);
 			}
 		};
 		panel.add(model);

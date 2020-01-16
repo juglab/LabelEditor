@@ -29,7 +29,7 @@ public class TestLabelMap {
 		assertNotNull(model);
 		assertNotNull(model.labeling());
 		ExportBehaviours exportBehaviours = new ExportBehaviours();
-		InteractiveLabeling labeling = new DefaultInteractiveLabeling<>(model, null);
+		InteractiveLabeling labeling = new DefaultInteractiveLabeling<>(model, null, null);
 		exportBehaviours.init(labeling);
 		IterableInterval<IntType> labelMap = Views.iterable(exportBehaviours.getLabelMap());
 		Cursor<IntType> resCursor = labelMap.localizingCursor();

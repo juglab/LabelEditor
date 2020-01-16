@@ -57,11 +57,11 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor");
 	}
 
-	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle) {
+	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
 		BdvInterface<L> interfaceInstance = new BdvInterface<>(bdvHandle);
-		InteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view);
-		interactiveLabeling.init(interfaceInstance);
-		interfaceInstance.installBehaviours(interactiveLabeling);
+		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
+		if(context != null) context.inject(interactiveLabeling);
+		interactiveLabeling.initialize();
 		return interactiveLabeling;
 	}
 
@@ -69,7 +69,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
 		if(context != null) context.inject(view);
 		view.addDefaultRenderers();
-		return control(model, view, handle);
+		return control(model, view, handle, context);
 	}
 
 	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {

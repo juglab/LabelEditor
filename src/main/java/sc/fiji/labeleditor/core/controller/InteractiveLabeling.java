@@ -8,7 +8,6 @@ import sc.fiji.labeleditor.core.view.LabelEditorView;
 import java.util.Set;
 
 public interface InteractiveLabeling<L> {
-	InteractiveLabeling<L> init(LabelEditorInterface<L> interfaceInstance);
 	LabelEditorModel<L> model();
 	LabelEditorView<L> view();
 	LabelEditorInterface<L> interfaceInstance();

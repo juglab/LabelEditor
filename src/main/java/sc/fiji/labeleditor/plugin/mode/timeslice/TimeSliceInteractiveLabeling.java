@@ -5,7 +5,6 @@ import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
-import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
@@ -21,19 +20,19 @@ public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<
 	private Set<L> labelsInScope = new HashSet<>();
 	private boolean processingLabelsInScope = false;
 
-	public TimeSliceInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view) {
-		super(model, view);
+	public TimeSliceInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
+		super(model, view, interfaceInstance);
 	}
 
-	public InteractiveLabeling init(LabelEditorInterface<L> interfaceInstance) {
-		InteractiveLabeling res = super.init(interfaceInstance);
+	@Override
+	public void initialize() {
+		super.initialize();
 		try {
 			BdvInterface bdv = (BdvInterface) interfaceInstance;
 			bdv.getComponent().addTimePointListener(this::timePointChanged);
 		} catch (ClassCastException e) {
 			System.err.println("Cannot add a timepoint listener to interface " + interfaceInstance.getClass().getName());
 		}
-		return res;
 	}
 
 	private void timePointChanged(int index) {
