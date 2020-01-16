@@ -24,23 +24,23 @@ public class E05_SetTagsAndColors {
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(
 				binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
-		LabelEditorModel model = new DefaultLabelEditorModel<>(labeling);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
 		String TAG1 = "tag1";
 		String TAG2 = "tag2";
 		String TAG3 = "tag3";
 
-		model.tagging().addTagToLabel(TAG1, new Integer(1));
-		model.tagging().addTagToLabel(TAG1, new Integer(7));
-		model.tagging().addTagToLabel(TAG1, new Integer(14));
+		model.tagging().addTagToLabel(TAG1, 1);
+		model.tagging().addTagToLabel(TAG1, 7);
+		model.tagging().addTagToLabel(TAG1, 14);
 
-		model.tagging().addTagToLabel(TAG2, new Integer(3));
-		model.tagging().addTagToLabel(TAG2, new Integer(13));
-		model.tagging().addTagToLabel(TAG2, new Integer(28));
+		model.tagging().addTagToLabel(TAG2, 3);
+		model.tagging().addTagToLabel(TAG2, 13);
+		model.tagging().addTagToLabel(TAG2, 28);
 
-		model.tagging().addTagToLabel(TAG3, new Integer(5));
-		model.tagging().addTagToLabel(TAG3, new Integer(18));
-		model.tagging().addTagToLabel(TAG3, new Integer(25));
+		model.tagging().addTagToLabel(TAG3, 5);
+		model.tagging().addTagToLabel(TAG3, 18);
+		model.tagging().addTagToLabel(TAG3, 25);
 
 		model.colors().getFaceColor(TAG1).set(255,50, 0);
 		model.colors().getFaceColor(TAG2).set(0,50, 255);

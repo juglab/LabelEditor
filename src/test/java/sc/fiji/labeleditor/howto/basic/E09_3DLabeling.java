@@ -34,7 +34,7 @@ public class E09_3DLabeling {
 			ra.setPosition(new int[]{random.nextInt(500), random.nextInt(500), random.nextInt(500)});
 			HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 42);
 			for (IntType value : hyperSphere)
-				try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
+				try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException ignored) {}
 		}
 
 		//create labeling

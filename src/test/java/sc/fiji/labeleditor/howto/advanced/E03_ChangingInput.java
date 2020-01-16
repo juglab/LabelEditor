@@ -55,7 +55,7 @@ public class E03_ChangingInput {
 		ra.setPosition(new int[]{random.nextInt(100), random.nextInt(100)});
 		HyperSphere<IntType> hyperSphere = new HyperSphere<>(img, ra, 5);
 		for (IntType value : hyperSphere)
-			try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException e) {}
+			try{value.set(ra.getIntPosition(0));} catch(ArrayIndexOutOfBoundsException ignored) {}
 	}
 
 	public static void main(String... args) throws InterruptedException {

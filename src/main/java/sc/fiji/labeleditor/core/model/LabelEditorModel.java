@@ -4,7 +4,6 @@ import net.imglib2.RandomAccessibleInterval;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
-import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 

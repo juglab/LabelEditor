@@ -70,7 +70,7 @@ public class E06_HandleSegmentationConflicts {
 
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D());
 
-		InteractiveLabeling interactiveLabeling = panel.add(model);
+		InteractiveLabeling<String> interactiveLabeling = panel.add(model);
 		interactiveLabeling.interfaceInstance().install(new ConflictSelectionBehaviours<>(), interactiveLabeling);
 
 		JFrame frame = new JFrame("Label editor");

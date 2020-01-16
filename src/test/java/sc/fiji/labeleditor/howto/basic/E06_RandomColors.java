@@ -21,7 +21,7 @@ public class E06_RandomColors {
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 		ImgLabeling<Integer, IntType> labeling = ij.op().image().watershed(input, true, false);
 
-		LabelEditorModel model = new DefaultLabelEditorModel<>(labeling, input);
+		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling, input);
 
 		Random random = new Random();
 		for (Integer label : labeling.getMapping().getLabels()) {
