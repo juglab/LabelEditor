@@ -14,7 +14,7 @@ public class FocusBehaviours<L> implements LabelEditorBehaviours<L> {
 
 	protected int currentSegment = -1;
 	private LabelingType<L> lastLabels = null;
-	private InteractiveLabeling<L> labeling;
+	protected InteractiveLabeling<L> labeling;
 
 	@Override
 	public void init(InteractiveLabeling<L> labeling) {
