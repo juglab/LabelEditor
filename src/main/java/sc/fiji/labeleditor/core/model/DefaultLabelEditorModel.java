@@ -38,7 +38,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private final LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 	private String name;
 
-	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval data) {
+	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval<?> data) {
 		this(labeling);
 		this.data = data;
 	}
@@ -54,18 +54,18 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		}
 	}
 
-	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval labelMap) {
+	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
 		return new DefaultLabelEditorModel<IntType>(makeLabeling(labelMap));
 	}
 
-	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval labelMap, RandomAccessibleInterval data) {
+	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap, RandomAccessibleInterval<?> data) {
 		return new DefaultLabelEditorModel<IntType>(makeLabeling(labelMap), data);
 	}
 
-	protected static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(RandomAccessibleInterval<T> labelMap) {
+	private static ImgLabeling<IntType, IntType> makeLabeling(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
 		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create(labelMap);
 		ImgLabeling<IntType, IntType> labeling = new ImgLabeling<>(backing);
-		Cursor<T> cursor = Views.iterable(labelMap).localizingCursor();
+		Cursor<? extends IntegerType<?>> cursor = Views.iterable(labelMap).localizingCursor();
 		RandomAccess<LabelingType<IntType>> ra = labeling.randomAccess();
 		while(cursor.hasNext()) {
 			int val = cursor.next().getInteger();
