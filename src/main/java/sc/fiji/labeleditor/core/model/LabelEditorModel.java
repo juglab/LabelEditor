@@ -17,7 +17,7 @@ public interface LabelEditorModel <L> {
 	Comparator<Object> getTagComparator();
 	Comparator<L> getLabelComparator();
 
-	RandomAccessibleInterval getData();
+	RandomAccessibleInterval<?> getData();
 
 	String getName();
 	void setName(String name);

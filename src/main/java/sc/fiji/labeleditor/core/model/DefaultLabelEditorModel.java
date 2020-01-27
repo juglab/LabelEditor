@@ -30,7 +30,7 @@ import java.util.Set;
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	protected ImgLabeling<L, IntType > labels;
-	private RandomAccessibleInterval data;
+	private RandomAccessibleInterval<?> data;
 	private Map<L, LabelRegion<L>> orderedLabels;
 	protected LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
@@ -167,7 +167,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public RandomAccessibleInterval getData() {
+	public RandomAccessibleInterval<?> getData() {
 		return data;
 	}
 

@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.application;
 
+import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.view.Views;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
@@ -67,7 +68,8 @@ public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 		else {
 			ops.copy().imgLabeling(output.labeling(), labeling);
 			if(backgroundDarker) {
-				ops.image().invert(Views.iterable(output.getData()), Views.iterable(data));
+				ops.image().invert(Views.iterable((RandomAccessibleInterval) output.getData()),
+						Views.iterable(data));
 			} else {
 				ops.copy().rai(output.getData(), data);
 			}
