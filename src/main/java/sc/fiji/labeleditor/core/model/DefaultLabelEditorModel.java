@@ -29,9 +29,9 @@ import java.util.Set;
 
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
-	protected ImgLabeling<L, IntType > labels;
+	private ImgLabeling<L, IntType > labels;
 	private RandomAccessibleInterval<?> data;
-	protected LabelEditorTagging<L> tagLabelRelation;
+	private LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
 
