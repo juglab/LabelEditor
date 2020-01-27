@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.plugin.renderers;
 
+import net.imglib2.type.numeric.IntegerType;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorColor;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
@@ -105,8 +106,9 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 
 	@Override
 	public RandomAccessibleInterval<ARGBType> getOutput() {
-		Converter<IntType, ARGBType> converter = (i, o) -> o.set(getLUT()[i.get()]);
-		return Converters.convert(model.labeling().getIndexImg(), converter, new ARGBType() );
+		Converter<? super IntegerType<?>, ARGBType> converter = (i, o) -> o.set(getLUT()[i.getInteger()]);
+		return Converters.convert(model.labeling().getIndexImg(), converter,
+				new ARGBType());
 	}
 
 	protected int[] getLUT() {

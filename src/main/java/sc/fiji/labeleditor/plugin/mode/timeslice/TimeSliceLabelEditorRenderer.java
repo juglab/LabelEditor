@@ -2,6 +2,7 @@ package sc.fiji.labeleditor.plugin.mode.timeslice;
 
 import bdv.viewer.TimePointListener;
 import net.imglib2.Cursor;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import org.scijava.plugin.Plugin;
@@ -26,11 +27,11 @@ public class TimeSliceLabelEditorRenderer<L> extends AbstractLabelEditorRenderer
 	@Override
 	public void updateOnTagChange(LabelEditorModel<L> model) {
 		TimeSliceLabelEditorModel<L> timeModel = (TimeSliceLabelEditorModel<L>) model;
-		IntervalView<IntType> intervalView = timeModel.getIndexImgAtTime(timePoint);
+		IntervalView< ? extends IntegerType< ? > > intervalView = timeModel.getIndexImgAtTime(timePoint);
 		updateLUT(model, intervalView, LabelEditorTargetComponent.FACE);
 	}
 
-	protected void updateLUT(LabelEditorModel<L> model, IntervalView<IntType> slice, Object targetComponent) {
+	protected void updateLUT(LabelEditorModel<L> model, IntervalView<? extends IntegerType<?>> slice, Object targetComponent) {
 
 		if(lut == null || lut.length != model.labeling().getMapping().numSets()) {
 			lut = new int[model.labeling().getMapping().numSets()];
@@ -44,11 +45,11 @@ public class TimeSliceLabelEditorRenderer<L> extends AbstractLabelEditorRenderer
 
 		if(model.colors() != null) {
 
-			Cursor<IntType> cursor = slice.cursor();
+			Cursor<? extends IntegerType<?>> cursor = slice.cursor();
 
 			while(cursor.hasNext()) {
 
-				int val = cursor.next().get();
+				int val = cursor.next().getInteger();
 
 				if(lutDone[val]) continue;
 				lutDone[val] = true;

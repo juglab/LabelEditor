@@ -19,6 +19,7 @@ import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.NativeType;
 import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.IntervalView;
@@ -117,7 +118,7 @@ public class SplitLabels<L> implements Behaviour {
 		return cropLabeling;
 	}
 
-	public static <L> Set<L> split(L label, ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data, double sigma, OpService opService) {
+	public static <L> Set<L> split(L label, ImgLabeling<L, ? extends IntegerType<?> > labeling, RandomAccessibleInterval data, double sigma, OpService opService) {
 		LabelRegions regions = new LabelRegions<>(labeling);
 		LabelRegion<Integer> region = regions.getLabelRegion(label);
 		Img<BitType> mask = createMask(opService, region);

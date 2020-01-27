@@ -2,6 +2,7 @@ package sc.fiji.labeleditor.application;
 
 import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.view.Views;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -40,7 +41,7 @@ public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 	RandomAccessibleInterval data;
 
 	@Parameter
-	private ImgLabeling<L, IntType> labeling;
+	private ImgLabeling<L, ? extends IntegerType<?> > labeling;
 
 	@Parameter(required = false, type = ItemIO.BOTH)
 	private LabelEditorModel<L> output;
@@ -66,7 +67,7 @@ public class InteractiveWatershedCommand<L> implements Command, Cancelable {
 			output = model;
 		}
 		else {
-			ops.copy().imgLabeling(output.labeling(), labeling);
+			ops.copy().imgLabeling(output.labeling(), (ImgLabeling) labeling);
 			if(backgroundDarker) {
 				ops.image().invert(Views.iterable((RandomAccessibleInterval) output.getData()),
 						Views.iterable(data));

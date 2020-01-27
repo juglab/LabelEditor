@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
-	private ImgLabeling<L, IntType > labels;
+	private ImgLabeling<L, ? extends IntegerType<?> > labels;
 	private RandomAccessibleInterval<?> data;
 	private LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
@@ -40,12 +40,12 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private final LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 	private String name;
 
-	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data) {
+	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval data) {
 		this(labeling);
 		this.data = data;
 	}
 
-	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labeling) {
+	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
 		if(labeling != null) {
 			setName("model " + System.identityHashCode(this));
 			this.labels = labeling;
@@ -88,15 +88,16 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public ImgLabeling<L, IntType> labeling() {
+	public ImgLabeling<L, ? extends IntegerType<?>> labeling() {
 		return labels;
 	}
 
+	// TODO: Consider using setters instead of protected methods.
 	protected void initTagging() {
-		tagLabelRelation = new DefaultLabelEditorTagging<L>();
+		tagLabelRelation = new DefaultLabelEditorTagging<>();
 	}
 
-	protected void initLabelOrdering(ImgLabeling<L, IntType> labeling) {
+	protected void initLabelOrdering(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
 		labelComparator = this::compareLabels;
 	}
 
