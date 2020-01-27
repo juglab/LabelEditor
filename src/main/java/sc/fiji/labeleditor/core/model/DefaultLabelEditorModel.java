@@ -31,7 +31,6 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	protected ImgLabeling<L, IntType > labels;
 	private RandomAccessibleInterval<?> data;
-	private Map<L, LabelRegion<L>> orderedLabels;
 	protected LabelEditorTagging<L> tagLabelRelation;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
