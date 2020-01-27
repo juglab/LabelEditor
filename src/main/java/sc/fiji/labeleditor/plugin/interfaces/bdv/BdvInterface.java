@@ -94,9 +94,9 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		//FIXME currently only works for 2D, 3D and 4D
 		RealPoint mousePointer = new RealPoint(3);
 		bdvHandle.getViewerPanel().getGlobalMouseCoordinates( mousePointer );
-		final int x = ( int ) mousePointer.getFloatPosition( 0 );
-		final int y = ( int ) mousePointer.getFloatPosition( 1 );
-		final int z = ( int ) mousePointer.getFloatPosition( 2 );
+		final int x = (int) Math.round( mousePointer.getDoublePosition( 0 ) );
+		final int y = (int) Math.round( mousePointer.getDoublePosition( 1 ) );
+		final int z = (int) Math.round( mousePointer.getDoublePosition( 2 ) );
 		int time = bdvHandle.getViewerPanel().getState().getCurrentTimepoint();
 		return new Point(x, y, z, time);
 	}
