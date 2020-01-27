@@ -12,6 +12,7 @@ import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
 import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
@@ -64,7 +65,6 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 
 	protected void adjustOptions(BdvOptions options) {
 		options.accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
-	}
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model) {
