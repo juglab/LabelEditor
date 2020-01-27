@@ -6,7 +6,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -24,14 +23,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private ImgLabeling<L, ? extends IntegerType<?> > labels;
 	private RandomAccessibleInterval<?> data;
-	private LabelEditorTagging<L> tagLabelRelation;
+	private LabelEditorTagging<L> tagging;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
 
@@ -94,7 +92,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	// TODO: Consider using setters instead of protected methods.
 	protected void initTagging() {
-		tagLabelRelation = new DefaultLabelEditorTagging<>();
+		tagging = new DefaultLabelEditorTagging<>();
 	}
 
 	protected void initLabelOrdering(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
@@ -134,14 +132,13 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		if(tag1Index < 0 && tag2Index < 0) {
 			return tag1.toString().compareTo(tag2.toString());
 		} else {
-			if(tag1Index < tag2Index) return 1;
-			return -1;
+			return Integer.compare(tag2Index, tag1Index);
 		}
 	}
 
 	@Override
 	public LabelEditorTagging<L> tagging() {
-		return tagLabelRelation;
+		return tagging;
 	}
 
 	public LabelEditorTagColors colors() {
