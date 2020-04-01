@@ -10,20 +10,20 @@ import sc.fiji.labeleditor.core.view.ViewChangedEvent;
 import java.awt.*;
 import java.util.List;
 
-public interface LabelEditorInterface<L> {
+public interface LabelEditorInterface {
 	//TODO 3d position?
-	LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model);
+	<L> LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model);
 	void onViewChange(ViewChangedEvent viewChangedEvent);
 
 	Behaviours behaviours();
 
-	void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling);
+	<L> void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling);
 
 	Component getComponent();
 
 	void onTagChange(List<TagChangedEvent> tagChangedEvents);
 
-	void display(LabelEditorView<L> view);
+	<L> void display(LabelEditorView<L> view);
 
-	void installBehaviours(InteractiveLabeling<L> labeling);
+	<L> void installBehaviours(InteractiveLabeling<L> labeling);
 }

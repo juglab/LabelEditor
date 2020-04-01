@@ -10,7 +10,7 @@ import java.util.Set;
 public interface InteractiveLabeling<L> {
 	LabelEditorModel<L> model();
 	LabelEditorView<L> view();
-	LabelEditorInterface<L> interfaceInstance();
+	LabelEditorInterface interfaceInstance();
 	IterableInterval<LabelingType<L>> getLabelingInScope();
 	Set<L> getLabelSetInScope();
 }

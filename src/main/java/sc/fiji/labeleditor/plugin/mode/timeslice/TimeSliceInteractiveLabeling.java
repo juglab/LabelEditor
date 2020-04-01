@@ -20,7 +20,7 @@ public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<
 	private Set<L> labelsInScope = new HashSet<>();
 	private boolean processingLabelsInScope = false;
 
-	public TimeSliceInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
+	public TimeSliceInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface interfaceInstance) {
 		super(model, view, interfaceInstance);
 	}
 

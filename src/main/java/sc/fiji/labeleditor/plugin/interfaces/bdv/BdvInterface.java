@@ -40,16 +40,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BdvInterface<L> implements LabelEditorInterface<L> {
+public class BdvInterface implements LabelEditorInterface {
 
 	@Parameter
 	private Context context;
 
 	private final BdvHandle bdvHandle;
 	private final Behaviours behaviours;
-	private LabelingType<L> labelsAtCursor;
 
-	private final Map<LabelEditorView<L>, List<BdvSource>> sources = new HashMap<>();
+	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
 
 	public BdvInterface(BdvHandle bdvHandle) {
 		this.bdvHandle = bdvHandle;
@@ -58,7 +57,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
-		BdvInterface<L> interfaceInstance = new BdvInterface<>(bdvHandle);
+		BdvInterface interfaceInstance = new BdvInterface(bdvHandle);
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
@@ -72,18 +71,14 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		return control(model, view, handle, context);
 	}
 
-	public LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
+	public <L> LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
 		RandomAccess<LabelingType<L>> ra = model.labeling().randomAccess();
 		Localizable pos = getDataPositionAtMouse();
 		if(Intervals.contains(model.labeling(), pos)) {
 			ra.setPosition(pos);
-			if(labelsAtCursor != null && ra.get().getIndex().getInteger() == labelsAtCursor.getIndex().getInteger()) {
-				return labelsAtCursor;
-			}
-			this.labelsAtCursor = ra.get();
 			//FIXME
 //			bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
-			return labelsAtCursor;
+			return ra.get();
 		}
 		//FIXME
 //		bdvHandle.getViewerPanel().getDisplay().setToolTipText(null);
@@ -102,21 +97,21 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void installBehaviours(InteractiveLabeling<L> labeling) {
+	public <L> void installBehaviours(InteractiveLabeling<L> labeling) {
 		install(labeling, new SelectionBehaviours<>());
 		install(labeling, new FocusBehaviours<>());
 		install(labeling, new LabelingModificationBehaviours<>());
 		install(labeling, new PopupBehaviours<>());
 	}
 
-	private void install(InteractiveLabeling<L> labeling, LabelEditorBehaviours<L> behavioursAdded) {
+	private <L> void install(InteractiveLabeling<L> labeling, LabelEditorBehaviours<L> behavioursAdded) {
 		if(context != null) context.inject(behavioursAdded);
 		behavioursAdded.init(labeling);
 		behavioursAdded.install(behaviours, bdvHandle.getViewerPanel().getDisplay());
 	}
 
 	@Override
-	public void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling) {
+	public <L> void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling) {
 		if(context != null) context.inject(behaviour);
 		behaviour.init(labeling);
 		behaviour.install(behaviours(), getComponent());
@@ -146,7 +141,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 	}
 
 	@Override
-	public void display(LabelEditorView<L> view) {
+	public <L> void display(LabelEditorView<L> view) {
 		ArrayList<BdvSource> sources = new ArrayList<>();
 		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());
 		Collections.reverse(renderers);
@@ -172,7 +167,7 @@ public class BdvInterface<L> implements LabelEditorInterface<L> {
 		}
 	}
 
-	public Map<LabelEditorView<L>, List<BdvSource>> getSources() {
+	public Map<LabelEditorView<?>, List<BdvSource>> getSources() {
 		return sources;
 	}
 }

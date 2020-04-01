@@ -75,11 +75,11 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view) {
-		BdvInterface<L> interfaceInstance = new BdvInterface<>(bdvHandlePanel);
+		BdvInterface interfaceInstance = new BdvInterface(bdvHandlePanel);
 		return add(model, view, interfaceInstance);
 	}
 
-	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
+	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface interfaceInstance) {
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
@@ -94,7 +94,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	public List<BdvSource> getSources() {
 		List<BdvSource> res = new ArrayList<>();
 		labelings.forEach((name, labeling) -> {
-			BdvInterface<?> labelEditorInterface = (BdvInterface) labeling.interfaceInstance();
+			BdvInterface labelEditorInterface = (BdvInterface) labeling.interfaceInstance();
 			labelEditorInterface.getSources().values().forEach(res::addAll);
 		});
 		return res;

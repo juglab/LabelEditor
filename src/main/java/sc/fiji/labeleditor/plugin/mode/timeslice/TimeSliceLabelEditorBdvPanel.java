@@ -27,7 +27,7 @@ public class TimeSliceLabelEditorBdvPanel extends LabelEditorBdvPanel {
 	}
 
 	@Override
-	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
+	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface interfaceInstance) {
 		TimeSliceInteractiveLabeling<L> interactiveLabeling = new TimeSliceInteractiveLabeling<>(model, view, interfaceInstance);
 		if(context() != null) context().inject(interactiveLabeling);
 		interactiveLabeling.initialize();

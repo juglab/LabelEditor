@@ -15,11 +15,11 @@ public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, In
 	@Parameter
 	Context context;
 
-	protected final LabelEditorInterface<L> interfaceInstance;
+	protected final LabelEditorInterface interfaceInstance;
 	private final LabelEditorModel<L> model;
 	private final LabelEditorView<L> view;
 
-	public DefaultInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface<L> interfaceInstance) {
+	public DefaultInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface interfaceInstance) {
 		this.model = model;
 		this.view = view;
 		this.interfaceInstance = interfaceInstance;
@@ -47,7 +47,7 @@ public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, In
 	}
 
 	@Override
-	public LabelEditorInterface<L> interfaceInstance() {
+	public LabelEditorInterface interfaceInstance() {
 		return interfaceInstance;
 	}
 
