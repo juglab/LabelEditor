@@ -103,7 +103,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		tagComparator = this::compareTags;
 		orderedTags.clear();
 		orderedTags.add(LabelEditorTag.SELECTED);
-		orderedTags.add(LabelEditorTag.FOCUS);
+		orderedTags.add(LabelEditorTag.MOUSE_OVER);
 	}
 
 	/**

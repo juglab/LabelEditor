@@ -37,7 +37,7 @@ public class TestDefaultLabelEditorModel {
 		Assert.assertEquals(0, model.tagging().getTags(LABEL1).size());
 
 		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL1);
-		model.tagging().addTagToLabel(LabelEditorTag.FOCUS, LABEL1);
+		model.tagging().addTagToLabel(LabelEditorTag.MOUSE_OVER, LABEL1);
 
 	}
 
@@ -57,7 +57,7 @@ public class TestDefaultLabelEditorModel {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
 
 		model.tagging().addTagToLabel(LabelEditorTag.SELECTED, LABEL1);
-		model.tagging().addTagToLabel(LabelEditorTag.FOCUS, LABEL2);
+		model.tagging().addTagToLabel(LabelEditorTag.MOUSE_OVER, LABEL2);
 		model.tagging().addTagToLabel("mytag", LABEL3);
 
 		List<String> sortedLabels = new ArrayList<>(model.labeling().getMapping().getLabels());
@@ -77,14 +77,14 @@ public class TestDefaultLabelEditorModel {
 		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(null);
 		model.initTagOrdering();
 		Set<Object> tags = new HashSet<>();
-		tags.add(LabelEditorTag.FOCUS);
+		tags.add(LabelEditorTag.MOUSE_OVER);
 		tags.add(LabelEditorTag.SELECTED);
 		tags.add("a");
 		tags.add("b");
 		List<Object> sortedTags = new ArrayList<>(tags);
 		sortedTags.sort(model::compareTags);
 		System.out.println(sortedTags);
-		assertEquals(LabelEditorTag.FOCUS, sortedTags.get(0));
+		assertEquals(LabelEditorTag.MOUSE_OVER, sortedTags.get(0));
 		assertEquals(LabelEditorTag.SELECTED, sortedTags.get(1));
 		assertEquals("a", sortedTags.get(2));
 		assertEquals("b", sortedTags.get(3));

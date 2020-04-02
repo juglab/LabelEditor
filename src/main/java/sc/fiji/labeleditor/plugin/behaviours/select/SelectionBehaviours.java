@@ -154,7 +154,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 
 	protected void select(L label) {
 		labeling.model().tagging().addTagToLabel(LabelEditorTag.SELECTED, label);
-		labeling.model().tagging().removeTagFromLabel(LabelEditorTag.FOCUS, label);
+		labeling.model().tagging().removeTagFromLabel(LabelEditorTag.MOUSE_OVER, label);
 	}
 
 	protected void selectPrevious(LabelingType<L> labels) {

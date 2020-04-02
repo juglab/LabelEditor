@@ -57,12 +57,12 @@ public class FocusBehaviours<L> implements LabelEditorBehaviours<L> {
 
 	protected void defocus() {
 		if(lastLabels == null) return;
-		lastLabels.forEach(label -> labeling.model().tagging().removeTagFromLabel(LabelEditorTag.FOCUS, label));
+		lastLabels.forEach(label -> labeling.model().tagging().removeTagFromLabel(LabelEditorTag.MOUSE_OVER, label));
 		lastLabels = null;
 	}
 
 	protected void focus(LabelingType<L> labels) {
-		labels.forEach(label -> labeling.model().tagging().addTagToLabel(LabelEditorTag.FOCUS, label));
+		labels.forEach(label -> labeling.model().tagging().addTagToLabel(LabelEditorTag.MOUSE_OVER, label));
 		lastLabels = labels;
 		currentSegment = labels.getIndex().getInteger();
 	}

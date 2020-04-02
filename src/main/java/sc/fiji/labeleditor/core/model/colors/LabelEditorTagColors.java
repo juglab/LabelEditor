@@ -25,7 +25,7 @@ public interface LabelEditorTagColors {
 	}
 
 	default LabelEditorColor getFocusFaceColor() {
-		return getFaceColor(LabelEditorTag.FOCUS);
+		return getFaceColor(LabelEditorTag.MOUSE_OVER);
 	}
 
 	default LabelEditorColor getSelectedFaceColor() {
@@ -37,7 +37,7 @@ public interface LabelEditorTagColors {
 	}
 
 	default LabelEditorColor getFocusBorderColor() {
-		return getBorderColor(LabelEditorTag.FOCUS);
+		return getBorderColor(LabelEditorTag.MOUSE_OVER);
 	}
 
 	default LabelEditorColor getSelectedBorderColor() {

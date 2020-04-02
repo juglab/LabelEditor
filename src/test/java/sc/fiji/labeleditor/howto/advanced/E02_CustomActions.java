@@ -43,7 +43,7 @@ public class E02_CustomActions {
 
 		//set colors
 		model.colors().getColorset(LabelEditorTag.SELECTED).clear();
-		model.colors().getColorset(LabelEditorTag.FOCUS).clear();
+		model.colors().getColorset(LabelEditorTag.MOUSE_OVER).clear();
 		model.colors().getFaceColor("special").set(255, 0, 0);
 
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(ij.context(), new BdvOptions().is2D());
