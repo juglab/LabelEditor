@@ -2,7 +2,9 @@ package sc.fiji.labeleditor.plugin.behaviours.modification;
 
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.view.Views;
 import org.scijava.ui.behaviour.Behaviour;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
@@ -23,8 +25,8 @@ public class DeleteLabels<L> implements Behaviour {
 		labeling.view().updateOnLabelingChange();
 	}
 
-	private static <L> void delete(Set<L> labels, IterableInterval<LabelingType<L>> labeling) {
-		Cursor<LabelingType<L>> cursor = labeling.cursor();
+	private static <L> void delete(Set<L> labels, RandomAccessibleInterval<LabelingType<L>> labeling) {
+		Cursor<LabelingType<L>> cursor = Views.iterable(labeling).cursor();
 		while (cursor.hasNext()) {
 			LabelingType<L> val = cursor.next();
 			val.removeAll(labels);

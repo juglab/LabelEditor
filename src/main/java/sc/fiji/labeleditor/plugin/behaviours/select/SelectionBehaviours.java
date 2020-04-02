@@ -89,7 +89,7 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	protected void selectFirstLabel(int x, int y) {
-		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
+		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling);
 		if (foundLabels(labels)) {
 			selectFirst(labels);
 		} else {
@@ -102,14 +102,14 @@ public class SelectionBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	protected void addFirstLabelToSelection(int x, int y) {
-		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
+		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling);
 		if (foundLabels(labels)) {
 			toggleSelectionOfFirst(labels);
 		}
 	}
 
 	protected void toggleLabelSelection(boolean forwardDirection, int x, int y) {
-		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
+		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling);
 		if(!foundLabels(labels)) return;
 		if(!anySelected(labels)) {
 			selectFirst(labels);

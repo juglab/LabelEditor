@@ -39,7 +39,7 @@ public class FocusBehaviours<L> implements LabelEditorBehaviours<L> {
 	protected synchronized void focusFirstLabelAtPosition(int x, int y) {
 		try {
 			labeling.model().tagging().pauseListeners();
-			LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
+			LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling);
 			if(labels != null) {
 				if(currentSegment == labels.getIndex().getInteger()) {
 					labeling.model().tagging().resumeListeners();

@@ -1,6 +1,6 @@
 package sc.fiji.labeleditor.core.controller;
 
-import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Context;
 import org.scijava.Initializable;
@@ -52,7 +52,7 @@ public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, In
 	}
 
 	@Override
-	public IterableInterval<LabelingType<L>> getLabelingInScope() {
+	public RandomAccessibleInterval<LabelingType<L>> getLabelingInScope() {
 		return model().labeling();
 	}
 

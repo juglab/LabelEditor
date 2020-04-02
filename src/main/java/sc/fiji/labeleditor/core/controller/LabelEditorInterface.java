@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface LabelEditorInterface {
 	//TODO 3d position?
-	<L> LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model);
+	<L> LabelingType<L> findLabelsAtMousePosition(int x, int y, InteractiveLabeling<L> labeling);
 	void onViewChange(ViewChangedEvent viewChangedEvent);
 
 	Behaviours behaviours();

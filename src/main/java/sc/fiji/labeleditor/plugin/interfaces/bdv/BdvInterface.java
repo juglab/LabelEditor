@@ -71,10 +71,10 @@ public class BdvInterface implements LabelEditorInterface {
 		return control(model, view, handle, context);
 	}
 
-	public <L> LabelingType<L> findLabelsAtMousePosition(int x, int y, LabelEditorModel<L> model) {
-		RandomAccess<LabelingType<L>> ra = model.labeling().randomAccess();
+	public <L> LabelingType<L> findLabelsAtMousePosition(int x, int y, InteractiveLabeling<L> labeling) {
+		RandomAccess<LabelingType<L>> ra = labeling.getLabelingInScope().randomAccess();
 		Localizable pos = getDataPositionAtMouse();
-		if(Intervals.contains(model.labeling(), pos)) {
+		if(Intervals.contains(labeling.getLabelingInScope(), pos)) {
 			ra.setPosition(pos);
 			//FIXME
 //			bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));

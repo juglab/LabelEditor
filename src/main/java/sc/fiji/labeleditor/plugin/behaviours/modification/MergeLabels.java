@@ -2,7 +2,9 @@ package sc.fiji.labeleditor.plugin.behaviours.modification;
 
 import net.imglib2.Cursor;
 import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.view.Views;
 import org.scijava.ui.behaviour.Behaviour;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
@@ -23,10 +25,10 @@ public class MergeLabels<L> implements Behaviour {
 		labeling.view().updateOnLabelingChange();
 	}
 
-	private static <L> void assignToFirst(Set<L> labels, IterableInterval<LabelingType<L>> labeling) {
+	private static <L> void assignToFirst(Set<L> labels, RandomAccessibleInterval<LabelingType<L>> labeling) {
 		L first = labels.iterator().next();
 		labels.remove(first);
-		Cursor<LabelingType<L>> cursor = labeling.cursor();
+		Cursor<LabelingType<L>> cursor = Views.iterable(labeling).cursor();
 		while (cursor.hasNext()) {
 			LabelingType<L> val = cursor.next();
 			if(val.removeAll(labels)) {

@@ -12,7 +12,7 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
 	@Override
 	protected void selectFirstLabel(int x, int y) {
-		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
+		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling);
 		if (labels != null && labels.size() > 0) {
 			selectFirst(labels);
 		}
@@ -25,7 +25,7 @@ public class ConflictSelectionBehaviours<L> extends SelectionBehaviours<L> {
 
 	@Override
 	protected void toggleLabelSelection(boolean forwardDirection, int x, int y) {
-		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling.model());
+		LabelingType<L> labels = labeling.interfaceInstance().findLabelsAtMousePosition(x, y, labeling);
 		if(labels.size() == 0) return;
 		if(!anySelected(labels)) {
 			selectFirst(labels);

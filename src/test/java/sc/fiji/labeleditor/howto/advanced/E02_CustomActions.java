@@ -54,7 +54,7 @@ public class E02_CustomActions {
 		interactiveLabeling.interfaceInstance().behaviours().behaviour((ClickBehaviour) (x, y) -> {
 
 				//get labels at current mouse position
-				LabelingType<Integer> labels = interactiveLabeling.interfaceInstance().findLabelsAtMousePosition(x, y, model);
+				LabelingType<Integer> labels = interactiveLabeling.interfaceInstance().findLabelsAtMousePosition(x, y, interactiveLabeling);
 
 				//pausing the tagging listeners while changing tags improves performance
 				model.tagging().pauseListeners();

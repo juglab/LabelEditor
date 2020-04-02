@@ -2,8 +2,9 @@ package sc.fiji.labeleditor.plugin.mode.timeslice;
 
 import bdv.viewer.TimePointListener;
 import net.imglib2.Cursor;
-import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.view.Views;
 import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -47,7 +48,7 @@ public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<
 			processingLabelsInScope = true;
 			labelsInScope.clear();
 			boolean[] setDone = new boolean[model().labeling().getMapping().numSets()];
-			Cursor<LabelingType<L>> cursor = getLabelingInScope().cursor();
+			Cursor<LabelingType<L>> cursor = Views.iterable(getLabelingInScope()).cursor();
 			while(cursor.hasNext()) {
 				int val = cursor.next().getIndex().getInteger();
 				if(setDone[val]) continue;
@@ -61,7 +62,7 @@ public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<
 	}
 
 	@Override
-	public IterableInterval<LabelingType<L>> getLabelingInScope() {
+	public RandomAccessibleInterval<LabelingType<L>> getLabelingInScope() {
 		try {
 			return ((TimeSliceLabelEditorModel<L>) model()).getLabelingAtTime(timePoint);
 		} catch (ClassCastException e) {
