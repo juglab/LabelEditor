@@ -6,7 +6,6 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.roi.labeling.LabelRegion;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -24,15 +23,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
-	protected ImgLabeling<L, IntType > labels;
-	private RandomAccessibleInterval data;
-	private Map<L, LabelRegion<L>> orderedLabels;
-	protected LabelEditorTagging<L> tagLabelRelation;
+	private ImgLabeling<L, ? extends IntegerType<?> > labels;
+	private RandomAccessibleInterval<?> data;
+	private LabelEditorTagging<L> tagging;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
 
@@ -41,12 +38,12 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private final LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 	private String name;
 
-	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labeling, RandomAccessibleInterval data) {
+	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval<?> data) {
 		this(labeling);
 		this.data = data;
 	}
 
-	public DefaultLabelEditorModel(ImgLabeling<L, IntType> labeling) {
+	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
 		if(labeling != null) {
 			setName("model " + System.identityHashCode(this));
 			this.labels = labeling;
@@ -57,18 +54,18 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		}
 	}
 
-	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval labelMap) {
+	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
 		return new DefaultLabelEditorModel<IntType>(makeLabeling(labelMap));
 	}
 
-	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval labelMap, RandomAccessibleInterval data) {
+	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap, RandomAccessibleInterval<?> data) {
 		return new DefaultLabelEditorModel<IntType>(makeLabeling(labelMap), data);
 	}
 
-	protected static <T extends IntegerType<T>> ImgLabeling<IntType, IntType> makeLabeling(RandomAccessibleInterval<T> labelMap) {
+	private static ImgLabeling<IntType, IntType> makeLabeling(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
 		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create(labelMap);
 		ImgLabeling<IntType, IntType> labeling = new ImgLabeling<>(backing);
-		Cursor<T> cursor = Views.iterable(labelMap).localizingCursor();
+		Cursor<? extends IntegerType<?>> cursor = Views.iterable(labelMap).localizingCursor();
 		RandomAccess<LabelingType<IntType>> ra = labeling.randomAccess();
 		while(cursor.hasNext()) {
 			int val = cursor.next().getInteger();
@@ -89,15 +86,16 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public ImgLabeling<L, IntType> labeling() {
+	public ImgLabeling<L, ? extends IntegerType<?>> labeling() {
 		return labels;
 	}
 
+	// TODO: Consider using setters instead of protected methods.
 	protected void initTagging() {
-		tagLabelRelation = new DefaultLabelEditorTagging<L>();
+		tagging = new DefaultLabelEditorTagging<>();
 	}
 
-	protected void initLabelOrdering(ImgLabeling<L, IntType> labeling) {
+	protected void initLabelOrdering(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
 		labelComparator = this::compareLabels;
 	}
 
@@ -134,14 +132,13 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		if(tag1Index < 0 && tag2Index < 0) {
 			return tag1.toString().compareTo(tag2.toString());
 		} else {
-			if(tag1Index < tag2Index) return 1;
-			return -1;
+			return Integer.compare(tag2Index, tag1Index);
 		}
 	}
 
 	@Override
 	public LabelEditorTagging<L> tagging() {
-		return tagLabelRelation;
+		return tagging;
 	}
 
 	public LabelEditorTagColors colors() {
@@ -167,7 +164,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public RandomAccessibleInterval getData() {
+	public RandomAccessibleInterval<?> getData() {
 		return data;
 	}
 

@@ -5,6 +5,7 @@ import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.roi.boundary.IntTypeBoundary;
 import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.IntervalView;
 import org.scijava.plugin.Plugin;
@@ -27,7 +28,7 @@ public class TimeSliceLabelEditorBorderRenderer<L> extends TimeSliceLabelEditorR
 	@Override
 	public void updateOnTagChange(LabelEditorModel<L> model) {
 		TimeSliceLabelEditorModel<L> timeModel = (TimeSliceLabelEditorModel<L>) model;
-		IntervalView<IntType> intervalView = timeModel.getIndexImgAtTime(timePoint);
+		IntervalView<? extends IntegerType<?> > intervalView = timeModel.getIndexImgAtTime(timePoint);
 		updateLUT(model, intervalView, LabelEditorTargetComponent.BORDER);
 	}
 
