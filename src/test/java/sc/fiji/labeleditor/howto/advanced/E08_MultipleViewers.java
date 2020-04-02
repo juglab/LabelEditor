@@ -51,6 +51,8 @@ public class E08_MultipleViewers {
 
 		JPanel viewer = new JPanel(new MigLayout());
 		JFrame frame = new JFrame("Label editor");
+		frame.setMinimumSize(new Dimension(500,500));
+		frame.setContentPane(viewer);
 		BdvHandlePanel panel1 = new BdvHandlePanel(frame, Bdv.options());
 		BdvHandlePanel panel2 = new BdvHandlePanel(frame, Bdv.options());
 
@@ -63,8 +65,6 @@ public class E08_MultipleViewers {
 
 		viewer.add( panel1.getViewerPanel(), "span, grow, push" );
 		viewer.add( panel2.getViewerPanel(), "span, grow, push" );
-		frame.setMinimumSize(new Dimension(500,500));
-		frame.setContentPane(viewer);
 		frame.pack();
 		frame.setVisible(true);
 	}

@@ -40,17 +40,15 @@ public class E07_MultipleLabelings {
 		model1.colors().getDefaultFaceColor().set(255,255,0,55);
 		model2.colors().getDefaultFaceColor().set(255,0,255,55);
 
-		JPanel viewer = new JPanel(new MigLayout());
 		JFrame frame = new JFrame("Label editor");
+		frame.setMinimumSize(new Dimension(500,500));
 		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 
 		BdvInterface.control(model1, panel.getBdvHandle(), ij.context());
 		BdvInterface.control(model2, panel.getBdvHandle(), ij.context());
 		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
 
-		viewer.add( panel.getViewerPanel(), "span, grow, push" );
-		frame.setMinimumSize(new Dimension(500,500));
-		frame.setContentPane(viewer);
+		frame.setContentPane(panel.getViewerPanel());
 		frame.pack();
 		frame.setVisible(true);
 	}

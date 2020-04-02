@@ -35,16 +35,14 @@ public class E01_AddToExistingBDV {
 
 		model.colors().getDefaultFaceColor().set(255,255,0,55);
 
-		JPanel viewer = new JPanel(new MigLayout());
 		JFrame frame = new JFrame("Label editor");
+		frame.setMinimumSize(new Dimension(500,500));
 		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 //		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
 
-		viewer.add( panel.getViewerPanel(), "span, grow, push" );
 		BdvInterface.control(model, panel, ij.context());
 
-		frame.setMinimumSize(new Dimension(500,500));
-		frame.setContentPane(viewer);
+		frame.setContentPane(panel.getViewerPanel());
 		frame.pack();
 		frame.setVisible(true);
 	}
