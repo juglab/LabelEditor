@@ -3,7 +3,7 @@ package sc.fiji.labeleditor.core.model;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.IntegerType;
-import net.imglib2.type.numeric.integer.IntType;
+import org.scijava.table.interactive.SelectionModel;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
 
@@ -19,6 +19,9 @@ public interface LabelEditorModel <L> {
 	Comparator<L> getLabelComparator();
 
 	RandomAccessibleInterval<?> getData();
+
+	SelectionModel<L> getSelectionModel();
+	void setSelectionModel(SelectionModel<L> model);
 
 	String getName();
 	void setName(String name);

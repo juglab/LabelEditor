@@ -8,7 +8,7 @@ public class LabelEditorColor {
 
 	public LabelEditorColor(LabelEditorColorset colorset, Integer color) {
 		this.colorset = colorset;
-		if(color != null) set(color);
+		if(color != null) this.color = color;
 	}
 
 	public int get() {

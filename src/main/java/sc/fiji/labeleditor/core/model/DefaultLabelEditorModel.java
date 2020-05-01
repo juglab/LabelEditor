@@ -11,11 +11,13 @@ import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import org.scijava.table.interactive.SelectionModel;
 import sc.fiji.labeleditor.core.model.colors.DefaultLabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
+import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +34,8 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private LabelEditorTagging<L> tagging;
 	private Comparator<L> labelComparator;
 	private Comparator<Object> tagComparator;
+
+	private SelectionModel<L> selectionModel;
 
 	private List<Object> orderedTags = new ArrayList<>();
 
@@ -50,16 +54,21 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 			initLabelOrdering(labeling);
 			initTagOrdering();
 			initTagging();
+			initSelectionModel();
 			addDefaultColorsets();
 		}
 	}
 
+	private void initSelectionModel() {
+		selectionModel = new SelectionBehaviours<>();
+	}
+
 	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
-		return new DefaultLabelEditorModel<IntType>(makeLabeling(labelMap));
+		return new DefaultLabelEditorModel<>(makeLabeling(labelMap));
 	}
 
 	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap, RandomAccessibleInterval<?> data) {
-		return new DefaultLabelEditorModel<IntType>(makeLabeling(labelMap), data);
+		return new DefaultLabelEditorModel<>(makeLabeling(labelMap), data);
 	}
 
 	private static ImgLabeling<IntType, IntType> makeLabeling(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
@@ -166,6 +175,16 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	@Override
 	public RandomAccessibleInterval<?> getData() {
 		return data;
+	}
+
+	@Override
+	public SelectionModel<L> getSelectionModel() {
+		return selectionModel;
+	}
+
+	@Override
+	public void setSelectionModel(SelectionModel<L> model) {
+		this.selectionModel = model;
 	}
 
 	@Override

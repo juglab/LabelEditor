@@ -9,6 +9,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
+import org.scijava.table.interactive.InteractiveTableDisplayViewer;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -17,6 +18,7 @@ import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.plugin.table.LabelEditorTable;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -68,6 +70,10 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 		return (arg0, arg1) -> showRenderer(renderer);
 	}
 
+	public ClickBehaviour getExportTableBehaviour() {
+		return (arg0, arg1) -> showTables();
+	}
+
 	public void showIndexImg() {
 		show(model.labeling().getIndexImg());
 	}
@@ -110,5 +116,11 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 		} else {
 			ImageJFunctions.show(img);
 		}
+	}
+
+	public void showTables() {
+		InteractiveTableDisplayViewer viewer = new InteractiveTableDisplayViewer(new LabelEditorTable(model));
+		viewer.display();
+//		ui.show(new LabelEditorTable(model));
 	}
 }
