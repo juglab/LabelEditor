@@ -306,6 +306,6 @@ public class SelectionBehaviours<L> implements SelectionModel< L >, LabelEditorB
 
 	public void selectByTag() {
 		commandService.run(SelectByTagCommand.class, true,
-				"labeling.model()", labeling.model(), "labeling", labeling);
+				"model", labeling.model(), "labeling", labeling);
 	}
 }
