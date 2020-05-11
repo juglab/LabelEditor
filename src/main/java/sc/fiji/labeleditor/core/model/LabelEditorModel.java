@@ -20,9 +20,6 @@ public interface LabelEditorModel <L> {
 
 	RandomAccessibleInterval<?> getData();
 
-	SelectionModel<L> getSelectionModel();
-	void setSelectionModel(SelectionModel<L> model);
-
 	String getName();
 	void setName(String name);
 }

@@ -98,8 +98,9 @@ public class BdvInterface implements LabelEditorInterface {
 
 	@Override
 	public <L> void installBehaviours(InteractiveLabeling<L> labeling) {
-		((LabelEditorBehaviours) labeling.model().getSelectionModel()).init(labeling);
-		((LabelEditorBehaviours) labeling.model().getSelectionModel()).install(behaviours, bdvHandle.getViewerPanel().getDisplay());
+		SelectionBehaviours<L> selectionModel = new SelectionBehaviours<>();
+		labeling.setSelectionModel(selectionModel);
+		install(labeling, selectionModel);
 		install(labeling, new FocusBehaviours<>());
 		install(labeling, new LabelingModificationBehaviours<>());
 		install(labeling, new PopupBehaviours<>());

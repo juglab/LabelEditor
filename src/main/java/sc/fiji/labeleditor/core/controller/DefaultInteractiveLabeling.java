@@ -5,6 +5,7 @@ import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Context;
 import org.scijava.Initializable;
 import org.scijava.plugin.Parameter;
+import org.scijava.table.interactive.SelectionModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 
@@ -18,6 +19,7 @@ public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, In
 	protected final LabelEditorInterface interfaceInstance;
 	private final LabelEditorModel<L> model;
 	private final LabelEditorView<L> view;
+	private SelectionModel<L> selectionModel;
 
 	public DefaultInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface interfaceInstance) {
 		this.model = model;
@@ -59,6 +61,16 @@ public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, In
 	@Override
 	public Set<L> getLabelSetInScope() {
 		return model().labeling().getMapping().getLabels();
+	}
+
+	@Override
+	public SelectionModel<L> getSelectionModel() {
+		return selectionModel;
+	}
+
+	@Override
+	public void setSelectionModel(SelectionModel<L> model) {
+		this.selectionModel = model;
 	}
 
 	@Override

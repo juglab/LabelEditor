@@ -16,7 +16,6 @@ import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.plugin.table.LabelEditorTable;
 
@@ -26,13 +25,13 @@ import java.util.List;
 
 public class ExportBehaviours extends Behaviours implements LabelEditorBehaviours {
 
-	protected LabelEditorModel model;
-
 	@Parameter
 	UIService ui;
 
 	@Parameter
 	Context context;
+
+	private InteractiveLabeling interactiveLabeling;
 
 	public ExportBehaviours() {
 		super(new InputTriggerConfig(), "labeleditor-export");
@@ -40,7 +39,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 
 	@Override
 	public void init(InteractiveLabeling labeling) {
-		this.model = labeling.model();
+		this.interactiveLabeling = labeling;
 	}
 
 	@Override
@@ -49,7 +48,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	public ExportLabels getExportSelectedLabels() {
-		ExportLabels exportLabels = new ExportLabels(model);
+		ExportLabels exportLabels = new ExportLabels(interactiveLabeling.model());
 		context.inject(exportLabels);
 		return exportLabels;
 	}
@@ -75,7 +74,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	public void showIndexImg() {
-		show(model.labeling().getIndexImg());
+		show(interactiveLabeling.model().labeling().getIndexImg());
 	}
 
 	public void showLabelMap() {
@@ -83,14 +82,14 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	public <T extends RealType<T>> RandomAccessibleInterval<IntType> getLabelMap() {
-		RandomAccessibleInterval<LabelingType<T>> labeling = model.labeling();
+		RandomAccessibleInterval<LabelingType<T>> labeling = interactiveLabeling.model().labeling();
 		Converter<LabelingType<T>, IntType> converter = (i, o) -> {
 			if(i.size() == 0) {
 				o.setZero();
 				return;
 			}
 			List<T> sortedLabels = new ArrayList<>(i);
-			sortedLabels.sort(model.getLabelComparator());
+			sortedLabels.sort(interactiveLabeling.model().getLabelComparator());
 			try {
 				o.set((int) sortedLabels.get(0).getRealFloat());
 			} catch(ClassCastException e) {
@@ -107,7 +106,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	public void showData() {
-		show(model.getData());
+		show(interactiveLabeling.model().getData());
 	}
 
 	private void show(RandomAccessibleInterval img) {
@@ -119,7 +118,7 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	}
 
 	public void showTables() {
-		InteractiveTableDisplayViewer viewer = new InteractiveTableDisplayViewer(new LabelEditorTable(model));
+		InteractiveTableDisplayViewer viewer = new InteractiveTableDisplayViewer(new LabelEditorTable(interactiveLabeling));
 		viewer.display();
 //		ui.show(new LabelEditorTable(model));
 	}

@@ -20,7 +20,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * How to display a labeling in an existing BDV instance
