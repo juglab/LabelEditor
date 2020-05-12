@@ -51,7 +51,7 @@ public class E02_CustomActions {
 
 //		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 
-		interactiveLabeling.interfaceInstance().behaviours().behaviour((ClickBehaviour) (x, y) -> {
+		interactiveLabeling.interfaceInstance().behaviours(interactiveLabeling).behaviour((ClickBehaviour) (x, y) -> {
 
 				//get labels at current mouse position
 				LabelingType<Integer> labels = interactiveLabeling.interfaceInstance().findLabelsAtMousePosition(x, y, interactiveLabeling);

@@ -2,7 +2,6 @@ package sc.fiji.labeleditor.core.controller;
 
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.util.Behaviours;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
@@ -15,8 +14,6 @@ public interface LabelEditorInterface {
 	<L> LabelingType<L> findLabelsAtMousePosition(int x, int y, InteractiveLabeling<L> labeling);
 	void onViewChange(ViewChangedEvent viewChangedEvent);
 
-	Behaviours behaviours();
-
 	<L> void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling);
 
 	Component getComponent();
@@ -26,4 +23,6 @@ public interface LabelEditorInterface {
 	<L> void display(LabelEditorView<L> view);
 
 	<L> void installBehaviours(InteractiveLabeling<L> labeling);
+
+	<L> Behaviours behaviours(InteractiveLabeling<L> interactiveLabeling);
 }

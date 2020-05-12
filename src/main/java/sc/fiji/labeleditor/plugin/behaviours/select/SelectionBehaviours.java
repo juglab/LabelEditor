@@ -50,10 +50,10 @@ public class SelectionBehaviours<L> implements SelectionModel< L >, LabelEditorB
 	@Override
 	public void install(Behaviours behaviours, Component panel) {
 
-		behaviours.behaviour(getToggleLabelSelectionBehaviour(), TOGGLE_LABEL_SELECTION_NAME, TOGGLE_LABEL_SELECTION_TRIGGERS);
-		behaviours.behaviour(getSelectFirstLabelBehaviour(), SELECT_FIRST_LABEL_NAME, SELECT_FIRST_LABEL_TRIGGERS);
-		behaviours.behaviour(getAddFirstLabelToSelectionBehaviour(), ADD_LABEL_TO_SELECTION_NAME, ADD_LABEL_TO_SELECTION_TRIGGERS);
-		behaviours.behaviour(getSelectAllBehaviour(), SELECT_ALL_LABELS_NAME, SELECT_ALL_LABELS_TRIGGERS);
+		behaviours.behaviour(getToggleLabelSelectionBehaviour(), TOGGLE_LABEL_SELECTION_NAME + labeling.toString(), TOGGLE_LABEL_SELECTION_TRIGGERS);
+		behaviours.behaviour(getSelectFirstLabelBehaviour(), SELECT_FIRST_LABEL_NAME + labeling.toString(), SELECT_FIRST_LABEL_TRIGGERS);
+		behaviours.behaviour(getAddFirstLabelToSelectionBehaviour(), ADD_LABEL_TO_SELECTION_NAME + labeling.toString(), ADD_LABEL_TO_SELECTION_TRIGGERS);
+		behaviours.behaviour(getSelectAllBehaviour(), SELECT_ALL_LABELS_NAME + labeling.toString(), SELECT_ALL_LABELS_TRIGGERS);
 
 	}
 

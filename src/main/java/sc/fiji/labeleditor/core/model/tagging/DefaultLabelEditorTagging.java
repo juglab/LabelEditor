@@ -47,7 +47,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	public void resumeListeners() {
 		listenersPaused = false;
 		if(keptEvents.size() > 0) {
-			System.out.println(keptEvents);
+//			System.out.println(keptEvents);
 			listeners.list.forEach(listener -> listener.tagChanged(keptEvents));
 			keptEvents.clear();
 		}

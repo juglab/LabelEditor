@@ -46,14 +46,12 @@ public class BdvInterface implements LabelEditorInterface {
 	private Context context;
 
 	private final BdvHandle bdvHandle;
-	private final Behaviours behaviours;
 
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
+	private final Map<InteractiveLabeling<?>, Behaviours> behavioursMap = new HashMap<>();
 
 	public BdvInterface(BdvHandle bdvHandle) {
 		this.bdvHandle = bdvHandle;
-		this.behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
-		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor");
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
@@ -100,13 +98,21 @@ public class BdvInterface implements LabelEditorInterface {
 	public <L> void installBehaviours(InteractiveLabeling<L> labeling) {
 		SelectionBehaviours<L> selectionModel = new SelectionBehaviours<>();
 		labeling.setSelectionModel(selectionModel);
-		install(labeling, selectionModel);
-		install(labeling, new FocusBehaviours<>());
-		install(labeling, new LabelingModificationBehaviours<>());
-		install(labeling, new PopupBehaviours<>());
+		Behaviours behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor");
+		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor" + labeling.toString());
+		behavioursMap.put(labeling, behaviours);
+		install(labeling, selectionModel, behaviours);
+		install(labeling, new FocusBehaviours<>(), behaviours);
+		install(labeling, new LabelingModificationBehaviours<>(), behaviours);
+		install(labeling, new PopupBehaviours<>(), behaviours);
 	}
 
-	private <L> void install(InteractiveLabeling<L> labeling, LabelEditorBehaviours<L> behavioursAdded) {
+	@Override
+	public <L> Behaviours behaviours(InteractiveLabeling<L> labeling) {
+		return behavioursMap.get(labeling);
+	}
+
+	private <L> void install(InteractiveLabeling<L> labeling, LabelEditorBehaviours<L> behavioursAdded, Behaviours behaviours) {
 		if(context != null) context.inject(behavioursAdded);
 		behavioursAdded.init(labeling);
 		behavioursAdded.install(behaviours, bdvHandle.getViewerPanel().getDisplay());
@@ -116,17 +122,12 @@ public class BdvInterface implements LabelEditorInterface {
 	public <L> void install(LabelEditorBehaviours<L> behaviour, InteractiveLabeling<L> labeling) {
 		if(context != null) context.inject(behaviour);
 		behaviour.init(labeling);
-		behaviour.install(behaviours(), getComponent());
+		behaviour.install(behavioursMap.get(labeling), getComponent());
 	}
 
 	@Override
 	public void onViewChange(ViewChangedEvent viewChangedEvent) {
 		bdvHandle.getViewerPanel().requestRepaint();
-	}
-
-	@Override
-	public Behaviours behaviours() {
-		return behaviours;
 	}
 
 	@Override
