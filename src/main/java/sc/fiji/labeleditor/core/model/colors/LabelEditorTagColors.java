@@ -48,15 +48,15 @@ public interface LabelEditorTagColors {
 		return getBorderColor(LabelEditorTag.DEFAULT);
 	}
 
-	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueBorderColor(Object valueTagIdentifier) {
-		LabelEditorColorset colorset = getColorset(valueTagIdentifier);
+	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueBorderColor(Object tag) {
+		LabelEditorColorset colorset = getColorset(tag);
 		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset);
 		colorset.put(LabelEditorTargetComponent.BORDER, color);
 		return color;
 	}
 
-	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueFaceColor(Object valueTagIdentifier, T minVal, T maxVal) {
-		LabelEditorColorset colorset = getColorset(valueTagIdentifier);
+	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueFaceColor(Object tag, T minVal, T maxVal) {
+		LabelEditorColorset colorset = getColorset(tag);
 		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset, minVal, maxVal);
 		colorset.put(LabelEditorTargetComponent.FACE, color);
 		return color;

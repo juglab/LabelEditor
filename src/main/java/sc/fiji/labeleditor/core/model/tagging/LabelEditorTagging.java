@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.core.model.tagging;
 
+import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.listeners.Listeners;
 
 import java.util.Map;
@@ -30,4 +31,8 @@ public interface LabelEditorTagging<L> {
 	Set filterLabelsWithAnyTag(Set<L> labels, Set<Object> tags);
 
 	void toggleTag(Object tag, L label);
+
+	void addValueToLabel(Object tag, Object value, L label);
+
+	Object getValue(Object tag, L label);
 }

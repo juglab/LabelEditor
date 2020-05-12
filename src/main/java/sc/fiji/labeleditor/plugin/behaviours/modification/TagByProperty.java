@@ -5,7 +5,6 @@ import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.plugin.Parameter;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorValueTag;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
 import java.util.Random;
@@ -26,9 +25,8 @@ public class TagByProperty<L> {
 		Set<L> labels = labeling.getLabelSetInScope();
 		Random random = new Random();
 		labels.forEach(label -> {
-			LabelEditorValueTag circularity = new LabelEditorValueTag<>("circularity", new IntType(random.nextInt(100)));
-			labeling.model().tagging().addTagToLabel(circularity, label);
-			labeling.model().colors().getColorset(circularity.getIdentifier()).put(
+			labeling.model().tagging().addValueToLabel("circularity", new IntType(random.nextInt(100)), label);
+			labeling.model().colors().getColorset("circularity").put(
 					LabelEditorTargetComponent.FACE,
 					ARGBType.rgba(0,0,255,250),
 					ARGBType.rgba(255,0,0,250),

@@ -2,12 +2,9 @@ package sc.fiji.labeleditor.plugin.renderers;
 
 import net.imglib2.type.numeric.IntegerType;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.model.colors.LabelEditorColor;
-import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
-import sc.fiji.labeleditor.core.model.colors.LabelEditorValueColor;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorValueTag;
+import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 import net.imglib2.RandomAccessibleInterval;
@@ -15,8 +12,6 @@ import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
-import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,12 +66,13 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		int[] labelColors = new int[sortedLabels.size()];
 		for (int j = 0; j < labelColors.length; j++) {
 
-			Set<Object> labelTags = model.tagging().getTags(sortedLabels.get(j));
+			L label = sortedLabels.get(j);
+			Set<Object> labelTags = model.tagging().getTags(label);
 			ArrayList<Object> sortedTags = new ArrayList<>(labelTags);
 			sortedTags.sort(model.getTagComparator());
 			sortedTags.add(LabelEditorTag.DEFAULT);
 
-			labelColors[j] = mixColorsAdditive(sortedTags, tagColors, targetComponent);
+			labelColors[j] = mixColorsAdditive(label, sortedTags, tagColors, targetComponent, model.tagging());
 		}
 
 		return ColorMixingUtils.mixColorsOverlay(labelColors);
@@ -115,49 +111,39 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		return lut;
 	}
 
-	public static int mixColorsAdditive(List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent) {
+	public static <L> int mixColorsAdditive(L label, List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging) {
 
-		int[] colors = getTagColors(tags, tagColors, targetComponent);
+		int[] colors = getTagColors(label, tags, tagColors, targetComponent, tagging);
 		return ColorMixingUtils.mixColorsAdditive(colors);
 	}
 
-	public static int mixColorsOverlay(List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent) {
+	public static <L> int mixColorsOverlay(L label, List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging) {
 
-		int[] colors = getTagColors(tags, tagColors, targetComponent);
+		int[] colors = getTagColors(label, tags, tagColors, targetComponent, tagging);
 		return ColorMixingUtils.mixColorsOverlay(colors);
 	}
 
-	private static int[] getTagColors(List< Object > tags,
-			LabelEditorTagColors tagColors, Object targetComponent)
+	private static <L> int[] getTagColors(L label, List< Object > tags,
+	                                      LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging)
 	{
 		int[] colors = new int[tags.size()];
 		for (int i = 0; i < colors.length; i++) {
 			Object tag = tags.get(i);
-			int color = getColor(tagColors, targetComponent, tag);
+			Object value = tagging.getValue(tag, label);
+			int color = tagColors.getColorset(tag).get(targetComponent).get(value);
 			colors[i] = color;
 		}
 		return colors;
 	}
 
-	private static int getColor(LabelEditorTagColors tagColors, Object targetComponent, Object tag) {
-		int color = 0;
-		if(LabelEditorValueTag.class.isAssignableFrom(tag.getClass())){
-			LabelEditorColorset colorset = tagColors.getColorset(((LabelEditorValueTag) tag).getIdentifier());
-			LabelEditorColor targetColor = colorset.get(targetComponent);
-			if(targetColor == null) return 0;
-			if(LabelEditorValueColor.class.isAssignableFrom(targetColor.getClass())) {
-				RealType value = ((LabelEditorValueTag) tag).getValue();
-				color = ((LabelEditorValueColor)targetColor).getColor(value);
-			} else {
-				color = targetColor.get();
-			}
-		} else {
-			LabelEditorColorset colorset = tagColors.getColorset(tag);
-			if(colorset != null && colorset.containsKey(targetComponent)) {
-				color = colorset.get(targetComponent).get();
-			}
+	static <L> int[] getTagColors(List< Object > tags, LabelEditorTagColors tagColors, Object targetComponent)
+	{
+		int[] colors = new int[tags.size()];
+		for (int i = 0; i < colors.length; i++) {
+			int color = tagColors.getColorset(tags.get(i)).get(targetComponent).get();
+			colors[i] = color;
 		}
-		return color;
+		return colors;
 	}
 
 	void printLUT() {

@@ -14,7 +14,7 @@ public class DefaultLabelEditorColorset extends HashMap<Object, LabelEditorColor
 
 	@Override
 	public LabelEditorColor put(Object o, int color) {
-		LabelEditorColor put = super.put(o, new LabelEditorColor(this, color));
+		LabelEditorColor put = super.put(o, new DefaultLabelEditorColor(this, color));
 		update();
 		return put;
 	}
@@ -62,7 +62,7 @@ public class DefaultLabelEditorColorset extends HashMap<Object, LabelEditorColor
 
 	@Override
 	public LabelEditorColor get(Object o) {
-		return computeIfAbsent(o, k -> new LabelEditorColor(this, 0));
+		return computeIfAbsent(o, k -> new DefaultLabelEditorColor(this, 0));
 	}
 
 }

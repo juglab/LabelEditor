@@ -118,6 +118,36 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	}
 
 	@Override
+	public void addValueToLabel(Object tag, Object value, L label) {
+		Integer row = labelToRow.get(label);
+		if(row == null) {
+			table.appendRow();
+			row = table.getRowCount()-1;
+			labelToRow.put(label, row);
+			rowToLabel.put(row, label);
+		}
+		Integer col = tagToColumn.get(tag);
+		if(col == null) {
+			table.appendColumn();
+			col = table.getColumnCount()-1;
+			tagToColumn.put(tag, col);
+			columnToTag.put(col, tag);
+		}
+		if(table.get(col, row) != null) return;
+		table.set(col, row, value);
+		notifyListeners(tag, label, TagChangedEvent.Action.ADDED);
+	}
+
+	@Override
+	public Object getValue(Object tag, L label) {
+		Integer row = labelToRow.get(label);
+		if(row == null) return null;
+		Integer col = tagToColumn.get(tag);
+		if(col == null) return null;
+		return table.get(col, row);
+	}
+
+	@Override
 	public void removeTagFromLabel(Object tag, L label) {
 		Integer row = labelToRow.get(label);
 		if(row == null) return;

@@ -4,15 +4,10 @@ import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
-import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.IntType;
-import org.scijava.ui.UIService;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorValueColor;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorValueTag;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
 import java.io.IOException;
 import java.util.Random;
@@ -38,10 +33,8 @@ public class E08_ValueTags {
 		int i = 0;
 		for (Integer label : labeling.getMapping().getLabels()) {//for each label, assign a tag with a random value between 0 and 100
 
-			LabelEditorValueTag randomValue = new LabelEditorValueTag<>("random", new IntType(random.nextInt(100)));
-
-			model.tagging().addTagToLabel(randomValue, label);
-			model.tagging().addTagToLabel(new LabelEditorValueTag<>("index", new IntType(i)), label);
+			model.tagging().addValueToLabel("random", new IntType(random.nextInt(100)), label);
+			model.tagging().addValueToLabel("index", new IntType(i), label);
 
 			i++;
 		}
