@@ -7,8 +7,6 @@ import java.util.Set;
 
 public interface LabelEditorTagging<L> {
 
-	Map<L, Set<Object>> get();
-
 	void addTagToLabel(Object tag, L label);
 
 	void removeTagFromLabel(Object tag, L label);
