@@ -3,11 +3,13 @@ package sc.fiji.labeleditor.howto.advanced;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
+import bdv.util.BdvStackSource;
 import net.imagej.ImageJ;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.view.Views;
@@ -45,8 +47,8 @@ public class E08_MultipleViewers {
 		DefaultLabelEditorModel<Integer> model1 = new DefaultLabelEditorModel<>(labeling1);
 		DefaultLabelEditorModel<Integer> model2 = new DefaultLabelEditorModel<>(labeling2);
 
-		model1.colors().getDefaultFaceColor().set(255,255,0,55);
-		model2.colors().getDefaultFaceColor().set(255,0,255,55);
+		model1.colors().getDefaultFaceColor().set(100,30,0,55);
+		model2.colors().getDefaultFaceColor().set(0,55,55,55);
 
 		JPanel viewer = new JPanel(new MigLayout());
 		JFrame frame = new JFrame("Label editor");
@@ -59,8 +61,10 @@ public class E08_MultipleViewers {
 		BdvInterface.control(model2, panel1.getBdvHandle(), ij.context());
 		BdvInterface.control(model1, panel2.getBdvHandle(), ij.context());
 		BdvInterface.control(model2, panel2.getBdvHandle(), ij.context());
-		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel1));
-		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel2));
+		BdvStackSource<T> source = BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel1));
+		source.setColor(new ARGBType(ARGBType.rgba(100, 100, 100,255)));
+		source = BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel2));
+		source.setColor(new ARGBType(ARGBType.rgba(100, 100, 100,255)));
 
 		viewer.add( panel1.getViewerPanel(), "span, grow, push" );
 		viewer.add( panel2.getViewerPanel(), "span, grow, push" );

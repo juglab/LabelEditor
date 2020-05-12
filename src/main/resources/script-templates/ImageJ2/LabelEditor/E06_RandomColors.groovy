@@ -1,6 +1,6 @@
+#@OUTPUT sc.fiji.labeleditor.core.model.DefaultLabelEditorModel(label="my model") model
 #@ OpService ops
 #@ IOService io
-#@ UIService ui
 
 import net.imglib2.algorithm.labeling.ConnectedComponents.StructuringElement
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel
@@ -20,5 +20,3 @@ for (def label : labeling.getMapping().getLabels()) {
     // add random color to each tag
     model.colors().getBorderColor(label).set(random.nextInt(255), random.nextInt(255), random.nextInt(255), 255)
 }
-
-ui.show(model)

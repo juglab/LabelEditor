@@ -1,4 +1,4 @@
-#@ UIService ui
+#@OUTPUT sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel(label="my model") model
 
 import net.imglib2.img.array.ArrayImgs
 import net.imglib2.roi.labeling.ImgLabeling
@@ -42,5 +42,3 @@ model.tagging().addTagToLabel(TAG2, LABEL4)
 
 model.colors().getFaceColor(TAG1).set(0,255,255,100)
 model.colors().getFaceColor(TAG2).set(255,0,255,100)
-
-ui.show(model)

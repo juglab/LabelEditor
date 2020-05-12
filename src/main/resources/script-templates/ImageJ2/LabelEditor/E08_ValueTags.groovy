@@ -1,12 +1,11 @@
+#@OUTPUT sc.fiji.labeleditor.core.model.DefaultLabelEditorModel(label="my model") model
 #@ OpService ops
 #@ IOService io
-#@ UIService ui
 
 
 import net.imglib2.algorithm.labeling.ConnectedComponents.StructuringElement
 import net.imglib2.type.numeric.integer.IntType
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorValueTag
 
 input = io.open("https://samples.fiji.sc/blobs.png")
 
@@ -23,9 +22,8 @@ random = new Random();
 // iterate over all labels
 labeling.getMapping().getLabels().each { def label ->
 
-    //for each label, assign a tag with a random value between 0 and 100
-    randomValue = new LabelEditorValueTag("random", new IntType(random.nextInt(100)));
-    model.tagging().addTagToLabel(randomValue, label);
+    //for each label, assign a random value between 0 and 100
+    model.tagging().addValueToLabel("random", new IntType(random.nextInt(100)), label);
 
 }
 
@@ -37,5 +35,3 @@ color.setMaxColor(255,0,0,250)
 
 // set the face color for selected labels to white
 model.colors().getSelectedFaceColor().set(255,255,255)
-
-ui.show(model)

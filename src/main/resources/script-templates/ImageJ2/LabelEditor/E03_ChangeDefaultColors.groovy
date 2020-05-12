@@ -1,6 +1,6 @@
+#@OUTPUT sc.fiji.labeleditor.core.model.DefaultLabelEditorModel(label="my model") model
 #@ OpService ops
 #@ IOService io
-#@ UIService ui
 
 import net.imglib2.algorithm.labeling.ConnectedComponents
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel
@@ -19,5 +19,3 @@ model.colors().getSelectedBorderColor().set(0,255,0)
 model.colors().getSelectedFaceColor().set(255,255,0,100)
 model.colors().getFocusBorderColor().set(255,0,0)
 model.colors().getFocusFaceColor().set(0,0,0,0)
-
-ui.show(model)

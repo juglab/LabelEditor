@@ -1,6 +1,6 @@
+#@OUTPUT sc.fiji.labeleditor.core.model.DefaultLabelEditorModel(label="my model") model
 #@ OpService ops
 #@ IOService io
-#@ UIService ui
 
 import net.imglib2.algorithm.labeling.ConnectedComponents
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel
@@ -32,5 +32,3 @@ model.tagging().addTagToLabel(TAG3, new Integer(25))
 model.colors().getFaceColor(TAG1).set(255,50, 0)
 model.colors().getFaceColor(TAG2).set(0,50, 255)
 model.colors().getFaceColor(TAG3).set(50,255, 0)
-
-ui.show(model)

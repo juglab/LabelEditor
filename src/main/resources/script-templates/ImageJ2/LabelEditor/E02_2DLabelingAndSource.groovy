@@ -1,6 +1,6 @@
+#@OUTPUT sc.fiji.labeleditor.core.model.DefaultLabelEditorModel(label="my model") model
 #@ OpService ops
 #@ IOService io
-#@ UIService ui
 
 import net.imglib2.algorithm.labeling.ConnectedComponents.StructuringElement
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel
@@ -12,5 +12,3 @@ binary = ops.threshold().otsu(input)
 labeling = ops.labeling().cca(binary, StructuringElement.EIGHT_CONNECTED)
 
 model = new DefaultLabelEditorModel(labeling, input)
-
-ui.show(model)
