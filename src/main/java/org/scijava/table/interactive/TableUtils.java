@@ -17,6 +17,7 @@ class TableUtils
 			}
 		};
 
+		model.addColumn(""); // row header
 		for ( int col = 0; col < numCols; ++col )
 		{
 			model.addColumn( genericTable.getColumnHeader( col ) );
@@ -24,11 +25,13 @@ class TableUtils
 
 		for ( int row = 0; row < genericTable.getRowCount(); ++row )
 		{
-			final Object[] rowEntries = new Object[ numCols ];
+			final Object[] rowEntries = new Object[ numCols+1 ];
+
+			rowEntries[0] = genericTable.getRowHeader(row);
 
 			for ( int col = 0; col < numCols; ++col )
 			{
-				rowEntries[ col ] = genericTable.get( col, row );
+				rowEntries[ col+1 ] = genericTable.get( col, row );
 			}
 
 			model.addRow( rowEntries );
