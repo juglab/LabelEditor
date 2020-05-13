@@ -1,6 +1,9 @@
 package sc.fiji.labeleditor.core.model.tagging;
 
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+
 public class TagChangedEvent<L> {
+	public LabelEditorModel model;
 	public Object tag;
 	public L label;
 	public Action action;

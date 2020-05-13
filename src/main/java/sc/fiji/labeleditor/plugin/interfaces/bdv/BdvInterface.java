@@ -3,6 +3,7 @@ package sc.fiji.labeleditor.plugin.interfaces.bdv;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
+import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import bdv.viewer.ViewerPanel;
 import net.imglib2.Localizable;
@@ -37,8 +38,10 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BdvInterface implements LabelEditorInterface {
 
@@ -46,6 +49,8 @@ public class BdvInterface implements LabelEditorInterface {
 	private Context context;
 
 	private final BdvHandle bdvHandle;
+	private final LabelEditorOverlay overlay = new LabelEditorOverlay();
+	private boolean overlayAdded = false;
 
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
 	private final Map<InteractiveLabeling<?>, Behaviours> behavioursMap = new HashMap<>();
@@ -89,12 +94,8 @@ public class BdvInterface implements LabelEditorInterface {
 		Localizable pos = getDataPositionAtMouse();
 		if(Intervals.contains(labeling.getLabelingInScope(), pos)) {
 			ra.setPosition(pos);
-			//FIXME
-//			bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
 			return ra.get();
 		}
-		//FIXME
-//		bdvHandle.getViewerPanel().getDisplay().setToolTipText(null);
 		return null;
 	}
 
@@ -152,10 +153,11 @@ public class BdvInterface implements LabelEditorInterface {
 
 	@Override
 	public void onTagChange(List<TagChangedEvent> tagChangedEvents) {
-		//FIXME
-//		if(labelsAtCursor == null) return;
-//		bdvHandle.getViewerPanel().getDisplay().setToolTipText(view.getToolTip(labelsAtCursor));
-//		showToolTip(bdvHandle.getViewerPanel().getDisplay());
+		Set<LabelEditorModel> models = new HashSet<>();
+		for (TagChangedEvent tagChangedEvent : tagChangedEvents) {
+			models.add(tagChangedEvent.model);
+		}
+		overlay.updateContent(models);
 	}
 
 	@Override
@@ -171,18 +173,11 @@ public class BdvInterface implements LabelEditorInterface {
 		if(rai == null) return null;
 		final BdvSource source = BdvFunctions.show(rai, name, Bdv.options().addTo(bdvHandle));
 		source.setActive(true);
-		return source;
-	}
-
-	public static void showToolTip(JComponent component) {
-		java.awt.Point locationOnScreen = MouseInfo.getPointerInfo().getLocation();
-		java.awt.Point locationOnComponent = new java.awt.Point(locationOnScreen);
-		SwingUtilities.convertPointFromScreen(locationOnComponent, component);
-		if (component.contains(locationOnComponent)) {
-			ToolTipManager.sharedInstance().mouseMoved(
-					new MouseEvent(component, -1, System.currentTimeMillis(), 0, locationOnComponent.x, locationOnComponent.y,
-							locationOnScreen.x, locationOnScreen.y, 0, false, 0));
+		if(!overlayAdded) {
+			overlayAdded = true;
+			BdvFunctions.showOverlay(overlay, "labeleditor", BdvOptions.options().addTo(bdvHandle));
 		}
+		return source;
 	}
 
 	public Map<LabelEditorView<?>, List<BdvSource>> getSources() {

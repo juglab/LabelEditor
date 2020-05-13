@@ -97,7 +97,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	// TODO: Consider using setters instead of protected methods.
 	protected void initTagging() {
-		tagging = new DefaultLabelEditorTagging<>();
+		tagging = new DefaultLabelEditorTagging<>(this);
 	}
 
 	protected void initLabelOrdering(ImgLabeling<L, ? extends IntegerType<?>> labeling) {

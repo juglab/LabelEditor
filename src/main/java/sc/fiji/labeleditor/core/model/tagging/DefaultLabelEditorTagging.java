@@ -7,6 +7,7 @@ import org.scijava.table.DefaultDoubleTable;
 import org.scijava.table.DefaultGenericTable;
 import org.scijava.table.GenericTable;
 import org.scijava.table.Table;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +23,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	@Parameter
 	LogService log;
 
+	private final LabelEditorModel model;
 	private final GenericTable table = new DefaultGenericTable();
 	private final HashMap<Object, Integer> tagToColumn = new HashMap<>();
 	private final HashMap<Integer, Object> columnToTag = new HashMap<>();
@@ -32,6 +34,10 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	private final Listeners.List<TagChangeListener> listeners = new Listeners.SynchronizedList<>();
 	private boolean listenersPaused = false;
 	private List<TagChangedEvent> keptEvents = new ArrayList<>();
+
+	public DefaultLabelEditorTagging(LabelEditorModel model) {
+		this.model = model;
+	}
 
 	@Override
 	public Listeners< TagChangeListener > listeners() {
@@ -88,10 +94,11 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		}
 	}
 
-	private void notifyListeners(Object tag, L label, TagChangedEvent.Action action) {
+	private void notifyListeners(Object tag, L label, LabelEditorModel model, TagChangedEvent.Action action) {
 		TagChangedEvent e = new TagChangedEvent();
 		e.action = action;
 		e.tag = tag;
+		e.model = model;
 		e.label = label;
 		notifyListeners(e);
 	}
@@ -114,7 +121,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		}
 		if(table.get(col, row) != null) return;
 		table.set(col, row, true);
-		notifyListeners(tag, label, TagChangedEvent.Action.ADDED);
+		notifyListeners(tag, label, model, TagChangedEvent.Action.ADDED);
 	}
 
 	@Override
@@ -135,7 +142,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		}
 		if(table.get(col, row) != null) return;
 		table.set(col, row, value);
-		notifyListeners(tag, label, TagChangedEvent.Action.ADDED);
+		notifyListeners(tag, label, model, TagChangedEvent.Action.ADDED);
 	}
 
 	@Override
@@ -155,7 +162,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		if(col == null) return;
 		if(table.get(col, row) == null) return;
 		table.set(col, row, null);
-		notifyListeners(tag, label, TagChangedEvent.Action.REMOVED);
+		notifyListeners(tag, label, model, TagChangedEvent.Action.REMOVED);
 	}
 
 	@Override
@@ -176,7 +183,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		for (int i = 0; i < table.getRowCount(); i++) {
 			boolean existed = table.get(col, i) != null;
 			table.set(col, i, null);
-			if(existed) notifyListeners(tag, rowToLabel.get(i), TagChangedEvent.Action.REMOVED);
+			if(existed) notifyListeners(tag, rowToLabel.get(i),model,  TagChangedEvent.Action.REMOVED);
 		}
 	}
 
