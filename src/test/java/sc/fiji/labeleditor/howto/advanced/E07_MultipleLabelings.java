@@ -44,8 +44,9 @@ public class E07_MultipleLabelings {
 		frame.setMinimumSize(new Dimension(500,500));
 		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D());
 
-		BdvInterface.control(model1, panel.getBdvHandle(), ij.context());
-		BdvInterface.control(model2, panel.getBdvHandle(), ij.context());
+		BdvInterface bdvInterface = new BdvInterface(panel.getBdvHandle(), ij.context());
+		bdvInterface.control(model1);
+		bdvInterface.control(model2);
 		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
 
 		frame.setContentPane(panel.getViewerPanel());

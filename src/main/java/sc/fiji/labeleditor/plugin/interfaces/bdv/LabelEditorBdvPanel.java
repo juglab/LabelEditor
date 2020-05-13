@@ -75,7 +75,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view) {
-		BdvInterface interfaceInstance = new BdvInterface(bdvHandlePanel);
+		BdvInterface interfaceInstance = new BdvInterface(bdvHandlePanel, context);
 		return add(model, view, interfaceInstance);
 	}
 

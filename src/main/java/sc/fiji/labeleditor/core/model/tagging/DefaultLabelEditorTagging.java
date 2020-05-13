@@ -83,7 +83,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		if(listenersPaused) {
 			keptEvents.add(e);
 		} else {
-			System.out.println(e);
+//			System.out.println(e);
 			listeners.list.forEach(listener -> listener.tagChanged(Collections.singletonList(e)));
 		}
 	}

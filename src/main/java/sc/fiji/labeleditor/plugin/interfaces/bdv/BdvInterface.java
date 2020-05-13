@@ -50,12 +50,13 @@ public class BdvInterface implements LabelEditorInterface {
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
 	private final Map<InteractiveLabeling<?>, Behaviours> behavioursMap = new HashMap<>();
 
-	public BdvInterface(BdvHandle bdvHandle) {
+	public BdvInterface(BdvHandle bdvHandle, Context context) {
 		this.bdvHandle = bdvHandle;
+		this.context = context;
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
-		BdvInterface interfaceInstance = new BdvInterface(bdvHandle);
+		BdvInterface interfaceInstance = new BdvInterface(bdvHandle, context);
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
@@ -67,6 +68,20 @@ public class BdvInterface implements LabelEditorInterface {
 		if(context != null) context.inject(view);
 		view.addDefaultRenderers();
 		return control(model, view, handle, context);
+	}
+
+	public <L> DefaultInteractiveLabeling<L> control(LabelEditorModel<L> model) {
+		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
+		if(context != null) context.inject(view);
+		view.addDefaultRenderers();
+		return control(model, view);
+	}
+
+	public <L> DefaultInteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view) {
+		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, this);
+		if(context != null) context.inject(interactiveLabeling);
+		interactiveLabeling.initialize();
+		return interactiveLabeling;
 	}
 
 	public <L> LabelingType<L> findLabelsAtMousePosition(int x, int y, InteractiveLabeling<L> labeling) {
