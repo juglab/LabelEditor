@@ -94,7 +94,7 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		}
 	}
 
-	private void notifyListeners(Object tag, L label, LabelEditorModel model, TagChangedEvent.Action action) {
+	private synchronized void notifyListeners(Object tag, L label, LabelEditorModel model, TagChangedEvent.Action action) {
 		TagChangedEvent e = new TagChangedEvent();
 		e.action = action;
 		e.tag = tag;
