@@ -49,7 +49,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		updateRenderers();
 	}
 
-	public void updateRenderers() {
+	public synchronized void updateRenderers() {
 		if(model == null || model.labeling() == null) return;
 		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
 		notifyListeners();

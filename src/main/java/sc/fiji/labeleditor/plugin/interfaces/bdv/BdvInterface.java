@@ -142,7 +142,7 @@ public class BdvInterface implements LabelEditorInterface {
 	}
 
 	@Override
-	public void onViewChange(ViewChangedEvent viewChangedEvent) {
+	public synchronized void onViewChange(ViewChangedEvent viewChangedEvent) {
 		bdvHandle.getViewerPanel().requestRepaint();
 	}
 
@@ -152,7 +152,7 @@ public class BdvInterface implements LabelEditorInterface {
 	}
 
 	@Override
-	public void onTagChange(List<TagChangedEvent> tagChangedEvents) {
+	public synchronized void onTagChange(List<TagChangedEvent> tagChangedEvents) {
 		Set<LabelEditorModel> models = new HashSet<>();
 		for (TagChangedEvent tagChangedEvent : tagChangedEvents) {
 			models.add(tagChangedEvent.model);

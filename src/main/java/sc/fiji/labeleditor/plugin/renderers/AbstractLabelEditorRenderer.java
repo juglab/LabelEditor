@@ -1,5 +1,10 @@
 package sc.fiji.labeleditor.plugin.renderers;
 
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.converter.Converter;
+import net.imglib2.converter.Converters;
+import net.imglib2.roi.labeling.LabelingMapping;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.IntegerType;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
@@ -7,11 +12,6 @@ import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.converter.Converter;
-import net.imglib2.converter.Converters;
-import net.imglib2.roi.labeling.LabelingMapping;
-import net.imglib2.type.numeric.ARGBType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		updateLUT(model.labeling().getMapping(), model.colors(), LabelEditorTargetComponent.FACE);
 	}
 
-	protected void updateLUT(LabelingMapping<L> mapping, LabelEditorTagColors tagColors, LabelEditorTargetComponent targetComponent) {
+	protected synchronized void updateLUT(LabelingMapping<L> mapping, LabelEditorTagColors tagColors, LabelEditorTargetComponent targetComponent) {
 
 		if(lut == null || lut.length != model.labeling().getMapping().numSets()) {
 			lut = new int[model.labeling().getMapping().numSets()];
@@ -101,13 +101,13 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 	}
 
 	@Override
-	public RandomAccessibleInterval<ARGBType> getOutput() {
+	public synchronized RandomAccessibleInterval<ARGBType> getOutput() {
 		Converter<? super IntegerType<?>, ARGBType> converter = (i, o) -> o.set(getLUT()[i.getInteger()]);
 		return Converters.convert(model.labeling().getIndexImg(), converter,
 				new ARGBType());
 	}
 
-	protected int[] getLUT() {
+	protected synchronized int[] getLUT() {
 		return lut;
 	}
 
