@@ -65,6 +65,7 @@ public class BdvInterface implements LabelEditorInterface {
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
+		interfaceInstance.display(view, new BdvOptions());
 		return interactiveLabeling;
 	}
 
@@ -86,6 +87,7 @@ public class BdvInterface implements LabelEditorInterface {
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, this);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
+		display(view, new BdvOptions());
 		return interactiveLabeling;
 	}
 
@@ -165,17 +167,25 @@ public class BdvInterface implements LabelEditorInterface {
 		ArrayList<BdvSource> sources = new ArrayList<>();
 		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());
 		Collections.reverse(renderers);
-		renderers.forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName())));
+		renderers.forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName(), new BdvOptions())));
 		this.sources.put(view, sources);
 	}
 
-	private BdvSource display(RandomAccessibleInterval rai, String name) {
+	public <L> void display(LabelEditorView<L> view, BdvOptions options) {
+		ArrayList<BdvSource> sources = new ArrayList<>();
+		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());
+		Collections.reverse(renderers);
+		renderers.forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName(), options)));
+		this.sources.put(view, sources);
+	}
+
+	private BdvSource display(RandomAccessibleInterval rai, String name, BdvOptions options) {
 		if(rai == null) return null;
-		final BdvSource source = BdvFunctions.show(rai, name, Bdv.options().addTo(bdvHandle));
+		final BdvSource source = BdvFunctions.show(rai, name, options.addTo(bdvHandle));
 		source.setActive(true);
 		if(!overlayAdded) {
 			overlayAdded = true;
-			BdvFunctions.showOverlay(overlay, "labeleditor", BdvOptions.options().addTo(bdvHandle));
+			BdvFunctions.showOverlay(overlay, "labeleditor", options.addTo(bdvHandle));
 		}
 		return source;
 	}

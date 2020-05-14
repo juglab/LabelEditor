@@ -68,21 +68,34 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model) {
+		return add(model, new BdvOptions());
+	}
+
+	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, BdvOptions options) {
 		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
 		if(context != null) context.inject(view);
 		view.addDefaultRenderers();
-		return add(model, view);
+		return add(model, view, options);
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view) {
-		BdvInterface interfaceInstance = new BdvInterface(bdvHandlePanel, context);
-		return add(model, view, interfaceInstance);
+		return add(model, view, new BdvOptions());
 	}
 
-	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface interfaceInstance) {
+	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvOptions options) {
+		BdvInterface interfaceInstance = new BdvInterface(bdvHandlePanel, context);
+		return add(model, view, interfaceInstance, options);
+	}
+
+	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvInterface interfaceInstance) {
+		return add(model, view, interfaceInstance, new BdvOptions());
+	}
+
+	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvInterface interfaceInstance, BdvOptions options) {
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
+		interfaceInstance.display(view, options);
 		return interactiveLabeling;
 	}
 

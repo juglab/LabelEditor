@@ -1,5 +1,6 @@
 package sc.fiji.labeleditor.plugin.imagej;
 
+import bdv.util.AxisOrder;
 import bdv.util.BdvOptions;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
@@ -30,8 +31,15 @@ public class SwingTimeSliceLabelEditorModelDisplayViewer extends EasySwingDispla
 
 	@Override
 	protected JPanel createDisplayPanel(TimeSliceLabelEditorModel model) {
-		TimeSliceLabelEditorBdvPanel panel = new TimeSliceLabelEditorBdvPanel(context, new BdvOptions().is2D());
-		panel.add(model);
+		BdvOptions options = new BdvOptions();
+		if(model.getTimeDimension() == 2) {
+			options.axisOrder(AxisOrder.XYT)
+					.is2D();
+		} else {
+			options.axisOrder(AxisOrder.XYZT);
+		}
+		TimeSliceLabelEditorBdvPanel panel = new TimeSliceLabelEditorBdvPanel(context, options);
+		panel.add(model, options);
 		return panel;
 	}
 

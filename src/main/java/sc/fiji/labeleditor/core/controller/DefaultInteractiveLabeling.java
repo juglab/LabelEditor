@@ -43,7 +43,6 @@ public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, In
 		model.tagging().listeners().remove(interfaceInstance::onTagChange);
 		view.listeners().add(interfaceInstance::onViewChange);
 		model.tagging().listeners().add(interfaceInstance::onTagChange);
-		interfaceInstance.display(view);
 		interfaceInstance.installBehaviours(this);
 	}
 
