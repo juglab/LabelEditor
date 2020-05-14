@@ -4,13 +4,14 @@ import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelRegion;
+import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.type.numeric.integer.IntType;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorValueColor;
 
 import java.io.IOException;
-import java.util.Random;
 
 /**
  * How to assign value tags in the LabelEditor
@@ -29,24 +30,17 @@ public class E08_ValueTags {
 
 		LabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling, input);
 
-		Random random = new Random();
-		int i = 0;
-		for (Integer label : labeling.getMapping().getLabels()) {//for each label, assign a tag with a random value between 0 and 100
-
-			model.tagging().addValueToLabel("random", new IntType(random.nextInt(100)), label);
-			model.tagging().addValueToLabel("index", new IntType(i), label);
-
-			i++;
+		LabelRegions<Integer> regions = new LabelRegions<>(labeling);
+		for (Integer label : labeling.getMapping().getLabels()) {
+			//add the size of the label region as a value to the label
+			LabelRegion<Integer> region = regions.getLabelRegion(label);
+			model.tagging().addValueToLabel("size", new IntType((int) region.size()), label);
 		}
 
-		// create a color for this value tag by passing the tag identifier and the min / max values of this tag
-		LabelEditorValueColor<IntType> color = model.colors().makeValueFaceColor("random", new IntType(0), new IntType(100));
-		// set the min and max colors for the specified value range
-		color.setMinColor(0,0,255,250);
-		color.setMaxColor(0,0,0,0);
-		LabelEditorValueColor<IntType> indexColor = model.colors().makeValueFaceColor("index", new IntType(0), new IntType(100));
-		indexColor.setMinColor(0,255,0,255);
-		indexColor.setMaxColor(0,0,0,0);
+		// create a color and the min / max values of this tag
+		LabelEditorValueColor<IntType> indexColor = model.colors().makeValueFaceColor("size", new IntType(0), new IntType(800));
+		indexColor.setMinColor(0,0,0,0);
+		indexColor.setMaxColor(0,255,0,255);
 
 		model.colors().getSelectedFaceColor().set(255,255,255);
 
