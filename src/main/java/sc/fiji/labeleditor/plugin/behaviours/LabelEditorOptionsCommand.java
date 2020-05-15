@@ -30,7 +30,10 @@ public class LabelEditorOptionsCommand<L> extends InteractiveCommand {
 	@Override
 	public void run() {
 		namedRenderers.forEach((name, renderer) -> {
-			labelEditorInterface.setRendererActive(renderer, (Boolean)getInput(name));
+			Boolean active = (Boolean) getInput(name);
+			renderer.setActive(active);
+			//TODO to this with listener
+			labelEditorInterface.setRendererActive(renderer, active);
 		});
 	}
 

@@ -15,6 +15,7 @@ public class LabelEditorOverlay extends BdvOverlay
 {
 	class ModelOverlay {
 		String name;
+		LabelEditorModel model;
 		List<LabelOverlay> labels = new ArrayList<>();
 	}
 
@@ -74,11 +75,17 @@ public class LabelEditorOverlay extends BdvOverlay
 	{
 		synchronized ( models )
 		{
-			data.clear();
 			List<LabelEditorTag> labelEditorTags = Arrays.asList(LabelEditorTag.values());
 			for (LabelEditorModel model : models) {
+				for (ModelOverlay datum : data) {
+					if (datum.model.equals(model)) {
+						data.remove(datum);
+						break;
+					}
+				}
 				ModelOverlay modelOverlay = new ModelOverlay();
 				modelOverlay.name = model.getName();
+				modelOverlay.model = model;
 				for (Object label : model.labeling().getMapping().getLabels()) {
 					LabelOverlay labelOverlay = new LabelOverlay();
 					labelOverlay.name = "label " + label.toString();
