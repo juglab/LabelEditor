@@ -1,7 +1,6 @@
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
 import bdv.util.Bdv;
-import bdv.util.BdvHandle;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
@@ -12,7 +11,6 @@ import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
 import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
-import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
@@ -35,6 +33,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	private final Map<String, InteractiveLabeling> labelings = new HashMap<>();
 
 	private BdvHandlePanel bdvHandlePanel;
+	private BdvInterface interfaceInstance;
 
 	public LabelEditorBdvPanel() {
 		this(null, Bdv.options());
@@ -59,6 +58,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		setPreferredSize(new Dimension(500, 500));
 		setLayout( new MigLayout("fill") );
 		bdvHandlePanel = new BdvHandlePanel(null, options);
+		interfaceInstance = new BdvInterface(bdvHandlePanel.getBdvHandle(), context);
 		Component viewer = bdvHandlePanel.getViewerPanel();
 		this.add( viewer, "span, grow, push" );
 	}
@@ -83,15 +83,6 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvOptions options) {
-		BdvInterface interfaceInstance = new BdvInterface(bdvHandlePanel, context);
-		return add(model, view, interfaceInstance, options);
-	}
-
-	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvInterface interfaceInstance) {
-		return add(model, view, interfaceInstance, new BdvOptions());
-	}
-
-	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvInterface interfaceInstance, BdvOptions options) {
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
@@ -119,5 +110,9 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 
 	public BdvHandlePanel getBdvHandlePanel() {
 		return bdvHandlePanel;
+	}
+
+	protected BdvInterface getInterfaceInstance() {
+		return interfaceInstance;
 	}
 }
