@@ -9,6 +9,8 @@ public interface LabelEditorRenderer<L> extends SciJavaPlugin {
 	void init(LabelEditorModel<L> model);
 	void updateOnTagChange(LabelEditorModel<L> model);
 	void updateOnLabelingChange();
+	void setActive(boolean active);
+	boolean isActive();
 
 	RandomAccessibleInterval getOutput();
 

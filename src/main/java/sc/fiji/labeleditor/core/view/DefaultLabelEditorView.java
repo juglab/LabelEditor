@@ -1,6 +1,5 @@
 package sc.fiji.labeleditor.core.view;
 
-import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.Context;
 import org.scijava.InstantiableException;
 import org.scijava.listeners.Listeners;
@@ -9,18 +8,13 @@ import org.scijava.plugin.PluginInfo;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelingChangedEvent;
 import sc.fiji.labeleditor.core.model.colors.ColorChangedEvent;
-import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
 import sc.fiji.labeleditor.plugin.renderers.BorderLabelEditorRenderer;
 import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 
@@ -50,14 +44,20 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 
 	public synchronized void updateRenderers() {
 		if(model == null || model.labeling() == null) return;
-		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
+		renderers.forEach(renderer -> {
+			if(renderer.isActive()) renderer.updateOnTagChange(model);
+		});
 		notifyListeners();
 	}
 
 	private void onLabelingChange(LabelingChangedEvent e) {
 		if(model == null || model.labeling() == null) return;
-		renderers.forEach(LabelEditorRenderer::updateOnLabelingChange);
-		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
+		renderers.forEach(renderer -> {
+			if(renderer.isActive()) {
+				renderer.updateOnLabelingChange();
+				renderer.updateOnTagChange(model);
+			}
+		});
 		notifyListeners();
 	}
 

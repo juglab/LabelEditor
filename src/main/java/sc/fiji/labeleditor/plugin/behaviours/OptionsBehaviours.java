@@ -6,6 +6,7 @@ import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
+import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.awt.*;
@@ -15,11 +16,13 @@ public class OptionsBehaviours<L> implements LabelEditorBehaviours<L> {
 	@Parameter
 	private CommandService commandService;
 
-	protected LabelEditorView<L> view;
+	private LabelEditorView<L> view;
+	private LabelEditorInterface labelEditorInterface;
 
 	@Override
 	public void init(InteractiveLabeling<L> labeling) {
 		this.view = labeling.view();
+		this.labelEditorInterface = labeling.interfaceInstance();
 	}
 
 	@Override
@@ -32,7 +35,9 @@ public class OptionsBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	public void showOptions() {
-		commandService.run(LabelEditorOptionsCommand.class, true, "view", view);
+		commandService.run(LabelEditorOptionsCommand.class, true,
+				"view", view,
+				"labelEditorInterface", labelEditorInterface);
 	}
 
 }

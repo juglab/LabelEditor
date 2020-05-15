@@ -22,6 +22,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 
 	protected int[] lut;
 	boolean debug = false;
+	boolean active = true;
 	protected LabelEditorModel<L> model;
 
 	@Override
@@ -105,6 +106,16 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		Converter<? super IntegerType<?>, ARGBType> converter = (i, o) -> o.set(getLUT()[i.getInteger()]);
 		return Converters.convert(model.labeling().getIndexImg(), converter,
 				new ARGBType());
+	}
+
+	@Override
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
 	}
 
 	protected synchronized int[] getLUT() {

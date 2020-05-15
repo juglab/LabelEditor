@@ -49,6 +49,7 @@ public class BdvInterface implements LabelEditorInterface {
 	private boolean overlayAdded = false;
 
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
+	private final Map<LabelEditorRenderer<?>, BdvSource> rendererSources = new HashMap<>();
 	private final Map<InteractiveLabeling<?>, Behaviours> behavioursMap = new HashMap<>();
 	private final PopupBehaviours popupBehaviours;
 
@@ -166,18 +167,18 @@ public class BdvInterface implements LabelEditorInterface {
 
 	@Override
 	public <L> void display(LabelEditorView<L> view) {
-		ArrayList<BdvSource> sources = new ArrayList<>();
-		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());
-		Collections.reverse(renderers);
-		renderers.forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName(), new BdvOptions())));
-		this.sources.put(view, sources);
+		display(view, new BdvOptions());
 	}
 
 	public <L> void display(LabelEditorView<L> view, BdvOptions options) {
 		ArrayList<BdvSource> sources = new ArrayList<>();
 		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());
 		Collections.reverse(renderers);
-		renderers.forEach(renderer -> sources.add(display(renderer.getOutput(), renderer.getName(), options)));
+		renderers.forEach(renderer -> {
+			BdvSource source = display(renderer.getOutput(), renderer.getName(), options);
+			rendererSources.put(renderer, source);
+			sources.add(source);
+		});
 		this.sources.put(view, sources);
 	}
 
@@ -194,5 +195,11 @@ public class BdvInterface implements LabelEditorInterface {
 
 	public Map<LabelEditorView<?>, List<BdvSource>> getSources() {
 		return sources;
+	}
+
+	@Override
+	public void setRendererActive(LabelEditorRenderer renderer, boolean active) {
+		BdvSource source = rendererSources.get(renderer);
+		if(source != null) source.setActive(active);
 	}
 }

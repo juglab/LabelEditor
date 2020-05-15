@@ -9,6 +9,7 @@ import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 public class DataLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	private RandomAccessibleInterval output;
+	private boolean active = true;
 
 	@Override
 	public void init(LabelEditorModel<L> model) {
@@ -22,6 +23,16 @@ public class DataLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	@Override
 	public void updateOnLabelingChange() {}
+
+	@Override
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
 
 	@Override
 	public RandomAccessibleInterval getOutput() {
