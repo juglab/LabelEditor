@@ -31,9 +31,6 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 	private final List<LabelEditorRenderer<L>> renderers = new ArrayList<>();
 	private final Listeners.List<ViewChangeListener> listeners = new Listeners.SynchronizedList<>();
 	private boolean listenersPaused = false;
-	private boolean showToolTip = true;
-	private boolean showLabelsInToolTip = true;
-	private boolean showTagsInToolTip = true;
 
 	public DefaultLabelEditorView(LabelEditorModel<L> model) {
 		this.model = model;
@@ -75,58 +72,6 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 	private void notifyListeners() {
 		if(listenersPaused) return;
 		listeners.list.forEach(listener -> listener.viewChanged(new ViewChangedEvent()));
-	}
-
-	public String getToolTip(LabelingType<L> labels) {
-		StringBuilder res = new StringBuilder("<html>");
-		for (Iterator<L> iterator = labels.iterator(); iterator.hasNext(); ) {
-			L label = iterator.next();
-			String text = getToolTip(label);
-			if(text != null) {
-				res.append(text);
-				if(iterator.hasNext()) res.append("<br>");
-			}
-		}
-		if(res.length() == 6) return null;
-		return res.toString();
-	}
-
-	private String getToolTip(L label) {
-		StringBuilder res = new StringBuilder();
-		Set<Object> tags = new HashSet<>(model.tagging().getTags(label));
-		boolean selected = tags.contains(LabelEditorTag.SELECTED);
-		if(showLabelsInToolTip) {
-			res.append(label);
-		}
-		if(showTagsInToolTip) {
-			tags.removeAll(Arrays.asList(LabelEditorTag.values()));
-			if (tags.size() != 0) {
-				if(showLabelsInToolTip) res.append(": ");
-				for (Iterator<Object> iter = tags.iterator(); iter.hasNext(); ) {
-					res.append(iter.next());
-					if(iter.hasNext()) res.append(", ");
-				}
-			}
-		}
-		if(res.length() > 0) {
-			if(selected) {
-				return "<b>" + res.toString() + "</b>";
-			}
-			return res.toString();
-		}
-		else return null;
-	}
-
-	public void setShowToolTip(boolean showToolTip) {
-		this.showToolTip = showToolTip;
-	}
-
-	public void setShowLabelsInToolTip(boolean showLabelsInToolTip) {
-		this.showLabelsInToolTip = showLabelsInToolTip;
-	}
-
-	public void setShowTagsInToolTip(boolean showTagsInToolTip) {
-		this.showTagsInToolTip = showTagsInToolTip;
 	}
 
 	public void addDefaultRenderers() {
