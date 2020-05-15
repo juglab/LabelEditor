@@ -12,14 +12,16 @@ import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 // TODO - can I do that with net.imagej.plugins.tools.ContextHandler?
-public class LabelEditorPopupMenu<L> extends JPopupMenu {
+public class LabelEditorPopupMenu extends JPopupMenu {
 
 	@Parameter
 	private Context context;
 
-	private final InteractiveLabeling<L> labeling;
+	private Map<InteractiveLabeling, JMenu> labelingMenus = new HashMap<>();
 
 	private static final String MENU_EDIT = "Edit";
 	private static final String MENU_EDIT_DELETE = "Delete selected";
@@ -41,27 +43,29 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 
 	private static final String MENU_OPTIONS = "Options";
 
-	public LabelEditorPopupMenu(InteractiveLabeling<L> labeling) {
-		this.labeling = labeling;
+	public LabelEditorPopupMenu() {
 	}
 
-	public void populate() {
-		makeSelectMenu();
-		makeEditMenu();
-		makeExportMenu();
-		makeOptionsEntry();
+	public void populate(InteractiveLabeling<?> labeling) {
+		JMenu labelingMenu = new JMenu(labeling.model().getName());
+		makeSelectMenu(labeling, labelingMenu);
+		makeEditMenu(labeling, labelingMenu);
+		makeExportMenu(labeling, labelingMenu);
+		makeOptionsEntry(labeling, labelingMenu);
+		labelingMenus.put(labeling, labelingMenu);
+		add(labelingMenu);
 	}
 
-	private void makeOptionsEntry() {
+	private <L> void makeOptionsEntry(InteractiveLabeling<L> labeling, JMenu labelingMenu) {
 		if(context != null) {
-			OptionsBehaviours optionsBehaviours = new OptionsBehaviours();
+			OptionsBehaviours<L> optionsBehaviours = new OptionsBehaviours<>();
 			context.inject(optionsBehaviours);
 			optionsBehaviours.init(labeling);
-			add(getMenuItem(e -> runInNewThread(optionsBehaviours::showOptions), MENU_OPTIONS));
+			labelingMenu.add(getMenuItem(e -> runInNewThread(optionsBehaviours::showOptions), MENU_OPTIONS));
 		}
 	}
 
-	private void makeExportMenu() {
+	private <L> void makeExportMenu(InteractiveLabeling<L> labeling, JMenu labelingMenu) {
 		if(context != null) {
 			ExportBehaviours exportBehaviours = new ExportBehaviours();
 			exportBehaviours.init(labeling);
@@ -80,15 +84,15 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 				}
 				menu.add(renderers);
 			}
-			add(menu);
+			labelingMenu.add(menu);
 		}
 	}
 
-	private void makeEditMenu() {
+	private <L> void makeEditMenu(InteractiveLabeling<L> labeling, JMenu labelingMenu) {
 		JMenu menu = new JMenu(MENU_EDIT);
-		LabelingModificationBehaviours modificationBehaviours = new LabelingModificationBehaviours();
+		LabelingModificationBehaviours<L> modificationBehaviours = new LabelingModificationBehaviours<>();
 		modificationBehaviours.init(labeling);
-		TagModificationBehaviours tagBehaviours = new TagModificationBehaviours();
+		TagModificationBehaviours<L> tagBehaviours = new TagModificationBehaviours<>();
 		tagBehaviours.init(labeling);
 		menu.add(getMenuItem(e -> runWhilePausingListeners(modificationBehaviours.getDeleteBehaviour()::deleteSelected), MENU_EDIT_DELETE));
 		menu.add(getMenuItem(e -> runWhilePausingListeners(modificationBehaviours.getMergeBehaviour()::assignSelectedToFirst), MENU_EDIT_MERGE));
@@ -102,10 +106,10 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 //					actionEvent -> runInNewThread(tagBehaviours.getTagByPropertyBehaviour()::circularity),
 //					"Tag with random numbers"));
 		}
-		add(menu);
+		labelingMenu.add(menu);
 	}
 
-	private void makeSelectMenu() {
+	private <L> void makeSelectMenu(InteractiveLabeling<L> labeling, JMenu labelingMenu) {
 		JMenu menu = new JMenu(MENU_SELECT);
 		SelectionBehaviours<L> selectionBehaviours = new SelectionBehaviours<>();
 		selectionBehaviours.init(labeling);
@@ -116,7 +120,7 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 			context.inject(selectionBehaviours);
 			menu.add(getMenuItem(e -> runInNewThread(selectionBehaviours::selectByTag), MENU_SELECT_BYTAG));
 		}
-		add(menu);
+		labelingMenu.add(menu);
 	}
 
 	private void runInNewThread(Runnable method) {
@@ -125,9 +129,11 @@ public class LabelEditorPopupMenu<L> extends JPopupMenu {
 
 	private void runWhilePausingListeners(Runnable method) {
 		new Thread(() -> {
-			labeling.model().tagging().pauseListeners();
-			method.run();
-			labeling.model().tagging().resumeListeners();
+			for (InteractiveLabeling labeling : labelingMenus.keySet()) {
+				labeling.model().tagging().pauseListeners();
+				method.run();
+				labeling.model().tagging().resumeListeners();
+			}
 		}).start();
 	}
 

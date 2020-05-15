@@ -116,4 +116,8 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	protected Context context() {
 		return context;
 	}
+
+	public BdvHandlePanel getBdvHandlePanel() {
+		return bdvHandlePanel;
+	}
 }

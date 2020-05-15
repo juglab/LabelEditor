@@ -10,16 +10,12 @@ import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 
 import java.awt.*;
 
-public class LabelingModificationBehaviours<L> extends Behaviours implements LabelEditorBehaviours<L> {
+public class LabelingModificationBehaviours<L> implements LabelEditorBehaviours<L> {
 
 	@Parameter
 	private Context context;
 
 	private InteractiveLabeling<L> labeling;
-
-	public LabelingModificationBehaviours() {
-		super(new InputTriggerConfig(), "labeleditor-modification");
-	}
 
 	@Override
 	public void init(InteractiveLabeling<L> labeling) {

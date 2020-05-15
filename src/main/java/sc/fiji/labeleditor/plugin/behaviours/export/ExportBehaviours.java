@@ -23,7 +23,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExportBehaviours extends Behaviours implements LabelEditorBehaviours {
+public class ExportBehaviours implements LabelEditorBehaviours {
 
 	@Parameter
 	UIService ui;
@@ -32,10 +32,6 @@ public class ExportBehaviours extends Behaviours implements LabelEditorBehaviour
 	Context context;
 
 	private InteractiveLabeling interactiveLabeling;
-
-	public ExportBehaviours() {
-		super(new InputTriggerConfig(), "labeleditor-export");
-	}
 
 	@Override
 	public void init(InteractiveLabeling labeling) {

@@ -5,28 +5,29 @@ import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
-import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.plugin.interfaces.LabelEditorPopupMenu;
 
 import java.awt.*;
 
-public class PopupBehaviours<L> implements LabelEditorBehaviours<L> {
+public class PopupBehaviours {
 
 	@Parameter
 	private Context context;
 
-	private InteractiveLabeling<L> labeling;
+	LabelEditorPopupMenu menu = new LabelEditorPopupMenu();
+
 	private static final String OPEN_POPUP_TRIGGERS = "button3";
 	private static final String OPEN_POPUP_NAME = "LABELEDITOR_OPENPOPUP";
+	private Component component;
 
-	@Override
-	public void init(InteractiveLabeling<L> labeling) {
-		this.labeling = labeling;
+	public void add(InteractiveLabeling<?> labeling) {
+		menu.populate(labeling);
 	}
 
-	@Override
 	public void install(Behaviours behaviours, Component panel) {
+		this.component = panel;
 		behaviours.behaviour(getOpenPopupBehaviour(), OPEN_POPUP_NAME, OPEN_POPUP_TRIGGERS);
+		if(context != null) context.inject(menu);
 	}
 
 	public ClickBehaviour getOpenPopupBehaviour() {
@@ -34,10 +35,7 @@ public class PopupBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	private void openPopupAt(int x, int y) {
-		LabelEditorPopupMenu<L> menu = new LabelEditorPopupMenu<>(labeling);
-		if(context != null) context.inject(menu);
-		menu.populate();
-		menu.show(labeling.interfaceInstance().getComponent(), x, y);
+		menu.show(component, x, y);
 	}
 
 }

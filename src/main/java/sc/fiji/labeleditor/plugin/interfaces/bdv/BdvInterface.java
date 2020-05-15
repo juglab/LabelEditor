@@ -1,6 +1,5 @@
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
-import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
 import bdv.util.BdvOptions;
@@ -32,9 +31,6 @@ import sc.fiji.labeleditor.plugin.behaviours.PopupBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,10 +50,16 @@ public class BdvInterface implements LabelEditorInterface {
 
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
 	private final Map<InteractiveLabeling<?>, Behaviours> behavioursMap = new HashMap<>();
+	private final PopupBehaviours popupBehaviours;
 
 	public BdvInterface(BdvHandle bdvHandle, Context context) {
 		this.bdvHandle = bdvHandle;
 		this.context = context;
+		popupBehaviours = new PopupBehaviours();
+		context.inject(popupBehaviours);
+		Behaviours behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor-popup");
+		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor-popup");
+		popupBehaviours.install(behaviours, bdvHandle.getViewerPanel());
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
@@ -122,7 +124,7 @@ public class BdvInterface implements LabelEditorInterface {
 		install(labeling, selectionModel, behaviours);
 		install(labeling, new FocusBehaviours<>(), behaviours);
 		install(labeling, new LabelingModificationBehaviours<>(), behaviours);
-		install(labeling, new PopupBehaviours<>(), behaviours);
+		popupBehaviours.add(labeling);
 	}
 
 	@Override
