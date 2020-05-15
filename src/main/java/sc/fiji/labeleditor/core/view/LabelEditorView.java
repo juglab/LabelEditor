@@ -9,8 +9,6 @@ public interface LabelEditorView<L> {
 
 	void updateRenderers();
 
-	void updateOnLabelingChange();
-
 	List< LabelEditorRenderer<L> > renderers();
 
 	Listeners< ViewChangeListener > listeners();

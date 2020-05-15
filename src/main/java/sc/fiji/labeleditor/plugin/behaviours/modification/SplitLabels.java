@@ -65,7 +65,7 @@ public class SplitLabels<L> implements Behaviour {
 				e.printStackTrace();
 			}
 		});
-		labeling.view().updateOnLabelingChange();
+		labeling.model().notifyLabelingListeners();
 	}
 
 	public <T extends NativeType<T>> void splitInteractively(L label) throws ExecutionException, InterruptedException {
@@ -83,7 +83,7 @@ public class SplitLabels<L> implements Behaviour {
 //			TODO add new labels to model labeling
 //			Set<Object> tags = model.tagging().getTags(label);
 //			newLabeling.forEach(newlabel -> tags.forEach(tag -> model.tagging().addTag(tag, newlabel)));
-			labeling.view().updateOnLabelingChange();
+			labeling.model().notifyLabelingListeners();
 		}
 
 

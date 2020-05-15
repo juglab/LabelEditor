@@ -11,6 +11,7 @@ import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import org.scijava.listeners.Listeners;
 import sc.fiji.labeleditor.core.model.colors.DefaultLabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.DefaultLabelEditorTagging;
@@ -37,6 +38,8 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private final LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
 	private String name;
+	private Listeners.List<LabelingChangeListener> listeners = new Listeners.SynchronizedList<>();
+	private boolean labelingListenersPaused = false;
 
 	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval<?> data) {
 		this(labeling);
@@ -183,6 +186,11 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		this.name = name;
 	}
 
+	@Override
+	public Listeners<LabelingChangeListener> labelingListeners() {
+		return listeners;
+	}
+
 	protected void setData(RandomAccessibleInterval data) {
 		this.data = data;
 	}
@@ -219,6 +227,22 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private Class<?> getLabelClass() {
 		Iterator<L> iterator = labeling().getMapping().getLabels().iterator();
 		return iterator.hasNext() ? iterator.next().getClass() : Object.class;
+	}
+
+	@Override
+	public void pauseLabelingListeners() {
+		labelingListenersPaused = true;
+	}
+
+	@Override
+	public void resumeLabelingListeners() {
+		labelingListenersPaused = false;
+	}
+
+	@Override
+	public void notifyLabelingListeners() {
+		LabelingChangedEvent e = new LabelingChangedEvent();
+		listeners.list.forEach(listener -> listener.labelingChanged(e));
 	}
 
 }

@@ -22,7 +22,7 @@ public class MergeLabels<L> implements Behaviour {
 	public void assignSelectedToFirst() {
 		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
 		assignToFirst(selected, labeling.getLabelingInScope());
-		labeling.view().updateOnLabelingChange();
+		labeling.model().notifyLabelingListeners();
 	}
 
 	private static <L> void assignToFirst(Set<L> labels, RandomAccessibleInterval<LabelingType<L>> labeling) {

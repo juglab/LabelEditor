@@ -7,6 +7,7 @@ import org.scijava.listeners.Listeners;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.PluginInfo;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelingChangedEvent;
 import sc.fiji.labeleditor.core.model.colors.ColorChangedEvent;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
@@ -38,6 +39,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		this.model = model;
 		model.tagging().listeners().add(this::onTagChange);
 		model.colors().listeners().add(this::onColorChange);
+		model.labelingListeners().add(this::onLabelingChange);
 		notifyListeners();
 	}
 
@@ -55,7 +57,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		notifyListeners();
 	}
 
-	public void updateOnLabelingChange() {
+	private void onLabelingChange(LabelingChangedEvent e) {
 		if(model == null || model.labeling() == null) return;
 		renderers.forEach(LabelEditorRenderer::updateOnLabelingChange);
 		renderers.forEach(renderer -> renderer.updateOnTagChange(model));
