@@ -123,7 +123,7 @@ public class BdvInterface implements LabelEditorInterface {
 		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor" + labeling.toString());
 		behavioursMap.put(labeling, behaviours);
 		install(labeling, selectionModel, behaviours);
-		install(labeling, new FocusBehaviours<>(), behaviours);
+//		install(labeling, new FocusBehaviours<>(), behaviours);
 		install(labeling, new LabelingModificationBehaviours<>(), behaviours);
 		popupBehaviours.add(labeling);
 	}
