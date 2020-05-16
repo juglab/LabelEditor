@@ -83,11 +83,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvOptions options) {
-		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
-		if(context != null) context.inject(interactiveLabeling);
-		interactiveLabeling.initialize();
-		interfaceInstance.display(view, options);
-		return interactiveLabeling;
+		return interfaceInstance.control(model, view, options);
 	}
 
 	@Override

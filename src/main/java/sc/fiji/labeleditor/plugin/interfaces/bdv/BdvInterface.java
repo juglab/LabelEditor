@@ -63,20 +63,16 @@ public class BdvInterface implements LabelEditorInterface {
 		popupBehaviours.install(behaviours, bdvHandle.getViewerPanel());
 	}
 
-	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
-		BdvInterface interfaceInstance = new BdvInterface(bdvHandle, context);
-		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, interfaceInstance);
-		if(context != null) context.inject(interactiveLabeling);
-		interactiveLabeling.initialize();
-		interfaceInstance.display(view, new BdvOptions());
-		return interactiveLabeling;
-	}
-
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, BdvHandle handle, Context context) {
 		LabelEditorView<L> view = new DefaultLabelEditorView<>(model);
 		if(context != null) context.inject(view);
 		view.addDefaultRenderers();
 		return control(model, view, handle, context);
+	}
+
+	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
+		BdvInterface interfaceInstance = new BdvInterface(bdvHandle, context);
+		return interfaceInstance.control(model, view);
 	}
 
 	public <L> DefaultInteractiveLabeling<L> control(LabelEditorModel<L> model) {
@@ -87,10 +83,14 @@ public class BdvInterface implements LabelEditorInterface {
 	}
 
 	public <L> DefaultInteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view) {
+		return control(model, view, new BdvOptions());
+	}
+
+	public <L> DefaultInteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvOptions options) {
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, this);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
-		display(view, new BdvOptions());
+		display(view, options);
 		return interactiveLabeling;
 	}
 
