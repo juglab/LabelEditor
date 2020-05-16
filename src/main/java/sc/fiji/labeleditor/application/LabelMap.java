@@ -8,13 +8,13 @@ import net.imglib2.type.numeric.RealType;
 
 import java.util.List;
 
-public class LabelMap implements RandomAccessibleInterval {
+public class LabelMap<I extends IntegerType<I>> implements RandomAccessibleInterval<I> {
 
-	private final RandomAccessibleInterval<? extends IntegerType<?>> ref;
+	private final RandomAccessibleInterval<I> ref;
 	private final boolean hasChannels;
 	private final List<RandomAccessibleInterval<? extends RealType<?>>> raws;
 
-	public <I extends IntegerType<I>> LabelMap(RandomAccessibleInterval<I> labels, List<RandomAccessibleInterval<? extends RealType<?>>> raws, boolean hasChannels) {
+	public LabelMap(RandomAccessibleInterval<I> labels, List<RandomAccessibleInterval<? extends RealType<?>>> raws, boolean hasChannels) {
 		this.hasChannels = hasChannels;
 		this.ref = labels;
 		this.raws = raws;
@@ -36,12 +36,12 @@ public class LabelMap implements RandomAccessibleInterval {
 	}
 
 	@Override
-	public RandomAccess randomAccess() {
+	public RandomAccess<I> randomAccess() {
 		return ref.randomAccess();
 	}
 
 	@Override
-	public RandomAccess randomAccess(Interval interval) {
+	public RandomAccess<I> randomAccess(Interval interval) {
 		return ref.randomAccess();
 	}
 
