@@ -44,17 +44,9 @@
 			<artifactId>scijava-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej-plugins-commands</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>scijava-listeners</artifactId>
 			<version>1.0.0-beta-2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.scif</groupId>
-			<artifactId>scifio</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>sc.fiji</groupId>
@@ -65,22 +57,12 @@
 			<artifactId>bigdataviewer-vistools</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej-ui-swing</artifactId>
+			<groupId>org.scijava</groupId>
+			<artifactId>scijava-ui-swing</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.imagej</groupId>
-			<artifactId>imagej-legacy</artifactId>
-		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>sc.fiji</groupId>-->
-<!--			<artifactId>bigdataviewer-core</artifactId>-->
-<!--			<version>7.0.0</version>-->
-<!--		</dependency>-->
-		<dependency>
-			<groupId>com.miglayout</groupId>
-			<artifactId>miglayout</artifactId>
-			<classifier>swing</classifier>
+			<artifactId>imagej-ops</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -90,6 +72,7 @@
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej</artifactId>
+			<scope>test</scope>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>sc.fiji</groupId>-->
