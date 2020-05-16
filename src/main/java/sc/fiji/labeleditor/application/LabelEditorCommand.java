@@ -6,9 +6,11 @@ import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.view.Views;
 import org.scijava.ItemIO;
+import org.scijava.ItemVisibility;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import org.scijava.widget.MessageWidget;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,10 +22,13 @@ public class LabelEditorCommand<I extends IntegerType<I>> implements Command {
 	@Parameter
 	private RandomAccessibleInterval<I> input;
 
-	@Parameter
+	@Parameter(visibility = ItemVisibility.MESSAGE)
+	private String line1 = "";
+
+	@Parameter(label = "Split by channels")
 	private boolean hasChannels = false;
 
-	@Parameter
+	@Parameter(label = "Channel dimension")
 	private int channelDimension;
 
 	@Parameter(label = "Raw channels (comma separated indices)")
@@ -32,8 +37,14 @@ public class LabelEditorCommand<I extends IntegerType<I>> implements Command {
 	@Parameter(label = "Labeling channels (comma separated indices)")
 	private String labelingChannels = "";
 
-	@Parameter(label = "Create new label image (will not include raw data)")
+	@Parameter(visibility = ItemVisibility.MESSAGE)
+	private String line2 = "";
+
+	@Parameter(label = "Copy labeling slices")
 	private boolean copyIntoNewImage = true;
+
+	@Parameter(visibility = ItemVisibility.MESSAGE)
+	private String copyNote = "<html><p style='font-weight: normal;'>When editing labels make sure to check the last option or<br>close any other open windows of the label map image to avoid interference.</p></html>";
 
 	@Parameter(type = ItemIO.OUTPUT)
 	private LabelMap output;
