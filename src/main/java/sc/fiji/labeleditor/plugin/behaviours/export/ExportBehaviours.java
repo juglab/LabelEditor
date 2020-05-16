@@ -3,7 +3,6 @@ package sc.fiji.labeleditor.plugin.behaviours.export;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
-import net.imglib2.img.display.imagej.ImageJFunctions;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -12,7 +11,6 @@ import org.scijava.plugin.Parameter;
 import org.scijava.table.interactive.InteractiveTableDisplayViewer;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.ClickBehaviour;
-import org.scijava.ui.behaviour.io.InputTriggerConfig;
 import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
@@ -97,8 +95,10 @@ public class ExportBehaviours implements LabelEditorBehaviours {
 
 	public void showRenderer(LabelEditorRenderer renderer) {
 		//TODO replace this as soon as SCIFIO can display ARGB
-		//ui.show(renderer.getOutput());
-		ImageJFunctions.show(renderer.getOutput());
+		if(ui != null) {
+			ui.show(renderer.getOutput());
+		}
+//		ImageJFunctions.show(renderer.getOutput());
 	}
 
 	public void showData() {
@@ -108,8 +108,8 @@ public class ExportBehaviours implements LabelEditorBehaviours {
 	private void show(RandomAccessibleInterval img) {
 		if(ui != null) {
 			ui.show(img);
-		} else {
-			ImageJFunctions.show(img);
+//		} else {
+//			ImageJFunctions.show(img);
 		}
 	}
 
