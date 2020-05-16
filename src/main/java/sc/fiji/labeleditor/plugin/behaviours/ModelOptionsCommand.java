@@ -6,7 +6,7 @@ import org.scijava.command.InteractiveCommand;
 import org.scijava.module.DefaultMutableModuleItem;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.scijava.util.ColorRGB;
+import org.scijava.util.ColorRGBA;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -40,14 +40,14 @@ public class ModelOptionsCommand extends InteractiveCommand {
 		});
 		faceColorItems.forEach((item, model) -> {
 			int currentColor = model.colors().getDefaultFaceColor().get();
-			int newColor = getColor((ColorRGB) getInput(item));
+			int newColor = getColor((ColorRGBA) getInput(item));
 			if(currentColor != newColor) {
 				model.colors().getDefaultFaceColor().set(newColor);
 			}
 		});
 		borderColorItems.forEach((item, model) -> {
 			int currentColor = model.colors().getDefaultBorderColor().get();
-			int newColor = getColor((ColorRGB) getInput(item));
+			int newColor = getColor((ColorRGBA) getInput(item));
 			if(currentColor != newColor) {
 				model.colors().getDefaultBorderColor().set(newColor);
 			}
@@ -83,8 +83,8 @@ public class ModelOptionsCommand extends InteractiveCommand {
 	}
 
 	private void makeFaceColorItem(LabelEditorModel model) {
-		final DefaultMutableModuleItem<ColorRGB> item =
-				new DefaultMutableModuleItem<>(this, model.getName() + " face color", ColorRGB.class);
+		final DefaultMutableModuleItem<ColorRGBA> item =
+				new DefaultMutableModuleItem<>(this, model.getName() + " face color", ColorRGBA.class);
 		item.setPersisted(false);
 		item.setLabel("Default face color");
 		item.setValue(this, getColor(model.colors().getDefaultFaceColor().get()));
@@ -93,8 +93,8 @@ public class ModelOptionsCommand extends InteractiveCommand {
 	}
 
 	private void makeBorderColorItem(LabelEditorModel model) {
-		final DefaultMutableModuleItem<ColorRGB> item =
-				new DefaultMutableModuleItem<>(this, model.getName() + " border color", ColorRGB.class);
+		final DefaultMutableModuleItem<ColorRGBA> item =
+				new DefaultMutableModuleItem<>(this, model.getName() + " border color", ColorRGBA.class);
 		item.setPersisted(false);
 		item.setLabel("Default border color");
 		item.setValue(this, getColor(model.colors().getDefaultBorderColor().get()));
@@ -102,16 +102,16 @@ public class ModelOptionsCommand extends InteractiveCommand {
 		addInput(item);
 	}
 
-	private ColorRGB getColor(int color) {
-		float alpha = (float)ARGBType.alpha(color)/255.f;
-		return new ColorRGB(
-				(int)(alpha*ARGBType.red(color)),
-				(int)(alpha*ARGBType.green(color)),
-				(int)(alpha*ARGBType.blue(color))
+	private ColorRGBA getColor(int color) {
+		return new ColorRGBA(
+				ARGBType.red(color),
+				ARGBType.green(color),
+				ARGBType.blue(color),
+				ARGBType.alpha(color)
 		);
 	}
 
-	private int getColor(ColorRGB color) {
+	private int getColor(ColorRGBA color) {
 		return color.getARGB();
 	}
 
