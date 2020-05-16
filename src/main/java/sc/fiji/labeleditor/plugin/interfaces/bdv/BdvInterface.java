@@ -165,11 +165,6 @@ public class BdvInterface implements LabelEditorInterface {
 		overlay.updateContent(models);
 	}
 
-	@Override
-	public <L> void display(LabelEditorView<L> view) {
-		display(view, new BdvOptions());
-	}
-
 	public <L> void display(LabelEditorView<L> view, BdvOptions options) {
 		ArrayList<BdvSource> sources = new ArrayList<>();
 		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());

@@ -21,8 +21,6 @@ public interface LabelEditorInterface {
 
 	void onTagChange(List<TagChangedEvent> tagChangedEvents);
 
-	<L> void display(LabelEditorView<L> view);
-
 	<L> void installBehaviours(InteractiveLabeling<L> labeling);
 
 	<L> Behaviours behaviours(InteractiveLabeling<L> interactiveLabeling);
