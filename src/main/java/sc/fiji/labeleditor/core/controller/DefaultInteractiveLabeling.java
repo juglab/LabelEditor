@@ -14,7 +14,7 @@ import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.util.Set;
 
-public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, Initializable {
+public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L> {
 
 	@Parameter
 	Context context;
@@ -43,7 +43,6 @@ public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L>, In
 		return view;
 	}
 
-	@Override
 	public void initialize() {
 		view.listeners().remove(interfaceInstance::onViewChange);
 		model.tagging().listeners().remove(interfaceInstance::onTagChange);
