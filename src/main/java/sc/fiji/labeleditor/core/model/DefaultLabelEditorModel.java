@@ -3,9 +3,13 @@ package sc.fiji.labeleditor.core.model;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.cache.img.DiskCachedCellImg;
+import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.loops.LoopBuilder;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
@@ -25,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
@@ -53,15 +58,9 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 			initLabelOrdering(labeling);
 			initTagOrdering();
 			initTagging();
-//			initSelectionModel();
 			addDefaultColorsets();
 		}
 	}
-
-//	private void initSelectionModel() {
-//		selectionModel = new SelectionBehaviours<>();
-//	}
-
 	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
 		return new DefaultLabelEditorModel<>(makeLabeling(labelMap));
 	}
@@ -71,16 +70,29 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	private static ImgLabeling<IntType, IntType> makeLabeling(RandomAccessibleInterval<? extends IntegerType<?>> labelMap) {
-		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create(labelMap);
-		ImgLabeling<IntType, IntType> labeling = new ImgLabeling<>(backing);
-		Cursor<? extends IntegerType<?>> cursor = Views.iterable(labelMap).localizingCursor();
-		RandomAccess<LabelingType<IntType>> ra = labeling.randomAccess();
-		while(cursor.hasNext()) {
-			int val = cursor.next().getInteger();
-			if(val == 0) continue;
-			ra.setPosition(cursor);
-			ra.get().add(new IntType(val));
+		Img<IntType> backing = new DiskCachedCellImgFactory<>(new IntType()).create(labelMap);
+		final ImgLabeling< IntType, IntType > labeling = new ImgLabeling<>( backing );
+		AtomicInteger max = new AtomicInteger(0);
+		LoopBuilder.setImages(labelMap, backing).multiThreaded().forEachPixel((input, output) -> {
+			int intInput = input.getInteger();
+			if(intInput > max.get()) max.getAndSet(intInput);
+			output.set(intInput);
+		});
+		final ArrayList<Set<IntType>> labelSets = new ArrayList<>();
+
+		labelSets.add( new HashSet<>() ); // empty 0 label
+		for (int label = 1; label <= max.get(); ++label) {
+			final HashSet< IntType > set = new HashSet< >();
+			set.add( new IntType(label) );
+			labelSets.add( set );
 		}
+
+		new LabelingMapping.SerialisationAccess<IntType>(labeling.getMapping()) {
+			{
+				super.setLabelSets(labelSets);
+			}
+		};
+
 		return labeling;
 	}
 
