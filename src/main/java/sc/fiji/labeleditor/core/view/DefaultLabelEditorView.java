@@ -100,6 +100,14 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		renderers.add(renderer);
 	}
 
+	@Override
+	public void setActive(LabelEditorRenderer<?> renderer, boolean active) {
+		if(renderer.isActive() != active) {
+			renderer.setActive(active);
+			notifyListeners();
+		}
+	}
+
 	private void prepare(LabelEditorRenderer<L> renderer) {
 		if(context != null) context.inject(renderer);
 		renderer.init(model);

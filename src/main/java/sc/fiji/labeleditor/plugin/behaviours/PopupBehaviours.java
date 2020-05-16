@@ -5,6 +5,7 @@ import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.ClickBehaviour;
 import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.plugin.interfaces.LabelEditorPopupMenu;
 
 import java.awt.*;
@@ -14,11 +15,15 @@ public class PopupBehaviours {
 	@Parameter
 	private Context context;
 
-	LabelEditorPopupMenu menu = new LabelEditorPopupMenu();
+	private final LabelEditorPopupMenu menu;
 
 	private static final String OPEN_POPUP_TRIGGERS = "button3";
 	private static final String OPEN_POPUP_NAME = "LABELEDITOR_OPENPOPUP";
 	private Component component;
+
+	public PopupBehaviours(LabelEditorInterface interfaceInstance) {
+		menu =  new LabelEditorPopupMenu(interfaceInstance);
+	}
 
 	public void add(InteractiveLabeling<?> labeling) {
 		menu.populate(labeling);
@@ -35,6 +40,7 @@ public class PopupBehaviours {
 	}
 
 	private void openPopupAt(int x, int y) {
+		menu.update();
 		menu.show(component, x, y);
 	}
 

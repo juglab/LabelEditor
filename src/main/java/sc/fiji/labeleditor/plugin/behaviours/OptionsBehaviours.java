@@ -7,21 +7,21 @@ import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorBehaviours;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 
 import java.awt.*;
+import java.util.Collections;
 
 public class OptionsBehaviours<L> implements LabelEditorBehaviours<L> {
 
 	@Parameter
 	private CommandService commandService;
 
-	private LabelEditorView<L> view;
 	private LabelEditorInterface labelEditorInterface;
+	private InteractiveLabeling<L> labeling;
 
 	@Override
 	public void init(InteractiveLabeling<L> labeling) {
-		this.view = labeling.view();
+		this.labeling = labeling;
 		this.labelEditorInterface = labeling.interfaceInstance();
 	}
 
@@ -35,9 +35,7 @@ public class OptionsBehaviours<L> implements LabelEditorBehaviours<L> {
 	}
 
 	public void showOptions() {
-		commandService.run(LabelEditorOptionsCommand.class, true,
-				"view", view,
-				"labelEditorInterface", labelEditorInterface);
+		commandService.run(ModelOptionsCommand.class, true,
+				"labelings", Collections.singleton(labeling), "labelEditorInterface", labelEditorInterface);
 	}
-
 }

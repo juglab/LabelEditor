@@ -1,0 +1,131 @@
+package sc.fiji.labeleditor.plugin.behaviours;
+
+import net.imglib2.type.numeric.ARGBType;
+import org.scijava.command.Command;
+import org.scijava.command.InteractiveCommand;
+import org.scijava.module.DefaultMutableModuleItem;
+import org.scijava.plugin.Parameter;
+import org.scijava.plugin.Plugin;
+import org.scijava.util.ColorRGB;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+@Plugin(type = Command.class, name = "LabelEditorModel options", initializer = "initRendererList")
+public class ModelOptionsCommand extends InteractiveCommand {
+
+	@Parameter
+	private Set<InteractiveLabeling<?>> labelings;
+
+	@Parameter
+	private LabelEditorInterface labelEditorInterface;
+
+	private Map<String, LabelEditorModel> nameItems;
+	private Map<String, LabelEditorModel> faceColorItems;
+	private Map<String, LabelEditorModel> borderColorItems;
+	private Map<String, LabelEditorRenderer<?>> namedRenderers;
+	private Map<String, LabelEditorView<?>> namedRendererViews;
+
+	@Override
+	public void run() {
+		nameItems.forEach((item, model) -> {
+			String name = (String) getInput(item);
+			model.setName(name);
+		});
+		faceColorItems.forEach((item, model) -> {
+			int currentColor = model.colors().getDefaultFaceColor().get();
+			int newColor = getColor((ColorRGB) getInput(item));
+			if(currentColor != newColor) {
+				model.colors().getDefaultFaceColor().set(newColor);
+			}
+		});
+		borderColorItems.forEach((item, model) -> {
+			int currentColor = model.colors().getDefaultBorderColor().get();
+			int newColor = getColor((ColorRGB) getInput(item));
+			if(currentColor != newColor) {
+				model.colors().getDefaultBorderColor().set(newColor);
+			}
+		});
+		namedRenderers.forEach((name, renderer) -> {
+			Boolean active = (Boolean) getInput(name);
+			namedRendererViews.get(name).setActive(renderer, active);
+		});
+	}
+
+	protected void initRendererList() {
+		nameItems = new HashMap<>();
+		faceColorItems = new HashMap<>();
+		borderColorItems = new HashMap<>();
+		namedRenderers = new HashMap<>();
+		namedRendererViews = new HashMap<>();
+		labelings.forEach(labeling -> {
+			makeNameItem(labeling.model());
+			makeFaceColorItem(labeling.model());
+			makeBorderColorItem(labeling.model());
+			makeRendererItems(labeling.view());
+		});
+	}
+
+	private void makeNameItem(LabelEditorModel model) {
+		final DefaultMutableModuleItem<String> item =
+				new DefaultMutableModuleItem<>(this, model.getName() + " name", String.class);
+		item.setPersisted(false);
+		item.setLabel("Model name");
+		item.setValue(this, model.getName());
+		nameItems.put(item.getName(), model);
+		addInput(item);
+	}
+
+	private void makeFaceColorItem(LabelEditorModel model) {
+		final DefaultMutableModuleItem<ColorRGB> item =
+				new DefaultMutableModuleItem<>(this, model.getName() + " face color", ColorRGB.class);
+		item.setPersisted(false);
+		item.setLabel("Default face color");
+		item.setValue(this, getColor(model.colors().getDefaultFaceColor().get()));
+		faceColorItems.put(item.getName(), model);
+		addInput(item);
+	}
+
+	private void makeBorderColorItem(LabelEditorModel model) {
+		final DefaultMutableModuleItem<ColorRGB> item =
+				new DefaultMutableModuleItem<>(this, model.getName() + " border color", ColorRGB.class);
+		item.setPersisted(false);
+		item.setLabel("Default border color");
+		item.setValue(this, getColor(model.colors().getDefaultBorderColor().get()));
+		borderColorItems.put(item.getName(), model);
+		addInput(item);
+	}
+
+	private ColorRGB getColor(int color) {
+		float alpha = (float)ARGBType.alpha(color)/255.f;
+		return new ColorRGB(
+				(int)(alpha*ARGBType.red(color)),
+				(int)(alpha*ARGBType.green(color)),
+				(int)(alpha*ARGBType.blue(color))
+		);
+	}
+
+	private int getColor(ColorRGB color) {
+		return color.getARGB();
+	}
+
+	private void makeRendererItems(LabelEditorView<?> view) {
+		view.renderers().forEach(renderer -> {
+			String id = view.toString() + " " + renderer.getName();
+			namedRenderers.put(id, renderer);
+			namedRendererViews.put(id, view);
+			final DefaultMutableModuleItem<Boolean> item =
+					new DefaultMutableModuleItem<>(this, id, Boolean.class);
+			item.setPersisted(false);
+			item.setLabel(renderer.getName());
+			item.setValue(this, renderer.isActive());
+			addInput(item);
+		});
+	}
+}

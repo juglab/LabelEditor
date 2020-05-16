@@ -15,4 +15,6 @@ public interface LabelEditorView<L> {
 	void addDefaultRenderers();
 
 	void add(LabelEditorRenderer<L> renderer);
+
+	void setActive(LabelEditorRenderer<?> renderer, boolean active);
 }

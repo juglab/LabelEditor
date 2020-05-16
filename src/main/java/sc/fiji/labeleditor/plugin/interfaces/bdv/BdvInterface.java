@@ -56,7 +56,7 @@ public class BdvInterface implements LabelEditorInterface {
 	public BdvInterface(BdvHandle bdvHandle, Context context) {
 		this.bdvHandle = bdvHandle;
 		this.context = context;
-		popupBehaviours = new PopupBehaviours();
+		popupBehaviours = new PopupBehaviours(this);
 		if(context != null) context.inject(popupBehaviours);
 		Behaviours behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor-popup");
 		behaviours.install(this.bdvHandle.getTriggerbindings(), "labeleditor-popup");
@@ -149,6 +149,9 @@ public class BdvInterface implements LabelEditorInterface {
 	@Override
 	public synchronized void onViewChange(ViewChangedEvent viewChangedEvent) {
 		bdvHandle.getViewerPanel().requestRepaint();
+		rendererSources.forEach((renderer, source) -> {
+			source.setActive(renderer.isActive());
+		});
 	}
 
 	@Override

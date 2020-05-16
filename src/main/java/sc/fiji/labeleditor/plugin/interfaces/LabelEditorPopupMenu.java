@@ -3,7 +3,9 @@ package sc.fiji.labeleditor.plugin.interfaces;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
+import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.plugin.behaviours.AllModelsBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.OptionsBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.export.ExportBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
@@ -21,7 +23,9 @@ public class LabelEditorPopupMenu extends JPopupMenu {
 	@Parameter
 	private Context context;
 
-	private Map<InteractiveLabeling, JMenu> labelingMenus = new HashMap<>();
+	private final LabelEditorInterface labelEditorInterface;
+
+	private Map<InteractiveLabeling<?>, JMenu> labelingMenus = new HashMap<>();
 
 	private static final String MENU_EDIT = "Edit";
 	private static final String MENU_EDIT_DELETE = "Delete selected";
@@ -42,8 +46,10 @@ public class LabelEditorPopupMenu extends JPopupMenu {
 	private static final String MENU_SELECT_BYTAG = "By tag..";
 
 	private static final String MENU_OPTIONS = "Options";
+	private JMenuItem allModelsOptionsItem;
 
-	public LabelEditorPopupMenu() {
+	public LabelEditorPopupMenu(LabelEditorInterface labelEditorInterface) {
+		this.labelEditorInterface = labelEditorInterface;
 	}
 
 	public void populate(InteractiveLabeling<?> labeling) {
@@ -54,6 +60,18 @@ public class LabelEditorPopupMenu extends JPopupMenu {
 		makeOptionsEntry(labeling, labelingMenu);
 		labelingMenus.put(labeling, labelingMenu);
 		add(labelingMenu);
+		if(allModelsOptionsItem != null) remove(allModelsOptionsItem);
+		addModelsOptionsEntry();
+	}
+
+	private void addModelsOptionsEntry() {
+		if(context != null) {
+			AllModelsBehaviours behaviours = new AllModelsBehaviours();
+			context.inject(behaviours);
+			behaviours.init(labelingMenus.keySet(), labelEditorInterface);
+			allModelsOptionsItem = getMenuItem(e -> runInNewThread(behaviours::showOptions), MENU_OPTIONS);
+			add(allModelsOptionsItem);
+		}
 	}
 
 	private <L> void makeOptionsEntry(InteractiveLabeling<L> labeling, JMenu labelingMenu) {
@@ -141,5 +159,12 @@ public class LabelEditorPopupMenu extends JPopupMenu {
 		JMenuItem item = new JMenuItem(label);
 		item.addActionListener(actionListener);
 		return item;
+	}
+
+	public void update() {
+		labelingMenus.forEach((interactiveLabeling, jMenu) -> {
+			jMenu.setText(interactiveLabeling.model().getName());
+		});
+		revalidate();
 	}
 }
