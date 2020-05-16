@@ -73,7 +73,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		Img<IntType> backing = new DiskCachedCellImgFactory<>(new IntType()).create(labelMap);
 		final ImgLabeling< IntType, IntType > labeling = new ImgLabeling<>( backing );
 		AtomicInteger max = new AtomicInteger(0);
-		LoopBuilder.setImages(labelMap, backing).multiThreaded().forEachPixel((input, output) -> {
+		LoopBuilder.setImages(labelMap, backing).forEachPixel((input, output) -> {
 			int intInput = input.getInteger();
 			if(intInput > max.get()) max.getAndSet(intInput);
 			output.set(intInput);

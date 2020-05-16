@@ -4,14 +4,10 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvOptions;
 import net.imagej.ops.OpService;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.loops.LoopBuilder;
-import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
-import net.imglib2.util.Pair;
-import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
 import org.scijava.Context;
 import org.scijava.Disposable;
@@ -25,11 +21,8 @@ import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class creates a {@link LabelEditorBdvPanel} for a label map.
@@ -62,13 +55,13 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 			for (int i = 0; i < labelMap.dimension(labelMap.numDimensions()-1); i++) {
 				labelings.add(Views.hyperSlice(labelMap, labelMap.numDimensions()-1, i));
 			}
-			return display(labelings, labelMap.getRaws());
+			return makePanel(labelings, labelMap.getRaws());
 		} else {
-			return display(labelMap);
+			return makePanel(labelMap);
 		}
 	}
 
-	private LabelEditorBdvPanel display(List<RandomAccessibleInterval<? extends IntegerType<?>>> labelings, List<RandomAccessibleInterval<? extends RealType<?>>> rest) {
+	private LabelEditorBdvPanel makePanel(List<RandomAccessibleInterval<? extends IntegerType<?>>> labelings, List<RandomAccessibleInterval<? extends RealType<?>>> rest) {
 		BdvOptions options = new BdvOptions();
 		if(labelings.get(0).numDimensions() == 2
 				|| (labelings.get(0).numDimensions() > 2
@@ -98,7 +91,7 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 		model.colors().getSelectedBorderColor().set(0xffffffff);
 	}
 
-	private <I extends IntegerType<I>> LabelEditorBdvPanel display(RandomAccessibleInterval<I> labelMap) {
+	private <I extends IntegerType<I>> LabelEditorBdvPanel makePanel(RandomAccessibleInterval<I> labelMap) {
 		BdvOptions options = new BdvOptions();
 		if(labelMap.numDimensions() == 2
 				|| (labelMap.numDimensions() > 2

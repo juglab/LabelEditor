@@ -17,7 +17,7 @@ abstract class ScriptTest {
 
 	@After
 	public void dispose() {
-		ij.dispose();
+		ij.context().dispose();
 	}
 
 	void logListener(LogMessage logMessage) {
