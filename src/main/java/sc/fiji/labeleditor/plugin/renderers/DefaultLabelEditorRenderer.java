@@ -5,7 +5,7 @@ import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import org.scijava.plugin.Plugin;
 
-@Plugin(type = LabelEditorRenderer.class, name = "labels", priority = 1)
+@Plugin(type = LabelEditorRenderer.class, name = "faces", priority = 1)
 public class DefaultLabelEditorRenderer<L> extends AbstractLabelEditorRenderer<L> {
 
 	@Override
