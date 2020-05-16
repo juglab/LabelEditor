@@ -10,7 +10,6 @@ import org.scijava.ItemVisibility;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.scijava.widget.MessageWidget;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,14 +36,14 @@ public class LabelEditorCommand<I extends IntegerType<I>> implements Command {
 	@Parameter(label = "Labeling channels (comma separated indices)")
 	private String labelingChannels = "";
 
-	@Parameter(visibility = ItemVisibility.MESSAGE)
-	private String line2 = "";
-
-	@Parameter(label = "Copy labeling slices")
-	private boolean copyIntoNewImage = true;
-
-	@Parameter(visibility = ItemVisibility.MESSAGE)
-	private String copyNote = "<html><p style='font-weight: normal;'>When editing labels make sure to check the last option or<br>close any other open windows of the label map image to avoid interference.</p></html>";
+//	@Parameter(visibility = ItemVisibility.MESSAGE)
+//	private String line2 = "";
+//
+//	@Parameter(label = "Copy labeling slices")
+//	private boolean copyIntoNewImage = true;
+//
+//	@Parameter(visibility = ItemVisibility.MESSAGE)
+//	private String copyNote = "<html><p style='font-weight: normal;'>When editing labels make sure to check the last option or<br>close any other open windows of the label map image to avoid interference.</p></html>";
 
 	@Parameter(type = ItemIO.OUTPUT)
 	private LabelMap output;
@@ -58,7 +57,7 @@ public class LabelEditorCommand<I extends IntegerType<I>> implements Command {
 		int[] raws = asIntArray(rawChannels.trim());
 		RandomAccessibleInterval<I> labelRAI = makeStack(labelings);
 		List<RandomAccessibleInterval<? extends RealType<?>>> rawList = makeList(raws);
-		output = new LabelMap(labelRAI, rawList, hasChannels);
+		output = new LabelMap<>(labelRAI, rawList, hasChannels);
 	}
 
 	private int[] asIntArray(String channels) {
@@ -78,12 +77,13 @@ public class LabelEditorCommand<I extends IntegerType<I>> implements Command {
 			List<RandomAccessibleInterval<I>> labelingsList = new ArrayList<>();
 			for (int i : channels) {
 				RandomAccessibleInterval<I> slice = Views.hyperSlice(input, channelDimension, i);
-				if(copyIntoNewImage) labelingsList.add(opService.copy().rai(slice));
-				else labelingsList.add(slice);
+//				if(copyIntoNewImage) labelingsList.add(opService.copy().rai(slice));
+//				else labelingsList.add(slice);
+				labelingsList.add(slice);
 			}
 			return Views.stack(new ArrayList<>(labelingsList));
 		} else {
-			if(copyIntoNewImage) return opService.copy().rai(input);
+//			if(copyIntoNewImage) return opService.copy().rai(input);
 			return input;
 		}
 	}
@@ -93,8 +93,9 @@ public class LabelEditorCommand<I extends IntegerType<I>> implements Command {
 			List<RandomAccessibleInterval<? extends RealType<?>>> res = new ArrayList<>();
 			for (int i : channels) {
 				RandomAccessibleInterval<? extends RealType<?>> slice = Views.hyperSlice(input, channelDimension, i);
-				if(copyIntoNewImage) res.add(opService.copy().rai(slice));
-				else res.add(slice);
+//				if(copyIntoNewImage) res.add(opService.copy().rai(slice));
+//				else res.add(slice);
+				res.add(slice);
 			}
 			return res;
 		} else {

@@ -9,6 +9,7 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Pair;
 import net.imglib2.util.ValuePair;
 import net.imglib2.view.Views;
@@ -57,7 +58,7 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 	@Override
 	protected JPanel createDisplayPanel(LabelMap labelMap) {
 		if(labelMap.hasChannels()) {
-			List<RandomAccessibleInterval<? extends RealType<?>>> labelings = new ArrayList<>();
+			List<RandomAccessibleInterval<? extends IntegerType<?>>> labelings = new ArrayList<>();
 			for (int i = 0; i < labelMap.dimension(labelMap.numDimensions()-1); i++) {
 				labelings.add(Views.hyperSlice(labelMap, labelMap.numDimensions()-1, i));
 			}
@@ -67,7 +68,7 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 		}
 	}
 
-	private LabelEditorBdvPanel display(List<RandomAccessibleInterval<? extends RealType<?>>> labelings, List<RandomAccessibleInterval<? extends RealType<?>>> rest) {
+	private LabelEditorBdvPanel display(List<RandomAccessibleInterval<? extends IntegerType<?>>> labelings, List<RandomAccessibleInterval<? extends RealType<?>>> rest) {
 		BdvOptions options = new BdvOptions();
 		if(labelings.get(0).numDimensions() == 2
 				|| (labelings.get(0).numDimensions() > 2
@@ -78,9 +79,8 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 		for (int i = 0; i < rest.size(); i++) {
 			BdvFunctions.show(rest.get(i), "data " + i, new BdvOptions().addTo(panel.getBdvHandlePanel()));
 		}
-		for (RandomAccessibleInterval randomAccessibleInterval : labelings) {
-			ImgLabeling labeling = makeLabeling(randomAccessibleInterval);
-			DefaultLabelEditorModel model = new DefaultLabelEditorModel<>(labeling);
+		for (RandomAccessibleInterval<? extends IntegerType<?>> labelMap : labelings) {
+			DefaultLabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap);
 			setRandomColors(model);
 			panel.add(model);
 		}
@@ -105,36 +105,35 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 				&& labelMap.dimension(2) == 1)) {
 			options.is2D();
 		}
-		ImgLabeling<Integer, I> labeling = makeLabeling(labelMap);
-		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
+		DefaultLabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap);
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(context, options);
 		panel.add(model);
 		return panel;
 	}
 
-	private <I extends IntegerType<I>> ImgLabeling<Integer, I> makeLabeling(RandomAccessibleInterval<I> labelMap) {
-		List<Pair<Integer, Set<Integer>>> maxLabelsPairs = LoopBuilder.setImages(labelMap).multiThreaded().forEachChunk(chunk -> {
-			AtomicReference<Integer> max = new AtomicReference<>(0);
-			Set<Integer> labelset= new HashSet<>();
-			chunk.forEachPixel(pixel -> {
-				if(max.get() < pixel.getInteger()) max.set(pixel.getInteger());
-				labelset.add(pixel.getInteger());
-			});
-			Pair<Integer, Set<Integer>> pair = new ValuePair<>(max.get(), labelset);
-			return pair;
-		});
-		Set<Integer> uniqueLabels = new HashSet<>();
-		AtomicReference<Integer> max = new AtomicReference<>(0);
-		maxLabelsPairs.forEach(maxLabelsPair -> {
-			if(maxLabelsPair.getA() > max.get()) max.set(maxLabelsPair.getA());
-			uniqueLabels.addAll(maxLabelsPair.getB());
-		});
-		List<Integer> labels = new ArrayList<>();
-		for (int i = 1; i < max.get()+1; i++) {
-			labels.add(i);
-		}
-		return ImgLabeling.fromImageAndLabels(labelMap, labels);
-	}
+//	private <I extends IntegerType<I>> ImgLabeling<Integer, I> makeLabeling(RandomAccessibleInterval<I> labelMap) {
+//		List<Pair<Integer, Set<Integer>>> maxLabelsPairs = LoopBuilder.setImages(labelMap).multiThreaded().forEachChunk(chunk -> {
+//			AtomicReference<Integer> max = new AtomicReference<>(0);
+//			Set<Integer> labelset= new HashSet<>();
+//			chunk.forEachPixel(pixel -> {
+//				if(max.get() < pixel.getInteger()) max.set(pixel.getInteger());
+//				labelset.add(pixel.getInteger());
+//			});
+//			Pair<Integer, Set<Integer>> pair = new ValuePair<>(max.get(), labelset);
+//			return pair;
+//		});
+//		Set<Integer> uniqueLabels = new HashSet<>();
+//		AtomicReference<Integer> max = new AtomicReference<>(0);
+//		maxLabelsPairs.forEach(maxLabelsPair -> {
+//			if(maxLabelsPair.getA() > max.get()) max.set(maxLabelsPair.getA());
+//			uniqueLabels.addAll(maxLabelsPair.getB());
+//		});
+//		List<Integer> labels = new ArrayList<>();
+//		for (int i = 1; i < max.get()+1; i++) {
+//			labels.add(i);
+//		}
+//		return ImgLabeling.fromImageAndLabels(labelMap, labels);
+//	}
 
 	@Override
 	public void redraw()

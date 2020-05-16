@@ -18,8 +18,8 @@
 		<license.licenseName>Simplified BSD License</license.licenseName>
 		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
-		<imglib2-roi.version>0.10.2</imglib2-roi.version>
-		<imglib2.version>5.9.0</imglib2.version>
+<!--		<imglib2-roi.version>0.10.2</imglib2-roi.version>-->
+<!--		<imglib2.version>5.9.0</imglib2.version>-->
 	</properties>
 
 	<name>Label Editor</name>
