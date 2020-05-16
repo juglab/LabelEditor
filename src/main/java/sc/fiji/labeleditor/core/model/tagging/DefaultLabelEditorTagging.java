@@ -3,10 +3,8 @@ package sc.fiji.labeleditor.core.model.tagging;
 import org.scijava.listeners.Listeners;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
-import org.scijava.table.DefaultDoubleTable;
 import org.scijava.table.DefaultGenericTable;
 import org.scijava.table.GenericTable;
-import org.scijava.table.Table;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 import java.util.ArrayList;
@@ -14,7 +12,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
