@@ -2,6 +2,7 @@ package sc.fiji.labeleditor.plugin.imagej;
 
 import bdv.util.BdvFunctions;
 import bdv.util.BdvOptions;
+import bdv.util.BdvStackSource;
 import net.imagej.ops.OpService;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.ARGBType;
@@ -70,7 +71,8 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 		}
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(context, options);
 		for (int i = 0; i < rest.size(); i++) {
-			BdvFunctions.show(rest.get(i), "data " + i, new BdvOptions().addTo(panel.getBdvHandlePanel()));
+			BdvStackSource<? extends RealType<?>> source = BdvFunctions.show(rest.get(i), "data " + i, new BdvOptions().addTo(panel.getBdvHandlePanel()));
+			source.setDisplayRange(0, 255);
 		}
 		for (RandomAccessibleInterval<? extends IntegerType<?>> labelMap : labelings) {
 			DefaultLabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(labelMap);
