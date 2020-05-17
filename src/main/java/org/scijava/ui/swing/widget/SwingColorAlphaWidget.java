@@ -7,13 +7,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -30,6 +30,19 @@
 
 package org.scijava.ui.swing.widget;
 
+import org.scijava.plugin.Plugin;
+import org.scijava.ui.awt.AWTColors;
+import org.scijava.util.ColorRGBA;
+import org.scijava.widget.InputWidget;
+import org.scijava.widget.WidgetModel;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -41,40 +54,27 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.colorchooser.AbstractColorChooserPanel;
-
-import org.scijava.plugin.Plugin;
-import org.scijava.ui.awt.AWTColors;
-import org.scijava.util.ColorRGBA;
-import org.scijava.widget.InputWidget;
-import org.scijava.widget.WidgetModel;
-
 /**
- * Swing implementation of color chooser widget.
- * 
+ * Swing implementation of color chooser widget including alpha.
+ *
  * @author Curtis Rueden
+ * @author Deborah Schmidt
  */
 @Plugin(type = InputWidget.class)
 public class SwingColorAlphaWidget extends SwingInputWidget<ColorRGBA> implements
-	ActionListener, InputWidget<ColorRGBA, JPanel>
+		ActionListener, InputWidget<ColorRGBA, JPanel>
 {
 
 	private static final int SWATCH_WIDTH = 64, SWATCH_HEIGHT = 16;
 
 	private static final String HSB_CLASS_NAME =
-		"javax.swing.colorchooser.DefaultHSBChooserPanel";
+			"javax.swing.colorchooser.DefaultHSBChooserPanel";
 
 	protected static final String RGB_CLASS_NAME =
-		"javax.swing.colorchooser.DefaultRGBChooserPanel";
+			"javax.swing.colorchooser.DefaultRGBChooserPanel";
 
 	protected static final String SWATCHES_CLASS_NAME =
-		"javax.swing.colorchooser.DefaultSwatchChooserPanel";
+			"javax.swing.colorchooser.DefaultSwatchChooserPanel";
 
 	private JButton choose;
 	private Color color;
@@ -135,7 +135,7 @@ public class SwingColorAlphaWidget extends SwingInputWidget<ColorRGBA> implement
 	 * (HSB, RGB, Swatches) rather than the default of (Swatches, HSB, RGB).
 	 */
 	public static Color showColorDialog(final Component component,
-		final String title, final Color initialColor) throws HeadlessException
+	                                    final String title, final Color initialColor) throws HeadlessException
 	{
 		final JColorChooser pane = createColorChooser(initialColor);
 
@@ -160,7 +160,7 @@ public class SwingColorAlphaWidget extends SwingInputWidget<ColorRGBA> implement
 		final ColorTracker ok = new ColorTracker(pane);
 
 		final JDialog dialog =
-			JColorChooser.createDialog(component, title, true, pane, ok, null);
+				JColorChooser.createDialog(component, title, true, pane, ok, null);
 
 		dialog.setVisible(true);
 
@@ -179,11 +179,11 @@ public class SwingColorAlphaWidget extends SwingInputWidget<ColorRGBA> implement
 	 */
 	private static JColorChooser createColorChooser(final Color initialColor) {
 		final JColorChooser chooser =
-			new JColorChooser(initialColor != null ? initialColor : Color.white);
+				new JColorChooser(initialColor != null ? initialColor : Color.white);
 
 		// get the list of panels
 		final AbstractColorChooserPanel[] panels =
-			chooser.getChooserPanels().clone();
+				chooser.getChooserPanels().clone();
 
 		// sort panels into the desired order
 		Arrays.sort(panels, new Comparator<Object>() {
@@ -216,7 +216,7 @@ public class SwingColorAlphaWidget extends SwingInputWidget<ColorRGBA> implement
 		color = AWTColors.getColor(value);
 
 		final BufferedImage image =
-			new BufferedImage(SWATCH_WIDTH, SWATCH_HEIGHT, BufferedImage.TYPE_INT_RGB);
+				new BufferedImage(SWATCH_WIDTH, SWATCH_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 		final Graphics g = image.getGraphics();
 		g.setColor(color);
 		g.fillRect(0, 0, image.getWidth(), image.getHeight());
