@@ -21,6 +21,7 @@ public class DeleteLabels<L> implements Behaviour {
 
 	public void deleteSelected() {
 		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
+		selected.forEach(label -> labeling.model().tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
 		delete(selected, labeling.getLabelingInScope());
 		labeling.model().notifyLabelingListeners();
 	}
