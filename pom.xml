@@ -11,7 +11,7 @@
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>labeleditor</artifactId>
-	<version>0.8.1-SNAPSHOT</version>
+	<version>0.8.1</version>
 
 	<properties>
 		<package-name>sc.fiji.labeleditor</package-name>
@@ -148,7 +148,7 @@
 		<connection>scm:git:git://github.com/juglab/LabelEditor</connection>
 		<developerConnection>scm:git:git@github.com:juglab/LabelEditor</developerConnection>
 		<url>https://github.com/juglab/LabelEditor</url>
-	  <tag>HEAD</tag>
+	  <tag>labeleditor-0.8.1</tag>
   </scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
