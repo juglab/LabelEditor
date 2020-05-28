@@ -8,21 +8,12 @@
 		<version>27.0.1</version>
 	</parent>
 
-
 	<groupId>sc.fiji</groupId>
 	<artifactId>labeleditor</artifactId>
 	<version>0.8.2-SNAPSHOT</version>
 
-	<properties>
-		<package-name>sc.fiji.labeleditor</package-name>
-		<license.licenseName>Simplified BSD License</license.licenseName>
-		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
-		<releaseProfiles>deploy-to-scijava</releaseProfiles>
-<!--		<imglib2-roi.version>0.10.2</imglib2-roi.version>-->
-<!--		<imglib2.version>5.9.0</imglib2.version>-->
-	</properties>
-
 	<name>Label Editor</name>
+
 	<description>UI component for image segmentation label comparison and selection</description>
 	<url>https:github.com/juglab/LabelEditor</url>
 	<inceptionYear>2019</inceptionYear>
@@ -37,50 +28,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.scijava</groupId>
-			<artifactId>scijava-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.scijava</groupId>
-			<artifactId>scijava-listeners</artifactId>
-			<version>1.0.0-beta-2</version>
-		</dependency>
-		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>bigdataviewer-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>sc.fiji</groupId>
-			<artifactId>bigdataviewer-vistools</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.scijava</groupId>
-			<artifactId>scijava-ui-swing</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej-ops</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej</artifactId>
-			<scope>test</scope>
-		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>sc.fiji</groupId>-->
-<!--			<artifactId>bigvolumeviewer</artifactId>-->
-<!--			<version>0.1.6</version>-->
-<!--		</dependency>-->
-	</dependencies>
-
 	<developers>
 		<developer>
 			<id>frauzufall</id>
@@ -95,16 +42,16 @@
 			<timezone>+1</timezone>
 		</developer>
 		<developer>
-		  <id>turek</id>
-		  <name>Gabriella Turek</name>
-		  <email>turek@@mpi-cbg.de</email>
-		  <url>https://wwww.mpi-cbg.de/jug</url>
-		  <organization>CSBD</organization>
-		  <organizationUrl>http://www.mpi-cbg.de/jug</organizationUrl>
-		  <roles>
-			<role>developer</role>
-		  </roles>
-		  <timezone>+1</timezone>
+			<id>turek</id>
+			<name>Gabriella Turek</name>
+			<email>turek@@mpi-cbg.de</email>
+			<url>https://wwww.mpi-cbg.de/jug</url>
+			<organization>CSBD</organization>
+			<organizationUrl>http://www.mpi-cbg.de/jug</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
 		</developer>
 		<developer>
 			<id>tpietzsch</id>
@@ -148,8 +95,9 @@
 		<connection>scm:git:git://github.com/juglab/LabelEditor</connection>
 		<developerConnection>scm:git:git@github.com:juglab/LabelEditor</developerConnection>
 		<url>https://github.com/juglab/LabelEditor</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
+
 	<issueManagement>
 		<system>GitHub Issues</system>
 		<url>https://github.com/juglab/LabelEditor/issues</url>
@@ -158,12 +106,56 @@
 		<system>Travis CI</system>
 		<url>https://travis-ci.com/juglab/LabelEditor</url>
 	</ciManagement>
-
 	<repositories>
 		<repository>
 			<id>scijava.public</id>
 			<url>https://maven.scijava.org/content/groups/public</url>
 		</repository>
 	</repositories>
+
+	<properties>
+		<package-name>sc.fiji.labeleditor</package-name>
+		<license.licenseName>Simplified BSD License</license.licenseName>
+		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
+		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>scijava-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>scijava-listeners</artifactId>
+			<version>1.0.0-beta-2</version>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>bigdataviewer-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>bigdataviewer-vistools</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>scijava-ui-swing</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-ops</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 </project>
