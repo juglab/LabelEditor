@@ -12,6 +12,7 @@ import java.awt.*;
 
 public class PopupBehaviours {
 
+	private final LabelEditorInterface interfaceInstance;
 	@Parameter
 	private Context context;
 
@@ -23,10 +24,7 @@ public class PopupBehaviours {
 
 	public PopupBehaviours(LabelEditorInterface interfaceInstance) {
 		menu =  new LabelEditorPopupMenu(interfaceInstance);
-	}
-
-	public void add(InteractiveLabeling<?> labeling) {
-		menu.populate(labeling);
+		this.interfaceInstance = interfaceInstance;
 	}
 
 	public void install(Behaviours behaviours, Component panel) {
@@ -40,7 +38,7 @@ public class PopupBehaviours {
 	}
 
 	private void openPopupAt(int x, int y) {
-		menu.update();
+		menu.build(interfaceInstance.getInteractiveLabelings());
 		menu.show(component, x, y);
 	}
 

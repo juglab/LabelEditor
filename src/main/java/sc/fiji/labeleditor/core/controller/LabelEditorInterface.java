@@ -9,6 +9,7 @@ import sc.fiji.labeleditor.core.view.ViewChangedEvent;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Set;
 
 public interface LabelEditorInterface {
 	//TODO 3d position?
@@ -26,4 +27,6 @@ public interface LabelEditorInterface {
 	<L> Behaviours behaviours(InteractiveLabeling<L> interactiveLabeling);
 
 	void setRendererActive(LabelEditorRenderer renderer, boolean active);
+
+	Set<InteractiveLabeling<?>> getInteractiveLabelings();
 }

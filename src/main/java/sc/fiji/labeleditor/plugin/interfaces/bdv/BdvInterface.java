@@ -94,6 +94,26 @@ public class BdvInterface implements LabelEditorInterface {
 		return interactiveLabeling;
 	}
 
+	public <L> void remove(InteractiveLabeling<L> labeling) {
+		for (LabelEditorRenderer<L> renderer : labeling.view().renderers()) {
+			rendererSources.remove(renderer);
+		}
+		List<BdvSource> toBeRemoved = sources.get(labeling.view());
+		if(toBeRemoved != null) {
+			sources.remove(labeling.view());
+			for (BdvSource bdvSource : toBeRemoved) {
+				bdvSource.removeFromBdv();
+			}
+		}
+		Behaviours behaviours = behavioursMap.get(labeling);
+		if(behaviours != null) {
+			behaviours.getInputTriggerMap().clear();
+			behaviours.getBehaviourMap().clear();
+			//TODO are behaviours now properly removed from BDV?
+			behavioursMap.remove(labeling);
+		}
+	}
+
 	public <L> LabelingType<L> findLabelsAtMousePosition(int x, int y, InteractiveLabeling<L> labeling) {
 		RandomAccess<LabelingType<L>> ra = labeling.getLabelingInScope().randomAccess();
 		Localizable pos = getDataPositionAtMouse();
@@ -125,7 +145,6 @@ public class BdvInterface implements LabelEditorInterface {
 		install(labeling, selectionModel, behaviours);
 //		install(labeling, new FocusBehaviours<>(), behaviours);
 		install(labeling, new LabelingModificationBehaviours<>(), behaviours);
-		popupBehaviours.add(labeling);
 	}
 
 	@Override
@@ -199,5 +218,10 @@ public class BdvInterface implements LabelEditorInterface {
 	public void setRendererActive(LabelEditorRenderer renderer, boolean active) {
 		BdvSource source = rendererSources.get(renderer);
 		if(source != null) source.setActive(active);
+	}
+
+	@Override
+	public Set<InteractiveLabeling<?>> getInteractiveLabelings() {
+		return behavioursMap.keySet();
 	}
 }
