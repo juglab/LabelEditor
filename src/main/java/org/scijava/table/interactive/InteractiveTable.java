@@ -1,9 +1,8 @@
 /*
  * #%L
- * Table structures for SciJava.
+ * UI component for image segmentation label comparison and selection
  * %%
- * Copyright (C) 2012 - 2020 Board of Regents of the University of
- * Wisconsin-Madison, and Friedrich Miescher Institute for Biomedical Research.
+ * Copyright (C) 2019 - 2020 DAIS developers
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
