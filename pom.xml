@@ -117,7 +117,7 @@
 		<package-name>sc.fiji.labeleditor</package-name>
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
-		<license.excludes>**/script_templates/**</license.excludes>
+		<license.excludes>**/script-templates/**</license.excludes>
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
 	</properties>
 
