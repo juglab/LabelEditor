@@ -10,7 +10,7 @@
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>labeleditor</artifactId>
-	<version>0.8.2-SNAPSHOT</version>
+	<version>0.9.0</version>
 
 	<name>Label Editor</name>
 
@@ -95,7 +95,7 @@
 		<connection>scm:git:git://github.com/juglab/LabelEditor</connection>
 		<developerConnection>scm:git:git@github.com:juglab/LabelEditor</developerConnection>
 		<url>https://github.com/juglab/LabelEditor</url>
-		<tag>HEAD</tag>
+		<tag>labeleditor-0.9.0</tag>
 	</scm>
 
 	<issueManagement>
