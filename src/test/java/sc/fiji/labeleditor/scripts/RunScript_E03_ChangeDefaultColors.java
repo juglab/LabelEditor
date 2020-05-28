@@ -39,7 +39,7 @@ public class RunScript_E03_ChangeDefaultColors extends ScriptTest {
 	@Test
 	public void run() throws Exception {
 		ij.script().run(new File(InteractiveLabeling.class.getResource(
-				"/script-templates/ImageJ2/LabelEditor/E03_ChangeDefaultColors.groovy").getPath()), true).get();
+				"/script_templates/ImageJ2/LabelEditor/E03_ChangeDefaultColors.groovy").getPath()), true).get();
 	}
 
 	public static void main(String... args) throws Exception

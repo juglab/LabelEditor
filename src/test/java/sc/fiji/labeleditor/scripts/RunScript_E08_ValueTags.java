@@ -39,7 +39,7 @@ public class RunScript_E08_ValueTags extends ScriptTest {
 	@Test
 	public void run() throws Exception {
 		ij.script().run(new File(InteractiveLabeling.class.getResource(
-				"/script-templates/ImageJ2/LabelEditor/E08_ValueTags.groovy").getPath()),
+				"/script_templates/ImageJ2/LabelEditor/E08_ValueTags.groovy").getPath()),
 				true).get();
 	}
 
