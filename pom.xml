@@ -10,7 +10,7 @@
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>labeleditor</artifactId>
-	<version>0.8.2-SNAPSHOT</version>
+	<version>0.9.1-SNAPSHOT</version>
 
 	<name>Label Editor</name>
 
