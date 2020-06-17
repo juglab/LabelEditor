@@ -4,6 +4,8 @@
 
 The LabelEditor is a JugLab creation aiming to close the gap between segmentation algorithms and user interaction in ImageJ2 / Fiji.
 
+For basic usage instructions [see this thread on image.sc](https://forum.image.sc/t/bdv-labeleditor-objects-counter-ij2-for-dealing-with-labelings-in-imagej-usage/31635).
+
 ## Implementation
 
 ### core
