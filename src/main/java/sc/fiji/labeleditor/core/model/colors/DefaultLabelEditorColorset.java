@@ -88,9 +88,4 @@ public class DefaultLabelEditorColorset extends HashMap<Object, LabelEditorColor
 		return remove;
 	}
 
-	@Override
-	public LabelEditorColor get(Object o) {
-		return computeIfAbsent(o, k -> new DefaultLabelEditorColor(this, 0));
-	}
-
 }

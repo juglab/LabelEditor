@@ -29,6 +29,7 @@
 package sc.fiji.labeleditor.core.model.colors;
 
 import org.scijava.listeners.Listeners;
+import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
 import java.util.HashMap;
 
@@ -42,7 +43,7 @@ public class DefaultLabelEditorTagColors extends HashMap<Object, LabelEditorColo
 
 	@Override
 	public LabelEditorColorset getColorset(Object tag) {
-		return computeIfAbsent(tag, k -> new DefaultLabelEditorColorset(this));
+		return get(tag);
 	}
 
 	@Override
@@ -64,6 +65,33 @@ public class DefaultLabelEditorTagColors extends HashMap<Object, LabelEditorColo
 	public void notifyListeners() {
 		ColorChangedEvent e = new ColorChangedEvent();
 		listeners.list.forEach(listener -> listener.tagChanged(e));
+	}
+
+	@Override
+	public LabelEditorColor getFaceColor(Object tag) {
+		LabelEditorTargetComponent target = LabelEditorTargetComponent.FACE;
+		return returnNotNullColor(tag, target);
+	}
+
+	@Override
+	public LabelEditorColor getBorderColor(Object tag) {
+		LabelEditorTargetComponent target = LabelEditorTargetComponent.BORDER;
+		return returnNotNullColor(tag, target);
+	}
+
+	private LabelEditorColor returnNotNullColor(Object tag, LabelEditorTargetComponent target) {
+		LabelEditorColorset colorset = getColorset(tag);
+		if(colorset == null) {
+			colorset = new DefaultLabelEditorColorset(this);
+			colorset.put(target, 0);
+			put(tag, colorset);
+		}
+		LabelEditorColor color = colorset.get(target);
+		if(color == null) {
+			color = new DefaultLabelEditorColor(colorset, 0);
+			colorset.put(target, color);
+		}
+		return color;
 	}
 
 	// convenience methods

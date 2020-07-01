@@ -44,13 +44,9 @@ public interface LabelEditorTagColors {
 
 	void notifyListeners();
 
-	default LabelEditorColor getFaceColor(Object tag) {
-		return getColorset(tag).get(LabelEditorTargetComponent.FACE);
-	}
+	LabelEditorColor getFaceColor(Object tag);
 
-	default LabelEditorColor getBorderColor(Object tag) {
-		return getColorset(tag).get(LabelEditorTargetComponent.BORDER);
-	}
+	LabelEditorColor getBorderColor(Object tag);
 
 	default LabelEditorColor getFocusFaceColor() {
 		return getFaceColor(LabelEditorTag.MOUSE_OVER);
