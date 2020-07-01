@@ -89,22 +89,29 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 	}
 
 	protected int getMixColor(LabelEditorTagColors tagColors, Object targetComponent, Set<L> labels) {
-		List<L> sortedLabels = new ArrayList<>(labels);
-		sortedLabels.sort(model.getLabelComparator());
+		if(labels.size() > 1) {
+			List<L> sortedLabels = new ArrayList<>(labels);
+			sortedLabels.sort(model.getLabelComparator());
+			int[] labelColors = new int[sortedLabels.size()];
+			for (int j = 0; j < labelColors.length; j++) {
 
-		int[] labelColors = new int[sortedLabels.size()];
-		for (int j = 0; j < labelColors.length; j++) {
-
-			L label = sortedLabels.get(j);
-			Set<Object> labelTags = model.tagging().getTags(label);
-			ArrayList<Object> sortedTags = new ArrayList<>(labelTags);
-			sortedTags.sort(model.getTagComparator());
-			sortedTags.add(LabelEditorTag.DEFAULT);
-
-			labelColors[j] = mixColorsAdditive(label, sortedTags, tagColors, targetComponent, model.tagging());
+				L label = sortedLabels.get(j);
+				int color = getLabelColor(tagColors, targetComponent, label);
+				labelColors[j] = color;
+			}
+			return ColorMixingUtils.mixColorsOverlay(labelColors);
+		} else {
+			return getLabelColor(tagColors, targetComponent, labels.iterator().next());
 		}
+	}
 
-		return ColorMixingUtils.mixColorsOverlay(labelColors);
+	private int getLabelColor(LabelEditorTagColors tagColors, Object targetComponent, L label) {
+		Set<Object> labelTags = model.tagging().getTags(label);
+		ArrayList<Object> sortedTags = new ArrayList<>(labelTags);
+		sortedTags.sort(model.getTagComparator());
+		sortedTags.add(LabelEditorTag.DEFAULT);
+
+		return mixColorsAdditive(label, sortedTags, tagColors, targetComponent, model.tagging());
 	}
 
 	private void printLUT(LabelingMapping<L> mapping, int[] lut) {
@@ -169,7 +176,11 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		for (int i = 0; i < colors.length; i++) {
 			Object tag = tags.get(i);
 			Object value = tagging.getValue(tag, label);
-			int color = tagColors.getColorset(tag).get(targetComponent).get(value);
+			LabelEditorColorset colorset = tagColors.getColorset(tag);
+			if(colorset == null) continue;
+			LabelEditorColor leColor = colorset.get(targetComponent);
+			if(leColor == null) continue;
+			int color = leColor.get(value);
 			colors[i] = color;
 		}
 		return colors;
