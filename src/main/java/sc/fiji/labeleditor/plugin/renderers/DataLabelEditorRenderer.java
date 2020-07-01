@@ -38,15 +38,16 @@ public class DataLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 
 	private RandomAccessibleInterval output;
 	private boolean active = true;
+	private LabelEditorModel<L> model;
 
-	@Override
 	public void init(LabelEditorModel<L> model) {
+		this.model = model;
 		if(model.getData() != null)
 		this.output = model.getData();
 	}
 
 	@Override
-	public synchronized void updateOnTagChange(LabelEditorModel<L> model) {
+	public synchronized void updateOnTagChange() {
 	}
 
 	@Override
@@ -65,6 +66,11 @@ public class DataLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
 	@Override
 	public RandomAccessibleInterval getOutput() {
 		return output;
+	}
+
+	@Override
+	public LabelEditorModel<L> model() {
+		return model;
 	}
 
 	@Override

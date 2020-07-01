@@ -28,7 +28,8 @@
  */
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
-import bdv.viewer.render.AccumulateProjector;
+import bdv.viewer.SourceAndConverter;
+import bdv.viewer.render.AccumulateProjectorARGB;
 import bdv.viewer.render.AccumulateProjectorFactory;
 import bdv.viewer.render.VolatileProjector;
 import net.imglib2.Cursor;
@@ -39,21 +40,29 @@ import net.imglib2.type.numeric.ARGBType;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 
-public class LabelEditorAccumulateProjector extends AccumulateProjector< ARGBType, ARGBType >
+public class LabelEditorAccumulateProjector extends AccumulateProjectorARGB
 {
-	public static AccumulateProjectorFactory< ARGBType > factory = (
-			sourceProjectors,
-			sources,
-			sourceScreenImages,
-			targetScreenImages,
-			numThreads,
-			executorService) ->
-			new LabelEditorAccumulateProjector(
-					sourceProjectors,
-					sourceScreenImages,
-					targetScreenImages,
-					numThreads,
-					executorService );
+
+	public static AccumulateProjectorFactory< ARGBType > factory = new AccumulateProjectorFactory< ARGBType >()
+	{
+		@Override
+		public VolatileProjector createProjector(
+				final ArrayList< VolatileProjector > sourceProjectors,
+				final ArrayList<SourceAndConverter< ? >> sources,
+				final ArrayList< ? extends RandomAccessible< ? extends ARGBType > > sourceScreenImages,
+				final RandomAccessibleInterval< ARGBType > targetScreenImage,
+				final int numThreads,
+				final ExecutorService executorService )
+		{
+			try
+			{
+				return new AccumulateProjectorARGB( sourceProjectors, sourceScreenImages, targetScreenImage, numThreads, executorService );
+			}
+			catch ( IllegalArgumentException ignored )
+			{}
+			return new LabelEditorAccumulateProjector( sourceProjectors, sourceScreenImages, targetScreenImage, numThreads, executorService );
+		}
+	};
 
 	public LabelEditorAccumulateProjector(
 			final ArrayList< VolatileProjector > sourceProjectors,

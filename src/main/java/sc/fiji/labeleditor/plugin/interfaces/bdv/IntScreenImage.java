@@ -1,8 +1,13 @@
-/*-
+/*
  * #%L
- * UI component for image segmentation label comparison and selection
+ * ImgLib2: a general-purpose, multidimensional image processing library.
  * %%
- * Copyright (C) 2019 - 2020 DAIS developers
+ * Copyright (C) 2009 - 2018 Tobias Pietzsch, Stephan Preibisch, Stephan Saalfeld,
+ * John Bogovic, Albert Cardona, Barry DeZonia, Christian Dietz, Jan Funke,
+ * Aivar Grislis, Jonathan Hale, Grant Harris, Stefan Helfrich, Mark Hiner,
+ * Martin Horn, Steffen Jaensch, Lee Kamentsky, Larry Lindsey, Melissa Linkert,
+ * Mark Longair, Brian Northan, Nick Perry, Curtis Rueden, Johannes Schindelin,
+ * Jean-Yves Tinevez and Michael Zinsmaier.
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -26,26 +31,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * #L%
  */
-package sc.fiji.labeleditor.plugin.renderers;
 
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.roi.boundary.IntTypeBoundary;
+package sc.fiji.labeleditor.plugin.interfaces.bdv;
+
+import net.imglib2.img.array.ArrayImg;
+import net.imglib2.img.basictypeaccess.array.IntArray;
 import net.imglib2.type.numeric.integer.IntType;
-import org.scijava.plugin.Plugin;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
-import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
+import net.imglib2.util.Fraction;
 
-@Plugin(type = LabelEditorRenderer.class, name = "borders", priority = 2)
-public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> {
+import java.awt.Image;
 
-	@Override
-	public void updateScreenImage(RandomAccessibleInterval<IntType> screenImage) {
-		super.updateScreenImage(new IntTypeBoundary<>(screenImage, -1));
+public class IntScreenImage extends ArrayImg<IntType, IntArray >
+{
+	final protected int[] data;
+
+	IntScreenImage(final int width, final int height)
+	{
+		this( width, height, new int[ width * height ] );
 	}
 
-	@Override
-	public synchronized void updateOnTagChange() {
-		updateLUT(LabelEditorTargetComponent.BORDER);
+	/**
+	 * Create an {@link Image} with {@code data}. Writing to the {@code data}
+	 * array will update the {@link Image}.
+	 */
+	private IntScreenImage(final int width, final int height, final int[] data)
+	{
+		super( new IntArray( data ), new long[]{ width, height }, new Fraction() );
+		setLinkedType( new IntType( this ) );
+		this.data = data;
 	}
 
+	public int[] getData()
+	{
+		return data;
+	}
 }

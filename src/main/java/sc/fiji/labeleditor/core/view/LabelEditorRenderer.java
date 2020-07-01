@@ -34,8 +34,8 @@ import org.scijava.plugin.SciJavaPlugin;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 public interface LabelEditorRenderer<L> extends SciJavaPlugin {
-	void init(LabelEditorModel<L> model);
-	void updateOnTagChange(LabelEditorModel<L> model);
+
+	void updateOnTagChange();
 	void updateOnLabelingChange();
 	void setActive(boolean active);
 	boolean isActive();
@@ -47,6 +47,8 @@ public interface LabelEditorRenderer<L> extends SciJavaPlugin {
 		if(annotation != null) return annotation.name();
 		return null;
 	}
+
+	LabelEditorModel<L> model();
 
 	<M extends LabelEditorModel> boolean canDisplay(M model);
 }
