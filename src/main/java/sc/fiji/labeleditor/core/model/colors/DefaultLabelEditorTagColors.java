@@ -31,12 +31,16 @@ package sc.fiji.labeleditor.core.model.colors;
 import org.scijava.listeners.Listeners;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class DefaultLabelEditorTagColors extends HashMap<Object, LabelEditorColorset> implements LabelEditorTagColors {
 
 	private final Listeners.List<ColorChangeListener> listeners = new Listeners.SynchronizedList<>();
 	private boolean listenersPaused = false;
+	private List<ColorChangedEvent> keptEvents = new ArrayList<>();
 
 	public DefaultLabelEditorTagColors() {
 	}
@@ -59,12 +63,21 @@ public class DefaultLabelEditorTagColors extends HashMap<Object, LabelEditorColo
 	@Override
 	public void resumeListeners() {
 		listenersPaused = false;
+		if(keptEvents.size() > 0) {
+//			System.out.println(keptEvents);
+			listeners.list.forEach(listener -> listener.colorChanged(keptEvents));
+			keptEvents.clear();
+		}
 	}
 
 	@Override
 	public void notifyListeners() {
 		ColorChangedEvent e = new ColorChangedEvent();
-		listeners.list.forEach(listener -> listener.tagChanged(e));
+		if(listenersPaused) {
+			keptEvents.add(e);
+		} else {
+			listeners.list.forEach(listener -> listener.colorChanged(Collections.singletonList(e)));
+		}
 	}
 
 	@Override

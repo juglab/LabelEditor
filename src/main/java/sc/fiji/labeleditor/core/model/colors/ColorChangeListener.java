@@ -28,6 +28,8 @@
  */
 package sc.fiji.labeleditor.core.model.colors;
 
+import java.util.List;
+
 public interface ColorChangeListener {
-	void tagChanged(ColorChangedEvent e);
+	void colorChanged(List<ColorChangedEvent> e);
 }

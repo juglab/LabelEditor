@@ -62,7 +62,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		notifyListeners();
 	}
 
-	private void onColorChange(ColorChangedEvent colorChangedEvent) {
+	private void onColorChange(List<ColorChangedEvent> colorChangedEvents) {
 		updateRenderers();
 	}
 
