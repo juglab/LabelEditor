@@ -35,6 +35,7 @@ import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
 public interface LabelEditorTagColors {
 	LabelEditorColorset getColorset(Object tag);
+	LabelEditorColorset getOrCreateColorset(Object tag);
 
 	Listeners<ColorChangeListener> listeners();
 
@@ -73,14 +74,14 @@ public interface LabelEditorTagColors {
 	}
 
 	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueBorderColor(Object tag) {
-		LabelEditorColorset colorset = getColorset(tag);
+		LabelEditorColorset colorset = getOrCreateColorset(tag);
 		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset);
 		colorset.put(LabelEditorTargetComponent.BORDER, color);
 		return color;
 	}
 
 	default <T extends RealType<T>> LabelEditorValueColor<T> makeValueFaceColor(Object tag, T minVal, T maxVal) {
-		LabelEditorColorset colorset = getColorset(tag);
+		LabelEditorColorset colorset = getOrCreateColorset(tag);
 		LabelEditorValueColor<T> color = new LabelEditorValueColor<>(colorset, minVal, maxVal);
 		colorset.put(LabelEditorTargetComponent.FACE, color);
 		return color;

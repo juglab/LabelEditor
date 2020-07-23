@@ -51,6 +51,16 @@ public class DefaultLabelEditorTagColors extends HashMap<Object, LabelEditorColo
 	}
 
 	@Override
+	public LabelEditorColorset getOrCreateColorset(Object tag) {
+		LabelEditorColorset colorset = get(tag);
+		if(colorset == null) {
+			colorset = new DefaultLabelEditorColorset(this);
+			put(tag, colorset);
+		}
+		return colorset;
+	}
+
+	@Override
 	public Listeners<ColorChangeListener> listeners() {
 		return listeners;
 	}
