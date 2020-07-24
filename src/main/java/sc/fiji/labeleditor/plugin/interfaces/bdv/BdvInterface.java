@@ -32,13 +32,22 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
+import bdv.util.BdvStackSource;
+import bdv.viewer.SourceAndConverter;
 import bdv.viewer.ViewerPanel;
+import bdv.viewer.render.AccumulateProjectorFactory;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
+import net.imglib2.converter.Converter;
+import net.imglib2.converter.Converters;
+import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.logic.BitType;
+import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.util.Intervals;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
@@ -51,16 +60,15 @@ import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
+import sc.fiji.labeleditor.core.view.LabelEditorOverlayRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
-import sc.fiji.labeleditor.plugin.behaviours.FocusBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.PopupBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -72,18 +80,24 @@ public class BdvInterface implements LabelEditorInterface {
 	@Parameter
 	private Context context;
 
-	private final BdvHandle bdvHandle;
+	private BdvHandle bdvHandle;
 	private final LabelEditorOverlay overlay = new LabelEditorOverlay();
 	private boolean overlayAdded = false;
 
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
+	private final Map<SourceAndConverter, InteractiveLabeling<?>> indexImgSources = new HashMap<>();
 	private final Map<LabelEditorRenderer<?>, BdvSource> rendererSources = new HashMap<>();
 	private final Map<InteractiveLabeling<?>, Behaviours> behavioursMap = new HashMap<>();
-	private final PopupBehaviours popupBehaviours;
+	private PopupBehaviours popupBehaviours;
+	private AccumulateProjectorFactory<ARGBType> factory;
 
-	public BdvInterface(BdvHandle bdvHandle, Context context) {
-		this.bdvHandle = bdvHandle;
+	public BdvInterface(Context context) {
 		this.context = context;
+		factory = LabelEditorAccumulateProjector.createFactory(this);
+	}
+
+	public void setup(BdvHandle bdvHandle) {
+		this.bdvHandle = bdvHandle;
 		popupBehaviours = new PopupBehaviours(this);
 		if(context != null) context.inject(popupBehaviours);
 		Behaviours behaviours = new Behaviours(new InputTriggerConfig(), "labeleditor-popup");
@@ -99,7 +113,8 @@ public class BdvInterface implements LabelEditorInterface {
 	}
 
 	public static <L> InteractiveLabeling<L> control(LabelEditorModel<L> model, LabelEditorView<L> view, BdvHandle bdvHandle, Context context) {
-		BdvInterface interfaceInstance = new BdvInterface(bdvHandle, context);
+		BdvInterface interfaceInstance = new BdvInterface(context);
+		interfaceInstance.setup(bdvHandle);
 		return interfaceInstance.control(model, view);
 	}
 
@@ -118,7 +133,7 @@ public class BdvInterface implements LabelEditorInterface {
 		DefaultInteractiveLabeling<L> interactiveLabeling = new DefaultInteractiveLabeling<>(model, view, this);
 		if(context != null) context.inject(interactiveLabeling);
 		interactiveLabeling.initialize();
-		display(view, options);
+		display(interactiveLabeling, options);
 		return interactiveLabeling;
 	}
 
@@ -133,6 +148,13 @@ public class BdvInterface implements LabelEditorInterface {
 				bdvSource.removeFromBdv();
 			}
 		}
+		for (Map.Entry<SourceAndConverter, InteractiveLabeling<?>> entry : indexImgSources.entrySet()) {
+			SourceAndConverter bdvSource = entry.getKey();
+			if(entry.getValue().equals(labeling)) {
+				indexImgSources.remove(bdvSource);
+				break;
+			}
+		}
 		Behaviours behaviours = behavioursMap.get(labeling);
 		if(behaviours != null) {
 			behaviours.getInputTriggerMap().clear();
@@ -140,6 +162,8 @@ public class BdvInterface implements LabelEditorInterface {
 			//TODO are behaviours now properly removed from BDV?
 			behavioursMap.remove(labeling);
 		}
+		overlay.removeContent(labeling.model());
+		bdvHandle.getViewerPanel().updateUI();
 	}
 
 	public <L> LabelingType<L> findLabelsAtMousePosition(int x, int y, InteractiveLabeling<L> labeling) {
@@ -197,6 +221,7 @@ public class BdvInterface implements LabelEditorInterface {
 	public synchronized void onViewChange(ViewChangedEvent viewChangedEvent) {
 		bdvHandle.getViewerPanel().requestRepaint();
 		rendererSources.forEach((renderer, source) -> {
+			if(source == null || renderer == null) return;
 			source.setActive(renderer.isActive());
 		});
 	}
@@ -215,31 +240,45 @@ public class BdvInterface implements LabelEditorInterface {
 		overlay.updateContent(models);
 	}
 
-	public <L> void display(LabelEditorView<L> view, BdvOptions options) {
+	public <L> void display(InteractiveLabeling<L> labeling, BdvOptions options) {
 		ArrayList<BdvSource> sources = new ArrayList<>();
-		List<LabelEditorRenderer<L>> renderers = new ArrayList<>(view.renderers());
-		Collections.reverse(renderers);
-		renderers.forEach(renderer -> {
-			BdvSource source = display(renderer.getOutput(), renderer.getName(), options);
-			rendererSources.put(renderer, source);
-			sources.add(source);
-		});
-		this.sources.put(view, sources);
+		BdvSource dataSource = displayModelData(labeling.model());
+		if(dataSource != null) sources.add(dataSource);
+		sources.add(displayModelIndexImage(labeling));
+		this.sources.put(labeling.view(), sources);
 	}
 
-	private BdvSource display(RandomAccessibleInterval rai, String name, BdvOptions options) {
-		if(rai == null) return null;
-		final BdvSource source = BdvFunctions.show(rai, name, options.addTo(bdvHandle));
-		source.setActive(true);
+	private <L> BdvSource displayModelData(LabelEditorModel<L> model) {
+		if(model.getData() != null) {
+			return BdvFunctions.show(model.getData(), model.getName() + " raw", BdvOptions.options().addTo(bdvHandle));
+		}
+		return null;
+	}
+
+	private <L> BdvStackSource displayModelIndexImage(InteractiveLabeling<L> labeling) {
+		RandomAccessibleInterval<ARGBType> indexImg = convertToARGB(labeling.model().labeling().getIndexImg());
+		BdvStackSource<ARGBType> source = BdvFunctions.show(
+				indexImg,
+				getModelIndexSourceName(labeling.model()),
+				BdvOptions.options().addTo(bdvHandle));
+		indexImgSources.put(source.getSources().get(0), labeling);
 		if(!overlayAdded) {
 			overlayAdded = true;
-			BdvFunctions.showOverlay(overlay, "labeleditor", options.addTo(bdvHandle));
+			BdvFunctions.show(new ArrayImgFactory<>(new BitType()).create(10, 10), "dummy", BdvOptions.options().addTo(bdvHandle));
+			BdvFunctions.showOverlay(overlay, "labeleditor", BdvOptions.options().addTo(bdvHandle));
 		}
 		return source;
 	}
 
-	public Map<LabelEditorView<?>, List<BdvSource>> getSources() {
-		return sources;
+	private <T extends IntegerType<T>> RandomAccessibleInterval<ARGBType> convertToARGB(RandomAccessibleInterval<T> indexImg) {
+		Converter<T, ARGBType> argbTypeConverter = (input, output) -> {
+			output.set(input.getInteger());
+		};
+		return Converters.convert(indexImg, argbTypeConverter, new ARGBType());
+	}
+
+	private <L> String getModelIndexSourceName(LabelEditorModel<L> model) {
+		return model.getName() + "_index";
 	}
 
 	@Override
@@ -251,5 +290,24 @@ public class BdvInterface implements LabelEditorInterface {
 	@Override
 	public Set<InteractiveLabeling<?>> getInteractiveLabelings() {
 		return behavioursMap.keySet();
+	}
+
+	private SourceAndConverter<?> getSourceAndConverter(LabelEditorOverlayRenderer<?> renderer) {
+		List<SourceAndConverter<?>> sourcesList = bdvHandle.getViewerPanel().state().getSources();
+		SourceAndConverter<?> thisSourceConverter = null;
+		for (SourceAndConverter<?> sourceAndConverter : sourcesList) {
+			if(sourceAndConverter.getSpimSource().getName().equals(getModelIndexSourceName(renderer.model()))) {
+				thisSourceConverter = sourceAndConverter;
+			}
+		}
+		return thisSourceConverter;
+	}
+
+	public AccumulateProjectorFactory<ARGBType> projector() {
+		return factory;
+	}
+
+	Map<SourceAndConverter, InteractiveLabeling<?>> getIndexSources() {
+		return indexImgSources;
 	}
 }

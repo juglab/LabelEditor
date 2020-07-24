@@ -28,17 +28,20 @@
  */
 package sc.fiji.labeleditor.plugin.renderers;
 
+import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
-import net.imglib2.type.numeric.IntegerType;
+import net.imglib2.type.numeric.integer.IntType;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorColor;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorColorset;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.view.LabelEditorOverlayRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
 import java.util.ArrayList;
@@ -46,30 +49,49 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRenderer<L> {
+public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverlayRenderer<L> {
 
-	protected int[] lut;
-	boolean debug = false;
-	boolean active = true;
-	protected LabelEditorModel<L> model;
+	private int[] lut;
+	private boolean debug = false;
+	private boolean active = true;
+	private LabelEditorModel<L> model;
+	private RandomAccessibleInterval<IntType> screenImg;
+	private RandomAccessibleInterval<? extends ARGBType> initScreenImg;
 
 	@Override
-	public void init(LabelEditorModel<L> model) {
+	public void init(LabelEditorModel<L> model, RandomAccessibleInterval<? extends ARGBType> screenImg) {
+		init(model);
+		this.initScreenImg = screenImg;
+		updateScreenImage(Converters.convert(screenImg, (input, output) -> output.set(input.get()), new IntType()));
+	}
+
+	protected void init(LabelEditorModel<L> model) {
 		this.model = model;
+		lut = new int[model.labeling().getMapping().numSets()];
 	}
 
 	@Override
-	public void updateOnTagChange(LabelEditorModel<L> model) {
-		updateLUT(model.labeling().getMapping(), model.colors(), LabelEditorTargetComponent.FACE);
+	public LabelEditorModel<L> model() {
+		return model;
 	}
 
-	protected synchronized void updateLUT(LabelingMapping<L> mapping, LabelEditorTagColors tagColors, LabelEditorTargetComponent targetComponent) {
+	protected void updateScreenImage(RandomAccessibleInterval<IntType> screenImage) {
+		this.screenImg = screenImage;
+	}
 
-		if(lut == null || lut.length != model.labeling().getMapping().numSets()) {
-			lut = new int[model.labeling().getMapping().numSets()];
-		} else {
-			Arrays.fill(lut, 0);
-		}
+	@Override
+	public synchronized void updateOnTagChange() {
+		updateLUT(LabelEditorTargetComponent.FACE);
+	}
+
+	protected synchronized void updateLUT(LabelEditorTargetComponent targetComponent) {
+
+		if(model == null) return;
+
+		LabelEditorTagColors tagColors = model.colors();
+		LabelingMapping<L> mapping = model.labeling().getMapping();
+
+		Arrays.fill(lut, 0);
 
 		if(tagColors == null) return;
 
@@ -111,7 +133,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		sortedTags.sort(model.getTagComparator());
 		sortedTags.add(LabelEditorTag.DEFAULT);
 
-		return mixColorsAdditive(label, sortedTags, tagColors, targetComponent, model.tagging());
+		return mixColorsOverlay(label, sortedTags, tagColors, targetComponent, model.tagging());
 	}
 
 	private void printLUT(LabelingMapping<L> mapping, int[] lut) {
@@ -137,10 +159,10 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 	}
 
 	@Override
-	public synchronized RandomAccessibleInterval<ARGBType> getOutput() {
-		Converter<? super IntegerType<?>, ARGBType> converter = (i, o) -> o.set(getLUT()[i.getInteger()]);
-		return Converters.convert(model.labeling().getIndexImg(), converter,
-				new ARGBType());
+	public <T extends RandomAccessible<? extends ARGBType>> T getOutput() {
+		int[] lut = getLUT();
+		Converter<IntType, ARGBType> converter = (i, o) -> o.set(lut[i.getInteger()]);
+		return (T) Converters.convert(screenImg, converter, new ARGBType());
 	}
 
 	@Override
@@ -153,7 +175,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorRende
 		return active;
 	}
 
-	protected synchronized int[] getLUT() {
+	protected int[] getLUT() {
 		return lut;
 	}
 

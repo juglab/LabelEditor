@@ -81,18 +81,19 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	private void initialize(BdvOptions options) {
-		adjustOptions(options);
 		setMinimumSize(new Dimension(100, 100));
 		setPreferredSize(new Dimension(500, 500));
 		setLayout( new MigLayout("fill") );
+		interfaceInstance = new BdvInterface(context);
+		adjustOptions(options);
 		bdvHandlePanel = new BdvHandlePanel(null, options);
-		interfaceInstance = new BdvInterface(bdvHandlePanel.getBdvHandle(), context);
+		interfaceInstance.setup(bdvHandlePanel);
 		Component viewer = bdvHandlePanel.getViewerPanel();
 		this.add( viewer, "span, grow, push" );
 	}
 
 	protected void adjustOptions(BdvOptions options) {
-		options.accumulateProjectorFactory(LabelEditorAccumulateProjector.factory);
+		options.accumulateProjectorFactory(interfaceInstance.projector());
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model) {
@@ -111,21 +112,14 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 	}
 
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvOptions options) {
-		return interfaceInstance.control(model, view, options);
+		DefaultInteractiveLabeling<L> interactiveLabeling = interfaceInstance.control(model, view, options);
+		labelings.put(model.getName(), interactiveLabeling);
+		return interactiveLabeling;
 	}
 
 	@Override
 	public void dispose() {
 		if(bdvHandlePanel != null) bdvHandlePanel.close();
-	}
-
-	public List<BdvSource> getSources() {
-		List<BdvSource> res = new ArrayList<>();
-		labelings.forEach((name, labeling) -> {
-			BdvInterface labelEditorInterface = (BdvInterface) labeling.interfaceInstance();
-			labelEditorInterface.getSources().values().forEach(res::addAll);
-		});
-		return res;
 	}
 
 	protected Context context() {
@@ -138,5 +132,11 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 
 	protected BdvInterface getInterfaceInstance() {
 		return interfaceInstance;
+	}
+
+	public void removeModels() {
+		labelings.forEach((name, labeling) -> {
+			interfaceInstance.remove(labeling);
+		});
 	}
 }

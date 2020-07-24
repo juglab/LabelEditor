@@ -63,16 +63,20 @@ public class E07_MultipleLabelings {
 		ImgLabeling<Integer, IntType> labeling2 = ij.op().labeling().cca(gaussBinary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model1 = new DefaultLabelEditorModel<>(labeling1);
+		model1.setName("no gauss");
 		DefaultLabelEditorModel<Integer> model2 = new DefaultLabelEditorModel<>(labeling2);
+		model2.setName("gauss 10");
 
 		model1.colors().getDefaultFaceColor().set(255,255,0,55);
 		model2.colors().getDefaultFaceColor().set(255,0,255,55);
 
+		BdvInterface bdvInterface = new BdvInterface(ij.context());
+
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));
-		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D());
+		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D().accumulateProjectorFactory(bdvInterface.projector()));
 
-		BdvInterface bdvInterface = new BdvInterface(panel.getBdvHandle(), ij.context());
+		bdvInterface.setup(panel.getBdvHandle());
 		bdvInterface.control(model1);
 		bdvInterface.control(model2);
 		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));

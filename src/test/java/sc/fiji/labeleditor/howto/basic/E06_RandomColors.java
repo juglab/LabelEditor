@@ -57,7 +57,7 @@ public class E06_RandomColors {
 			// assign each label also as a tag to itself (so you can set colors for each label separately)
 			model.tagging().addTagToLabel(label, label);
 			// add random color to each tag
-			model.colors().getBorderColor(label).set(random.nextInt(255), random.nextInt(255), random.nextInt(255), 200);
+			model.colors().getFaceColor(label).set(random.nextInt(255), random.nextInt(255), random.nextInt(255), 200);
 		}
 
 		model.colors().getFocusFaceColor().set(255,255,0,255);

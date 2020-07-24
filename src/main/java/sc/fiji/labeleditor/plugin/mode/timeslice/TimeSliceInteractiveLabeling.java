@@ -28,7 +28,6 @@
  */
 package sc.fiji.labeleditor.plugin.mode.timeslice;
 
-import bdv.viewer.TimePointListener;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
@@ -36,7 +35,6 @@ import net.imglib2.view.Views;
 import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
 
@@ -66,12 +64,6 @@ public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<
 
 	private void timePointChanged(int index) {
 		this.timePoint = index;
-		for (LabelEditorRenderer renderer : view().renderers()) {
-			if(renderer instanceof TimePointListener) {
-				((TimePointListener) renderer).timePointChanged(index);
-			}
-		}
-		view().updateRenderers();
 		new Thread(() -> {
 			processingLabelsInScope = true;
 			labelsInScope.clear();

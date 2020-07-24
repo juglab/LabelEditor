@@ -78,18 +78,21 @@ public class E08_MultipleViewers {
 		model1.colors().getDefaultFaceColor().set(100,30,0,55);
 		model2.colors().getDefaultFaceColor().set(0,55,55,55);
 
+		BdvInterface bdvInterface1 = new BdvInterface(ij.context());
+		BdvInterface bdvInterface2 = new BdvInterface(ij.context());
+
 		JPanel viewer = new JPanel(new MigLayout());
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));
 		frame.setContentPane(viewer);
-		BdvHandlePanel panel1 = new BdvHandlePanel(frame, Bdv.options());
-		BdvHandlePanel panel2 = new BdvHandlePanel(frame, Bdv.options());
+		BdvHandlePanel panel1 = new BdvHandlePanel(frame, Bdv.options().accumulateProjectorFactory(bdvInterface1.projector()));
+		BdvHandlePanel panel2 = new BdvHandlePanel(frame, Bdv.options().accumulateProjectorFactory(bdvInterface2.projector()));
 
-		BdvInterface bdvInterface1 = new BdvInterface(panel1.getBdvHandle(), ij.context());
+		bdvInterface1.setup(panel1.getBdvHandle());
 		bdvInterface1.control(model1);
 		bdvInterface1.control(model2);
 
-		BdvInterface bdvInterface2 = new BdvInterface(panel2.getBdvHandle(), ij.context());
+		bdvInterface2.setup(panel2.getBdvHandle());
 		bdvInterface2.control(model1);
 		bdvInterface2.control(model2);
 

@@ -74,9 +74,6 @@ public class E09_3DLabeling {
 		// .. add model to panel
 		panel.add(new DefaultLabelEditorModel<>(labeling));
 
-		// .. maybe set the display range for the inputs..
-		panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
-
 		// .. and create a frame to show the panel.
 		JFrame frame = new JFrame("Label editor");
 		frame.setContentPane(panel);

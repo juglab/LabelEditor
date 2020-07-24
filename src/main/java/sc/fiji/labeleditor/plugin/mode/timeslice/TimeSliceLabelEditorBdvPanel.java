@@ -59,7 +59,7 @@ public class TimeSliceLabelEditorBdvPanel extends LabelEditorBdvPanel {
 		TimeSliceInteractiveLabeling<L> interactiveLabeling = new TimeSliceInteractiveLabeling<>(model, view, getInterfaceInstance());
 		if(context() != null) context().inject(interactiveLabeling);
 		interactiveLabeling.initialize();
-		getInterfaceInstance().display(view, options);
+		getInterfaceInstance().display(interactiveLabeling, options);
 		return interactiveLabeling;
 	}
 }
