@@ -83,6 +83,16 @@ public interface ForwardedListeners< T > extends Listeners< T >
 		}
 
 		@Override
+		public boolean add(int i, T listener) {
+			if ( !list.contains( listener ) )
+			{
+				list.add( i, listener );
+				onAdd.accept( listener );
+			}
+			return listeners.add( i, listener );
+		}
+
+		@Override
 		public boolean remove( final T listener )
 		{
 			list.remove( listener );
