@@ -34,6 +34,7 @@ import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.ARGBType;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorColor;
@@ -55,19 +56,18 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 	private boolean debug = false;
 	private boolean active = true;
 	private LabelEditorModel<L> model;
-	private RandomAccessibleInterval<IntType> screenImg;
-	private RandomAccessibleInterval<? extends ARGBType> initScreenImg;
+	private RandomAccessibleInterval<? extends IntegerType<?>> screenImg;
 
 	@Override
 	public void init(LabelEditorModel<L> model, RandomAccessibleInterval<? extends ARGBType> screenImg) {
 		init(model);
-		this.initScreenImg = screenImg;
 		updateScreenImage(Converters.convert(screenImg, (input, output) -> output.set(input.get()), new IntType()));
 	}
 
 	protected void init(LabelEditorModel<L> model) {
 		this.model = model;
 		lut = new int[model.labeling().getMapping().numSets()];
+		updateOnTagChange();
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 		return model;
 	}
 
-	protected void updateScreenImage(RandomAccessibleInterval<IntType> screenImage) {
+	protected <I extends IntegerType<I>> void updateScreenImage(RandomAccessibleInterval<I> screenImage) {
 		this.screenImg = screenImage;
 	}
 
@@ -116,7 +116,6 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 			sortedLabels.sort(model.getLabelComparator());
 			int[] labelColors = new int[sortedLabels.size()];
 			for (int j = 0; j < labelColors.length; j++) {
-
 				L label = sortedLabels.get(j);
 				int color = getLabelColor(tagColors, targetComponent, label);
 				labelColors[j] = color;
@@ -128,11 +127,9 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 	}
 
 	private int getLabelColor(LabelEditorTagColors tagColors, Object targetComponent, L label) {
-		Set<Object> labelTags = model.tagging().getTags(label);
+		List<Object> labelTags = model.tagging().getTags(label);
 		ArrayList<Object> sortedTags = new ArrayList<>(labelTags);
-		sortedTags.sort(model.getTagComparator());
 		sortedTags.add(LabelEditorTag.DEFAULT);
-
 		return mixColorsOverlay(label, sortedTags, tagColors, targetComponent, model.tagging());
 	}
 
@@ -161,8 +158,12 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 	@Override
 	public <T extends RandomAccessible<? extends ARGBType>> T getOutput() {
 		int[] lut = getLUT();
-		Converter<IntType, ARGBType> converter = (i, o) -> o.set(lut[i.getInteger()]);
-		return (T) Converters.convert(screenImg, converter, new ARGBType());
+		return (T) convert(lut, (RandomAccessibleInterval)screenImg);
+	}
+
+	private static <I extends IntegerType<I>> RandomAccessibleInterval<ARGBType> convert(int[] lut, RandomAccessibleInterval<I> screenImg) {
+		Converter<I, ARGBType> converter = (i, o) -> o.set(lut[i.getInteger()]);
+		return Converters.convert(screenImg, converter, new ARGBType());
 	}
 
 	@Override

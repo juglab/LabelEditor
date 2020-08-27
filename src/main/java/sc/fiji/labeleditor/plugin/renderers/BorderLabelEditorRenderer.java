@@ -30,6 +30,7 @@ package sc.fiji.labeleditor.plugin.renderers;
 
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.boundary.IntTypeBoundary;
+import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.integer.IntType;
 import org.scijava.plugin.Plugin;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
@@ -39,7 +40,7 @@ import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 public class BorderLabelEditorRenderer<L> extends DefaultLabelEditorRenderer<L> {
 
 	@Override
-	protected void updateScreenImage(RandomAccessibleInterval<IntType> screenImage) {
+	protected <I extends IntegerType<I>> void updateScreenImage(RandomAccessibleInterval<I> screenImage) {
 		super.updateScreenImage(new IntTypeBoundary<>(screenImage, -1));
 	}
 

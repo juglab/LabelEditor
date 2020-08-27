@@ -32,16 +32,13 @@ import org.scijava.listeners.Listeners;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.table.DefaultGenericTable;
-import org.scijava.table.GenericTable;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 
@@ -49,13 +46,8 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	LogService log;
 
 	private final LabelEditorModel model;
-	private final GenericTable table = new DefaultGenericTable();
-	private final HashMap<Object, Integer> tagToColumn = new HashMap<>();
-	private final HashMap<Integer, Object> columnToTag = new HashMap<>();
-	private final HashMap<L, Integer> labelToRow = new HashMap<>();
-	private final HashMap<Integer, L> rowToLabel = new HashMap<>();
+	private final TaggingTable<Object, L> table = new TaggingTable<>();
 
-	//	private final HashMap<L, Set<Object>> tags = new HashMap<>();
 	private final Listeners.List<TagChangeListener> listeners = new Listeners.SynchronizedList<>();
 	private boolean listenersPaused = false;
 	private List<TagChangedEvent> keptEvents = new ArrayList<>();
@@ -85,22 +77,18 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 	}
 
 	@Override
-	public Set<Object> getAllTags() {
-		return tagToColumn.keySet();
+	public List<Object> getAllTags() {
+		return table.getColumns();
 	}
 
 	@Override
-	public Set<L> filterLabelsWithTag(Set<L> labels, Object tag) {
-		return labels.stream()
-				.filter(label -> this.getTags(label).contains(tag))
-				.collect(Collectors.toSet());
+	public List<L> filterLabelsWithTag(List<L> labels, Object tag) {
+		return table.filter(labels, tag);
 	}
 
 	@Override
-	public Set filterLabelsWithAnyTag(Set<L> labels, Set<Object> tags) {
-		return labels.stream()
-				.filter(label -> getTags(label).stream().anyMatch(tags::contains))
-				.collect(Collectors.toSet());
+	public List filterLabelsWithAnyTag(List<L> labels, Set<Object> tags) {
+		return table.filterAny(labels, tags);
 	}
 
 	@Override
@@ -119,108 +107,265 @@ public class DefaultLabelEditorTagging<L> implements LabelEditorTagging<L> {
 		}
 	}
 
-	private synchronized void notifyListeners(Object tag, L label, LabelEditorModel model, TagChangedEvent.Action action) {
+	private synchronized void notifyListeners(List<Object> tags, List<L> labels, LabelEditorModel model, TagChangedEvent.Action action) {
 		TagChangedEvent e = new TagChangedEvent();
 		e.action = action;
-		e.tag = tag;
+		e.tags = tags;
 		e.model = model;
-		e.label = label;
+		e.labels = labels;
 		notifyListeners(e);
 	}
 
 	@Override
 	public void addTagToLabel(Object tag, L label) {
-		Integer row = labelToRow.get(label);
-		if(row == null) {
-			table.appendRow();
-			row = table.getRowCount()-1;
-			labelToRow.put(label, row);
-			rowToLabel.put(row, label);
+		if(table.add(tag, label)) {
+			notifyListeners(Collections.singletonList(tag), Collections.singletonList(label), model, TagChangedEvent.Action.ADDED);
 		}
-		Integer col = tagToColumn.get(tag);
-		if(col == null) {
-			table.appendColumn();
-			col = table.getColumnCount()-1;
-			tagToColumn.put(tag, col);
-			columnToTag.put(col, tag);
-		}
-		if(table.get(col, row) != null) return;
-		table.set(col, row, true);
-		notifyListeners(tag, label, model, TagChangedEvent.Action.ADDED);
+	}
+
+	@Override
+	public void addTagToLabels(Object tag, List<L> labels) {
+		List<L> added = table.add(tag, labels);
+		notifyListeners(Collections.singletonList(tag), added, model, TagChangedEvent.Action.ADDED);
 	}
 
 	@Override
 	public void addValueToLabel(Object tag, Object value, L label) {
-		Integer row = labelToRow.get(label);
-		if(row == null) {
-			table.appendRow();
-			row = table.getRowCount()-1;
-			labelToRow.put(label, row);
-			rowToLabel.put(row, label);
+		if(table.add(tag, value, label)) {
+			notifyListeners(Collections.singletonList(tag), Collections.singletonList(label), model, TagChangedEvent.Action.ADDED);
 		}
-		Integer col = tagToColumn.get(tag);
-		if(col == null) {
-			table.appendColumn();
-			col = table.getColumnCount()-1;
-			tagToColumn.put(tag, col);
-			columnToTag.put(col, tag);
-		}
-		if(table.get(col, row) != null) return;
-		table.set(col, row, value);
-		notifyListeners(tag, label, model, TagChangedEvent.Action.ADDED);
 	}
 
 	@Override
 	public Object getValue(Object tag, L label) {
-		Integer row = labelToRow.get(label);
-		if(row == null) return null;
-		Integer col = tagToColumn.get(tag);
-		if(col == null) return null;
-		return table.get(col, row);
+		return table.get(tag, label);
+	}
+
+	@Override
+	public List filterLabelsWithAnyTag(Set<Object> tags) {
+		return table.filterAny(tags);
+	}
+
+	@Override
+	public List filterLabelsWithTag(Object tag) {
+		return table.filter(tag);
+	}
+
+	@Override
+	public void addTag(Object tag) {
+		table.addColumn(tag);
 	}
 
 	@Override
 	public void removeTagFromLabel(Object tag, L label) {
-		Integer row = labelToRow.get(label);
-		if(row == null) return;
-		Integer col = tagToColumn.get(tag);
-		if(col == null) return;
-		if(table.get(col, row) == null) return;
-		table.set(col, row, null);
-		notifyListeners(tag, label, model, TagChangedEvent.Action.REMOVED);
+		if(table.removeEntry(tag, label)) {
+			notifyListeners(Collections.singletonList(tag), Collections.singletonList(label), model, TagChangedEvent.Action.REMOVED);
+		}
 	}
 
 	@Override
-	public Set<Object> getTags(L label) {
-		Integer row = labelToRow.get(label);
-		if(row == null) return Collections.emptySet();
-		Set<Object> res = new HashSet<>();
-		for (int i = 0; i < table.getColumnCount(); i++) {
-			if(table.get(i, row) != null) res.add(columnToTag.get(i));
-		}
-		return Collections.unmodifiableSet(res);
+	public void removeTagFromLabels(Object tag, List<L> labels) {
+
+	}
+
+	@Override
+	public List<Object> getTags(L label) {
+		return table.get(label);
 	}
 
 	@Override
 	public synchronized void removeTagFromLabel(Object tag) {
-		Integer col = tagToColumn.get(tag);
-		if(col == null) return;
-		for (int i = 0; i < table.getRowCount(); i++) {
-			boolean existed = table.get(col, i) != null;
-			table.set(col, i, null);
-			if(existed) notifyListeners(tag, rowToLabel.get(i),model,  TagChangedEvent.Action.REMOVED);
-		}
+		List<L> labels = table.getRows(tag);
+		table.clearColumn(tag);
+		notifyListeners(Collections.singletonList(tag), labels, model, TagChangedEvent.Action.REMOVED);
 	}
 
 	@Override
-	public Set<L> getLabels(Object tag) {
-		Integer col = tagToColumn.get(tag);
-		if(col == null) return Collections.emptySet();
-		Set<L> res = new HashSet<>();
-		for (int i = 0; i < table.getRowCount(); i++) {
-			if(table.get(col, i) != null) res.add(rowToLabel.get(i));
+	public List<L> getLabels(Object tag) {
+		return table.getRows(tag);
+	}
+
+	class TaggingTable<ColumnType, RowType> extends DefaultGenericTable {
+
+		private final HashMap<ColumnType, Integer> tagToColumn = new HashMap<>();
+		private final HashMap<Integer, ColumnType> columnToTag = new HashMap<>();
+		private final HashMap<RowType, Integer> labelToRow = new HashMap<>();
+		private final HashMap<Integer, RowType> rowToLabel = new HashMap<>();
+
+		List<ColumnType> getColumns() {
+			return new ArrayList<>(tagToColumn.keySet());
 		}
-		return Collections.unmodifiableSet(res);
+
+		List<RowType> filter(List<RowType> labels, ColumnType tag) {
+			List<RowType> res = new ArrayList<>();
+			int column = tagToColumn.get(tag);
+			for (RowType label : labels) {
+				Object val = get(column, labelToRow.get(label));
+				if(exists(val)) res.add(label);
+			}
+			return res;
+		}
+
+		List<RowType> filter(ColumnType tag) {
+			List<RowType> res = new ArrayList<>();
+			int column = tagToColumn.get(tag);
+			for (int i = 0; i < getRowCount(); i++) {
+				Object val = get(column, i);
+				if(exists(val)) res.add(rowToLabel.get(i));
+			}
+			return res;
+		}
+
+		List<RowType> filterAny(List<RowType> labels, Set<ColumnType> tags) {
+			List<RowType> res = new ArrayList<>();
+			for (RowType label : labels) {
+				for (ColumnType tag : tags) {
+					int column = tagToColumn.get(tag);
+					Object val = get(column, labelToRow.get(label));
+					if (exists(val)) {
+						res.add(label);
+						break;
+					}
+				}
+			}
+			return res;
+		}
+
+		List<RowType> filterAny(Set<ColumnType> tags) {
+			List<RowType> res = new ArrayList<>();
+			for (ColumnType tag : tags) {
+				for (int i = 0; i < getRowCount(); i++) {
+					int column = tagToColumn.get(tag);
+					Object val = get(column, i);
+					if (exists(val)) {
+						res.add(rowToLabel.get(i));
+						break;
+					}
+				}
+			}
+			return res;
+		}
+
+		boolean add(ColumnType tag, RowType label) {
+			Integer row = labelToRow.get(label);
+			if(row == null) {
+				table.appendRow();
+				row = table.getRowCount()-1;
+				labelToRow.put(label, row);
+				rowToLabel.put(row, label);
+			}
+			Integer col = tagToColumn.get(tag);
+			if(col == null) {
+				table.appendColumn();
+				col = table.getColumnCount()-1;
+				tagToColumn.put(tag, col);
+				columnToTag.put(col, tag);
+			}
+			if(table.get(col, row) != null) return false;
+			table.set(col, row, true);
+			return true;
+		}
+
+		boolean add(ColumnType tag, Object value, RowType label) {
+			Integer row = labelToRow.get(label);
+			if(row == null) {
+				table.appendRow();
+				row = table.getRowCount()-1;
+				labelToRow.put(label, row);
+				rowToLabel.put(row, label);
+			}
+			Integer col = tagToColumn.get(tag);
+			if(col == null) {
+				table.appendColumn();
+				col = table.getColumnCount()-1;
+				tagToColumn.put(tag, col);
+				columnToTag.put(col, tag);
+			}
+			if(table.get(col, row) != null) return false;
+			table.set(col, row, value);
+			return true;
+		}
+
+		private boolean exists(Object val) {
+			return val != null && val != "";
+		}
+
+		Object get(ColumnType tag, RowType label) {
+			Integer row = labelToRow.get(label);
+			if(row == null) return null;
+			Integer col = tagToColumn.get(tag);
+			if(col == null) return null;
+			return table.get(col, row);
+		}
+
+		boolean removeEntry(ColumnType tag, RowType label) {
+			Integer row = labelToRow.get(label);
+			if(row == null) return false;
+			Integer col = tagToColumn.get(tag);
+			if(col == null) return false;
+			if(table.get(col, row) == null) return false;
+			table.set(col, row, null);
+			return true;
+		}
+
+		List<ColumnType> get(RowType label) {
+			Integer row = labelToRow.get(label);
+			if(row == null) return Collections.emptyList();
+			List<ColumnType> res = new ArrayList<>();
+			for (int i = 0; i < table.getColumnCount(); i++) {
+				if(exists(table.get(i, row))) res.add(columnToTag.get(i));
+			}
+			return Collections.unmodifiableList(res);
+		}
+
+		void clearColumn(ColumnType tag) {
+			Integer col = tagToColumn.get(tag);
+			if(col == null) return;
+			int rows = get(col).size();
+			get(col).clear();
+			get(col).setSize(rows);
+		}
+
+		List<RowType> getRows(ColumnType tag) {
+			Integer col = tagToColumn.get(tag);
+			if(col == null) return Collections.emptyList();
+			List<RowType> res = new ArrayList<>();
+			for (int i = 0; i < table.getRowCount(); i++) {
+				if(exists(table.get(col, i))) res.add(rowToLabel.get(i));
+			}
+			return Collections.unmodifiableList(res);
+		}
+
+		public List<RowType> add(ColumnType tag, List<RowType> labels) {
+			List<RowType> res = new ArrayList<>();
+			Integer col = tagToColumn.get(tag);
+			if(col == null) {
+				table.appendColumn();
+				col = table.getColumnCount()-1;
+				tagToColumn.put(tag, col);
+				columnToTag.put(col, tag);
+			}
+			for (RowType label : labels) {
+				Integer row = labelToRow.get(label);
+				if(row == null) {
+					table.appendRow();
+					row = table.getRowCount()-1;
+					labelToRow.put(label, row);
+					rowToLabel.put(row, label);
+				}
+				if(table.get(col, row) != null) continue;
+				table.set(col, row, true);
+				res.add(label);
+			}
+			return res;
+		}
+
+		void addColumn(ColumnType tag) {
+			table.appendColumn();
+			int col = table.getColumnCount() - 1;
+			tagToColumn.put(tag, col);
+			columnToTag.put(col, tag);
+		}
 	}
 
 }

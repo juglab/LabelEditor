@@ -32,9 +32,13 @@ import bdv.util.BdvOptions;
 import org.scijava.Context;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TimeSliceLabelEditorBdvPanel extends LabelEditorBdvPanel {
 
@@ -57,6 +61,33 @@ public class TimeSliceLabelEditorBdvPanel extends LabelEditorBdvPanel {
 	@Override
 	public <L> InteractiveLabeling<L> add(LabelEditorModel<L> model, LabelEditorView<L> view, BdvOptions options) {
 		TimeSliceInteractiveLabeling<L> interactiveLabeling = new TimeSliceInteractiveLabeling<>(model, view, getInterfaceInstance());
+		if(context() != null) context().inject(interactiveLabeling);
+		interactiveLabeling.initialize();
+		getInterfaceInstance().display(interactiveLabeling, options);
+		return interactiveLabeling;
+	}
+
+	public <L> InteractiveLabeling<L> add(List<LabelEditorModel<L>> models) {
+		return add(models, new BdvOptions());
+	}
+
+	public <L> InteractiveLabeling<L> add(List<LabelEditorModel<L>> models, BdvOptions options) {
+		List<LabelEditorView<L>> views = new ArrayList<>();
+		for (LabelEditorModel<L> model : models) {
+			DefaultLabelEditorView<L> view = new DefaultLabelEditorView<>(model);
+			if(context() != null) context().inject(view);
+			view.addDefaultRenderers();
+			views.add(view);
+		}
+		return add(models, views, options);
+	}
+
+	public <L> InteractiveLabeling<L> add(List<LabelEditorModel<L>> models, List<LabelEditorView<L>> views) {
+		return add(models, views, new BdvOptions());
+	}
+
+	public <L> InteractiveLabeling<L> add(List<LabelEditorModel<L>> models, List<LabelEditorView<L>> views, BdvOptions options) {
+		TimeSliceInteractiveLabeling<L> interactiveLabeling = new TimeSliceInteractiveLabeling(models, views, getInterfaceInstance());
 		if(context() != null) context().inject(interactiveLabeling);
 		interactiveLabeling.initialize();
 		getInterfaceInstance().display(interactiveLabeling, options);

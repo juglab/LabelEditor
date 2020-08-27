@@ -37,9 +37,11 @@ import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,10 +49,7 @@ import java.util.Set;
 public class SelectByTagCommand extends InteractiveCommand {
 
 	@Parameter
-	LabelEditorModel model;
-
-	@Parameter
-	InteractiveLabeling labeling;
+	InteractiveLabeling<?> labeling;
 
 	Map<String, Object> namedTags;
 
@@ -62,33 +61,33 @@ public class SelectByTagCommand extends InteractiveCommand {
 				chosenTags.add(tag);
 			}
 		});
-		Set selectedLabels = model.tagging().filterLabelsWithTag(labeling.getLabelSetInScope(), LabelEditorTag.SELECTED);
-		Set toSelect = model.tagging().filterLabelsWithAnyTag(labeling.getLabelSetInScope(), chosenTags);
-		Set toUnselect = new HashSet(selectedLabels);
+		List selectedLabels = labeling.model().tagging().filterLabelsWithTag(LabelEditorTag.SELECTED);
+		List toSelect = labeling.model().tagging().filterLabelsWithAnyTag(chosenTags);
+		List toUnselect = new ArrayList(selectedLabels);
 		toUnselect.removeAll(toSelect);
 		toSelect.remove(selectedLabels);
 
-		model.tagging().pauseListeners();
-		toUnselect.forEach(label -> model.tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
-		toSelect.forEach(label -> model.tagging().addTagToLabel(LabelEditorTag.SELECTED, label));
-		model.tagging().resumeListeners();
+		labeling.model().tagging().pauseListeners();
+		labeling.model().tagging().removeTagFromLabels(LabelEditorTag.SELECTED, toUnselect);
+		labeling.model().tagging().addTagToLabels(LabelEditorTag.SELECTED, toSelect);
+		labeling.model().tagging().resumeListeners();
 	}
 
-	protected void initTagList() {
-		Set tags = model.tagging().getAllTags();
-		tags.removeAll(Arrays.asList(LabelEditorTag.values()));
-		if(tags.size() == 0) {
-			cancel("No tags assigned");
-		}
-		namedTags = new HashMap<>();
-		tags.forEach(tag -> namedTags.put(tag.toString(), tag));
-		tags.forEach(tag -> {
-			final DefaultMutableModuleItem<Boolean> tagItem =
-					new DefaultMutableModuleItem<>(this, tag.toString(), Boolean.class);
-			tagItem.setPersisted(false);
-			tagItem.setValue(this, false);
-			addInput(tagItem);
-		});
-	}
+//	protected void initTagList() {
+//		Set tags = labeling.model().tagging().getAllTags();
+//		tags.removeAll(Arrays.asList(LabelEditorTag.values()));
+//		if(tags.size() == 0) {
+//			cancel("No tags assigned");
+//		}
+//		namedTags = new HashMap<>();
+//		tags.forEach(tag -> namedTags.put(tag.toString(), tag));
+//		tags.forEach(tag -> {
+//			final DefaultMutableModuleItem<Boolean> tagItem =
+//					new DefaultMutableModuleItem<>(this, tag.toString(), Boolean.class);
+//			tagItem.setPersisted(false);
+//			tagItem.setValue(this, false);
+//			addInput(tagItem);
+//		});
+//	}
 
 }

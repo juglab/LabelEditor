@@ -43,7 +43,6 @@ public interface LabelEditorModel <L> {
 	LabelEditorTagging<L> tagging();
 	LabelEditorTagColors colors();
 
-	Comparator<Object> getTagComparator();
 	Comparator<L> getLabelComparator();
 
 	RandomAccessibleInterval<?> getData();
