@@ -117,9 +117,8 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		return interactiveLabeling;
 	}
 
-	@Override
-	public void dispose() {
-		if(bdvHandlePanel != null) bdvHandlePanel.close();
+	public List<BdvSource> getSources() {
+		return interfaceInstance.getDataSources();
 	}
 
 	protected Context context() {
@@ -138,5 +137,10 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		labelings.forEach((name, labeling) -> {
 			interfaceInstance.remove(labeling);
 		});
+	}
+
+	@Override
+	public void dispose() {
+		if(bdvHandlePanel != null) bdvHandlePanel.close();
 	}
 }

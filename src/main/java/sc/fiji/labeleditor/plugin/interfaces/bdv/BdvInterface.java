@@ -84,6 +84,7 @@ public class BdvInterface implements LabelEditorInterface {
 	private final LabelEditorOverlay overlay = new LabelEditorOverlay();
 	private boolean overlayAdded = false;
 
+	private final List<BdvSource> dataSources = new ArrayList<>();
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
 	private final Map<SourceAndConverter, InteractiveLabeling<?>> indexImgSources = new HashMap<>();
 	private final Map<LabelEditorRenderer<?>, BdvSource> rendererSources = new HashMap<>();
@@ -145,6 +146,7 @@ public class BdvInterface implements LabelEditorInterface {
 		if(toBeRemoved != null) {
 			sources.remove(labeling.view());
 			for (BdvSource bdvSource : toBeRemoved) {
+				dataSources.remove(bdvSource);
 				bdvSource.removeFromBdv();
 			}
 		}
@@ -243,7 +245,10 @@ public class BdvInterface implements LabelEditorInterface {
 	public <L> void display(InteractiveLabeling<L> labeling, BdvOptions options) {
 		ArrayList<BdvSource> sources = new ArrayList<>();
 		BdvSource dataSource = displayModelData(labeling.model());
-		if(dataSource != null) sources.add(dataSource);
+		if(dataSource != null) {
+			dataSources.add(dataSource);
+			sources.add(dataSource);
+		}
 		sources.add(displayModelIndexImage(labeling));
 		this.sources.put(labeling.view(), sources);
 	}
@@ -292,22 +297,15 @@ public class BdvInterface implements LabelEditorInterface {
 		return behavioursMap.keySet();
 	}
 
-	private SourceAndConverter<?> getSourceAndConverter(LabelEditorOverlayRenderer<?> renderer) {
-		List<SourceAndConverter<?>> sourcesList = bdvHandle.getViewerPanel().state().getSources();
-		SourceAndConverter<?> thisSourceConverter = null;
-		for (SourceAndConverter<?> sourceAndConverter : sourcesList) {
-			if(sourceAndConverter.getSpimSource().getName().equals(getModelIndexSourceName(renderer.model()))) {
-				thisSourceConverter = sourceAndConverter;
-			}
-		}
-		return thisSourceConverter;
-	}
-
 	public AccumulateProjectorFactory<ARGBType> projector() {
 		return factory;
 	}
 
 	Map<SourceAndConverter, InteractiveLabeling<?>> getIndexSources() {
 		return indexImgSources;
+	}
+
+	List<BdvSource> getDataSources() {
+		return dataSources;
 	}
 }
