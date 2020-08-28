@@ -37,7 +37,7 @@ import org.scijava.ui.behaviour.Behaviour;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
-import java.util.Set;
+import java.util.List;
 
 public class DeleteLabels<L> implements Behaviour {
 
@@ -48,13 +48,13 @@ public class DeleteLabels<L> implements Behaviour {
 	}
 
 	public void deleteSelected() {
-		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
+		List<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
 		selected.forEach(label -> labeling.model().tagging().removeTagFromLabel(LabelEditorTag.SELECTED, label));
 		delete(selected, labeling.getLabelingInScope());
 		labeling.model().notifyLabelingListeners();
 	}
 
-	private static <L> void delete(Set<L> labels, RandomAccessibleInterval<LabelingType<L>> labeling) {
+	private static <L> void delete(List<L> labels, RandomAccessibleInterval<LabelingType<L>> labeling) {
 		LabelRegions<L> regions = new LabelRegions<>(labeling);
 		for (L label : labels) {
 			IterableInterval<LabelingType<L>> sample = Regions.sample(regions.getLabelRegion(label), labeling);

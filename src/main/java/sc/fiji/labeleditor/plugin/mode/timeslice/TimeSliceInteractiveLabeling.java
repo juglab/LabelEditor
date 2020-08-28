@@ -32,12 +32,10 @@ import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.view.Views;
-import org.scijava.Context;
 import org.scijava.display.Display;
 import org.scijava.display.DisplayService;
 import org.scijava.plugin.Parameter;
 import org.scijava.table.interactive.SelectionModel;
-import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
@@ -157,7 +155,6 @@ public class TimeSliceInteractiveLabeling<L> implements InteractiveLabeling<L> {
 			return models.get(timePoint).labeling().getMapping().getLabels();
 		}
 	}
-
 
 	@Override
 	public SelectionModel<L> getSelectionModel() {

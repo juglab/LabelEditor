@@ -60,8 +60,6 @@ import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
-import sc.fiji.labeleditor.core.view.LabelEditorOverlayRenderer;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
 import sc.fiji.labeleditor.plugin.behaviours.PopupBehaviours;
@@ -87,7 +85,6 @@ public class BdvInterface implements LabelEditorInterface {
 	private final List<BdvSource> dataSources = new ArrayList<>();
 	private final Map<LabelEditorView<?>, List<BdvSource>> sources = new HashMap<>();
 	private final Map<SourceAndConverter, InteractiveLabeling<?>> indexImgSources = new HashMap<>();
-	private final Map<LabelEditorRenderer<?>, BdvSource> rendererSources = new HashMap<>();
 	private final Map<InteractiveLabeling<?>, Behaviours> behavioursMap = new HashMap<>();
 	private PopupBehaviours popupBehaviours;
 	private AccumulateProjectorFactory<ARGBType> factory;
@@ -139,9 +136,6 @@ public class BdvInterface implements LabelEditorInterface {
 	}
 
 	public <L> void remove(InteractiveLabeling<L> labeling) {
-		for (LabelEditorRenderer<L> renderer : labeling.view().renderers()) {
-			rendererSources.remove(renderer);
-		}
 		List<BdvSource> toBeRemoved = sources.get(labeling.view());
 		if(toBeRemoved != null) {
 			sources.remove(labeling.view());
@@ -222,10 +216,6 @@ public class BdvInterface implements LabelEditorInterface {
 	@Override
 	public synchronized void onViewChange(ViewChangedEvent viewChangedEvent) {
 		bdvHandle.getViewerPanel().requestRepaint();
-		rendererSources.forEach((renderer, source) -> {
-			if(source == null || renderer == null) return;
-			source.setActive(renderer.isActive());
-		});
 	}
 
 	@Override
@@ -284,12 +274,6 @@ public class BdvInterface implements LabelEditorInterface {
 
 	private <L> String getModelIndexSourceName(LabelEditorModel<L> model) {
 		return model.getName() + "_index";
-	}
-
-	@Override
-	public void setRendererActive(LabelEditorRenderer renderer, boolean active) {
-		BdvSource source = rendererSources.get(renderer);
-		if(source != null) source.setActive(active);
 	}
 
 	@Override

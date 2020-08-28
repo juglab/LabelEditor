@@ -106,7 +106,9 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 			add(new DefaultLabelEditorRenderer<>());
 			add(new BorderLabelEditorRenderer<>());
 		} else {
-			context.getPluginIndex().get(LabelEditorRenderer.class).forEach(this::add);
+			List<PluginInfo<?>> pluginInfos = context.getPluginIndex().get(LabelEditorRenderer.class);
+			Collections.reverse(pluginInfos);
+			pluginInfos.forEach(this::add);
 		}
 	}
 

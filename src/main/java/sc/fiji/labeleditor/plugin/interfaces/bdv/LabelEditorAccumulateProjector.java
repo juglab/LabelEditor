@@ -126,6 +126,7 @@ public class LabelEditorAccumulateProjector extends AccumulateProjectorARGB
 			InteractiveLabeling<L> labeling) {
 
 		for (LabelEditorRenderer<L> renderer : labeling.view().renderers()) {
+			if(!renderer.isActive()) continue;
 			if (LabelEditorOverlayRenderer.class.isAssignableFrom(renderer.getClass())) {
 				LabelEditorOverlayRenderer<L> overlayRenderer = (LabelEditorOverlayRenderer<L>) renderer;
 				ARGBScreenImage argbScreenImage = (ARGBScreenImage) screenImage;

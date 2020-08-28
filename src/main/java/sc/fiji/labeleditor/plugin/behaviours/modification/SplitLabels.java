@@ -55,7 +55,6 @@ import net.imglib2.view.Views;
 import org.scijava.command.CommandModule;
 import org.scijava.command.CommandService;
 import org.scijava.plugin.Parameter;
-import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.Behaviour;
 import sc.fiji.labeleditor.application.InteractiveWatershedCommand;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
@@ -63,6 +62,7 @@ import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -72,8 +72,6 @@ public class SplitLabels<L> implements Behaviour {
 	private OpService opService;
 	@Parameter
 	private CommandService commandService;
-	@Parameter
-	private UIService uiService;
 
 	private final InteractiveLabeling<L> labeling;
 
@@ -85,7 +83,7 @@ public class SplitLabels<L> implements Behaviour {
 		if(opService == null) {
 			throw new RuntimeException("No OpService available. You have to inject your LabelEditorPanel with a context to use this behaviour.");
 		}
-		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
+		List<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
 		selected.forEach(label -> {
 			try {
 				splitInteractively(label);

@@ -30,10 +30,12 @@ package sc.fiji.labeleditor.core.model.tagging;
 
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
+import java.util.List;
+
 public class TagChangedEvent<L> {
 	public LabelEditorModel model;
-	public Object tag;
-	public L label;
+	public List<Object> tags;
+	public List<L> labels;
 	public Action action;
 
 	public enum Action {
@@ -48,15 +50,15 @@ public class TagChangedEvent<L> {
 			case ADDED:
 				stringBuilder.append("Added"); break;
 		}
-		stringBuilder.append(" tag ");
-		stringBuilder.append(tag);
+		stringBuilder.append(" tags ");
+		stringBuilder.append(tags);
 		switch(action) {
 			case REMOVED:
-				stringBuilder.append(" from label "); break;
+				stringBuilder.append(" from labels "); break;
 			case ADDED:
-				stringBuilder.append(" to label "); break;
+				stringBuilder.append(" to labels "); break;
 		}
-		stringBuilder.append(label);
+		stringBuilder.append(labels);
 		return stringBuilder.toString();
 	}
 }

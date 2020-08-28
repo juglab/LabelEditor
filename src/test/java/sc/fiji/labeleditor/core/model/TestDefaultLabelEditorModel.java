@@ -100,23 +100,4 @@ public class TestDefaultLabelEditorModel {
 
 	}
 
-	@Test
-	public void testDefaultTagComparator() {
-		DefaultLabelEditorModel<String> model = new DefaultLabelEditorModel<>(null);
-		model.initTagOrdering();
-		Set<Object> tags = new HashSet<>();
-		tags.add(LabelEditorTag.MOUSE_OVER);
-		tags.add(LabelEditorTag.SELECTED);
-		tags.add("a");
-		tags.add("b");
-		List<Object> sortedTags = new ArrayList<>(tags);
-		sortedTags.sort(model::compareTags);
-		System.out.println(sortedTags);
-		assertEquals(LabelEditorTag.MOUSE_OVER, sortedTags.get(0));
-		assertEquals(LabelEditorTag.SELECTED, sortedTags.get(1));
-		assertEquals("a", sortedTags.get(2));
-		assertEquals("b", sortedTags.get(3));
-
-	}
-
 }
