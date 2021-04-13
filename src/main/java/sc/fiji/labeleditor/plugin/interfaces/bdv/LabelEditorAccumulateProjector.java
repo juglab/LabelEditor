@@ -6,13 +6,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,36 +28,36 @@
  */
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
+import bdv.viewer.SourceAndConverter;
 import bdv.viewer.render.AccumulateProjector;
 import bdv.viewer.render.AccumulateProjectorFactory;
 import bdv.viewer.render.VolatileProjector;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.type.numeric.ARGBType;
 
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-
 public class LabelEditorAccumulateProjector extends AccumulateProjector< ARGBType, ARGBType >
 {
-	public static AccumulateProjectorFactory< ARGBType > factory = (
-			sourceProjectors,
-			sources,
-			sourceScreenImages,
-			targetScreenImages,
-			numThreads,
-			executorService) ->
-			new LabelEditorAccumulateProjector(
-					sourceProjectors,
-					sourceScreenImages,
-					targetScreenImages,
-					numThreads,
-					executorService );
+	public static AccumulateProjectorFactory<ARGBType> factory = new AccumulateProjectorFactory<ARGBType>() {
+		@Override
+		public VolatileProjector createProjector(
+				final List< VolatileProjector > sourceProjectors,
+				final List< SourceAndConverter< ? > > sources,
+				final List< ? extends RandomAccessible< ? extends ARGBType > > sourceScreenImages,
+				final RandomAccessibleInterval< ARGBType > targetScreenImage,
+				final int numThreads,
+				final ExecutorService executorService )
+		{
+			return new LabelEditorAccumulateProjector( sourceProjectors, sourceScreenImages, targetScreenImage, numThreads, executorService );
+		}
+	};
 
 	public LabelEditorAccumulateProjector(
-			final ArrayList< VolatileProjector > sourceProjectors,
-			final ArrayList< ? extends RandomAccessible< ? extends ARGBType > > sources,
+			final List< VolatileProjector > sourceProjectors,
+			final List< ? extends RandomAccessible< ? extends ARGBType > > sources,
 			final RandomAccessibleInterval< ARGBType > target,
 			final int numThreads,
 			final ExecutorService executorService )

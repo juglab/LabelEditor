@@ -6,13 +6,13 @@
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -33,6 +33,13 @@ import bdv.util.BdvHandle;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import bdv.viewer.ViewerPanel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import net.imglib2.Localizable;
 import net.imglib2.Point;
 import net.imglib2.RandomAccess;
@@ -54,18 +61,9 @@ import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
-import sc.fiji.labeleditor.plugin.behaviours.FocusBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.PopupBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.modification.LabelingModificationBehaviours;
 import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class BdvInterface implements LabelEditorInterface {
 
@@ -159,7 +157,7 @@ public class BdvInterface implements LabelEditorInterface {
 		final int x = (int) Math.round( mousePointer.getDoublePosition( 0 ) );
 		final int y = (int) Math.round( mousePointer.getDoublePosition( 1 ) );
 		final int z = (int) Math.round( mousePointer.getDoublePosition( 2 ) );
-		int time = bdvHandle.getViewerPanel().getState().getCurrentTimepoint();
+		int time = bdvHandle.getViewerPanel().state().getCurrentTimepoint();
 		return new Point(x, y, z, time);
 	}
 
