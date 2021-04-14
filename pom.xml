@@ -122,6 +122,7 @@
 
 		<bigdataviewer-core.version>10.2.0</bigdataviewer-core.version>
 		<bigdataviewer-vistools.version>1.0.0-beta-28</bigdataviewer-vistools.version>
+		<scifio.version>0.41.2</scifio.version>
 	</properties>
 
 	<dependencies>
@@ -148,6 +149,10 @@
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej-ops</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>io.scif</groupId>
+		  <artifactId>scifio</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
