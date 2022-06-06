@@ -35,6 +35,7 @@ import net.imglib2.loops.LoopBuilder;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
 import net.imglib2.type.numeric.IntegerType;
+import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import org.scijava.listeners.Listeners;
@@ -56,7 +57,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private ImgLabeling<L, ? extends IntegerType<?> > labels;
-	private RandomAccessibleInterval<?> data;
+	private RandomAccessibleInterval<? extends NumericType<?>> data;
 	private LabelEditorTagging<L> tagging;
 	private Comparator<L> labelComparator;
 
@@ -67,7 +68,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private Listeners.List<LabelingChangeListener> listeners = new Listeners.SynchronizedList<>();
 	private boolean labelingListenersPaused = false;
 
-	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval<?> data) {
+	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval<? extends NumericType<?>> data) {
 		this(labeling);
 		this.data = data;
 	}
@@ -85,7 +86,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		return new DefaultLabelEditorModel<>(makeLabeling(labelMap));
 	}
 
-	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap, RandomAccessibleInterval<?> data) {
+	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap, RandomAccessibleInterval<? extends NumericType<?>> data) {
 		return new DefaultLabelEditorModel<>(makeLabeling(labelMap), data);
 	}
 
@@ -133,8 +134,9 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	// TODO: Consider using setters instead of protected methods.
 	private void initTagging() {
 		tagging = new DefaultLabelEditorTagging<>(this);
-		tagging.addTag(LabelEditorTag.SELECTED);
+		tagging.addTag(LabelEditorTag.MOUSE_OVER);
 		tagging.addTag(LabelEditorTag.FOCUS);
+		tagging.addTag(LabelEditorTag.SELECTED);
 	}
 
 	private void initLabelOrdering(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
@@ -164,7 +166,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public RandomAccessibleInterval<?> getData() {
+	public RandomAccessibleInterval<? extends NumericType<?>> getData() {
 		return data;
 	}
 

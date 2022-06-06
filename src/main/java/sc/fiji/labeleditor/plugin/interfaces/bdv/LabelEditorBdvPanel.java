@@ -88,7 +88,7 @@ public class LabelEditorBdvPanel extends JPanel implements Disposable {
 		adjustOptions(options);
 		bdvHandlePanel = new BdvHandlePanel(null, options);
 		interfaceInstance.setup(bdvHandlePanel);
-		Component viewer = bdvHandlePanel.getViewerPanel();
+		Component viewer = bdvHandlePanel.getSplitPanel();
 		this.add( viewer, "span, grow, push" );
 	}
 

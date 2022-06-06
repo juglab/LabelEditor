@@ -28,14 +28,23 @@
  */
 package sc.fiji.labeleditor.howto.basic;
 
+import net.imagej.Dataset;
 import net.imagej.ImageJ;
+import net.imglib2.IterableInterval;
+import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
+import net.imglib2.converter.Converter;
+import net.imglib2.converter.Converters;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
+import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.numeric.integer.ByteType;
 import net.imglib2.type.numeric.integer.IntType;
+import net.imglib2.view.Views;
 import org.scijava.ui.UIService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * How to open a labeling in the LabelEditor via {@link UIService)
@@ -49,12 +58,13 @@ public class E01_2DLabeling {
 
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
 
-		Img<IntType> binary = (Img) ij.op().threshold().otsu(input);
+		RandomAccessibleInterval gauss = ij.op().filter().gauss(input, 2);
+
+		Img<IntType> binary = (Img) ij.op().threshold().otsu(Views.iterable(gauss));
 
 		ImgLabeling labeling = ij.op().labeling().cca(
 				binary,
 				ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
-
 		ij.ui().show(labeling);
 
 	}

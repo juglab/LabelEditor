@@ -28,11 +28,21 @@
  */
 package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
+import bdv.BigDataViewer;
+import bdv.tools.brightness.ConverterSetup;
+import bdv.util.AxisOrder;
+import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
+import bdv.util.BdvHandleFrame;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import bdv.util.BdvStackSource;
+import bdv.util.RandomAccessibleIntervalSource;
+import bdv.util.RandomAccessibleIntervalSource4D;
+import bdv.util.volatiles.VolatileView;
+import bdv.util.volatiles.VolatileViewData;
+import bdv.viewer.Source;
 import bdv.viewer.SourceAndConverter;
 import bdv.viewer.ViewerPanel;
 import bdv.viewer.render.AccumulateProjectorFactory;
@@ -44,11 +54,16 @@ import net.imglib2.RealPoint;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
 import net.imglib2.img.array.ArrayImgFactory;
+import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.IntegerType;
+import net.imglib2.type.numeric.NumericType;
+import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.volatiles.VolatileARGBType;
 import net.imglib2.util.Intervals;
+import net.imglib2.util.Util;
 import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.behaviour.io.InputTriggerConfig;
@@ -245,9 +260,76 @@ public class BdvInterface implements LabelEditorInterface {
 
 	private <L> BdvSource displayModelData(LabelEditorModel<L> model) {
 		if(model.getData() != null) {
-			return BdvFunctions.show(model.getData(), model.getName() + " raw", BdvOptions.options().addTo(bdvHandle));
+			//TODO create converter myself
+			return showInBdv((RandomAccessibleInterval)model.getData(), model.getName() + " raw", BdvOptions.options().addTo(bdvHandle));
+//			BdvStackSource res = BdvFunctions.show((RandomAccessibleInterval) model.getData(), model.getName() + " raw", BdvOptions.options().addTo(bdvHandle));
+//			return res;
 		}
 		return null;
+	}
+
+	private <T extends NumericType<T>> BdvSource showInBdv(RandomAccessibleInterval<T> img, String name, BdvOptions options) {
+		final Bdv bdv = options.values.addTo();
+		final BdvHandle handle = bdv.getBdvHandle();
+		final AxisOrder axisOrder = AxisOrder.getAxisOrder( options.values.axisOrder(), img, options.values.is2D() );
+		final AffineTransform3D sourceTransform = options.values.getSourceTransform();
+		final T type;
+//		if ( img instanceof VolatileView)
+//		{
+//			final VolatileViewData< ?, ? > viewData = ( ( VolatileView< ?, ? > ) img ).getVolatileViewData();
+//			type = ( T ) viewData.getVolatileType();
+//			handle.getCacheControls().addCacheControl( viewData.getCacheControl() );
+//		}
+//		else
+			type = Util.getTypeFromInterval( img );
+
+		final List<ConverterSetup> converterSetups = new ArrayList<>();
+		final List< SourceAndConverter< T > > sources = new ArrayList<>();
+		final ArrayList< RandomAccessibleInterval< T > > stacks = AxisOrder.splitInputStackIntoSourceStacks( img, axisOrder );
+		int numTimepoints = 1;
+		for ( final RandomAccessibleInterval< T > stack : stacks )
+		{
+			final Source< T > s;
+			if ( stack.numDimensions() > 3 )
+			{
+				numTimepoints = ( int ) stack.max( 3 ) + 1;
+				s = new RandomAccessibleIntervalSource4D<>( stack, type, sourceTransform, name );
+			}
+			else
+			{
+				s = new RandomAccessibleIntervalSource<>( stack, type, sourceTransform, name );
+			}
+			int setupId = BdvFunctions.getUnusedSetupId(bdvHandle.getSetupAssignments());
+			addSourceToListsGenericType( s, setupId, converterSetups, sources );
+		}
+		sources.forEach(soc -> {
+			handle.getViewerPanel().state().addSource( soc );
+			handle.getViewerPanel().state().setSourceActive( soc, true );
+		});
+		final BdvStackSource< T > bdvSource = new BdvLabelingSource( handle, numTimepoints, type, converterSetups, sources );
+//		handle.addBdvSource( bdvSource );
+		return bdvSource;
+	}
+
+	private < T > void addSourceToListsGenericType(
+			final Source<T> source,
+			final int setupId,
+			final List<ConverterSetup> converterSetups,
+			final List<SourceAndConverter<T>> sources)
+	{
+		final T type = source.getType();
+		if ( type instanceof RealType || type instanceof ARGBType || type instanceof VolatileARGBType)
+			addSourceToListsNumericType( ( Source ) source, setupId, converterSetups, ( List ) sources );
+		else
+			throw new IllegalArgumentException( "Unknown source type. Expected RealType, ARGBType, or VolatileARGBType" );
+	}
+
+	private <T extends NumericType<T>> void addSourceToListsNumericType(Source<T> source, int setupId, List<ConverterSetup> converterSetups, List<SourceAndConverter<T>> sources) {
+		final T type = source.getType();
+		final SourceAndConverter< T > soc = BigDataViewer.wrapWithTransformedSource(
+				new SourceAndConverter<>( source, BigDataViewer.createConverterToARGB( type ) ) );
+		converterSetups.add( BigDataViewer.createConverterSetup( soc, setupId ) );
+		sources.add( soc );
 	}
 
 	private <L> BdvStackSource displayModelIndexImage(InteractiveLabeling<L> labeling) {

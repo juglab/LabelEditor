@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
- * UI component for image segmentation label comparison and selection
+ * BigDataViewer quick visualization API.
  * %%
- * Copyright (C) 2019 - 2020 DAIS developers
+ * Copyright (C) 2016 - 2020 BigDataViewer developers.
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -26,35 +26,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * #L%
  */
-package net.imglib2.roi.boundary;
+package sc.fiji.labeleditor.plugin.interfaces.bdv;
 
-import net.imglib2.AbstractWrappedInterval;
-import net.imglib2.Interval;
-import net.imglib2.RandomAccess;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.type.numeric.IntegerType;
-import net.imglib2.type.numeric.integer.IntType;
+import bdv.tools.brightness.ConverterSetup;
+import bdv.util.BdvHandle;
+import bdv.util.BdvStackSource;
+import bdv.viewer.SourceAndConverter;
+import net.imglib2.type.numeric.ARGBType;
 
-public final class IntTypeBoundary< T extends IntegerType<T>>
-	extends AbstractWrappedInterval< RandomAccessibleInterval< T > > implements RandomAccessibleInterval<IntType>
+import java.util.List;
+
+class BdvLabelingSource< T > extends BdvStackSource
 {
-
-	int timeDim;
-
-	public IntTypeBoundary(final RandomAccessibleInterval<T> img, int timeDim)
+	protected BdvLabelingSource(
+			final BdvHandle bdv,
+			final int numTimepoints,
+			final T type,
+			final List< ConverterSetup > converterSetups,
+			final List< SourceAndConverter< T > > sources )
 	{
-		super( img );
-		this.timeDim = timeDim;
+		super( bdv, numTimepoints, type, converterSetups, sources );
 	}
 
 	@Override
-	public RandomAccess<IntType> randomAccess() {
-		return new IntTypeBoundaryRandomAccess4< T >( sourceInterval, timeDim );
+	public void setColor(ARGBType color) {
+		//do nothing
 	}
 
 	@Override
-	public RandomAccess<IntType> randomAccess(Interval interval) {
-		return randomAccess();
+	public void setDisplayRange(double min, double max) {
+		// nope
 	}
 
+	@Override
+	public void setDisplayRangeBounds(double min, double max) {
+		// nothing
+	}
 }

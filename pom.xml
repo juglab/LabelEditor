@@ -10,7 +10,7 @@
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>labeleditor</artifactId>
-	<version>0.9.1-SNAPSHOT</version>
+	<version>0.9.1</version>
 
 	<name>Label Editor</name>
 
@@ -119,12 +119,18 @@
 		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
 		<license.excludes>**/script_templates/**</license.excludes>
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+		<bigdataviewer-vistools.version>1.0.0-beta-21</bigdataviewer-vistools.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>scijava-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.scif</groupId>
+			<artifactId>scifio</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.scijava</groupId>
@@ -145,6 +151,11 @@
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej-ops</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-roi</artifactId>
+			<version>0.10.4</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

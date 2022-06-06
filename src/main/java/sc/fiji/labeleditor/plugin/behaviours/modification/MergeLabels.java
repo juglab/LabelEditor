@@ -28,13 +28,10 @@
  */
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
-import jdk.nashorn.internal.ir.Labels;
-import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.Regions;
 import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.view.Views;
 import org.scijava.ui.behaviour.Behaviour;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
