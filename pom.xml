@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>29.2.1</version>
+		<version>31.1.0</version>
 	</parent>
 
 	<groupId>sc.fiji</groupId>
@@ -119,7 +119,6 @@
 		<license.copyrightOwners>DAIS developers</license.copyrightOwners>
 		<license.excludes>**/script_templates/**</license.excludes>
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
-		<bigdataviewer-vistools.version>1.0.0-beta-21</bigdataviewer-vistools.version>
 	</properties>
 
 	<dependencies>
@@ -155,7 +154,6 @@
 		<dependency>
 			<groupId>net.imglib2</groupId>
 			<artifactId>imglib2-roi</artifactId>
-			<version>0.10.4</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
