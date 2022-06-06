@@ -34,14 +34,14 @@ import bdv.util.AxisOrder;
 import bdv.util.Bdv;
 import bdv.util.BdvFunctions;
 import bdv.util.BdvHandle;
-import bdv.util.BdvHandleFrame;
 import bdv.util.BdvOptions;
 import bdv.util.BdvSource;
 import bdv.util.BdvStackSource;
+import bdv.util.ConstantRandomAccessible;
+import bdv.util.PlaceHolderConverterSetup;
 import bdv.util.RandomAccessibleIntervalSource;
 import bdv.util.RandomAccessibleIntervalSource4D;
-import bdv.util.volatiles.VolatileView;
-import bdv.util.volatiles.VolatileViewData;
+import bdv.viewer.ConverterSetups;
 import bdv.viewer.Source;
 import bdv.viewer.SourceAndConverter;
 import bdv.viewer.ViewerPanel;
@@ -53,14 +53,13 @@ import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.RealPoint;
 import net.imglib2.converter.Converter;
 import net.imglib2.converter.Converters;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.realtransform.AffineTransform3D;
 import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.type.logic.BitType;
 import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.IntegerType;
 import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.RealType;
+import net.imglib2.type.numeric.integer.UnsignedByteType;
 import net.imglib2.type.volatiles.VolatileARGBType;
 import net.imglib2.util.Intervals;
 import net.imglib2.util.Util;
@@ -306,7 +305,7 @@ public class BdvInterface implements LabelEditorInterface {
 			handle.getViewerPanel().state().addSource( soc );
 			handle.getViewerPanel().state().setSourceActive( soc, true );
 		});
-		final BdvStackSource< T > bdvSource = new BdvLabelingSource( handle, numTimepoints, type, converterSetups, sources );
+		final BdvStackSource< T > bdvSource = new BdvLabelingSource( handle, numTimepoints, type, new ArrayList<>(), sources );
 //		handle.addBdvSource( bdvSource );
 		return bdvSource;
 	}
@@ -338,10 +337,16 @@ public class BdvInterface implements LabelEditorInterface {
 				indexImg,
 				getModelIndexSourceName(labeling.model()),
 				BdvOptions.options().addTo(bdvHandle));
+		final ConverterSetups setups = source.getBdvHandle().getConverterSetups();
+		source.getSources().forEach( s -> setups.put( s, new PlaceHolderConverterSetup( 0, 0, 255, 0xffffff ) ) );
 		indexImgSources.put(source.getSources().get(0), labeling);
 		if(!overlayAdded) {
 			overlayAdded = true;
-			BdvFunctions.show(new ArrayImgFactory<>(new BitType()).create(10, 10), "dummy", BdvOptions.options().addTo(bdvHandle));
+			BdvFunctions.show(
+					new ConstantRandomAccessible<>( new UnsignedByteType(), 2 ),
+					Intervals.createMinSize( 0, 0, 10, 10 ),
+					"dummy",
+					BdvOptions.options().addTo( bdvHandle ) );
 			BdvFunctions.showOverlay(overlay, "labeleditor", BdvOptions.options().addTo(bdvHandle));
 		}
 		return source;
