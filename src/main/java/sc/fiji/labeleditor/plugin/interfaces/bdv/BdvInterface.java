@@ -248,7 +248,7 @@ public class BdvInterface implements LabelEditorInterface {
 
 	public <L> void display(InteractiveLabeling<L> labeling, BdvOptions options) {
 		ArrayList<BdvSource> sources = new ArrayList<>();
-		BdvSource dataSource = displayModelData(labeling.model());
+		BdvSource dataSource = displayModelData(labeling.model(), options);
 		if(dataSource != null) {
 			dataSources.add(dataSource);
 			sources.add(dataSource);
@@ -257,12 +257,10 @@ public class BdvInterface implements LabelEditorInterface {
 		this.sources.put(labeling.view(), sources);
 	}
 
-	private <L> BdvSource displayModelData(LabelEditorModel<L> model) {
+	private <L> BdvSource displayModelData(LabelEditorModel<L> model, BdvOptions options) {
 		if(model.getData() != null) {
-			//TODO create converter myself
-			return showInBdv((RandomAccessibleInterval)model.getData(), model.getName() + " raw", BdvOptions.options().addTo(bdvHandle));
-//			BdvStackSource res = BdvFunctions.show((RandomAccessibleInterval) model.getData(), model.getName() + " raw", BdvOptions.options().addTo(bdvHandle));
-//			return res;
+			BdvStackSource res = BdvFunctions.show((RandomAccessibleInterval) model.getData(), model.getName() + " raw", options.addTo(bdvHandle));
+			return res;
 		}
 		return null;
 	}
