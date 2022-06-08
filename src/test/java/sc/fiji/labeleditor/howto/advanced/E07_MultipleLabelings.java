@@ -55,7 +55,7 @@ public class E07_MultipleLabelings {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 
-		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
+		Img input = (Img) ij.scifio().datasetIO().open(getClass().getResource("/blobs.png").getPath());
 		Img binary = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling1 = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 		RandomAccessibleInterval gauss = ij.op().filter().gauss(input, 10);

@@ -56,7 +56,7 @@ public class E01_2DLabeling {
 		ImageJ ij = new ImageJ();
 		ij.launch();
 
-		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
+		Img input = ij.scifio().datasetIO().open(getClass().getResource("/blobs.png").getPath());
 
 		RandomAccessibleInterval gauss = ij.op().filter().gauss(input, 2);
 

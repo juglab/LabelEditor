@@ -125,11 +125,32 @@
 		<dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>scijava-common</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>net.imagej</groupId>
+					<artifactId>imagej-legacy</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.scijava</groupId>
+					<artifactId>scripting-javascript</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>io.scif</groupId>
 			<artifactId>scifio</artifactId>
 			<scope>runtime</scope>
+
+			<exclusions>
+				<exclusion>
+					<groupId>net.imagej</groupId>
+					<artifactId>imagej-legacy</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.scijava</groupId>
+					<artifactId>scripting-javascript</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.scijava</groupId>
@@ -150,6 +171,16 @@
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej-ops</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>net.imagej</groupId>
+					<artifactId>imagej-legacy</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.scijava</groupId>
+					<artifactId>scripting-javascript</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.imglib2</groupId>
@@ -163,6 +194,16 @@
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>imagej</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>net.imagej</groupId>
+					<artifactId>imagej-legacy</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.scijava</groupId>
+					<artifactId>scripting-javascript</artifactId>
+				</exclusion>
+			</exclusions>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
