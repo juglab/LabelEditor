@@ -52,7 +52,7 @@ public class TestLabelMap {
 	@Test
 	public void loadIndexImg() throws IOException {
 		ImageJ ij = new ImageJ();
-		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
+		Img input = ij.scifio().datasetIO().open(getClass().getResource("/labelmap.png").getPath());
 		DefaultLabelEditorModel<IntType> model = DefaultLabelEditorModel.initFromLabelMap(input);
 		assertNotNull(model);
 		assertNotNull(model.labeling());

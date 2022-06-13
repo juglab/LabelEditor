@@ -96,6 +96,15 @@ public class LabelEditorOverlay extends BdvOverlay
 		g.drawString(text, x, y);
 	}
 
+	public synchronized void removeContent(final LabelEditorModel model) {
+		for (ModelOverlay overlay : data) {
+			if (overlay.model.equals(model)) {
+				data.remove(overlay);
+				break;
+			}
+		}
+	}
+
 	/**
 	 * Update data to show in the overlay.
 	 */
@@ -105,9 +114,9 @@ public class LabelEditorOverlay extends BdvOverlay
 		{
 			List<LabelEditorTag> labelEditorTags = Arrays.asList(LabelEditorTag.values());
 			for (LabelEditorModel model : models) {
-				for (ModelOverlay datum : data) {
-					if (datum.model.equals(model)) {
-						data.remove(datum);
+				for (ModelOverlay overlay : data) {
+					if (overlay.model.equals(model)) {
+						data.remove(overlay);
 						break;
 					}
 				}

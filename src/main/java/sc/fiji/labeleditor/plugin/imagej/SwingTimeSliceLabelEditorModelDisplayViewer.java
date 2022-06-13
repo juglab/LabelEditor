@@ -47,6 +47,7 @@ public class SwingTimeSliceLabelEditorModelDisplayViewer extends EasySwingDispla
 
 	@Parameter
 	Context context;
+	private TimeSliceLabelEditorBdvPanel panel;
 
 	public SwingTimeSliceLabelEditorModelDisplayViewer() {
 		super(TimeSliceLabelEditorModel.class);
@@ -66,7 +67,7 @@ public class SwingTimeSliceLabelEditorModelDisplayViewer extends EasySwingDispla
 		} else {
 			options.axisOrder(AxisOrder.XYZT);
 		}
-		TimeSliceLabelEditorBdvPanel panel = new TimeSliceLabelEditorBdvPanel(context, options);
+		panel = new TimeSliceLabelEditorBdvPanel(context, options);
 		panel.add(model, options);
 		return panel;
 	}
@@ -88,5 +89,11 @@ public class SwingTimeSliceLabelEditorModelDisplayViewer extends EasySwingDispla
 	public void setLabel(final String s)
 	{
 		// ignored
+	}
+
+	@Override
+	public void dispose() {
+		panel.dispose();
+		super.dispose();
 	}
 }

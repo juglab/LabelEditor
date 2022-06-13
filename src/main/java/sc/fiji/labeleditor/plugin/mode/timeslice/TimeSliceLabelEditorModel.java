@@ -55,10 +55,6 @@ public class TimeSliceLabelEditorModel<L> extends DefaultLabelEditorModel<L> {
 		return timeDimension;
 	}
 
-	public IntervalView<? extends IntegerType<?> > getIndexImgAtTime(long currentTimePoint) {
-		return Views.hyperSlice(labeling().getIndexImg(), getTimeDimension(), currentTimePoint);
-	}
-
 	public IntervalView<LabelingType<L>> getLabelingAtTime(long currentTimePoint) {
 		return Views.hyperSlice(labeling(), getTimeDimension(), currentTimePoint);
 	}

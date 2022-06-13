@@ -28,16 +28,16 @@
  */
 package sc.fiji.labeleditor.plugin.behaviours.modification;
 
-import net.imglib2.Cursor;
-import net.imglib2.IterableInterval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.roi.Regions;
+import net.imglib2.roi.labeling.LabelRegions;
 import net.imglib2.roi.labeling.LabelingType;
-import net.imglib2.view.Views;
 import org.scijava.ui.behaviour.Behaviour;
 import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MergeLabels<L> implements Behaviour {
 
@@ -48,22 +48,29 @@ public class MergeLabels<L> implements Behaviour {
 	}
 
 	public void assignSelectedToFirst() {
-		Set<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
+		List<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
 		assignToFirst(selected, labeling.getLabelingInScope());
 		labeling.model().notifyLabelingListeners();
 	}
 
-	private static <L> void assignToFirst(Set<L> labels, RandomAccessibleInterval<LabelingType<L>> labeling) {
+	private static <L> void assignToFirst(List<L> labels, RandomAccessibleInterval<LabelingType<L>> labeling) {
 		L first = labels.iterator().next();
-		labels.remove(first);
-		Cursor<LabelingType<L>> cursor = Views.iterable(labeling).cursor();
-		while (cursor.hasNext()) {
-			LabelingType<L> val = cursor.next();
-			if(val.removeAll(labels)) {
-				val.add(first);
-			}
-
+		List<L> toRemove = new ArrayList<>(labels);
+		toRemove.remove(first);
+		LabelRegions<L> regions = new LabelRegions<>(labeling);
+		for (L label : labels) {
+			Regions.sample(regions.getLabelRegion(label), labeling).forEach(ls -> {
+				ls.remove(label);
+				ls.add(first);
+			});
 		}
+//		Cursor<LabelingType<L>> cursor = Views.iterable(labeling).cursor();
+//		while (cursor.hasNext()) {
+//			LabelingType<L> val = cursor.next();
+//			if(val.removeAll(labels)) {
+//				val.add(first);
+//			}
+//		}
 	}
 
 }

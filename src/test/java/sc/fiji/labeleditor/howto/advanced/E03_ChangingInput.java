@@ -73,8 +73,8 @@ public class E03_ChangingInput {
 		for (int i = 0; i < 1300; i++) {
 			drawRandomSphere(imgPlus, ra, random);
 			ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(imgPlus, ConnectedComponents.StructuringElement.FOUR_CONNECTED);
+			panel.removeModels();
 			panel.add(new DefaultLabelEditorModel<>(labeling, imgPlus));
-			panel.getSources().forEach(source -> source.setDisplayRange(0, 100));
 			Thread.sleep(3000);
 		}
 	}

@@ -65,10 +65,10 @@ public class E01_AddToExistingBDV {
 
 		JFrame frame = new JFrame("Label editor");
 		frame.setMinimumSize(new Dimension(500,500));
-		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D());
-//		BdvFunctions.show(input, "RAW", Bdv.options().addTo(panel));
-
-		BdvInterface.control(model, panel, ij.context());
+		BdvInterface bdvInterface = new BdvInterface(ij.context());
+		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D().accumulateProjectorFactory(bdvInterface.projector()));
+		bdvInterface.setup(panel);
+		bdvInterface.control(model);
 
 		frame.setContentPane(panel.getViewerPanel());
 		frame.pack();

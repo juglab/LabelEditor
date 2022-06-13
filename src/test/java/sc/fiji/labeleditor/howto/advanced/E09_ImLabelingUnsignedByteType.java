@@ -34,7 +34,10 @@ import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingType;
+import net.imglib2.type.numeric.ARGBType;
 import net.imglib2.type.numeric.integer.UnsignedByteType;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 /**
  * How to use label editor with ImgLabeling<..., UnsignedByteType>
@@ -48,8 +51,16 @@ public class E09_ImLabelingUnsignedByteType {
 		RandomAccess< LabelingType< String > > ra = labeling.randomAccess();
 		ra.setPosition(new long[]{0,0});
 		ra.get().add("A");
+		ra.setPosition(new long[]{0,1});
+		ra.get().add("A");
+		ra.get().add("B");
 		ra.setPosition(new long[]{1,1});
 		ra.get().add("B");
-		ij.ui().show(labeling);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labeling);
+		model.tagging().addTagToLabel("A", "A");
+		model.tagging().addTagToLabel("B", "B");
+		model.colors().getFaceColor("A").set(255, 0, 0);
+		model.colors().getFaceColor("B").set(0, 255, 0);
+		ij.ui().show(model);
 	}
 }

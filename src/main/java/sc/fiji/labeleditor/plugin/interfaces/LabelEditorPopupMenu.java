@@ -41,9 +41,10 @@ import sc.fiji.labeleditor.plugin.behaviours.modification.TagModificationBehavio
 import sc.fiji.labeleditor.plugin.behaviours.select.SelectionBehaviours;
 
 import javax.swing.*;
+import java.awt.Component;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 // TODO - can I do that with net.imagej.plugins.tools.ContextHandler?
@@ -80,19 +81,27 @@ public class LabelEditorPopupMenu extends JPopupMenu {
 
 	public void build(Set<InteractiveLabeling<?>> labelings) {
 		removeAll();
+		List<JMenu> menus = new ArrayList<>();
 		for (InteractiveLabeling<?> labeling : labelings) {
-			populate(labeling);
+			menus.add(populate(labeling));
 		}
-		addModelsOptionsEntry(labelings);
+		if(menus.size() == 1) {
+			for (Component component : menus.get(0).getMenuComponents()) {
+				add(component);
+			}
+		} else {
+			menus.forEach(this::add);
+			if(menus.size() > 0) addModelsOptionsEntry(labelings);
+		}
 	}
 
-	public void populate(InteractiveLabeling<?> labeling) {
+	public JMenu populate(InteractiveLabeling<?> labeling) {
 		JMenu labelingMenu = new JMenu(labeling.model().getName());
 		makeSelectMenu(labeling, labelingMenu);
 		makeEditMenu(labeling, labelingMenu);
 		makeExportMenu(labeling, labelingMenu);
 		makeOptionsEntry(labeling, labelingMenu);
-		add(labelingMenu);
+		return labelingMenu;
 	}
 
 	private void addModelsOptionsEntry(Set<InteractiveLabeling<?>> labelings) {

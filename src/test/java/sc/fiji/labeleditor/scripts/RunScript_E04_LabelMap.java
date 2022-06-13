@@ -41,7 +41,7 @@ public class RunScript_E04_LabelMap extends ScriptTest {
 	public void run() throws Exception {
 		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
 		ij.script().run(new File(InteractiveLabeling.class.getResource(
-			"/script-templates/ImageJ2/LabelEditor/E04_LabelMap.groovy").getPath()),
+			"/script_templates/ImageJ2/LabelEditor/E04_LabelMap.groovy").getPath()),
 				true, new Object[] { "input", input }).get();
 	}
 

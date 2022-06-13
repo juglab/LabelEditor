@@ -28,51 +28,81 @@
  */
 package sc.fiji.labeleditor.plugin.mode.timeslice;
 
-import bdv.viewer.TimePointListener;
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.view.Views;
-import sc.fiji.labeleditor.core.controller.DefaultInteractiveLabeling;
+import org.scijava.display.Display;
+import org.scijava.display.DisplayService;
+import org.scijava.plugin.Parameter;
+import org.scijava.table.interactive.SelectionModel;
+import sc.fiji.labeleditor.core.controller.InteractiveLabeling;
 import sc.fiji.labeleditor.core.controller.LabelEditorInterface;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.model.LabelingChangedEvent;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<L> {
+public class TimeSliceInteractiveLabeling<L> implements InteractiveLabeling<L> {
 
-	private long timePoint = 0;
+	@Parameter
+	private
+	DisplayService displayService;
+
+	private final LabelEditorInterface interfaceInstance;
+	private final boolean singleModelView;
+	private int timePoint = 0;
 	private Set<L> labelsInScope = new HashSet<>();
-	private boolean processingLabelsInScope = false;
+	private volatile boolean processingLabelsInScope = false;
+	private List<LabelEditorModel<L>> models;
+	private List<LabelEditorView<L>> views;
+	private SelectionModel<L> selectionModel;
 
 	public TimeSliceInteractiveLabeling(LabelEditorModel<L> model, LabelEditorView<L> view, LabelEditorInterface interfaceInstance) {
-		super(model, view, interfaceInstance);
+		this.interfaceInstance = interfaceInstance;
+		this.models = Collections.singletonList(model);
+		this.views = Collections.singletonList(view);
+		this.singleModelView = true;
 	}
 
-	@Override
+	public TimeSliceInteractiveLabeling(List<LabelEditorModel<L>> models, List<LabelEditorView<L>> views, LabelEditorInterface interfaceInstance) {
+		this.models = models;
+		this.views = views;
+		this.interfaceInstance = interfaceInstance;
+		this.singleModelView = false;
+	}
+
 	public void initialize() {
-		super.initialize();
+		interfaceInstance.installBehaviours(this);
 		try {
 			BdvInterface bdv = (BdvInterface) interfaceInstance;
 			bdv.getComponent().addTimePointListener(this::timePointChanged);
 		} catch (ClassCastException e) {
 			System.err.println("Cannot add a timepoint listener to interface " + interfaceInstance.getClass().getName());
 		}
+		timePointChanged(0);
+	}
+
+	private void onLabelingChange(LabelingChangedEvent event) {
+		if(displayService != null) {
+			displayService.getDisplays(model().labeling().getIndexImg()).forEach(Display::update);
+		}
 	}
 
 	private void timePointChanged(int index) {
 		this.timePoint = index;
-		for (LabelEditorRenderer renderer : view().renderers()) {
-			if(renderer instanceof TimePointListener) {
-				((TimePointListener) renderer).timePointChanged(index);
-			}
-		}
-		view().updateRenderers();
-		new Thread(() -> {
+		views.forEach(view -> view.listeners().remove(interfaceInstance::onViewChange));
+		models.forEach(model -> model.tagging().listeners().remove(interfaceInstance::onTagChange));
+		models.forEach(model -> model.labelingListeners().remove(this::onLabelingChange));
+		views.get(index).listeners().add(interfaceInstance::onViewChange);
+		models.get(index).tagging().listeners().add(interfaceInstance::onTagChange);
+		models.get(index).labelingListeners().add(this::onLabelingChange);
+		if(singleModelView) new Thread(() -> {
 			processingLabelsInScope = true;
 			labelsInScope.clear();
 			boolean[] setDone = new boolean[model().labeling().getMapping().numSets()];
@@ -90,18 +120,49 @@ public class TimeSliceInteractiveLabeling<L> extends DefaultInteractiveLabeling<
 	}
 
 	@Override
+	public LabelEditorModel<L> model() {
+		return singleModelView ? models.get(0) : models.get(timePoint);
+	}
+
+	@Override
+	public LabelEditorView<L> view() {
+		return singleModelView ? views.get(0) : views.get(timePoint);
+	}
+
+	@Override
+	public LabelEditorInterface interfaceInstance() {
+		return interfaceInstance;
+	}
+
+	@Override
 	public RandomAccessibleInterval<LabelingType<L>> getLabelingInScope() {
-		try {
-			return ((TimeSliceLabelEditorModel<L>) model()).getLabelingAtTime(timePoint);
-		} catch (ClassCastException e) {
-			System.err.println("Model is no TimeSliceLabelEditorModel. Operation will be performed on the whole labeling instead of only one timepoint.");
+		if(singleModelView) {
+			try {
+				return ((TimeSliceLabelEditorModel<L>) model()).getLabelingAtTime(timePoint);
+			} catch (ClassCastException e) {
+				System.err.println("Model is no TimeSliceLabelEditorModel. Operation will be performed on the whole labeling instead of only one timepoint.");
+			}
 		}
 		return model().labeling();
 	}
 
 	@Override
 	public Set<L> getLabelSetInScope() {
-		while(processingLabelsInScope){}
-		return labelsInScope;
+		if(singleModelView) {
+			while(processingLabelsInScope){}
+			return labelsInScope;
+		} else {
+			return models.get(timePoint).labeling().getMapping().getLabels();
+		}
+	}
+
+	@Override
+	public SelectionModel<L> getSelectionModel() {
+		return selectionModel;
+	}
+
+	@Override
+	public void setSelectionModel(SelectionModel<L> model) {
+		this.selectionModel = model;
 	}
 }

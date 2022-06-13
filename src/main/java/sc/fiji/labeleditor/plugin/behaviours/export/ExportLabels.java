@@ -43,23 +43,18 @@ import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
-import org.scijava.Context;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 import org.scijava.ui.behaviour.Behaviour;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.core.model.tagging.LabelEditorTag;
-import sc.fiji.labeleditor.plugin.interfaces.bdv.LabelEditorBdvPanel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ExportLabels<L> implements Behaviour {
-
-	@Parameter
-	Context context;
 
 	@Parameter
 	UIService ui;
@@ -74,14 +69,12 @@ public class ExportLabels<L> implements Behaviour {
 	}
 
 	public void exportSelected() {
-		Set<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
+		List<L> selected = model.tagging().getLabels(LabelEditorTag.SELECTED);
 
-		LabelRegions regions = new LabelRegions<>(model.labeling());
+		LabelRegions<L> regions = new LabelRegions<>(model.labeling());
 		Map<L, LabelRegion<L>> regionList = new HashMap<>();
 
-		selected.forEach(label -> {
-			regionList.put(label, regions.getLabelRegion(label));
-		});
+		selected.forEach(label -> regionList.put(label, regions.getLabelRegion(label)));
 		Interval boundingBox = null;
 		for (LabelRegion<L> region : regionList.values()) {
 			if (boundingBox == null) {
@@ -101,7 +94,7 @@ public class ExportLabels<L> implements Behaviour {
 			exportModel = new DefaultLabelEditorModel<>(cropLabeling);
 		}
 		for(L label : exportModel.labeling().getMapping().getLabels()) {
-			Set<Object> oldTags = model.tagging().getTags(label);
+			List<Object> oldTags = model.tagging().getTags(label);
 			oldTags.forEach(tag -> exportModel.tagging().addTagToLabel(tag, label));
 		}
 
@@ -113,7 +106,7 @@ public class ExportLabels<L> implements Behaviour {
 		return ops.copy().rai(Views.zeroMin(Views.interval(model.getData(), boundingBox)));
 	}
 
-	private ImgLabeling<L, IntType> createCroppedLabeling(Set<L> labels, Interval boundingBox, Map<L, LabelRegion<L>> regionList) {
+	private ImgLabeling<L, IntType> createCroppedLabeling(List<L> labels, Interval boundingBox, Map<L, LabelRegion<L>> regionList) {
 		Img<IntType> backing = new ArrayImgFactory<>(new IntType()).create( boundingBox );
 		ImgLabeling<L, IntType> cropLabeling = new ImgLabeling<>(backing);
 		Point offset = new Point(boundingBox.numDimensions());

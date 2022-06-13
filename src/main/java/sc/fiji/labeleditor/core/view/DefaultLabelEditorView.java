@@ -62,7 +62,7 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 		notifyListeners();
 	}
 
-	private void onColorChange(ColorChangedEvent colorChangedEvent) {
+	private void onColorChange(List<ColorChangedEvent> colorChangedEvents) {
 		updateRenderers();
 	}
 
@@ -71,19 +71,17 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 	}
 
 	public synchronized void updateRenderers() {
-		if(model == null || model.labeling() == null) return;
 		renderers.forEach(renderer -> {
-			if(renderer.isActive()) renderer.updateOnTagChange(model);
+			if(renderer.isActive()) renderer.updateOnTagChange();
 		});
 		notifyListeners();
 	}
 
 	private void onLabelingChange(LabelingChangedEvent e) {
-		if(model == null || model.labeling() == null) return;
 		renderers.forEach(renderer -> {
 			if(renderer.isActive()) {
 				renderer.updateOnLabelingChange();
-				renderer.updateOnTagChange(model);
+				renderer.updateOnTagChange();
 			}
 		});
 		notifyListeners();
@@ -108,7 +106,9 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 			add(new DefaultLabelEditorRenderer<>());
 			add(new BorderLabelEditorRenderer<>());
 		} else {
-			context.getPluginIndex().get(LabelEditorRenderer.class).forEach(this::add);
+			List<PluginInfo<?>> pluginInfos = context.getPluginIndex().get(LabelEditorRenderer.class);
+			Collections.reverse(pluginInfos);
+			pluginInfos.forEach(this::add);
 		}
 	}
 
@@ -138,8 +138,6 @@ public class DefaultLabelEditorView<L> implements LabelEditorView<L> {
 
 	private void prepare(LabelEditorRenderer<L> renderer) {
 		if(context != null) context.inject(renderer);
-		renderer.init(model);
-		renderer.updateOnTagChange(model);
 	}
 
 }

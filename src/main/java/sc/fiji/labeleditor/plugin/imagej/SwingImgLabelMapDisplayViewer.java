@@ -66,7 +66,7 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 	private OpService opService;
 
 	private Random random = new Random();
-
+	private LabelEditorBdvPanel panel;
 
 	public SwingImgLabelMapDisplayViewer() {
 		super(LabelMap.class);
@@ -84,10 +84,11 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 			for (int i = 0; i < labelMap.dimension(labelMap.numDimensions()-1); i++) {
 				labelings.add(Views.hyperSlice(labelMap, labelMap.numDimensions()-1, i));
 			}
-			return makePanel(labelings, labelMap.getRaws());
+			panel = makePanel(labelings, labelMap.getRaws());
 		} else {
-			return makePanel(labelMap);
+			panel = makePanel(labelMap);
 		}
+		return panel;
 	}
 
 	private LabelEditorBdvPanel makePanel(List<RandomAccessibleInterval<? extends IntegerType<?>>> labelings, List<RandomAccessibleInterval<? extends RealType<?>>> rest) {
@@ -175,5 +176,11 @@ public class SwingImgLabelMapDisplayViewer<I extends IntegerType<I>> extends Eas
 	public void setLabel(final String s)
 	{
 		// ignored
+	}
+
+	@Override
+	public void dispose() {
+		panel.dispose();
+		super.dispose();
 	}
 }

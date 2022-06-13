@@ -234,19 +234,19 @@ public class SelectionBehaviours<L> implements SelectionModel< L >, LabelEditorB
 
 	@Override
 	public Set<L> getSelected() {
-		return labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
+		return new HashSet<>(labeling.model().tagging().getLabels(LabelEditorTag.SELECTED));
 	}
 
 	@Override
 	public L getFocused() {
-		Set<L> labels = labeling.model().tagging().getLabels(LabelEditorTag.FOCUS);
+		List<L> labels = labeling.model().tagging().getLabels(LabelEditorTag.FOCUS);
 		if(labels == null || labels.size() == 0) return null;
 		return labels.iterator().next();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		Set<L> selected = getSelected();
+		List<L> selected = labeling.model().tagging().getLabels(LabelEditorTag.SELECTED);
 		if(selected == null) return true;
 		return selected.size() == 0;
 	}
@@ -325,15 +325,14 @@ public class SelectionBehaviours<L> implements SelectionModel< L >, LabelEditorB
 	}
 
 	public void invertSelection() {
-		Set<L> all = new HashSet(labeling.getLabelSetInScope());
-		Set<L> selected = labeling.model().tagging().filterLabelsWithTag(all, LabelEditorTag.SELECTED);
+		List<L> all = new ArrayList<>(labeling.getLabelSetInScope());
+		List<L> selected = labeling.model().tagging().filterLabelsWithTag(all, LabelEditorTag.SELECTED);
 		all.removeAll(selected);
-		all.forEach(label -> select(label));
-		selected.forEach(label -> deselect(label));
+		all.forEach(this::select);
+		selected.forEach(this::deselect);
 	}
 
 	public void selectByTag() {
-		commandService.run(SelectByTagCommand.class, true,
-				"model", labeling.model(), "labeling", labeling);
+		commandService.run(SelectByTagCommand.class, true, "labeling", labeling);
 	}
 }

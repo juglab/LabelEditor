@@ -32,6 +32,7 @@ import net.imagej.ImgPlus;
 import net.imagej.axis.Axes;
 import net.imagej.axis.AxisType;
 import net.imglib2.RandomAccess;
+import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImg;
@@ -77,7 +78,6 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 	}
 
 	@Test
-	@Ignore //FIXME this test works for overlay color mixing, not additive mixing
 	public void testDefaultRendering() {
 		RandomAccess<LabelingType<String>> ra = labels.randomAccess();
 		ra.setPosition(new long[]{0,0});
@@ -95,15 +95,17 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.colors().getDefaultFaceColor().set(green);
 
 		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
-		view.renderers().add(new DefaultLabelEditorRenderer<>());
+		DefaultLabelEditorRenderer<String> renderer = new DefaultLabelEditorRenderer<>();
+		view.add(renderer);
+		renderer.init(model);
+		renderer.updateScreenImage(model.labeling().getIndexImg());
+		renderer.printLUT();
 		List<LabelEditorRenderer<String>> renderings = view.renderers();
 		assertEquals(1, renderings.size());
-		((DefaultLabelEditorRenderer)renderings.get(0)).printLUT();
-		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
+		assertEquals(renderer, view.renderers().get(0));
+		RandomAccessible<ARGBType> rendering = renderer.getOutput();
 		assertNotNull(rendering);
-		assertEquals(data.numDimensions(), rendering.numDimensions());
-		assertEquals(data.dimension(0), rendering.dimension(0));
-		assertEquals(data.dimension(1), rendering.dimension(1));
+		assertEquals(2, rendering.numDimensions());
 		RandomAccess<ARGBType> outRa = rendering.randomAccess();
 		outRa.setPosition(new long[]{0,0}); // labels {a}
 		printColor(outRa.get());
@@ -113,14 +115,13 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		assertEquals(red, outRa.get().get());
 		outRa.setPosition(new long[]{1,0}); // labels {a,b}
 		printColor(outRa.get());
-		assertEquals(red, outRa.get().get());
+		assertEquals(green, outRa.get().get());
 		outRa.setPosition(new long[]{1,1}); // labels {}
 		printColor(outRa.get());
 		assertEquals(0, outRa.get().get());
 	}
 
 	@Test
-	@Ignore //FIXME this test works for overlay color mixing, not additive mixing
 	public void testDefaultRenderingMixColors() {
 		//img
 		RandomAccess<LabelingType<String>> ra = labels.randomAccess();
@@ -144,10 +145,14 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 		//view
 		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
-		view.renderers().add(new DefaultLabelEditorRenderer<>());
+		DefaultLabelEditorRenderer<String> renderer = new DefaultLabelEditorRenderer<>();
+		view.add(renderer);
+		renderer.init(model);
+		renderer.updateScreenImage(model.labeling().getIndexImg());
 		List<LabelEditorRenderer<String>> renderings = view.renderers();
 		assertEquals(1, renderings.size());
-		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
+		assertEquals(renderer, renderings.get(0));
+		RandomAccessibleInterval<ARGBType> rendering = renderer.getOutput();
 		assertNotNull(rendering);
 		assertEquals(data.numDimensions(), rendering.numDimensions());
 		assertEquals(data.dimension(0), rendering.dimension(0));
@@ -169,7 +174,6 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 
 	@Test
-	@Ignore //FIXME this test works for overlay color mixing, not additive mixing
 	public void testDefaultRenderingAlphaBlending() {
 		RandomAccess<LabelingType<String>> ra = labels.randomAccess();
 		ra.setPosition(new long[]{0,0});
@@ -189,7 +193,10 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 		model.colors().getDefaultFaceColor().set(0);
 
 		LabelEditorView<String> view = new DefaultLabelEditorView<>(model);
-		view.renderers().add(new DefaultLabelEditorRenderer<>());
+		DefaultLabelEditorRenderer<String> renderer = new DefaultLabelEditorRenderer<>();
+		view.add(renderer);
+		renderer.init(model);
+		renderer.updateScreenImage(model.labeling().getIndexImg());
 		List<LabelEditorRenderer<String>> renderings = view.renderers();
 		RandomAccessibleInterval<ARGBType> rendering = renderings.get(0).getOutput();
 		RandomAccess<ARGBType> outRa = rendering.randomAccess();

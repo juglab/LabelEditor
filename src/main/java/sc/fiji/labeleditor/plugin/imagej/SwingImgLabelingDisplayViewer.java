@@ -49,6 +49,7 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 
 	@Parameter
 	Context context;
+	private LabelEditorBdvPanel panel;
 
 	public SwingImgLabelingDisplayViewer() {
 		super(ImgLabeling.class);
@@ -61,7 +62,7 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 
 	@Override
 	protected JPanel createDisplayPanel(ImgLabeling labeling) {
-		LabelEditorBdvPanel panel = new LabelEditorBdvPanel(context, new BdvOptions().is2D());
+		panel = new LabelEditorBdvPanel(context, new BdvOptions().is2D());
 		panel.add(new DefaultLabelEditorModel<>(labeling));
 		return panel;
 	}
@@ -83,5 +84,11 @@ public class SwingImgLabelingDisplayViewer extends EasySwingDisplayViewer<ImgLab
 	public void setLabel(final String s)
 	{
 		// ignored
+	}
+
+	@Override
+	public void dispose() {
+		panel.dispose();
+		super.dispose();
 	}
 }

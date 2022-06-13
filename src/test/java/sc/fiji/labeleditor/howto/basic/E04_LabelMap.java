@@ -28,10 +28,10 @@
  */
 package sc.fiji.labeleditor.howto.basic;
 
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import net.imagej.ImageJ;
 import net.imglib2.img.Img;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
 
 import java.io.IOException;
 
@@ -41,11 +41,9 @@ public class E04_LabelMap {
 
 		ImageJ ij = new ImageJ();
 		ij.launch();
-
-		Img input = (Img) ij.io().open(getClass().getResource("/labelmap.png").getPath());
+		Img input = ij.scifio().datasetIO().open(getClass().getResource("/labelmap.png").getPath());
 
 		LabelEditorModel model = DefaultLabelEditorModel.initFromLabelMap(input);
-
 		ij.ui().show(model);
 	}
 

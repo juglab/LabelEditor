@@ -1,8 +1,8 @@
 /*-
  * #%L
- * UI component for image segmentation label comparison and selection
+ * BigDataViewer quick visualization API.
  * %%
- * Copyright (C) 2019 - 2020 DAIS developers
+ * Copyright (C) 2016 - 2020 BigDataViewer developers.
  * %%
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -26,10 +26,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * #L%
  */
-package sc.fiji.labeleditor.core.model.colors;
+package sc.fiji.labeleditor.plugin.interfaces.bdv;
+
+import bdv.tools.brightness.ConverterSetup;
+import bdv.util.BdvHandle;
+import bdv.util.BdvStackSource;
+import bdv.viewer.SourceAndConverter;
+import net.imglib2.type.numeric.ARGBType;
 
 import java.util.List;
 
-public interface ColorChangeListener {
-	void colorChanged(List<ColorChangedEvent> e);
+class BdvLabelingSource< T > extends BdvStackSource
+{
+	protected BdvLabelingSource(
+			final BdvHandle bdv,
+			final int numTimepoints,
+			final T type,
+			final List< ConverterSetup > converterSetups,
+			final List< SourceAndConverter< T > > sources )
+	{
+		super( bdv, numTimepoints, type, converterSetups, sources );
+	}
+
+	@Override
+	public void setColor(ARGBType color) {
+		//do nothing
+	}
+
+	@Override
+	public void setDisplayRange(double min, double max) {
+		// nope
+	}
+
+	@Override
+	public void setDisplayRangeBounds(double min, double max) {
+		// nothing
+	}
 }

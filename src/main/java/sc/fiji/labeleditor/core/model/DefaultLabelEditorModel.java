@@ -28,21 +28,16 @@
  */
 package sc.fiji.labeleditor.core.model;
 
-import net.imglib2.Cursor;
-import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.cache.img.DiskCachedCellImg;
 import net.imglib2.cache.img.DiskCachedCellImgFactory;
 import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgFactory;
 import net.imglib2.loops.LoopBuilder;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.roi.labeling.LabelingMapping;
-import net.imglib2.roi.labeling.LabelingType;
 import net.imglib2.type.numeric.IntegerType;
+import net.imglib2.type.numeric.NumericType;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
-import net.imglib2.view.Views;
 import org.scijava.listeners.Listeners;
 import sc.fiji.labeleditor.core.model.colors.DefaultLabelEditorTagColors;
 import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
@@ -62,10 +57,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 
 	private ImgLabeling<L, ? extends IntegerType<?> > labels;
-	private RandomAccessibleInterval<?> data;
+	private RandomAccessibleInterval<? extends NumericType<?>> data;
 	private LabelEditorTagging<L> tagging;
 	private Comparator<L> labelComparator;
-	private Comparator<Object> tagComparator;
 
 	private List<Object> orderedTags = new ArrayList<>();
 
@@ -74,7 +68,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	private Listeners.List<LabelingChangeListener> listeners = new Listeners.SynchronizedList<>();
 	private boolean labelingListenersPaused = false;
 
-	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval<?> data) {
+	public DefaultLabelEditorModel(ImgLabeling<L, ? extends IntegerType<?>> labeling, RandomAccessibleInterval<? extends NumericType<?>> data) {
 		this(labeling);
 		this.data = data;
 	}
@@ -84,7 +78,6 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 			setName("model " + System.identityHashCode(this));
 			this.labels = labeling;
 			initLabelOrdering(labeling);
-			initTagOrdering();
 			initTagging();
 			addDefaultColorsets();
 		}
@@ -93,7 +86,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		return new DefaultLabelEditorModel<>(makeLabeling(labelMap));
 	}
 
-	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap, RandomAccessibleInterval<?> data) {
+	public static DefaultLabelEditorModel<IntType> initFromLabelMap(RandomAccessibleInterval<? extends IntegerType<?>> labelMap, RandomAccessibleInterval<? extends NumericType<?>> data) {
 		return new DefaultLabelEditorModel<>(makeLabeling(labelMap), data);
 	}
 
@@ -101,7 +94,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		Img<IntType> backing = new DiskCachedCellImgFactory<>(new IntType()).create(labelMap);
 		final ImgLabeling< IntType, IntType > labeling = new ImgLabeling<>( backing );
 		AtomicInteger max = new AtomicInteger(0);
-		LoopBuilder.setImages(labelMap, backing).forEachPixel((input, output) -> {
+		LoopBuilder.setImages(labelMap, backing).multiThreaded().forEachPixel((input, output) -> {
 			int intInput = input.getInteger();
 			if(intInput > max.get()) max.getAndSet(intInput);
 			output.set(intInput);
@@ -139,49 +132,19 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	// TODO: Consider using setters instead of protected methods.
-	protected void initTagging() {
+	private void initTagging() {
 		tagging = new DefaultLabelEditorTagging<>(this);
+		tagging.addTag(LabelEditorTag.MOUSE_OVER);
+		tagging.addTag(LabelEditorTag.FOCUS);
+		tagging.addTag(LabelEditorTag.SELECTED);
 	}
 
-	protected void initLabelOrdering(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
+	private void initLabelOrdering(ImgLabeling<L, ? extends IntegerType<?>> labeling) {
 		labelComparator = this::compareLabels;
 	}
 
-	protected void initTagOrdering() {
-		tagComparator = this::compareTags;
-		orderedTags.clear();
-		orderedTags.add(LabelEditorTag.SELECTED);
-		orderedTags.add(LabelEditorTag.MOUSE_OVER);
-	}
-
-	/**
-	 * This is sorting labels by their tags. If a label has the more important tag,
-	 * it should be displayed on top. Not sure the sorting works as intended.
-	 */
 	int compareLabels(L label1, L label2) {
-		Set<Object> tags1 = tagging().getTags(label1);
-		Set<Object> tags2 = tagging().getTags(label2);
-		if(tags1.size() == 0 && tags2.size() == 0) return label1.toString().compareTo(label2.toString());
-		if(tags1.size() == 0) return 1;
-		if(tags2.size() == 0) return -1;
-		Set<Object> tags1Copy = new HashSet<>(tags1);
-		tags1Copy.addAll(tags2);
-		List<Object> bothTags = new ArrayList<>(tags1Copy);
-		bothTags.sort(getTagComparator());
-		Object firstTag = bothTags.get(0);
-		if(tags1.contains(firstTag) && !tags2.contains(firstTag)) return -1;
-		if(!tags1.contains(firstTag) && tags2.contains(firstTag)) return 1;
 		return label1.toString().compareTo(label2.toString());
-	}
-
-	int compareTags(Object tag1, Object tag2) {
-		int tag1Index = orderedTags.indexOf(tag1);
-		int tag2Index = orderedTags.indexOf(tag2);
-		if(tag1Index < 0 && tag2Index < 0) {
-			return tag1.toString().compareTo(tag2.toString());
-		} else {
-			return Integer.compare(tag2Index, tag1Index);
-		}
 	}
 
 	@Override
@@ -193,17 +156,8 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 		return tagColors;
 	}
 
-	public void setTagComparator(Comparator<Object> comparator) {
-		this.tagComparator = comparator;
-	}
-
 	public void setLabelComparator(Comparator<L> comparator) {
 		this.labelComparator = comparator;
-	}
-
-	@Override
-	public Comparator<Object> getTagComparator() {
-		return tagComparator;
 	}
 
 	@Override
@@ -212,7 +166,7 @@ public class DefaultLabelEditorModel<L> implements LabelEditorModel<L> {
 	}
 
 	@Override
-	public RandomAccessibleInterval<?> getData() {
+	public RandomAccessibleInterval<? extends NumericType<?>> getData() {
 		return data;
 	}
 

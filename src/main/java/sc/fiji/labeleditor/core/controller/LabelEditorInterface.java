@@ -31,11 +31,9 @@ package sc.fiji.labeleditor.core.controller;
 import net.imglib2.roi.labeling.LabelingType;
 import org.scijava.ui.behaviour.util.Behaviours;
 import sc.fiji.labeleditor.core.model.tagging.TagChangedEvent;
-import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.core.view.ViewChangedEvent;
 
-import java.awt.*;
+import java.awt.Component;
 import java.util.List;
 import java.util.Set;
 
@@ -53,8 +51,6 @@ public interface LabelEditorInterface {
 	<L> void installBehaviours(InteractiveLabeling<L> labeling);
 
 	<L> Behaviours behaviours(InteractiveLabeling<L> interactiveLabeling);
-
-	void setRendererActive(LabelEditorRenderer renderer, boolean active);
 
 	Set<InteractiveLabeling<?>> getInteractiveLabelings();
 }

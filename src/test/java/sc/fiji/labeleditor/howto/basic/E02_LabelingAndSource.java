@@ -51,7 +51,7 @@ public class E02_LabelingAndSource {
 	public void run() throws IOException {
 		ImageJ ij = new ImageJ();
 		ij.launch();
-		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
+		Img input = (Img) ij.scifio().datasetIO().open(getClass().getResource("/blobs.png").getPath());
 		Img<IntType> binary = (Img) ij.op().threshold().otsu(input);
 
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(
