@@ -118,7 +118,7 @@
 		<license.licenseName>bsd_2</license.licenseName>
 		<license.copyrightOwners>Deborah Schmidt</license.copyrightOwners>
 		<license.excludes>**/script_templates/**</license.excludes>
-		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
 		<bigdataviewer-core.version>10.2.0</bigdataviewer-core.version>
 		<bigdataviewer-vistools.version>1.0.0-beta-28</bigdataviewer-vistools.version>
