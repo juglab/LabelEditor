@@ -103,8 +103,8 @@
 		<url>https://github.com/frauzufall/LabelEditor/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.com/frauzufall/LabelEditor</url>
+		<system>GitHub Actions</system>
+		<url>https://github.com/frauzufall/LabelEditor/actions</url>
 	</ciManagement>
 	<repositories>
 		<repository>
