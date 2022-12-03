@@ -57,7 +57,7 @@ public class TestCreatePanel {
 		labels = new ImgLabeling<>( backing );
 	}
 
-	@Test
+//	@Test
 	public void run() {
 		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels, data);
 		LabelEditorBdvPanel panel = new LabelEditorBdvPanel();
