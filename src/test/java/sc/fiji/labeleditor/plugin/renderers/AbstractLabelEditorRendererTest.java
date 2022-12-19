@@ -49,16 +49,21 @@ import org.junit.Before;
 import org.junit.Test;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
 import sc.fiji.labeleditor.core.model.LabelEditorModel;
+import sc.fiji.labeleditor.core.model.colors.DefaultLabelEditorTagColors;
+import sc.fiji.labeleditor.core.model.colors.LabelEditorTagColors;
 import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
 import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
+import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 import sc.fiji.labeleditor.core.view.LabelEditorView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T>> {
+public class AbstractLabelEditorRendererTest<T extends RealType<T> & NativeType<T>> {
 
 	private ImgPlus<T> data;
 	private ImgLabeling<String, IntType> labels;
@@ -207,5 +212,114 @@ public class DefaultLabelEditorRendererTest<T extends RealType<T> & NativeType<T
 
 	private void printColor(ARGBType argbType) {
 		System.out.println(ARGBType.red(argbType.get()) + ", " + ARGBType.green(argbType.get()) + ", " + ARGBType.blue(argbType.get()) + ", " + ARGBType.alpha(argbType.get()));
+	}
+
+	@Test
+	public void testMixColors() {
+		LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
+		String tag1 = "tag1";
+		String tag2 = "tag2";
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		model.tagging().addTagToLabel("tag1", "b");
+		model.tagging().addTagToLabel("tag2", "b");
+		tagColors.getFaceColor(tag1).set(255, 0, 0, 100);
+		tagColors.getFaceColor(tag2).set(0, 255, 0, 100);
+		List<Object> noSet = new ArrayList<>();
+		Stream<Integer> colors = DefaultLabelEditorRenderer.getTagColors("b", noSet.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorNoTag = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(0, ARGBType.red(colorNoTag));
+		assertEquals(0, ARGBType.green(colorNoTag));
+		assertEquals(0, ARGBType.blue(colorNoTag));
+		assertEquals(0, ARGBType.alpha(colorNoTag));
+		List<Object> tag1Set = new ArrayList<>();
+		tag1Set.add(tag1);
+		colors = DefaultLabelEditorRenderer.getTagColors("b", tag1Set.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorTag1 = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(255, ARGBType.red(colorTag1));
+		assertEquals(0, ARGBType.green(colorTag1));
+		assertEquals(0, ARGBType.blue(colorTag1));
+		assertEquals(100, ARGBType.alpha(colorTag1));
+		//TODO test second color and mixed color
+	}
+
+	@Test
+	public void testMixTransparentColors() {
+		LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
+		String tag1 = "tag1";
+		String tag2 = "tag2";
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		model.tagging().addTagToLabel("tag1", "b");
+		model.tagging().addTagToLabel("tag2", "b");
+		tagColors.getFaceColor(tag1).set(0, 0, 0, 0);
+		tagColors.getFaceColor(tag2).set(255, 155, 0, 100);
+		List<Object> noSet = new ArrayList<>();
+		Stream<Integer> colors = AbstractLabelEditorRenderer.getTagColors("b", noSet.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorNoTag = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(0, ARGBType.red(colorNoTag));
+		assertEquals(0, ARGBType.green(colorNoTag));
+		assertEquals(0, ARGBType.blue(colorNoTag));
+		assertEquals(0, ARGBType.alpha(colorNoTag));
+		List<Object> tag1Set = new ArrayList<>();
+		tag1Set.add(tag1);
+		colors = DefaultLabelEditorRenderer.getTagColors("b", tag1Set.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorTag1 = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(0, ARGBType.red(colorTag1));
+		assertEquals(0, ARGBType.green(colorTag1));
+		assertEquals(0, ARGBType.blue(colorTag1));
+		assertEquals(0, ARGBType.alpha(colorTag1));
+		List<Object> tag2Set = new ArrayList<>();
+		tag2Set.add(tag2);
+		colors = DefaultLabelEditorRenderer.getTagColors("b", tag2Set.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorTag2 = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(255, ARGBType.red(colorTag2));
+		assertEquals(155, ARGBType.green(colorTag2));
+		assertEquals(0, ARGBType.blue(colorTag2));
+		assertEquals(100, ARGBType.alpha(colorTag2));
+		List<Object> tag12Set = new ArrayList<>();
+		tag12Set.add(tag1);
+		tag12Set.add(tag2);
+		colors = DefaultLabelEditorRenderer.getTagColors("b", tag12Set.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorTag12 = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(255, ARGBType.red(colorTag12));
+		assertEquals(155, ARGBType.green(colorTag12));
+		assertEquals(0, ARGBType.blue(colorTag12));
+		assertEquals(100, ARGBType.alpha(colorTag12));
+		List<Object> tag21Set = new ArrayList<>();
+		tag21Set.add(tag2);
+		tag21Set.add(tag1);
+		colors = DefaultLabelEditorRenderer.getTagColors("b", tag21Set.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorTag21 = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(255, ARGBType.red(colorTag21));
+		assertEquals(155, ARGBType.green(colorTag21));
+		assertEquals(0, ARGBType.blue(colorTag21));
+		assertEquals(100, ARGBType.alpha(colorTag21));
+	}
+
+	@Test
+	public void testMixSameColors() {
+		LabelEditorTagColors tagColors = new DefaultLabelEditorTagColors();
+		String tag1 = "tag1";
+		String tag2 = "tag2";
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels);
+		model.tagging().addTagToLabel("tag1", "b");
+		model.tagging().addTagToLabel("tag2", "b");
+		tagColors.getFaceColor(tag1).set(255, 255, 255, 100);
+		tagColors.getFaceColor(tag2).set(255, 255, 255, 100);
+		List<Object> noSet = new ArrayList<>();
+		Stream<Integer> colors = AbstractLabelEditorRenderer.getTagColors("b", noSet.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorNoTag = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(0, ARGBType.red(colorNoTag));
+		assertEquals(0, ARGBType.green(colorNoTag));
+		assertEquals(0, ARGBType.blue(colorNoTag));
+		assertEquals(0, ARGBType.alpha(colorNoTag));
+		List<Object> tag12Set = new ArrayList<>();
+		tag12Set.add(tag1);
+		tag12Set.add(tag2);
+		colors = AbstractLabelEditorRenderer.getTagColors("b", tag12Set.stream(), tagColors, LabelEditorTargetComponent.FACE, model.tagging());
+		int colorTag12 = ColorMixingUtils.mixColorsOverlay(colors);
+		assertEquals(255, ARGBType.red(colorTag12));
+		assertEquals(255, ARGBType.green(colorTag12));
+		assertEquals(255, ARGBType.blue(colorTag12));
+		assertEquals(160, ARGBType.alpha(colorTag12));
 	}
 }

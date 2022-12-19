@@ -45,10 +45,9 @@ import sc.fiji.labeleditor.core.model.tagging.LabelEditorTagging;
 import sc.fiji.labeleditor.core.view.LabelEditorOverlayRenderer;
 import sc.fiji.labeleditor.core.view.LabelEditorTargetComponent;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverlayRenderer<L> {
 
@@ -112,14 +111,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 
 	protected int getMixColor(LabelEditorTagColors tagColors, Object targetComponent, Set<L> labels) {
 		if(labels.size() > 1) {
-			List<L> sortedLabels = new ArrayList<>(labels);
-			sortedLabels.sort(model.getLabelComparator());
-			int[] labelColors = new int[sortedLabels.size()];
-			for (int j = 0; j < labelColors.length; j++) {
-				L label = sortedLabels.get(j);
-				int color = getLabelColor(tagColors, targetComponent, label);
-				labelColors[j] = color;
-			}
+			Stream<Integer> labelColors = labels.stream().sorted(model.getLabelComparator()).map(label -> getLabelColor(tagColors, targetComponent, label));
 			return ColorMixingUtils.mixColorsOverlay(labelColors);
 		} else {
 			return getLabelColor(tagColors, targetComponent, labels.iterator().next());
@@ -127,10 +119,8 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 	}
 
 	private int getLabelColor(LabelEditorTagColors tagColors, Object targetComponent, L label) {
-		List<Object> labelTags = model.tagging().getTags(label);
-		ArrayList<Object> sortedTags = new ArrayList<>(labelTags);
-		sortedTags.add(LabelEditorTag.DEFAULT);
-		return mixColorsOverlay(label, sortedTags, tagColors, targetComponent, model.tagging());
+		Stream<Object> labelTags = Stream.concat(model.tagging().getTags(label).stream(), Stream.of(LabelEditorTag.DEFAULT));
+		return mixColorsOverlay(label, labelTags, tagColors, targetComponent, model.tagging());
 	}
 
 	private void printLUT(LabelingMapping<L> mapping, int[] lut) {
@@ -180,43 +170,28 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 		return lut;
 	}
 
-	public static <L> int mixColorsAdditive(L label, List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging) {
+	public static <L> int mixColorsAdditive(L label, Stream<Object> tags, LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging) {
 
-		int[] colors = getTagColors(label, tags, tagColors, targetComponent, tagging);
+		Stream<Integer> colors = getTagColors(label, tags, tagColors, targetComponent, tagging);
 		return ColorMixingUtils.mixColorsAdditive(colors);
 	}
 
-	public static <L> int mixColorsOverlay(L label, List<Object> tags, LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging) {
+	public static <L> int mixColorsOverlay(L label, Stream<Object> tags, LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging) {
 
-		int[] colors = getTagColors(label, tags, tagColors, targetComponent, tagging);
+		Stream<Integer> colors = getTagColors(label, tags, tagColors, targetComponent, tagging);
 		return ColorMixingUtils.mixColorsOverlay(colors);
 	}
 
-	private static <L> int[] getTagColors(L label, List< Object > tags,
-	                                      LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging)
+	protected static <L> Stream<Integer> getTagColors(L label, Stream< Object > tags,
+													LabelEditorTagColors tagColors, Object targetComponent, LabelEditorTagging tagging)
 	{
-		int[] colors = new int[tags.size()];
-		for (int i = 0; i < colors.length; i++) {
-			Object tag = tags.get(i);
-			Object value = tagging.getValue(tag, label);
+		return tags.map(tag -> {
 			LabelEditorColorset colorset = tagColors.getColorset(tag);
-			if(colorset == null) continue;
+			if(colorset == null) return 0;
 			LabelEditorColor leColor = colorset.get(targetComponent);
-			if(leColor == null) continue;
-			int color = leColor.get(value);
-			colors[i] = color;
-		}
-		return colors;
-	}
-
-	static <L> int[] getTagColors(List< Object > tags, LabelEditorTagColors tagColors, Object targetComponent)
-	{
-		int[] colors = new int[tags.size()];
-		for (int i = 0; i < colors.length; i++) {
-			int color = tagColors.getColorset(tags.get(i)).get(targetComponent).get();
-			colors[i] = color;
-		}
-		return colors;
+			if(leColor == null) return 0;
+			return leColor.get(tagging.getValue(tag, label));
+		});
 	}
 
 	void printLUT() {
