@@ -29,18 +29,14 @@
 package sc.fiji.labeleditor.howto.advanced;
 
 import bdv.util.Bdv;
-import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
-import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
-import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
-import sc.fiji.labeleditor.core.view.LabelEditorView;
-import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
-import net.miginfocom.swing.MigLayout;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,7 +66,7 @@ public class E01_AddToExistingBDV {
 		bdvInterface.setup(panel);
 		bdvInterface.control(model);
 
-		frame.setContentPane(panel.getViewerPanel());
+		frame.setContentPane(panel.getSplitPanel());
 		frame.pack();
 		frame.setVisible(true);
 	}

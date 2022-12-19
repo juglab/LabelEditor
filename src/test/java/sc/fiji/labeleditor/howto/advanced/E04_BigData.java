@@ -35,6 +35,8 @@ import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import net.imglib2.util.Intervals;
 import net.imglib2.view.Views;
+import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.model.LabelEditorModel;
 import sc.fiji.labeleditor.plugin.mode.timeslice.TimeSliceLabelEditorModel;
 
 import java.util.Random;
@@ -82,7 +84,7 @@ public class E04_BigData {
 
 		System.out.println("Done creating labeling");
 
-		TimeSliceLabelEditorModel<String> model = new TimeSliceLabelEditorModel<>(labels, backing, 2);
+		LabelEditorModel<String> model = new DefaultLabelEditorModel<>(labels, backing);
 		model.tagging().addTagToLabel(LABEL1, TAG1);
 		model.tagging().addTagToLabel(LABEL2, TAG2);
 
