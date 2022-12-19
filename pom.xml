@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>31.1.0</version>
+		<version>33.2.0</version>
 	</parent>
 
 	<groupId>sc.fiji</groupId>
@@ -32,10 +32,10 @@
 		<developer>
 			<id>frauzufall</id>
 			<name>Deborah Schmidt</name>
-			<email>frauzufall@mpi-cbg.de</email>
-			<url>http://juglab.mpi-cbg.de</url>
-			<organization>CSBD</organization>
-			<organizationUrl>http://www.mpi-cbg.de/jug</organizationUrl>
+			<email>mail@frauzufall.de</email>
+			<url>https://frauzufall.de</url>
+			<organization>MDC Berlin</organization>
+			<organizationUrl>http://www.mdc-berlin.de</organizationUrl>
 			<roles>
 				<role>developer</role>
 			</roles>
@@ -122,7 +122,6 @@
 
 		<bigdataviewer-core.version>10.2.0</bigdataviewer-core.version>
 		<bigdataviewer-vistools.version>1.0.0-beta-28</bigdataviewer-vistools.version>
-		<scifio.version>0.41.2</scifio.version>
 	</properties>
 
 	<dependencies>
@@ -144,7 +143,6 @@
 			<groupId>io.scif</groupId>
 			<artifactId>scifio</artifactId>
 			<scope>runtime</scope>
-
 			<exclusions>
 				<exclusion>
 					<groupId>net.imagej</groupId>
