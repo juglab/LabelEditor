@@ -271,8 +271,11 @@ public class BdvInterface implements LabelEditorInterface {
 				indexImg,
 				getModelIndexSourceName(labeling.model()),
 				BdvOptions.options().addTo(bdvHandle));
-		final ConverterSetups setups = source.getBdvHandle().getConverterSetups();
-		source.getSources().forEach( s -> setups.put( s, new PlaceHolderConverterSetup( 0, 0, 255, 0xffffff ) ) );
+
+		//FIXME why was this next line there? and what is the dummy image for?
+//		final ConverterSetups setups = source.getBdvHandle().getConverterSetups();
+//		source.getSources().forEach( s -> setups.put( s, new PlaceHolderConverterSetup( 0, 0, 255, 0xffffff ) ) );
+
 		indexImgSources.put(source.getSources().get(0), labeling);
 		if(!overlayAdded) {
 			overlayAdded = true;

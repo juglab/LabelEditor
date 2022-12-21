@@ -28,15 +28,17 @@
  */
 package sc.fiji.labeleditor.howto.advanced;
 
-import bdv.util.Bdv;
-import bdv.util.BdvHandlePanel;
+import bdv.util.*;
 import net.imagej.ImageJ;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
 import net.imglib2.img.Img;
 import net.imglib2.roi.labeling.ImgLabeling;
 import net.imglib2.type.numeric.integer.IntType;
 import sc.fiji.labeleditor.core.model.DefaultLabelEditorModel;
+import sc.fiji.labeleditor.core.view.DefaultLabelEditorView;
+import sc.fiji.labeleditor.core.view.LabelEditorView;
 import sc.fiji.labeleditor.plugin.interfaces.bdv.BdvInterface;
+import sc.fiji.labeleditor.plugin.renderers.DefaultLabelEditorRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,23 +54,23 @@ public class E01_AddToExistingBDV {
 		ij.launch();
 
 		Img input = (Img) ij.io().open(getClass().getResource("/blobs.png").getPath());
+
+		BdvInterface labelEditorInterface = new BdvInterface(ij.context());
+		BdvOptions options = BdvOptions.options().accumulateProjectorFactory(labelEditorInterface.projector()).is2D();
+		BdvStackSource source = BdvFunctions.show(input, "raw", options);
+
 		Img binary = (Img) ij.op().threshold().otsu(input);
 		ImgLabeling<Integer, IntType> labeling = ij.op().labeling().cca(binary, ConnectedComponents.StructuringElement.EIGHT_CONNECTED);
 
 		DefaultLabelEditorModel<Integer> model = new DefaultLabelEditorModel<>(labeling);
 
+		labelEditorInterface.setup(source.getBdvHandle());
+		LabelEditorView<Integer> view = new DefaultLabelEditorView<>(model);
+		view.add(new DefaultLabelEditorRenderer<>());
+		labelEditorInterface.control(model, view);
 		model.colors().getDefaultFaceColor().set(255,255,0,55);
 
-		JFrame frame = new JFrame("Label editor");
-		frame.setMinimumSize(new Dimension(500,500));
-		BdvInterface bdvInterface = new BdvInterface(ij.context());
-		BdvHandlePanel panel = new BdvHandlePanel(frame, Bdv.options().is2D().accumulateProjectorFactory(bdvInterface.projector()));
-		bdvInterface.setup(panel);
-		bdvInterface.control(model);
-
-		frame.setContentPane(panel.getSplitPanel());
-		frame.pack();
-		frame.setVisible(true);
+		source.removeFromBdv();
 	}
 
 	public static void main(String...args) throws IOException {

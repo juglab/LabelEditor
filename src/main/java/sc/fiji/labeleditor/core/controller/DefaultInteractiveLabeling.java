@@ -45,9 +45,6 @@ import java.util.Set;
 public class DefaultInteractiveLabeling<L> implements InteractiveLabeling<L> {
 
 	@Parameter
-	Context context;
-
-	@Parameter
 	DisplayService displayService;
 
 	protected final LabelEditorInterface interfaceInstance;

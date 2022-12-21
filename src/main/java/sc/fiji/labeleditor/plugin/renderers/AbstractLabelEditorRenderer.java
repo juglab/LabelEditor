@@ -105,7 +105,7 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 		}
 
 		if(debug) {
-			printLUT(mapping, lut);
+			printLUT(targetComponent, mapping, lut);
 		}
 	}
 
@@ -123,8 +123,10 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 		return mixColorsOverlay(label, labelTags, tagColors, targetComponent, model.tagging());
 	}
 
-	private void printLUT(LabelingMapping<L> mapping, int[] lut) {
+	private void printLUT(LabelEditorTargetComponent target, LabelingMapping<L> mapping, int[] lut) {
 		StringBuilder str = new StringBuilder();
+		str.append("target: ");
+		str.append(target);
 		for (int i = 0; i < lut.length; i++) {
 			str.append("{");
 			mapping.labelsAtIndex(i).forEach(label -> str.append(label).append(" "));
@@ -152,7 +154,13 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 	}
 
 	private static <I extends IntegerType<I>> RandomAccessibleInterval<ARGBType> convert(int[] lut, RandomAccessibleInterval<I> screenImg) {
-		Converter<I, ARGBType> converter = (i, o) -> o.set(lut[i.getInteger()]);
+		Converter<I, ARGBType> converter = (i, o) -> {
+			try {
+				o.set(lut[i.getInteger()]);
+			} catch(ArrayIndexOutOfBoundsException e) {
+				//FIXME I cannot figure out why this is happening. to reproduce, remove this catch and run the AddToExistingBDV example.
+			}
+		};
 		return Converters.convert(screenImg, converter, new ARGBType());
 	}
 
@@ -190,11 +198,12 @@ public abstract class AbstractLabelEditorRenderer<L> implements LabelEditorOverl
 			if(colorset == null) return 0;
 			LabelEditorColor leColor = colorset.get(targetComponent);
 			if(leColor == null) return 0;
-			return leColor.get(tagging.getValue(tag, label));
+			Object value = tagging.getValue(tag, label);
+			return leColor.get(value);
 		});
 	}
 
 	void printLUT() {
-		printLUT(model.labeling().getMapping(), lut);
+		printLUT(null, model.labeling().getMapping(), lut);
 	}
 }

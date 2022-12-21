@@ -32,8 +32,10 @@ import bdv.viewer.SourceAndConverter;
 import bdv.viewer.render.AccumulateProjector;
 import bdv.viewer.render.AccumulateProjectorFactory;
 import bdv.viewer.render.VolatileProjector;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
 import net.imglib2.Cursor;
 import net.imglib2.RandomAccessible;
 import net.imglib2.RandomAccessibleInterval;
@@ -45,176 +47,167 @@ import sc.fiji.labeleditor.core.view.LabelEditorRenderer;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class LabelEditorAccumulateProjector extends AccumulateProjector< ARGBType, ARGBType >
-{
-	private final int indexFirstLabeling;
+public class LabelEditorAccumulateProjector extends AccumulateProjector<ARGBType, ARGBType> {
+    private final int indexFirstLabeling;
 
-	static AccumulateProjectorFactory< ARGBType > createFactory( BdvInterface bdvInterface )
-	{
-		return new AccumulateProjectorFactory< ARGBType >() {
+    static AccumulateProjectorFactory<ARGBType> createFactory(BdvInterface bdvInterface) {
+        return new AccumulateProjectorFactory<ARGBType>() {
 
-			@Override
-			public VolatileProjector createProjector(
-					final List< VolatileProjector > sourceProjectors,
-					final List<SourceAndConverter< ? >> sources,
-					final List< ? extends RandomAccessible< ? extends ARGBType > > sourceScreenImages,
-					final RandomAccessibleInterval< ARGBType > targetScreenImage,
-					final int numThreads,
-					final ExecutorService executorService) {
-				return new LabelEditorAccumulateProjector( bdvInterface, sourceProjectors, sources, sourceScreenImages, targetScreenImage, numThreads, executorService);
-			}
-		};
-	}
+            @Override
+            public VolatileProjector createProjector(
+                    final List<VolatileProjector> sourceProjectors,
+                    final List<SourceAndConverter<?>> sources,
+                    final List<? extends RandomAccessible<? extends ARGBType>> sourceScreenImages,
+                    final RandomAccessibleInterval<ARGBType> targetScreenImage,
+                    final int numThreads,
+                    final ExecutorService executorService) {
+                return new LabelEditorAccumulateProjector(bdvInterface, sourceProjectors, sources, sourceScreenImages, targetScreenImage, numThreads, executorService);
+            }
+        };
+    }
 
-	private LabelEditorAccumulateProjector(
-			final BdvInterface bdvInterface,
-			final List<VolatileProjector> sourceProjectors,
-			final List<SourceAndConverter<?>> sources,
-			final List<? extends RandomAccessible<? extends ARGBType>> sourceScreenImages,
-			final RandomAccessibleInterval<ARGBType> target,
-			final int numThreads,
-			final ExecutorService executorService) {
-		super( labelEditorProjectors(bdvInterface, sources, sourceScreenImages, target, sourceProjectors),
-				labelEditorScreenImages(bdvInterface, sources, sourceScreenImages, target),
-				target, numThreads, executorService );
-		indexFirstLabeling = sources.size() - labelEditorSourceIndices(bdvInterface, sources).size();
-	}
+    private LabelEditorAccumulateProjector(
+            final BdvInterface bdvInterface,
+            final List<VolatileProjector> sourceProjectors,
+            final List<SourceAndConverter<?>> sources,
+            final List<? extends RandomAccessible<? extends ARGBType>> sourceScreenImages,
+            final RandomAccessibleInterval<ARGBType> target,
+            final int numThreads,
+            final ExecutorService executorService) {
+        super(labelEditorProjectors(bdvInterface, sources, sourceProjectors),
+                labelEditorScreenImages(bdvInterface, sources, sourceScreenImages),
+                target, numThreads, executorService);
+        indexFirstLabeling = firstLabelingIndex(bdvInterface, sources);
+    }
 
-	private static List<Integer> labelEditorSourceIndices(
-			final BdvInterface bdvInterface,
-			final List<SourceAndConverter<?>> sources) {
-		List<Integer> indices = new ArrayList<>();
-		for (int i = 0; i < sources.size(); i++) {
-			for (Map.Entry<SourceAndConverter, InteractiveLabeling<?>> entry : bdvInterface.getIndexSources().entrySet()) {
-				if (entry.getKey().equals(sources.get(i))) {
-					indices.add(i);
-					break;
-				}
-			}
-		}
-		return indices;
-	}
+    private static ArrayList<? extends RandomAccessible<? extends ARGBType>> labelEditorScreenImages(
+            BdvInterface bdvInterface,
+            List<SourceAndConverter<?>> sources,
+            List<? extends RandomAccessible<? extends ARGBType>> sourceScreenImages) {
 
-	private static ArrayList<? extends RandomAccessible<? extends ARGBType>> labelEditorScreenImages(
-			BdvInterface bdvInterface,
-			List<SourceAndConverter<?>> sources,
-			List<? extends RandomAccessible<? extends ARGBType>> sourceScreenImages,
-			RandomAccessibleInterval<ARGBType> target) {
+        ArrayList<RandomAccessible<? extends ARGBType>> res = new ArrayList<>();
+        ArrayList<RandomAccessible<? extends ARGBType>> resLabeling = new ArrayList<>();
 
-		ArrayList<RandomAccessible<? extends ARGBType>> res = new ArrayList<>();
-		ArrayList<RandomAccessible<? extends ARGBType>> renderers = new ArrayList<>();
+        for (int i = 0; i < sources.size(); i++) {
+            SourceAndConverter<?> source = sources.get(i);
+            RandomAccessibleInterval<? extends ARGBType> screenImage = (RandomAccessibleInterval<? extends ARGBType>) sourceScreenImages.get(i);
+            if(bdvInterface.getIndexSources().containsKey(source)) {
+                resLabeling.addAll(getRendererSourcesForLabeling(screenImage, bdvInterface.getIndexSources().get(sources.get(i))));
+            } else {
+                res.add(screenImage);
+            }
+        }
+        res.addAll(resLabeling);
+        return res;
+    }
 
-		List<Integer> indices = labelEditorSourceIndices(bdvInterface, sources);
+    private synchronized static <L> ArrayList<RandomAccessible<? extends ARGBType>> getRendererSourcesForLabeling(
+            RandomAccessibleInterval<? extends ARGBType> screenImage,
+            InteractiveLabeling<L> labeling) {
+        ArrayList<RandomAccessible<? extends ARGBType>> res = new ArrayList<>();
+        for (LabelEditorRenderer<L> renderer : labeling.view().renderers()) {
+            if (!renderer.isActive()) continue;
+            if (LabelEditorOverlayRenderer.class.isAssignableFrom(renderer.getClass())) {
+                LabelEditorOverlayRenderer<L> overlayRenderer = (LabelEditorOverlayRenderer<L>) renderer;
+                overlayRenderer.init(labeling.model(), screenImage);
+                overlayRenderer.updateOnTagChange();
+                res.add(overlayRenderer.getOutput());
+            }
+        }
+        return res;
+    }
 
-		for (int i = 0; i < sourceScreenImages.size(); i++) {
-			RandomAccessibleInterval<? extends ARGBType> screenImage = ( RandomAccessibleInterval< ? extends ARGBType > ) sourceScreenImages.get(i);
-			if(indices.contains(i)) {
-				addSource(renderers, target, screenImage, bdvInterface.getIndexSources().get(sources.get(i)));
-			}
-			else {
-				res.add(screenImage);
-			}
-		}
-		res.addAll(renderers);
-		return res;
-	}
+    private static List<VolatileProjector> labelEditorProjectors(
+            BdvInterface bdvInterface,
+            List<SourceAndConverter<?>> sources,
+            List<VolatileProjector> sourceProjectors) {
 
-	private synchronized static <L> void addSource(
-			ArrayList<RandomAccessible<? extends ARGBType>> res,
-			RandomAccessibleInterval<ARGBType> target,
-			RandomAccessibleInterval<? extends ARGBType> screenImage,
-			InteractiveLabeling<L> labeling) {
 
-		for (LabelEditorRenderer<L> renderer : labeling.view().renderers()) {
-			if(!renderer.isActive()) continue;
-			if (LabelEditorOverlayRenderer.class.isAssignableFrom(renderer.getClass())) {
-				LabelEditorOverlayRenderer<L> overlayRenderer = (LabelEditorOverlayRenderer<L>) renderer;
-				overlayRenderer.init(labeling.model(), screenImage);
-				overlayRenderer.updateOnTagChange();
-				res.add(overlayRenderer.getOutput());
-			}
-		}
+        // sort out sources belonging to labelings and order the associated projects to the end of the list
+        List<VolatileProjector> allProjectors = new ArrayList<>();
+        List<VolatileProjector> rendererProjectors = new ArrayList<>();
 
-	}
+        for (int i = 0; i < sources.size(); i++) {
 
-	private static List<VolatileProjector> labelEditorProjectors(
-			BdvInterface bdvInterface,
-			List<SourceAndConverter<?>> sources,
-			List<? extends RandomAccessible<? extends ARGBType>> sourceScreenImages,
-			RandomAccessibleInterval<ARGBType> target,
-			List<VolatileProjector> sourceProjectors) {
+            SourceAndConverter<?> source = sources.get(i);
+            if(bdvInterface.getIndexSources().containsKey(source)) {
+                InteractiveLabeling<?> labeling = bdvInterface.getIndexSources().get(source);
+                for (LabelEditorRenderer<?> renderer : labeling.view().renderers()) {
+                    if (LabelEditorOverlayRenderer.class.isAssignableFrom(renderer.getClass())) {
+                        rendererProjectors.add(sourceProjectors.get(i));
+                    }
+                }
+            } else {
+                allProjectors.add(sourceProjectors.get(i));
+            }
+        }
+        allProjectors.addAll(rendererProjectors);
+        return allProjectors;
+    }
 
-		List<VolatileProjector> res = new ArrayList<>();
-		List<VolatileProjector> rendererProjectors = new ArrayList<>();
+    private static int firstLabelingIndex(
+            BdvInterface bdvInterface,
+            List<SourceAndConverter<?>> sources) {
+        int nonLabelingProjectors = 0;
+        for (SourceAndConverter<?> source : sources) {
+            if (!bdvInterface.getIndexSources().containsKey(source)) {
+                nonLabelingProjectors++;
+            }
+        }
+        return nonLabelingProjectors;
+    }
 
-		List<Integer> indices = labelEditorSourceIndices(bdvInterface, sources);
+    @Override
+    protected void accumulate(final Cursor<? extends ARGBType>[] accesses, final ARGBType target) {
+        // accumulate sources additively
+        int aSum = 0, rSum = 0, gSum = 0, bSum = 0;
+        for (int i = 0; i < indexFirstLabeling; i++) {
+            final int value = accesses[i].get().get();
+            final int a = ARGBType.alpha(value);
+            final int r = ARGBType.red(value);
+            final int g = ARGBType.green(value);
+            final int b = ARGBType.blue(value);
+            aSum += a;
+            rSum += r;
+            gSum += g;
+            bSum += b;
+        }
+        if (aSum > 255)
+            aSum = 255;
+        if (rSum > 255)
+            rSum = 255;
+        if (gSum > 255)
+            gSum = 255;
+        if (bSum > 255)
+            bSum = 255;
 
-		for (int i = 0; i < sources.size(); i++) {
+        float alpha = 0, red = 0, green = 0, blue = 0;
 
-			if(indices.contains(i)) {
-				InteractiveLabeling<?> labeling = bdvInterface.getIndexSources().get(sources.get(i));
-				for (LabelEditorRenderer<?> renderer : labeling.view().renderers()) {
-					if (LabelEditorOverlayRenderer.class.isAssignableFrom(renderer.getClass())) {
-						rendererProjectors.add(sourceProjectors.get(i));
-					}
-				}
-			} else {
-				res.add(sourceProjectors.get(i));
-			}
-		}
-		sourceProjectors.addAll(rendererProjectors);
-		return sourceProjectors;
-	}
+        // accumulate labeleditor tag colors as overlay
+        for (int i = accesses.length - 1; i >= indexFirstLabeling; i--) {
+            final int value = accesses[i].get().get();
+            final float newalpha = ((float) ARGBType.alpha(value)) / 255.f;
+            final float newred = ARGBType.red(value);
+            final float newgreen = ARGBType.green(value);
+            final float newblue = ARGBType.blue(value);
+            if (alpha < 0.0001 && newalpha < 0.0001) continue;
+            if (newgreen + newred + newblue < 0.0001) continue;
+            red = (red * alpha + newred * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
+            green = (green * alpha + newgreen * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
+            blue = (blue * alpha + newblue * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
+            alpha = alpha + newalpha * (1 - alpha);
+        }
 
-	@Override
-	protected void accumulate( final Cursor< ? extends ARGBType >[] accesses, final ARGBType target )
-	{
-		// accumulate sources additively
-		int aSum = 0, rSum = 0, gSum = 0, bSum = 0;
-		for (int i = 0; i < indexFirstLabeling; i++) {
-			final int value = accesses[ i ].get().get();
-			final int a = ARGBType.alpha(value);
-			final int r = ARGBType.red(value);
-			final int g = ARGBType.green(value);
-			final int b = ARGBType.blue(value);
-			aSum += a;
-			rSum += r;
-			gSum += g;
-			bSum += b;
-		}
-		if ( aSum > 255 )
-			aSum = 255;
-		if ( rSum > 255 )
-			rSum = 255;
-		if ( gSum > 255 )
-			gSum = 255;
-		if ( bSum > 255 )
-			bSum = 255;
+        // concatenate additive sources with overlay tag colors
+        final float newalpha = ((float) aSum) / 255.f;
+        red = (red * alpha + (float) rSum * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
+        green = (green * alpha + (float) gSum * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
+        blue = (blue * alpha + (float) bSum * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
+        alpha = alpha + newalpha * (1 - alpha);
 
-		float alpha = 0, red = 0, green = 0, blue = 0;
-
-		// accumulate labeleditor tag colors as overlay
-		for (int i = accesses.length-1; i >= indexFirstLabeling; i--) {
-			final int value = accesses[ i ].get().get();
-			final float newalpha = ((float) ARGBType.alpha(value)) / 255.f;
-			final float newred = ARGBType.red(value);
-			final float newgreen = ARGBType.green(value);
-			final float newblue = ARGBType.blue(value);
-			if(alpha < 0.0001 && newalpha < 0.0001) continue;
-			if(newgreen + newred + newblue < 0.0001) continue;
-			red = (red * alpha + newred * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
-			green = (green * alpha + newgreen * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
-			blue = (blue * alpha + newblue * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
-			alpha = alpha + newalpha * (1 - alpha);
-		}
-
-		// concatenate additive sources with overlay tag colors
-		final float newalpha = ((float)aSum) / 255.f;
-		red = (red * alpha + (float) rSum * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
-		green = (green * alpha + (float) gSum * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
-		blue = (blue * alpha + (float) bSum * newalpha * (1 - alpha)) / (alpha + newalpha * (1 - alpha));
-		alpha = alpha + newalpha * (1 - alpha);
-
-		target.set( ARGBType.rgba( red, green, blue, ( int ) ( alpha * 255 ) ) );
-	}
+        float perc = alpha;
+//        System.out.println(red*perc + ":" + green*perc + ":" + blue*perc + ":" + 255);
+        target.set(ARGBType.rgba(red*perc, green*perc, blue*perc, 255));
+//        target.set(ARGBType.rgba(red, green, blue, alpha));
+    }
 }
