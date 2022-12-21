@@ -96,6 +96,7 @@ public class TimeSliceInteractiveLabeling<L> implements InteractiveLabeling<L> {
 
 	private void timePointChanged(int index) {
 		this.timePoint = index;
+		if(singleModelView) index = 0;
 		views.forEach(view -> view.listeners().remove(interfaceInstance::onViewChange));
 		models.forEach(model -> model.tagging().listeners().remove(interfaceInstance::onTagChange));
 		models.forEach(model -> model.labelingListeners().remove(this::onLabelingChange));
