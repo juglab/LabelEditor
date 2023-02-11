@@ -178,7 +178,7 @@ public class BdvInterface implements LabelEditorInterface {
 
 	public <L> LabelingType<L> findLabelsAtMousePosition(int x, int y, InteractiveLabeling<L> labeling) {
 		RandomAccess<LabelingType<L>> ra = labeling.getLabelingInScope().randomAccess();
-		Localizable pos = getDataPositionAtMouse();
+		Localizable pos = getDataPositionAtMouse(ra.numDimensions());
 		if(Intervals.contains(labeling.getLabelingInScope(), pos)) {
 			ra.setPosition(pos);
 			return ra.get();
@@ -186,13 +186,16 @@ public class BdvInterface implements LabelEditorInterface {
 		return null;
 	}
 
-	private Localizable getDataPositionAtMouse() {
+	private Localizable getDataPositionAtMouse(int nDims) {
 		//FIXME currently only works for 2D, 3D and 4D
 		RealPoint mousePointer = new RealPoint(3);
 		bdvHandle.getViewerPanel().getGlobalMouseCoordinates( mousePointer );
 		final int x = (int) Math.round( mousePointer.getDoublePosition( 0 ) );
 		final int y = (int) Math.round( mousePointer.getDoublePosition( 1 ) );
 		final int z = (int) Math.round( mousePointer.getDoublePosition( 2 ) );
+		if(nDims == 3) {
+			return new Point(x, y, z);
+		}
 		int time = bdvHandle.getViewerPanel().state().getCurrentTimepoint();
 		return new Point(x, y, z, time);
 	}
